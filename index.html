@@ -316,9 +316,8 @@
             </div>
             <ul class="nav-links">
                 <li><a href="/">Αρχική</a></li>
-                <li><a href="/games.html">Παιχνίδια</a></li>
-                <li><a href="/about.html">Σχετικά</a></li>
-                <li><a href="/contact.html">Επικοινωνία</a></li>
+                <li><a href="#games">Παιχνίδια</a></li>
+                <li><a href="#features">Πλεονεκτήματα</a></li>
             </ul>
         </nav>
     </header>
@@ -329,7 +328,7 @@
             <h1>Καλώς Ηρθες στο FranklyMadEar</h1>
             <p>Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!</p>
             <div class="cta-buttons">
-                <button onclick="showAdBeforeSudoku()" class="btn btn-primary">Παίξε Sudoku</button>
+                <a href="sudoku.html" class="btn btn-primary">Παίξε Sudoku</a>
                 <a href="#games" class="btn btn-secondary">Δες Όλα τα Παιχνίδια</a>
             </div>
         </div>
@@ -343,7 +342,7 @@
                 <p>Διάλεξε από τη συλλογή μας με τα καλύτερα παιχνίδια</p>
             </div>
             <div class="games-grid">
-                <!-- Game 1 -->
+                <!-- Sudoku -->
                 <div class="game-card">
                     <div class="game-image">
                         🧩
@@ -355,27 +354,31 @@
                             <span>🎯 Δύσκολο</span>
                             <span>⭐ 4.8/5</span>
                         </div>
-                        <button onclick="showAdBeforeSudoku()" class="btn btn-primary" style="width: 100%;">Παίξε Τώρα</button>
+                        <a href="sudoku.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;">
+                            Παίξε Τώρα
+                        </a>
                     </div>
                 </div>
                 
-                <!-- Game 2 -->
+                <!-- Pacman -->
                 <div class="game-card">
                     <div class="game-image">
-                        🎮
+                        👻
                     </div>
                     <div class="game-content">
-                        <h3>Πακμαν</h3>
-                        <p>Σύντομα διαθέσιμο - Κλασικό arcade</p>
+                        <h3>Pacman</h3>
+                        <p>Κλασικό arcade παιχνίδι</p>
                         <div class="game-stats">
                             <span>🎯 Μέτριο</span>
-                            <span>🔜 Σύντομα</span>
+                            <span>⭐ 4.5/5</span>
                         </div>
-                        <button class="btn btn-secondary" style="width: 100%; background: #95a5a6;">Σύντομα</button>
+                        <a href="pacman/index.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;">
+                            Παίξε Τώρα
+                        </a>
                     </div>
                 </div>
                 
-                <!-- Game 3 -->
+                <!-- Tetris -->
                 <div class="game-card">
                     <div class="game-image">
                         🧩
@@ -387,7 +390,9 @@
                             <span>🎯 Εύκολο</span>
                             <span>🔜 Σύντομα</span>
                         </div>
-                        <button class="btn btn-secondary" style="width: 100%; background: #95a5a6;">Σύντομα</button>
+                        <button class="btn btn-secondary" style="width: 100%; background: #95a5a6; cursor: not-allowed;">
+                            Σύντομα
+                        </button>
                     </div>
                 </div>
             </div>
@@ -395,7 +400,7 @@
     </section>
 
     <!-- Features Section -->
-    <section class="features">
+    <section id="features" class="features">
         <div class="container">
             <div class="section-title">
                 <h2>Γιατί να παίξεις με εμάς;</h2>
@@ -437,8 +442,8 @@
                 <div class="footer-section">
                     <h3>Παιχνίδια</h3>
                     <ul style="list-style: none;">
-                        <li><a href="#" style="color: #ccc; text-decoration: none;">Sudoku</a></li>
-                        <li><a href="#" style="color: #ccc; text-decoration: none;">Πακμαν</a></li>
+                        <li><a href="sudoku.html" style="color: #ccc; text-decoration: none;">Sudoku</a></li>
+                        <li><a href="pacman/index.html" style="color: #ccc; text-decoration: none;">Pacman</a></li>
                         <li><a href="#" style="color: #ccc; text-decoration: none;">Τέτρις</a></li>
                         <li><a href="#" style="color: #ccc; text-decoration: none;">Φίδι</a></li>
                     </ul>
@@ -454,114 +459,41 @@
         </div>
     </footer>
 
-    <!-- AD OVERLAY (Ο ίδιος κώδικας που σου έδωσα πριν) -->
-    <div id="adOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; color: white;">
-        <div style="text-align: center; padding: 20px; background: #2c3e50; border-radius: 15px; max-width: 400px; width: 90%;">
-            <h2>🎮 Πρόσβαση στο Παιχνίδι</h2>
-            <p>Παρακαλώ δες τη διαφήμιση για <span id="countdown" style="font-weight: bold; color: #3498db;">5</span> δευτερόλεπτα</p>
-            
-            <div id="adContainer" style="background: white; padding: 15px; border-radius: 10px; margin: 20px auto; min-height: 250px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                <div style="color: black; text-align: center;">
-                    <p>📱 Φόρτωση διαφήμισης...</p>
-                    <div style="width: 100%; height: 3px; background: #ecf0f1; margin: 10px 0;">
-                        <div id="adProgress" style="width: 0%; height: 100%; background: #3498db; transition: width 5s;"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <button onclick="skipAd()" id="skipButton" style="background: #95a5a6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: not-allowed; margin-top: 10px; transition: background 0.3s;">
-                Παράβλεψη (5s)
-            </button>
-        </div>
-    </div>
-
     <script>
-    // Rewarded Ad System (Ο ίδιος κώδικας)
-    function showAdBeforeSudoku() {
-        const overlay = document.getElementById('adOverlay');
-        const countdownElement = document.getElementById('countdown');
-        const skipButton = document.getElementById('skipButton');
-        const adProgress = document.getElementById('adProgress');
-        
-        overlay.style.display = 'flex';
-        
-        let seconds = 5;
-        let skipAvailable = false;
-        
-        skipButton.disabled = true;
-        skipButton.style.background = '#95a5a6';
-        skipButton.style.cursor = 'not-allowed';
-        skipButton.textContent = 'Παράβλεψη (5s)';
-        
-        setTimeout(() => {
-            adProgress.style.width = '100%';
-        }, 100);
-        
-        const countdown = setInterval(() => {
-            seconds--;
-            countdownElement.textContent = seconds;
-            
-            if (seconds === 2 && !skipAvailable) {
-                skipAvailable = true;
-                skipButton.disabled = false;
-                skipButton.style.background = '#27ae60';
-                skipButton.style.cursor = 'pointer';
-                skipButton.textContent = 'Παράβλεψη Τώρα';
-            }
-            
-            if (seconds === 0) {
-                clearInterval(countdown);
-                window.location.href = '/sudoku.html';
-            }
-        }, 1000);
-        
-        loadRealAd();
-    }
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
 
-    function loadRealAd() {
-        const adContainer = document.getElementById('adContainer');
-        adContainer.innerHTML = '<div style="color: black; text-align: center;"><p>📱 Φόρτωση διαφήμισης...</p></div>';
-        
-        try {
-            const adScript = document.createElement('script');
-            adScript.src = 'https://fpyf8.com/88/tag.min.js';
-            adScript.setAttribute('data-zone', '175808');
-            adScript.async = true;
-            adScript.setAttribute('data-cfasync', 'false');
-            
-            adScript.onerror = function() {
-                showFallbackAd();
-            };
-            
-            setTimeout(() => {
-                adContainer.innerHTML = '';
-                adContainer.appendChild(adScript);
-            }, 500);
-            
-        } catch (error) {
-            showFallbackAd();
-        }
-    }
+        // Add fade-in animation to elements when they enter viewport
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
 
-    function showFallbackAd() {
-        const adContainer = document.getElementById('adContainer');
-        adContainer.innerHTML = `
-            <div style="color: black; text-align: center; width: 100%;">
-                <h4 style="color: #e74c3c;">🎯 FranklyMadEar Games</h4>
-                <p>Απολαύστε το δωρεάν Sudoku!</p>
-                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
-                    <p style="font-size: 10px; color: #999;">Ad space</p>
-                </div>
-            </div>
-        `;
-    }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
 
-    function skipAd() {
-        const skipButton = document.getElementById('skipButton');
-        if (!skipButton.disabled) {
-            window.location.href = '/sudoku.html';
-        }
-    }
+        // Observe all game cards and feature cards
+        document.querySelectorAll('.game-card, .feature-card').forEach(el => {
+            el.style.opacity = '0';
+            observer.observe(el);
+        });
     </script>
 </body>
 </html>
