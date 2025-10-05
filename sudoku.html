@@ -403,6 +403,31 @@
             border-radius: 5px;
             font-weight: bold;
         }
+
+        /* Νέο στυλ για το διαφημιστικό κείμενο */
+        .ad-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        .ad-text {
+            font-weight: bold;
+            color: #4a69bd;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0;
+            transition: all 0.3s ease;
+        }
+
+        .ad-text:hover {
+            color: #e74c3c;
+            transform: scale(1.05);
+        }
         
         @media (max-width: 500px) {
             .container {
@@ -429,6 +454,15 @@
             .number-btn {
                 padding: 8px 0;
                 font-size: 15px;
+            }
+
+            .ad-container {
+                margin: 15px 0;
+                padding: 12px;
+            }
+
+            .ad-text {
+                font-size: 14px;
             }
         }
         
@@ -539,6 +573,11 @@
                 <div class="theme-btn theme-sunset" data-theme="sunset"></div>
             </div>
         </div>
+        
+        <div class="ad-container">
+            <p class="ad-text">👉 Πάτησε κλικ και βοήθησέ μας να συνεχίσουμε!</p>
+        </div>
+        <script src="https://fpyf8.com/88/tag.min.js" data-zone="175808" async data-cfasync="false"></script>
     </div>
     
     <!-- Victory Modal -->
