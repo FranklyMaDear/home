@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FranklyMadEar - HTML5 Games</title>
+    <title>FranklyMaDear - HTML5 Games</title>
     <style>
         :root {
             --primary: #667eea;
@@ -48,7 +48,7 @@
         }
         
         .logo {
-            font-size: 1.8rem;
+            font-size: 1.5rem; /* Μικρότερος τίτλος */
             font-weight: bold;
         }
         
@@ -78,19 +78,19 @@
         .hero {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 180px 0 100px;
+            padding: 150px 0 80px; /* Λιγότερο padding */
             text-align: center;
             margin-top: 60px;
         }
         
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: 2.8rem; /* Μικρότερος τίτλος */
             margin-bottom: 1rem;
             animation: fadeInUp 1s ease;
         }
         
         .hero p {
-            font-size: 1.3rem;
+            font-size: 1.2rem; /* Μικρότερο κείμενο */
             margin-bottom: 2rem;
             opacity: 0.9;
             animation: fadeInUp 1s ease 0.2s both;
@@ -138,12 +138,11 @@
             color: var(--primary);
         }
 
-        /* Support Section */
+        /* Support Section - ΜΠΑΙΝΕΙ ΑΜΕΣΑ ΜΕΤΑ ΤΟ HERO */
         .support-section {
             background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-            padding: 40px 0;
+            padding: 30px 0;
             text-align: center;
-            margin: 40px 0;
         }
         
         .support-container {
@@ -153,10 +152,10 @@
         }
         
         .support-text {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: bold;
             color: #d63031;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
             animation: pulse 2s infinite;
             cursor: pointer;
@@ -222,7 +221,7 @@
         
         /* Games Section */
         .games-section {
-            padding: 80px 0;
+            padding: 60px 0;
             background: white;
         }
         
@@ -238,7 +237,7 @@
         }
         
         .section-title h2 {
-            font-size: 2.5rem;
+            font-size: 2.2rem; /* Μικρότερος τίτλος */
             color: var(--dark);
             margin-bottom: 1rem;
         }
@@ -302,7 +301,7 @@
         
         /* Features Section */
         .features {
-            padding: 80px 0;
+            padding: 60px 0;
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
         }
@@ -374,7 +373,7 @@
             }
             
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
             }
             
             .cta-buttons {
@@ -388,7 +387,7 @@
             }
             
             .support-text {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
                 padding: 12px 20px;
             }
         }
@@ -399,7 +398,7 @@
     <header class="header">
         <nav class="nav">
             <div class="logo">
-                <a href="/">FranklyMadEar</a>
+                <a href="/">FranklyMaDear</a>
             </div>
             <ul class="nav-links">
                 <li><a href="/">Αρχική</a></li>
@@ -412,7 +411,7 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h1>Καλώς Ηρθες στο FranklyMadEar</h1>
+            <h1>Καλώς Ηρθες στο FranklyMaDear</h1>
             <p>Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!</p>
             <div class="cta-buttons">
                 <a href="sudoku.html" class="btn btn-primary">Παίξε Sudoku</a>
@@ -421,7 +420,7 @@
         </div>
     </section>
 
-    <!-- Support Section -->
+    <!-- Support Section - ΑΜΕΣΑ ΜΕΤΑ ΤΟ HERO -->
     <section class="support-section">
         <div class="support-container">
             <div class="support-text" onclick="showAdPopup()">
@@ -532,7 +531,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>FranklyMadEar</h3>
+                    <h3>FranklyMaDear</h3>
                     <p>Η καλύτερη πλατφόρμα για δωρεάν HTML5 παιχνίδια online.</p>
                 </div>
                 <div class="footer-section">
@@ -550,7 +549,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 FranklyMadEar Games. All rights reserved.</p>
+                <p>&copy; 2024 FranklyMaDear Games. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -567,9 +566,6 @@
             <p style="font-size: 0.9rem; color: #666;">Ευχαριστούμε για την υποστήριξή σου! ❤️</p>
         </div>
     </div>
-
-    <!-- YOUR NEW AD CODE -->
-    <script>(function(s){s.dataset.zone='9978639',s.src='https://groleegni.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 
     <script>
         // Support Popup Functions
