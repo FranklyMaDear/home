@@ -3,24 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FranklyMadEar Games - Καλώς Ήρθες</title>
+    <title>FranklyMadEar - HTML5 Games</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --accent: #e74c3c;
+        }
+        
+        * {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            box-sizing: border-box;
         }
-        .navbar {
-            background: #2c3e50;
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: var(--light);
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
             padding: 1rem 0;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .nav-container {
+        
+        .nav {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
@@ -28,161 +46,420 @@
             justify-content: space-between;
             align-items: center;
         }
-        .nav-logo a {
-            color: white;
-            font-size: 1.5rem;
+        
+        .logo {
+            font-size: 1.8rem;
             font-weight: bold;
+        }
+        
+        .logo a {
+            color: white;
             text-decoration: none;
         }
-        .nav-menu {
+        
+        .nav-links {
             display: flex;
             gap: 2rem;
+            list-style: none;
         }
-        .nav-link {
+        
+        .nav-links a {
             color: white;
             text-decoration: none;
+            font-weight: 500;
             transition: color 0.3s;
         }
-        .nav-link:hover {
-            color: #3498db;
+        
+        .nav-links a:hover {
+            color: #ffd700;
         }
+        
+        /* Hero Section */
         .hero {
-            padding: 150px 0 100px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 180px 0 100px;
             text-align: center;
             margin-top: 60px;
         }
+        
         .hero h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary);
+        }
+        
+        /* Games Section */
+        .games-section {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
             margin-bottom: 1rem;
         }
-        .cta-button {
-            display: inline-block;
-            background: #e74c3c;
-            color: white;
-            padding: 12px 30px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            margin: 0 10px;
-            cursor: pointer;
-            transition: background 0.3s;
-            border: none;
-            font-size: 16px;
+        
+        .section-title p {
+            color: #666;
+            font-size: 1.1rem;
         }
-        .cta-button:hover {
-            background: #c0392b;
-        }
+        
         .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .game-card {
+            background: var(--light);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .game-image {
+            height: 200px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+        
+        .game-content {
+            padding: 1.5rem;
+        }
+        
+        .game-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .game-content p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 0 20px;
         }
-        .game-card {
-            background: white;
+        
+        .feature-card {
+            text-align: center;
             padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            text-align: center;
-            color: #333;
         }
-        .game-button {
-            display: inline-block;
-            background: #3498db;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-top: 1rem;
-            cursor: pointer;
-            border: none;
-            font-size: 14px;
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
-        .game-button:hover {
-            background: #2980b9;
+        
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
         }
+        
+        /* Footer */
         .footer {
-            background: #2c3e50;
+            background: var(--dark);
             color: white;
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #ffd700;
+        }
+        
+        .footer-bottom {
             text-align: center;
-            padding: 2rem 0;
-            margin-top: 50px;
+            padding-top: 2rem;
+            border-top: 1px solid #444;
+            color: #888;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         /* Responsive */
         @media (max-width: 768px) {
-            .nav-menu {
+            .nav-links {
                 flex-direction: column;
                 gap: 1rem;
             }
+            
             .hero h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
-            .games-grid {
-                grid-template-columns: 1fr;
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
             }
-            .cta-button {
-                display: block;
-                margin: 10px auto;
-                max-width: 200px;
+            
+            .btn {
+                width: 200px;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
                 <a href="/">FranklyMadEar</a>
             </div>
-            <div class="nav-menu">
-                <a href="/" class="nav-link">Αρχική</a>
-                <a href="/games.html" class="nav-link">Παιχνίδια</a>
-                <a href="/about.html" class="nav-link">Σχετικά</a>
-            </div>
-        </div>
-    </nav>
+            <ul class="nav-links">
+                <li><a href="/">Αρχική</a></li>
+                <li><a href="/games.html">Παιχνίδια</a></li>
+                <li><a href="/about.html">Σχετικά</a></li>
+                <li><a href="/contact.html">Επικοινωνία</a></li>
+            </ul>
+        </nav>
+    </header>
 
+    <!-- Hero Section -->
     <section class="hero">
-        <h1>Καλώς Ηρθες στο FranklyMadEar</h1>
-        <p>Ανακάλυψε τα καλύτερα HTML5 παιχνίδια!</p>
-        <a href="#games" class="cta-button">Δες Τα Παιχνίδια</a>
-        <button onclick="showAdBeforeSudoku()" class="cta-button">Παίξε Sudoku</button>
-    </section>
-
-    <section id="games">
-        <div class="games-grid">
-            <div class="game-card">
-                <h3>Sudoku</h3>
-                <p>Κλασικό puzzle παιχνίδι</p>
-                <button onclick="showAdBeforeSudoku()" class="game-button">Παίξε Τώρα</button>
-            </div>
-            <div class="game-card">
-                <h3>Πακμαν</h3>
-                <p>Σύντομα διαθέσιμο</p>
-                <button class="game-button" style="background: #95a5a6;">Σύντομα</button>
-            </div>
-            <div class="game-card">
-                <h3>Τέτρις</h3>
-                <p>Σύντομα διαθέσιμο</p>
-                <button class="game-button" style="background: #95a5a6;">Σύντομα</button>
+        <div class="container">
+            <h1>Καλώς Ηρθες στο FranklyMadEar</h1>
+            <p>Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!</p>
+            <div class="cta-buttons">
+                <button onclick="showAdBeforeSudoku()" class="btn btn-primary">Παίξε Sudoku</button>
+                <a href="#games" class="btn btn-secondary">Δες Όλα τα Παιχνίδια</a>
             </div>
         </div>
     </section>
 
+    <!-- Games Section -->
+    <section id="games" class="games-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Δημοφιλή Παιχνίδια</h2>
+                <p>Διάλεξε από τη συλλογή μας με τα καλύτερα παιχνίδια</p>
+            </div>
+            <div class="games-grid">
+                <!-- Game 1 -->
+                <div class="game-card">
+                    <div class="game-image">
+                        🧩
+                    </div>
+                    <div class="game-content">
+                        <h3>Sudoku</h3>
+                        <p>Κλασικό puzzle παιχνίδι για όλες τις ηλικίες</p>
+                        <div class="game-stats">
+                            <span>🎯 Δύσκολο</span>
+                            <span>⭐ 4.8/5</span>
+                        </div>
+                        <button onclick="showAdBeforeSudoku()" class="btn btn-primary" style="width: 100%;">Παίξε Τώρα</button>
+                    </div>
+                </div>
+                
+                <!-- Game 2 -->
+                <div class="game-card">
+                    <div class="game-image">
+                        🎮
+                    </div>
+                    <div class="game-content">
+                        <h3>Πακμαν</h3>
+                        <p>Σύντομα διαθέσιμο - Κλασικό arcade</p>
+                        <div class="game-stats">
+                            <span>🎯 Μέτριο</span>
+                            <span>🔜 Σύντομα</span>
+                        </div>
+                        <button class="btn btn-secondary" style="width: 100%; background: #95a5a6;">Σύντομα</button>
+                    </div>
+                </div>
+                
+                <!-- Game 3 -->
+                <div class="game-card">
+                    <div class="game-image">
+                        🧩
+                    </div>
+                    <div class="game-content">
+                        <h3>Τέτρις</h3>
+                        <p>Σύντομα διαθέσιμο - Puzzle challenge</p>
+                        <div class="game-stats">
+                            <span>🎯 Εύκολο</span>
+                            <span>🔜 Σύντομα</span>
+                        </div>
+                        <button class="btn btn-secondary" style="width: 100%; background: #95a5a6;">Σύντομα</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Γιατί να παίξεις με εμάς;</h2>
+                <p>Ολα τα πλεονεκτήματα των παιχνιδιών μας</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Δωρεάν</h3>
+                    <p>Όλα τα παιχνίδια είναι 100% δωρεάν</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Responsive</h3>
+                    <p>Δουλεύουν σε όλες τις συσκευές</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Γρήγορα</h3>
+                    <p>Φορτώνονται αμέσως χωρίς εγκατάσταση</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h3>Ποικιλία</h3>
+                    <p>Συνεχώς νέα παιχνίδια προστίθενται</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2024 FranklyMadEar Games. All rights reserved.</p>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>FranklyMadEar</h3>
+                    <p>Η καλύτερη πλατφόρμα για δωρεάν HTML5 παιχνίδια online.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Παιχνίδια</h3>
+                    <ul style="list-style: none;">
+                        <li><a href="#" style="color: #ccc; text-decoration: none;">Sudoku</a></li>
+                        <li><a href="#" style="color: #ccc; text-decoration: none;">Πακμαν</a></li>
+                        <li><a href="#" style="color: #ccc; text-decoration: none;">Τέτρις</a></li>
+                        <li><a href="#" style="color: #ccc; text-decoration: none;">Φίδι</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Επικοινωνία</h3>
+                    <p>Email: info@franklymadear.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 FranklyMadEar Games. All rights reserved.</p>
+            </div>
+        </div>
     </footer>
 
-    <!-- REWARDED AD OVERLAY -->
+    <!-- AD OVERLAY (Ο ίδιος κώδικας που σου έδωσα πριν) -->
     <div id="adOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; color: white;">
         <div style="text-align: center; padding: 20px; background: #2c3e50; border-radius: 15px; max-width: 400px; width: 90%;">
             <h2>🎮 Πρόσβαση στο Παιχνίδι</h2>
             <p>Παρακαλώ δες τη διαφήμιση για <span id="countdown" style="font-weight: bold; color: #3498db;">5</span> δευτερόλεπτα</p>
             
-            <!-- AD CONTAINER - ΕΔΩ ΘΑ ΜΠΕΙ Η ΔΙΑΦΗΜΙΣΗ ΣΟΥ -->
             <div id="adContainer" style="background: white; padding: 15px; border-radius: 10px; margin: 20px auto; min-height: 250px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                 <div style="color: black; text-align: center;">
                     <p>📱 Φόρτωση διαφήμισης...</p>
@@ -199,36 +476,31 @@
     </div>
 
     <script>
-    // Rewarded Ad System
+    // Rewarded Ad System (Ο ίδιος κώδικας)
     function showAdBeforeSudoku() {
         const overlay = document.getElementById('adOverlay');
         const countdownElement = document.getElementById('countdown');
         const skipButton = document.getElementById('skipButton');
         const adProgress = document.getElementById('adProgress');
         
-        // Show overlay
         overlay.style.display = 'flex';
         
         let seconds = 5;
         let skipAvailable = false;
         
-        // Reset button state
         skipButton.disabled = true;
         skipButton.style.background = '#95a5a6';
         skipButton.style.cursor = 'not-allowed';
         skipButton.textContent = 'Παράβλεψη (5s)';
         
-        // Start progress bar
         setTimeout(() => {
             adProgress.style.width = '100%';
         }, 100);
         
-        // Countdown timer
         const countdown = setInterval(() => {
             seconds--;
             countdownElement.textContent = seconds;
             
-            // Enable skip after 3 seconds
             if (seconds === 2 && !skipAvailable) {
                 skipAvailable = true;
                 skipButton.disabled = false;
@@ -237,49 +509,36 @@
                 skipButton.textContent = 'Παράβλεψη Τώρα';
             }
             
-            // Redirect when finished
             if (seconds === 0) {
                 clearInterval(countdown);
                 window.location.href = '/sudoku.html';
             }
         }, 1000);
         
-        // Load actual ad
         loadRealAd();
     }
 
     function loadRealAd() {
         const adContainer = document.getElementById('adContainer');
-        
-        // Clear previous content
         adContainer.innerHTML = '<div style="color: black; text-align: center;"><p>📱 Φόρτωση διαφήμισης...</p></div>';
         
         try {
-            // CREATE YOUR AD SCRIPT
             const adScript = document.createElement('script');
             adScript.src = 'https://fpyf8.com/88/tag.min.js';
             adScript.setAttribute('data-zone', '175808');
             adScript.async = true;
             adScript.setAttribute('data-cfasync', 'false');
             
-            // Add error handling
             adScript.onerror = function() {
-                console.log('Ad failed to load');
                 showFallbackAd();
             };
             
-            adScript.onload = function() {
-                console.log('Ad loaded successfully');
-            };
-            
-            // Inject the ad script
             setTimeout(() => {
-                adContainer.innerHTML = ''; // Clear loading message
+                adContainer.innerHTML = '';
                 adContainer.appendChild(adScript);
             }, 500);
             
         } catch (error) {
-            console.error('Ad loading error:', error);
             showFallbackAd();
         }
     }
@@ -290,9 +549,8 @@
             <div style="color: black; text-align: center; width: 100%;">
                 <h4 style="color: #e74c3c;">🎯 FranklyMadEar Games</h4>
                 <p>Απολαύστε το δωρεάν Sudoku!</p>
-                <p style="color: #666; font-size: 12px;">Περισσότερα παιχνίδια σύντομα!</p>
                 <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
-                    <p style="font-size: 10px; color: #999;">Ad space - Support our free games</p>
+                    <p style="font-size: 10px; color: #999;">Ad space</p>
                 </div>
             </div>
         `;
@@ -304,14 +562,6 @@
             window.location.href = '/sudoku.html';
         }
     }
-
-    // Close overlay if clicked outside
-    document.getElementById('adOverlay').addEventListener('click', function(e) {
-        if (e.target === this) {
-            // Optional: Prevent closing when clicking outside
-            // this.style.display = 'none';
-        }
-    });
     </script>
 </body>
 </html>
