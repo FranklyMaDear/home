@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FranklyMaDear Games - Καλώς Ήρθες</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>FranklyMadEar Games - Καλώς Ήρθες</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -65,6 +64,13 @@
             border-radius: 5px;
             font-weight: bold;
             margin: 0 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: none;
+            font-size: 16px;
+        }
+        .cta-button:hover {
+            background: #c0392b;
         }
         .games-grid {
             display: grid;
@@ -90,6 +96,38 @@
             text-decoration: none;
             border-radius: 5px;
             margin-top: 1rem;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
+        .game-button:hover {
+            background: #2980b9;
+        }
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 50px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            .cta-button {
+                display: block;
+                margin: 10px auto;
+                max-width: 200px;
+            }
         }
     </style>
 </head>
@@ -97,7 +135,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <a href="/">FmD</a>
+                <a href="/">FranklyMadEar</a>
             </div>
             <div class="nav-menu">
                 <a href="/" class="nav-link">Αρχική</a>
@@ -108,10 +146,10 @@
     </nav>
 
     <section class="hero">
-        <h1>Καλώς Ηρθες στο FranklyMaDear</h1>
+        <h1>Καλώς Ηρθες στο FranklyMadEar</h1>
         <p>Ανακάλυψε τα καλύτερα HTML5 παιχνίδια!</p>
         <a href="#games" class="cta-button">Δες Τα Παιχνίδια</a>
-        <a href="/sudoku.html" class="cta-button">Παίξε Sudoku</a>
+        <button onclick="showAdBeforeSudoku()" class="cta-button">Παίξε Sudoku</button>
     </section>
 
     <section id="games">
@@ -119,19 +157,161 @@
             <div class="game-card">
                 <h3>Sudoku</h3>
                 <p>Κλασικό puzzle παιχνίδι</p>
-                <a href="/sudoku.html" class="cta-button" target="_blank">Παίξε Sudoku</a>
+                <button onclick="showAdBeforeSudoku()" class="game-button">Παίξε Τώρα</button>
             </div>
             <div class="game-card">
                 <h3>Πακμαν</h3>
                 <p>Σύντομα διαθέσιμο</p>
-                <a href="#" class="game-button">Σύντομα</a>
+                <button class="game-button" style="background: #95a5a6;">Σύντομα</button>
             </div>
             <div class="game-card">
                 <h3>Τέτρις</h3>
                 <p>Σύντομα διαθέσιμο</p>
-                <a href="#" class="game-button">Σύντομα</a>
+                <button class="game-button" style="background: #95a5a6;">Σύντομα</button>
             </div>
         </div>
     </section>
+
+    <footer class="footer">
+        <p>&copy; 2024 FranklyMadEar Games. All rights reserved.</p>
+    </footer>
+
+    <!-- REWARDED AD OVERLAY -->
+    <div id="adOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; color: white;">
+        <div style="text-align: center; padding: 20px; background: #2c3e50; border-radius: 15px; max-width: 400px; width: 90%;">
+            <h2>🎮 Πρόσβαση στο Παιχνίδι</h2>
+            <p>Παρακαλώ δες τη διαφήμιση για <span id="countdown" style="font-weight: bold; color: #3498db;">5</span> δευτερόλεπτα</p>
+            
+            <!-- AD CONTAINER - ΕΔΩ ΘΑ ΜΠΕΙ Η ΔΙΑΦΗΜΙΣΗ ΣΟΥ -->
+            <div id="adContainer" style="background: white; padding: 15px; border-radius: 10px; margin: 20px auto; min-height: 250px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                <div style="color: black; text-align: center;">
+                    <p>📱 Φόρτωση διαφήμισης...</p>
+                    <div style="width: 100%; height: 3px; background: #ecf0f1; margin: 10px 0;">
+                        <div id="adProgress" style="width: 0%; height: 100%; background: #3498db; transition: width 5s;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="skipAd()" id="skipButton" style="background: #95a5a6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: not-allowed; margin-top: 10px; transition: background 0.3s;">
+                Παράβλεψη (5s)
+            </button>
+        </div>
+    </div>
+
+    <script>
+    // Rewarded Ad System
+    function showAdBeforeSudoku() {
+        const overlay = document.getElementById('adOverlay');
+        const countdownElement = document.getElementById('countdown');
+        const skipButton = document.getElementById('skipButton');
+        const adProgress = document.getElementById('adProgress');
+        
+        // Show overlay
+        overlay.style.display = 'flex';
+        
+        let seconds = 5;
+        let skipAvailable = false;
+        
+        // Reset button state
+        skipButton.disabled = true;
+        skipButton.style.background = '#95a5a6';
+        skipButton.style.cursor = 'not-allowed';
+        skipButton.textContent = 'Παράβλεψη (5s)';
+        
+        // Start progress bar
+        setTimeout(() => {
+            adProgress.style.width = '100%';
+        }, 100);
+        
+        // Countdown timer
+        const countdown = setInterval(() => {
+            seconds--;
+            countdownElement.textContent = seconds;
+            
+            // Enable skip after 3 seconds
+            if (seconds === 2 && !skipAvailable) {
+                skipAvailable = true;
+                skipButton.disabled = false;
+                skipButton.style.background = '#27ae60';
+                skipButton.style.cursor = 'pointer';
+                skipButton.textContent = 'Παράβλεψη Τώρα';
+            }
+            
+            // Redirect when finished
+            if (seconds === 0) {
+                clearInterval(countdown);
+                window.location.href = '/sudoku.html';
+            }
+        }, 1000);
+        
+        // Load actual ad
+        loadRealAd();
+    }
+
+    function loadRealAd() {
+        const adContainer = document.getElementById('adContainer');
+        
+        // Clear previous content
+        adContainer.innerHTML = '<div style="color: black; text-align: center;"><p>📱 Φόρτωση διαφήμισης...</p></div>';
+        
+        try {
+            // CREATE YOUR AD SCRIPT
+            const adScript = document.createElement('script');
+            adScript.src = 'https://fpyf8.com/88/tag.min.js';
+            adScript.setAttribute('data-zone', '175808');
+            adScript.async = true;
+            adScript.setAttribute('data-cfasync', 'false');
+            
+            // Add error handling
+            adScript.onerror = function() {
+                console.log('Ad failed to load');
+                showFallbackAd();
+            };
+            
+            adScript.onload = function() {
+                console.log('Ad loaded successfully');
+            };
+            
+            // Inject the ad script
+            setTimeout(() => {
+                adContainer.innerHTML = ''; // Clear loading message
+                adContainer.appendChild(adScript);
+            }, 500);
+            
+        } catch (error) {
+            console.error('Ad loading error:', error);
+            showFallbackAd();
+        }
+    }
+
+    function showFallbackAd() {
+        const adContainer = document.getElementById('adContainer');
+        adContainer.innerHTML = `
+            <div style="color: black; text-align: center; width: 100%;">
+                <h4 style="color: #e74c3c;">🎯 FranklyMadEar Games</h4>
+                <p>Απολαύστε το δωρεάν Sudoku!</p>
+                <p style="color: #666; font-size: 12px;">Περισσότερα παιχνίδια σύντομα!</p>
+                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <p style="font-size: 10px; color: #999;">Ad space - Support our free games</p>
+                </div>
+            </div>
+        `;
+    }
+
+    function skipAd() {
+        const skipButton = document.getElementById('skipButton');
+        if (!skipButton.disabled) {
+            window.location.href = '/sudoku.html';
+        }
+    }
+
+    // Close overlay if clicked outside
+    document.getElementById('adOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            // Optional: Prevent closing when clicking outside
+            // this.style.display = 'none';
+        }
+    });
+    </script>
 </body>
 </html>
