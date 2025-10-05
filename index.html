@@ -137,6 +137,88 @@
             background: white;
             color: var(--primary);
         }
+
+        /* Support Section */
+        .support-section {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            padding: 40px 0;
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .support-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .support-text {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #d63031;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50px;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .support-text:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            background: white;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Popup Ad */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .popup-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .close-popup {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            background: none;
+            border: none;
+        }
+        
+        .close-popup:hover {
+            color: #e74c3c;
+        }
         
         /* Games Section */
         .games-section {
@@ -304,6 +386,11 @@
                 width: 200px;
                 text-align: center;
             }
+            
+            .support-text {
+                font-size: 1.2rem;
+                padding: 12px 20px;
+            }
         }
     </style>
 </head>
@@ -330,6 +417,15 @@
             <div class="cta-buttons">
                 <a href="sudoku.html" class="btn btn-primary">Παίξε Sudoku</a>
                 <a href="#games" class="btn btn-secondary">Δες Όλα τα Παιχνίδια</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support Section -->
+    <section class="support-section">
+        <div class="support-container">
+            <div class="support-text" onclick="showAdPopup()">
+                👉 Πάτησε κλικ και βοήθησέ μας να συνεχίσουμε!
             </div>
         </div>
     </section>
@@ -459,10 +555,70 @@
         </div>
     </footer>
 
+    <!-- Popup Ad -->
+    <div id="popupOverlay" class="popup-overlay">
+        <div class="popup-content">
+            <button class="close-popup" onclick="closePopup()">×</button>
+            <h3>Βοήθησέ μας να συνεχίσουμε! 🎮</h3>
+            <p>Η υποστήριξή σου βοηθά να δημιουργούμε ακόμα περισσότερα δωρεάν παιχνίδια!</p>
+            <div id="adContainer" style="margin: 20px 0; min-height: 250px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 10px; padding: 20px;">
+                <p>Φόρτωση διαφήμισης...</p>
+            </div>
+            <p style="font-size: 0.9rem; color: #666;">Ευχαριστούμε για την υποστήριξή σου! ❤️</p>
+        </div>
+    </div>
+
     <!-- YOUR NEW AD CODE -->
     <script>(function(s){s.dataset.zone='9978639',s.src='https://groleegni.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 
     <script>
+        // Support Popup Functions
+        function showAdPopup() {
+            const popup = document.getElementById('popupOverlay');
+            popup.style.display = 'flex';
+            
+            // Load the ad script in the popup
+            loadAdInPopup();
+        }
+
+        function closePopup() {
+            const popup = document.getElementById('popupOverlay');
+            popup.style.display = 'none';
+        }
+
+        function loadAdInPopup() {
+            const adContainer = document.getElementById('adContainer');
+            adContainer.innerHTML = '';
+            
+            // Create and load the ad script
+            const adScript = document.createElement('script');
+            adScript.src = 'https://fpyf8.com/88/tag.min.js';
+            adScript.setAttribute('data-zone', '175808');
+            adScript.async = true;
+            adScript.setAttribute('data-cfasync', 'false');
+            
+            adContainer.appendChild(adScript);
+            
+            // Fallback if ad doesn't load
+            setTimeout(() => {
+                if (adContainer.children.length === 1) { // Only the script tag
+                    adContainer.innerHTML = `
+                        <div style="text-align: center; color: #666;">
+                            <p>🎯 Ευχαριστούμε για την υποστήριξή σου!</p>
+                            <p>Η διαφήμιση θα εμφανιστεί σύντομα...</p>
+                        </div>
+                    `;
+                }
+            }, 3000);
+        }
+
+        // Close popup when clicking outside
+        document.getElementById('popupOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
+
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
