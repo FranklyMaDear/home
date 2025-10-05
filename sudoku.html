@@ -391,6 +391,19 @@
             background: #6d4c41;
         }
         
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .player-turn {
+            background: rgba(255, 235, 59, 0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
         @media (max-width: 500px) {
             .container {
                 max-width: 380px;
@@ -451,6 +464,11 @@
 <body>
     <div class="container">
         <div class="app-card">
+            <div class="player-info">
+                <div id="player1-info" class="player-turn">Παίκτης 1</div>
+                <div id="player2-info">Παίκτης 2</div>
+            </div>
+            
             <div class="header-row">
                 <h1 id="game-title">My Sudoku</h1>
                 <div id="timer">00:00</div>
@@ -544,7 +562,7 @@
     <!-- Score Screen -->
     <div class="score-screen" id="score-screen" style="display: none;">
         <h2>🎉 Συγχαρητήρια! 🎉</h2>
-        <p>Ολοκλήρωσες το Sudoku!</p>
+        <p id="score-player-text">Ο Παίκτης 1 ολοκλήρωσε το Sudoku!</p>
         <p>Χρόνος: <span id="score-time">00:00</span></p>
         <p>Σφάλματα: <span id="score-errors">0</span></p>
         <div class="score">Πόντοι: <span id="score-points">0</span></div>
@@ -581,6 +599,9 @@
                 level: "Level",
                 success: "Success!",
                 nextLevel: "Moving to the next level!",
+                player1: "Player 1",
+                player2: "Player 2",
+                scoreText: "Player 1 completed the Sudoku!",
                 points: "Points",
                 pressAnyKey: "Press any key to continue"
             },
@@ -604,6 +625,9 @@
                 level: "Επίπεδο",
                 success: "Επιτυχία!",
                 nextLevel: "Προχωράς στο επόμενο επίπεδο!",
+                player1: "Παίκτης 1",
+                player2: "Παίκτης 2",
+                scoreText: "Ο Παίκτης 1 ολοκλήρωσε το Sudoku!",
                 points: "Πόντοι",
                 pressAnyKey: "Πάτησε οποιοδήποτε πλήκτρο για να συνεχίσει"
             },
@@ -627,6 +651,9 @@
                 level: "Nivel",
                 success: "¡Éxito!",
                 nextLevel: "¡Pasando al siguiente nivel!",
+                player1: "Jugador 1",
+                player2: "Jugador 2",
+                scoreText: "¡El Jugador 1 completó el Sudoku!",
                 points: "Puntos",
                 pressAnyKey: "Presiona cualquier tecla para continuar"
             },
@@ -650,6 +677,9 @@
                 level: "Level",
                 success: "Erfolg!",
                 nextLevel: "Weiter zum nächsten Level!",
+                player1: "Spieler 1",
+                player2: "Spieler 2",
+                scoreText: "Spieler 1 hat das Sudoku abgeschlossen!",
                 points: "Punkte",
                 pressAnyKey: "Drücke eine beliebige Taste, um fortzufahren"
             },
@@ -673,6 +703,9 @@
                 level: "等级",
                 success: "成功！",
                 nextLevel: "进入下一关！",
+                player1: "玩家 1",
+                player2: "玩家 2",
+                scoreText: "玩家 1 完成了数独！",
                 points: "分数",
                 pressAnyKey: "按任意键继续"
             },
@@ -696,6 +729,9 @@
                 level: "Уровень",
                 success: "Успех!",
                 nextLevel: "Переход на следующий уровень!",
+                player1: "Игрок 1",
+                player2: "Игрок 2",
+                scoreText: "Игрок 1 завершил Судоку!",
                 points: "Очки",
                 pressAnyKey: "Нажмите любую клавишу для продолжения"
             },
@@ -715,10 +751,13 @@
                 newGameBtn: "Yeni Oyun",
                 selectEmpty: "Lütfen önce boş bir hücre seçin!",
                 notComplete: "Tahta tamamlanmadı. Önce tüm boş hücreleri doldurun!",
-                incorrect: "Bazı hücreler yanlıш. Devam edin!",
+                incorrect: "Bazı hücreler yanlış. Devam edin!",
                 level: "Seviye",
                 success: "Başarı!",
                 nextLevel: "Sonraki seviyeye geçiliyor!",
+                player1: "Oyuncu 1",
+                player2: "Oyuncu 2",
+                scoreText: "Oyuncu 1 Sudoku'yu tamamladı!",
                 points: "Puan",
                 pressAnyKey: "Devam etmek için herhangi bir tuşa basın"
             },
@@ -742,6 +781,9 @@
                 level: "مستوى",
                 success: "نجاح!",
                 nextLevel: "الانتقال إلى المستوى التالي!",
+                player1: "لاعب 1",
+                player2: "لاعب 2",
+                scoreText: "اللاعب 1 أكمل السودوكو!",
                 points: "النقاط",
                 pressAnyKey: "اضغط على أي مفتاح للمتابعة"
             },
@@ -765,6 +807,9 @@
                 level: "Vlak",
                 success: "Sukses!",
                 nextLevel: "Beweeg na die volgende vlak!",
+                player1: "Speler 1",
+                player2: "Speler 2",
+                scoreText: "Speler 1 het die Sudoku voltooi!",
                 points: "Punte",
                 pressAnyKey: "Druk enige sleutel om voort te gaan"
             }
@@ -786,7 +831,13 @@
                 this.currentLanguage = 'el';
                 this.currentLevel = 1;
                 this.completedLevels = 0;
-                this.totalScore = 0;
+                
+                // Νέα μεταβλητές για πολλαπλούς παίκτες
+                this.currentPlayer = 1;
+                this.player1Score = 0;
+                this.player2Score = 0;
+                this.player1Time = 0;
+                this.player2Time = 0;
                 
                 this.initializeGame();
             }
@@ -796,118 +847,71 @@
             }
             
             generateSudoku() {
-                // Δημιουργία πλήρους λύσης
-                this.solution = this.generateSolution();
+                // Προσαρμοσμένα πρότυπα λύσεων για κάθε μέγεθος
+                const solutionTemplates = {
+                    4: [
+                        [1, 2, 3, 4],
+                        [3, 4, 1, 2],
+                        [2, 1, 4, 3],
+                        [4, 3, 2, 1]
+                    ],
+                    6: [
+                        [1, 2, 3, 4, 5, 6],
+                        [4, 5, 6, 1, 2, 3],
+                        [2, 3, 1, 5, 6, 4],
+                        [5, 6, 4, 2, 3, 1],
+                        [3, 1, 2, 6, 4, 5],
+                        [6, 4, 5, 3, 1, 2]
+                    ],
+                    8: [
+                        [1, 2, 3, 4, 5, 6, 7, 8],
+                        [5, 6, 7, 8, 1, 2, 3, 4],
+                        [2, 3, 4, 1, 6, 5, 8, 7],
+                        [6, 7, 8, 5, 2, 1, 4, 3],
+                        [3, 4, 1, 2, 7, 8, 5, 6],
+                        [7, 8, 5, 6, 3, 4, 1, 2],
+                        [4, 1, 2, 3, 8, 7, 6, 5],
+                        [8, 5, 6, 7, 4, 3, 2, 1]
+                    ],
+                    9: [
+                        [5, 3, 4, 6, 7, 8, 9, 1, 2],
+                        [6, 7, 2, 1, 9, 5, 3, 4, 8],
+                        [1, 9, 8, 3, 4, 2, 5, 6, 7],
+                        [8, 5, 9, 7, 6, 1, 4, 2, 3],
+                        [4, 2, 6, 8, 5, 3, 7, 9, 1],
+                        [7, 1, 3, 9, 2, 4, 8, 5, 6],
+                        [9, 6, 1, 5, 3, 7, 2, 8, 4],
+                        [2, 8, 7, 4, 1, 9, 6, 3, 5],
+                        [3, 4, 5, 2, 8, 6, 1, 7, 9]
+                    ]
+                };
+                
+                // Αντιγραφή της λύσης
+                this.solution = JSON.parse(JSON.stringify(solutionTemplates[this.size]));
+                
+                // Προσδιορισμός αριθμού κελιών που θα εμφανίζονται
+                let cellsToShow = Math.floor(this.size * this.size * 0.5); // Easy - 50% γεμάτα
+                if (this.level === 'medium') cellsToShow = Math.floor(this.size * this.size * 0.4); // 40% γεμάτα
+                if (this.level === 'hard') cellsToShow = Math.floor(this.size * this.size * 0.3); // 30% γεμάτα
                 
                 // Δημιουργία κενού πίνακα
                 this.board = Array(this.size).fill().map(() => Array(this.size).fill(''));
                 
-                // Προσδιορισμός αριθμού κελιών που θα εμφανίζονται
-                let cellsToShow;
-                switch(this.level) {
-                    case 'easy':
-                        cellsToShow = Math.floor(this.size * this.size * 0.5); // 50% γεμάτα
-                        break;
-                    case 'medium':
-                        cellsToShow = Math.floor(this.size * this.size * 0.4); // 40% γεμάτα
-                        break;
-                    case 'hard':
-                        cellsToShow = Math.floor(this.size * this.size * 0.3); // 30% γεμάτα
-                        break;
-                    default:
-                        cellsToShow = Math.floor(this.size * this.size * 0.5);
-                }
-                
-                // Αντιγραφή τυχαίων κελιών από τη λύση
+                // Γέμισμα κάποιων κελιών με βάση τη λύση
                 let cellsFilled = 0;
-                const positions = [];
-                
-                // Δημιουργία λίστας όλων των θέσεων
-                for (let row = 0; row < this.size; row++) {
-                    for (let col = 0; col < this.size; col++) {
-                        positions.push({row, col});
+                while (cellsFilled < cellsToShow) {
+                    const row = Math.floor(Math.random() * this.size);
+                    const col = Math.floor(Math.random() * this.size);
+                    
+                    if (this.board[row][col] === '') {
+                        this.board[row][col] = this.solution[row][col];
+                        cellsFilled++;
                     }
                 }
-                
-                // Ανακάτεμα των θέσεων
-                this.shuffleArray(positions);
-                
-                // Συμπλήρωση των πρώτων cellsToShow θέσεων
-                for (let i = 0; i < cellsToShow; i++) {
-                    const {row, col} = positions[i];
-                    this.board[row][col] = this.solution[row][col];
-                }
-            }
-            
-            generateSolution() {
-                // Δημιουργία έγκυρου Sudoku πίνακα για κάθε μέγεθος
-                const emptyBoard = Array(this.size).fill().map(() => Array(this.size).fill(0));
-                this.solveSudoku(emptyBoard);
-                return emptyBoard;
-            }
-            
-            solveSudoku(board) {
-                for (let row = 0; row < this.size; row++) {
-                    for (let col = 0; col < this.size; col++) {
-                        if (board[row][col] === 0) {
-                            const numbers = this.shuffleArray([...Array(this.size).keys()].map(x => x + 1));
-                            for (let num of numbers) {
-                                if (this.isValidPlacement(board, row, col, num)) {
-                                    board[row][col] = num;
-                                    if (this.solveSudoku(board)) {
-                                        return true;
-                                    }
-                                    board[row][col] = 0;
-                                }
-                            }
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-            
-            isValidPlacement(board, row, col, num) {
-                // Έλεγχος γραμμής
-                for (let i = 0; i < this.size; i++) {
-                    if (board[row][i] === num) return false;
-                }
-                
-                // Έλεγχος στήλης
-                for (let i = 0; i < this.size; i++) {
-                    if (board[i][col] === num) return false;
-                }
-                
-                // Έλεγχος υπο-τετραγώνου
-                const subSize = Math.sqrt(this.size);
-                const startRow = Math.floor(row / subSize) * subSize;
-                const startCol = Math.floor(col / subSize) * subSize;
-                
-                for (let i = startRow; i < startRow + subSize; i++) {
-                    for (let j = startCol; j < startCol + subSize; j++) {
-                        if (board[i][j] === num) return false;
-                    }
-                }
-                
-                return true;
-            }
-            
-            shuffleArray(array) {
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
-                }
-                return array;
             }
             
             // Έλεγχος για έγκυρη κίνηση
             isValidMove(row, col, num) {
-                // Έλεγχος αν το κελί είναι προ-συμπληρωμένο
-                const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-                if (cell && cell.classList.contains('prefilled')) {
-                    return false;
-                }
-                
                 // Έλεγχος γραμμής
                 for (let i = 0; i < this.size; i++) {
                     if (this.board[row][i] === num && i !== col) return false;
@@ -949,26 +953,26 @@
                 return null;
             }
             
+            // Redo τελευταίας κίνησης
+            redo() {
+                if (this.redoHistory.length > 0) {
+                    const move = this.redoHistory.pop();
+                    this.board[move.row][move.col] = move.newValue;
+                    this.moveHistory.push(move);
+                    return move;
+                }
+                return null;
+            }
+            
             // Έλεγχος αν ο πίνακας είναι πλήρης και σωστός
             isComplete() {
-                // Έλεγχος αν όλα τα κελιά είναι συμπληρωμένα
                 for (let row = 0; row < this.size; row++) {
                     for (let col = 0; col < this.size; col++) {
-                        if (this.board[row][col] === '') {
+                        if (this.board[row][col] === '' || !this.isValidMove(row, col, this.board[row][col])) {
                             return false;
                         }
                     }
                 }
-                
-                // Έλεγχος αν όλα τα κελιά είναι σωστά
-                for (let row = 0; row < this.size; row++) {
-                    for (let col = 0; col < this.size; col++) {
-                        if (!this.isValidMove(row, col, this.board[row][col])) {
-                            return false;
-                        }
-                    }
-                }
-                
                 return true;
             }
             
@@ -987,21 +991,27 @@
                 return Math.max(0, score);
             }
             
-            // Αύξηση επιπέδου
-            increaseLevel() {
-                this.currentLevel++;
-                this.completedLevels++;
-                
-                // Αύξηση δυσκολίας με βάση τα επίπεδα που έχουν ολοκληρωθεί
-                if (this.completedLevels % 3 === 0 && this.level === 'easy') {
-                    this.level = 'medium';
-                    document.getElementById('level').value = 'medium';
-                } else if (this.completedLevels % 5 === 0 && this.level === 'medium') {
-                    this.level = 'hard';
-                    document.getElementById('level').value = 'hard';
+            // Εναλλαγή παίκτη
+            switchPlayer() {
+                this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
+            }
+            
+            // Αποθήκευση χρόνου παίκτη
+            savePlayerTime(player, time) {
+                if (player === 1) {
+                    this.player1Time = time;
+                } else {
+                    this.player2Time = time;
                 }
-                
-                return this.currentLevel;
+            }
+            
+            // Αποθήκευση πόντων παίκτη
+            savePlayerScore(player, score) {
+                if (player === 1) {
+                    this.player1Score += score;
+                } else {
+                    this.player2Score += score;
+                }
             }
         }
 
@@ -1034,6 +1044,9 @@
         const scoreErrorsElement = document.getElementById('score-errors');
         const scorePointsElement = document.getElementById('score-points');
         const continueButton = document.getElementById('continue-btn');
+        const scorePlayerText = document.getElementById('score-player-text');
+        const player1Info = document.getElementById('player1-info');
+        const player2Info = document.getElementById('player2-info');
         
         // Φόρτωση ήχων
         const completeSound = document.getElementById('complete-sound');
@@ -1049,13 +1062,13 @@
             
             // Ρύθμιση μεγέθους κελιών
             const cellSize = Math.min(40, 400 / game.size);
-            sudokuBoard.style.width = `${cellSize * game.size}px`;
-            sudokuBoard.style.height = `${cellSize * game.size}px`;
             
             for (let row = 0; row < game.size; row++) {
                 for (let col = 0; col < game.size; col++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
+                    cell.style.width = `${cellSize}px`;
+                    cell.style.height = `${cellSize}px`;
                     
                     // Προσθήκη χοντρών συνόρων για υπο-τετράγωνα
                     const subSize = Math.sqrt(game.size);
@@ -1079,13 +1092,29 @@
             
             // Ενημέρωση του πίνακα αριθμών
             updateNumberPad();
+            
+            // Ενημέρωση πληροφοριών παικτών
+            updatePlayerInfo();
+        }
+        
+        // Ενημέρωση πληροφοριών παικτών
+        function updatePlayerInfo() {
+            player1Info.textContent = `${translations[game.currentLanguage].player1}${game.currentPlayer === 1 ? ' (Σειρά)' : ''}`;
+            player2Info.textContent = `${translations[game.currentLanguage].player2}${game.currentPlayer === 2 ? ' (Σειρά)' : ''}`;
+            
+            if (game.currentPlayer === 1) {
+                player1Info.classList.add('player-turn');
+                player2Info.classList.remove('player-turn');
+            } else {
+                player1Info.classList.remove('player-turn');
+                player2Info.classList.add('player-turn');
+            }
         }
         
         // Ενημέρωση του πίνακα αριθμών
         function updateNumberPad() {
             numberPad.innerHTML = '';
-            const cols = game.size <= 6 ? game.size : Math.ceil(game.size / 2);
-            numberPad.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            numberPad.style.gridTemplateColumns = `repeat(${Math.min(game.size, 6)}, 1fr)`;
             
             for (let i = 1; i <= game.size; i++) {
                 const numberBtn = document.createElement('button');
@@ -1183,7 +1212,6 @@
             
             // Αποθήκευση κίνησης
             game.saveMove(row, col, previousValue, number);
-            undoCountElement.textContent = game.moveHistory.length;
             
             // Ενημέρωση εμφάνισης κελιού
             cell.textContent = number;
@@ -1229,7 +1257,6 @@
             
             // Αποθήκευση κίνησης
             game.saveMove(row, col, previousValue, '');
-            undoCountElement.textContent = game.moveHistory.length;
             
             // Ενημέρωση εμφάνισης κελιού
             cell.textContent = '';
@@ -1262,9 +1289,10 @@
             clearInterval(game.timerInterval);
             gameCompleted = true;
             
-            // Υπολογισμός πόντων
+            // Αποθήκευση χρόνου και πόντων για τον τρέχοντα παίκτη
+            game.savePlayerTime(game.currentPlayer, game.gameTime);
             const playerScore = game.calculateScore(game.gameTime, game.errors);
-            game.totalScore += playerScore;
+            game.savePlayerScore(game.currentPlayer, playerScore);
             
             // Αναπαραγωγή ήχου
             playSound(completeSound);
@@ -1291,24 +1319,32 @@
             const playerScore = game.calculateScore(game.gameTime, game.errors);
             scorePointsElement.textContent = playerScore;
             
+            // Ενημέρωση κειμένου παίκτη
+            scorePlayerText.textContent = game.currentPlayer === 1 ? 
+                `${translations[game.currentLanguage].player1} ${translations[game.currentLanguage].completed.toLowerCase()}` :
+                `${translations[game.currentLanguage].player2} ${translations[game.currentLanguage].completed.toLowerCase()}`;
+            
             // Εμφάνιση οθόνης πόνων
             scoreScreen.style.display = 'flex';
             
             // Προσθήκη event listener για πλήκτρο
             document.addEventListener('keydown', handleKeyPressForContinue);
-            continueButton.addEventListener('click', continueToNextLevel);
+            continueButton.addEventListener('click', continueToNextPlayer);
         }
         
         // Χειρισμός πλήκτρου για συνέχεια
         function handleKeyPressForContinue() {
-            continueToNextLevel();
+            continueToNextPlayer();
             document.removeEventListener('keydown', handleKeyPressForContinue);
         }
         
-        // Συνέχεια στο επόμενο επίπεδο
-        function continueToNextLevel() {
+        // Συνέχεια στον επόμενο παίκτη
+        function continueToNextPlayer() {
             // Απόκρυψη οθόνης πόνων
             scoreScreen.style.display = 'none';
+            
+            // Εναλλαγή παίκτη
+            game.switchPlayer();
             
             // Εμφάνιση μετάβασης επιπέδου
             showLevelTransition();
@@ -1339,19 +1375,22 @@
                     levelTransition.classList.remove('active');
                     
                     // Εκκίνηση νέου γύρου
-                    startNewLevel();
+                    startNewRound();
                 }
             }, 1000);
         }
         
-        // Έναρξη νέου επιπέδου
-        function startNewLevel() {
+        // Έναρξη νέου γύρου
+        function startNewRound() {
             // Αύξηση επιπέδου
-            game.increaseLevel();
+            game.currentLevel++;
             currentLevelElement.textContent = game.currentLevel;
             
             // Επαναφορά του παιχνιδιού
             resetGame();
+            
+            // Ενημέρωση πληροφοριών παικτών
+            updatePlayerInfo();
         }
         
         // Επαναφορά του παιχνιδιού
@@ -1366,7 +1405,7 @@
             // Ενημέρωση εμφάνισης
             updateTimerDisplay();
             errorCountElement.textContent = game.errors;
-            undoCountElement.textContent = '0';
+            undoCountElement.textContent = '∞';
             
             // Δημιουργία νέου Sudoku
             game.generateSudoku();
@@ -1420,6 +1459,9 @@
             document.getElementById('transition-title').textContent = translations[lang].success;
             document.getElementById('transition-text').textContent = translations[lang].nextLevel;
             document.getElementById('continue-btn').textContent = translations[lang].newGameBtn;
+            
+            // Ενημέρωση πληροφοριών παικτών
+            updatePlayerInfo();
         }
         
         // Event Listeners
@@ -1458,7 +1500,6 @@
                     }
                 }
                 
-                undoCountElement.textContent = game.moveHistory.length;
                 playSound(clickSound);
             }
         });
@@ -1487,20 +1528,8 @@
                 btn.classList.add('active');
                 
                 const theme = btn.dataset.theme;
-                switch(theme) {
-                    case 'classic':
-                        document.body.style.background = 'linear-gradient(135deg, #6a89cc, #4a69bd)';
-                        break;
-                    case 'dark':
-                        document.body.style.background = 'linear-gradient(135deg, #2c3e50, #34495e)';
-                        break;
-                    case 'nature':
-                        document.body.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
-                        break;
-                    case 'sunset':
-                        document.body.style.background = 'linear-gradient(135deg, #e74c3c, #f39c12)';
-                        break;
-                }
+                document.body.className = '';
+                document.body.classList.add(`theme-${theme}`);
             });
         });
         
