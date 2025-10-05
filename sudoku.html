@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku - FranklyMadEar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: #2c3e50;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo a {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+        }
+        .game-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: inline-block;
+            margin: 20px auto;
+        }
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 50px);
+            grid-gap: 2px;
+            margin: 20px auto;
+            background: #333;
+            padding: 8px;
+            border-radius: 8px;
+        }
+        .sudoku-cell {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            border: 1px solid #999;
+            background: white;
+            color: #333;
+        }
+        .sudoku-cell:nth-child(3n) {
+            border-right: 3px solid #333;
+        }
+        .sudoku-cell:nth-child(n+19):nth-child(-n+27),
+        .sudoku-cell:nth-child(n+46):nth-child(-n+54) {
+            border-bottom: 3px solid #333;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        .control-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .back-btn {
+            background: #7f8c8d;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/">FranklyMadEar</a>
+            </div>
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Αρχική</a>
+                <a href="/games.html" class="nav-link">Παιχνίδια</a>
+                <a href="/about.html" class="nav-link">Σχετικά</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="game-container">
+        <h1 style="color: #2c3e50;">Sudoku</h1>
+        <p style="color: #666;">Συμπλήρωσε όλα τα κελιά χωρίς επαναλήψεις!</p>
+        
+        <div class="sudoku-grid" id="sudokuGrid">
+            <!-- Το sudoku grid θα γεμίσει με JavaScript -->
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" onclick="checkSolution()">Έλεγχος</button>
+            <button class="control-btn" onclick="resetGame()">Επαναφορά</button>
+            <button class="control-btn" onclick="newGame()">Νέο Παιχνίδι</button>
+        </div>
+        
+        <div id="message" style="color: #2c3e50; font-weight: bold; margin: 10px 0;"></div>
+        
+        <a href="/" class="back-btn">← Πίσω στην Αρχική</a>
+    </div>
+
+    <script>
+        // Βασικό Sudoku grid
+        const initialBoard = [
+            [5, 3, 0, 0, 7, 0, 0, 0, 0],
+            [6, 0, 0, 1, 9, 5, 0, 0, 0],
+            [0, 9, 8, 0, 0, 0, 0, 6, 0],
+            [8, 0, 0, 0, 6, 0, 0, 0, 3],
+            [4, 0, 0, 8, 0, 3, 0, 0, 1],
+            [7, 0, 0, 0, 2, 0, 0, 0, 6],
+            [0, 6, 0, 0, 0, 0, 2, 8, 0],
+            [0, 0, 0, 4, 1, 9, 0, 0, 5],
+            [0, 0, 0, 0, 8, 0, 0, 7, 9]
+        ];
+
+        let currentBoard = JSON.parse(JSON.stringify(initialBoard));
+
+        function createSudokuGrid() {
+            const grid = document.getElementById('sudokuGrid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    const cell = document.createElement('input');
+                    cell.type = 'text';
+                    cell.className = 'sudoku-cell';
+                    cell.maxLength = 1;
+                    cell.value = currentBoard[i][j] !== 0 ? currentBoard[i][j] : '';
+                    
+                    if (initialBoard[i][j] !== 0) {
+                        cell.style.background = '#f0f0f0';
+                        cell.readOnly = true;
+                    } else {
+                        cell.addEventListener('input', function(e) {
+                            const value = parseInt(e.target.value);
+                            if (value >= 1 && value <= 9) {
+                                currentBoard[i][j] = value;
+                            } else {
+                                currentBoard[i][j] = 0;
+                                e.target.value = '';
+                            }
+                        });
+                    }
+                    
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function checkSolution() {
+            const message = document.getElementById('message');
+            // Βασικός έλεγχος - μπορείς να βελτιώσεις αυτή τη λογική
+            let solved = true;
+            
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    if (currentBoard[i][j] === 0) {
+                        solved = false;
+                        break;
+                    }
+                }
+            }
+            
+            if (solved) {
+                message.textContent = 'Συγχαρητήρια! Το λύσατε σωστά! 🎉';
+                message.style.color = 'green';
+            } else {
+                message.textContent = 'Συνεχίστε! Υπάρχουν ακόμα κενά κελιά.';
+                message.style.color = 'orange';
+            }
+        }
+
+        function resetGame() {
+            currentBoard = JSON.parse(JSON.stringify(initialBoard));
+            createSudokuGrid();
+            document.getElementById('message').textContent = '';
+        }
+
+        function newGame() {
+            // Εδώ μπορείς να προσθέσεις περισσότερα puzzles
+            resetGame();
+            document.getElementById('message').textContent = 'Νέο παιχνίδι! Καλή επιτυχία!';
+        }
+
+        // Αρχικοποίηση
+        createSudokuGrid();
+    </script>
+</body>
+</html>
