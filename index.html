@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="el">
-<head>
+<head><script>
+// Αυτόματα redirect από www σε μη-www
+if (window.location.hostname === 'www.franklymadear.com') {
+    window.location.href = 'https://franklymadear.com' + window.location.pathname;
+}
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Sudoku</title>
