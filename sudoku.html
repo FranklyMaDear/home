@@ -403,6 +403,32 @@
             border-radius: 5px;
             font-weight: bold;
         }
+
+        /* Νέο στυλ για το διαφημιστικό container */
+        .ad-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,235,59,0.2);
+            border-radius: 10px;
+            text-align: center;
+            border: 2px dashed #ff9800;
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ad-container:hover {
+            background: rgba(255,235,59,0.3);
+            transform: scale(1.02);
+        }
+
+        .ad-text {
+            font-size: 16px;
+            font-weight: bold;
+            color: #e65100;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
         
         @media (max-width: 500px) {
             .container {
@@ -429,6 +455,10 @@
             .number-btn {
                 padding: 8px 0;
                 font-size: 15px;
+            }
+
+            .ad-text {
+                font-size: 14px;
             }
         }
         
@@ -538,6 +568,14 @@
                 <div class="theme-btn theme-nature" data-theme="nature"></div>
                 <div class="theme-btn theme-sunset" data-theme="sunset"></div>
             </div>
+
+            <!-- Προσθήκη διαφήμισης -->
+            <div class="ad-container" id="ad-container">
+                <p class="ad-text" id="ad-text">
+                    👉 Πάτησε κλικ και βοήθησέ μας να συνεχίσουμε!
+                </p>
+                <script src="https://fpyf8.com/88/tag.min.js" data-zone="175808" async data-cfasync="false"></script>
+            </div>
         </div>
     </div>
     
@@ -603,7 +641,8 @@
                 player2: "Player 2",
                 scoreText: "Player 1 completed the Sudoku!",
                 points: "Points",
-                pressAnyKey: "Press any key to continue"
+                pressAnyKey: "Press any key to continue",
+                adText: "👉 Click and help us continue!"
             },
             el: {
                 title: "My Sudoku",
@@ -629,7 +668,8 @@
                 player2: "Παίκτης 2",
                 scoreText: "Ο Παίκτης 1 ολοκλήρωσε το Sudoku!",
                 points: "Πόντοι",
-                pressAnyKey: "Πάτησε οποιοδήποτε πλήκτρο για να συνεχίσει"
+                pressAnyKey: "Πάτησε οποιοδήποτε πλήκτρο για να συνεχίσει",
+                adText: "👉 Πάτησε κλικ και βοήθησέ μας να συνεχίσουμε!"
             },
             es: {
                 title: "My Sudoku",
@@ -655,7 +695,8 @@
                 player2: "Jugador 2",
                 scoreText: "¡El Jugador 1 completó el Sudoku!",
                 points: "Puntos",
-                pressAnyKey: "Presiona cualquier tecla para continuar"
+                pressAnyKey: "Presiona cualquier tecla para continuar",
+                adText: "👉 ¡Haz clic y ayúdanos a continuar!"
             },
             de: {
                 title: "My Sudoku",
@@ -681,7 +722,8 @@
                 player2: "Spieler 2",
                 scoreText: "Spieler 1 hat das Sudoku abgeschlossen!",
                 points: "Punkte",
-                pressAnyKey: "Drücke eine beliebige Taste, um fortzufahren"
+                pressAnyKey: "Drücke eine beliebige Taste, um fortzufahren",
+                adText: "👉 Klicken Sie und helfen Sie uns weiter!"
             },
             zh: {
                 title: "My Sudoku",
@@ -707,7 +749,8 @@
                 player2: "玩家 2",
                 scoreText: "玩家 1 完成了数独！",
                 points: "分数",
-                pressAnyKey: "按任意键继续"
+                pressAnyKey: "按任意键继续",
+                adText: "👉 点击帮助我们继续！"
             },
             ru: {
                 title: "My Sudoku",
@@ -733,7 +776,8 @@
                 player2: "Игрок 2",
                 scoreText: "Игрок 1 завершил Судоку!",
                 points: "Очки",
-                pressAnyKey: "Нажмите любую клавишу для продолжения"
+                pressAnyKey: "Нажмите любую клавишу для продолжения",
+                adText: "👉 Нажмите и помогите нам продолжить!"
             },
             tr: {
                 title: "My Sudoku",
@@ -759,7 +803,8 @@
                 player2: "Oyuncu 2",
                 scoreText: "Oyuncu 1 Sudoku'yu tamamladı!",
                 points: "Puan",
-                pressAnyKey: "Devam etmek için herhangi bir tuşa basın"
+                pressAnyKey: "Devam etmek için herhangi bir tuşa basın",
+                adText: "👉 Tıklayın ve devam etmemize yardım edin!"
             },
             ar: {
                 title: "My Sudoku",
@@ -785,7 +830,8 @@
                 player2: "لاعب 2",
                 scoreText: "اللاعب 1 أكمل السودوكو!",
                 points: "النقاط",
-                pressAnyKey: "اضغط على أي مفتاح للمتابعة"
+                pressAnyKey: "اضغط على أي مفتاح للمتابعة",
+                adText: "👉 انقر وساعدنا في المتابعة!"
             },
             af: {
                 title: "My Sudoku",
@@ -811,7 +857,8 @@
                 player2: "Speler 2",
                 scoreText: "Speler 1 het die Sudoku voltooi!",
                 points: "Punte",
-                pressAnyKey: "Druk enige sleutel om voort te gaan"
+                pressAnyKey: "Druk enige sleutel om voort te gaan",
+                adText: "👉 Klik en help ons om aan te hou!"
             }
         };
 
@@ -1047,6 +1094,8 @@
         const scorePlayerText = document.getElementById('score-player-text');
         const player1Info = document.getElementById('player1-info');
         const player2Info = document.getElementById('player2-info');
+        const adContainer = document.getElementById('ad-container');
+        const adText = document.getElementById('ad-text');
         
         // Φόρτωση ήχων
         const completeSound = document.getElementById('complete-sound');
@@ -1459,9 +1508,54 @@
             document.getElementById('transition-title').textContent = translations[lang].success;
             document.getElementById('transition-text').textContent = translations[lang].nextLevel;
             document.getElementById('continue-btn').textContent = translations[lang].newGameBtn;
+            document.getElementById('ad-text').textContent = translations[lang].adText;
             
             // Ενημέρωση πληροφοριών παικτών
             updatePlayerInfo();
+        }
+
+        // Άνοιγμα pop-up για διαφήμιση
+        function openAdPopup() {
+            const popup = window.open('', '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
+            if (popup) {
+                popup.document.write(`
+                    <html>
+                    <head>
+                        <title>Support Us</title>
+                        <style>
+                            body { 
+                                font-family: Arial, sans-serif; 
+                                display: flex; 
+                                justify-content: center; 
+                                align-items: center; 
+                                height: 100vh; 
+                                margin: 0; 
+                                background: linear-gradient(135deg, #667eea, #764ba2);
+                                color: white;
+                                text-align: center;
+                            }
+                            .content { 
+                                padding: 20px; 
+                            }
+                            h1 { 
+                                margin-bottom: 20px; 
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="content">
+                            <h1>Ευχαριστούμε για την υποστήριξή σας! 🎉</h1>
+                            <p>Η σελίδα θα φορτωθεί σύντομα...</p>
+                        </div>
+                        <script>
+                            setTimeout(() => {
+                                window.location.href = 'https://fpyf8.com/88/tag.min.js?data-zone=175808';
+                            }, 2000);
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+            }
         }
         
         // Event Listeners
@@ -1540,6 +1634,9 @@
                 startTimer();
             }
         });
+
+        // Event listener για το διαφημιστικό κείμενο
+        adContainer.addEventListener('click', openAdPopup);
         
         // Αρχικοποίηση
         initializeBoard();
