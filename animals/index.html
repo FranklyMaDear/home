@@ -1,361 +1,932 @@
+Animals no ads
+
+
+
 <!DOCTYPE html>
 <html lang="el">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animals Game - FranklyMaDear</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-        
-        .nav {
-            margin-bottom: 20px;
-        }
-        
-        .btn {
-            display: inline-block;
-            background: #3498db;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 8px;
-            margin: 5px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-        }
-        
-        .game-container {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            max-width: 800px;
-            width: 100%;
-            text-align: center;
-        }
-        
-        .game-title {
-            font-size: 2.5rem;
-            color: #ffd700;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-        
-        .game-description {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            opacity: 0.9;
-        }
-        
-        .animals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-        
-        .animal-card {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .animal-card:hover {
-            transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.3);
-            border-color: #ffd700;
-        }
-        
-        .animal-emoji {
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-        
-        .animal-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #ffd700;
-        }
-        
-        .animal-sound {
-            font-size: 0.9rem;
-            color: #ccc;
-            margin-top: 5px;
-        }
-        
-        .quiz-section {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-        
-        .quiz-question {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            color: #ffd700;
-        }
-        
-        .quiz-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-        }
-        
-        .quiz-option {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .quiz-option:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        .score {
-            font-size: 1.5rem;
-            color: #ffd700;
-            margin: 20px 0;
-        }
-        
-        .correct {
-            background: #27ae60 !important;
-            color: white;
-        }
-        
-        .wrong {
-            background: #e74c3c !important;
-            color: white;
-        }
-        
-        @media (max-width: 768px) {
-            .animals-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .game-title {
-                font-size: 2rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Magic Animal Holes - Πολλοί Χαρακτήρες!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Arial', 'Arial', cursive;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      touch-action: manipulation;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+      padding: 10px;
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #welcomeScreen {
+      background: linear-gradient(135deg, #ff6b6b 0%, #feca57 50%, #48dbfb 100%);
+    }
+
+    .welcome-title {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      color: white;
+      text-align: center;
+      margin-bottom: 15px;
+      text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .welcome-subtitle {
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      color: white;
+      text-align: center;
+      margin-bottom: 15px;
+      opacity: 0.9;
+    }
+
+    .choose-title {
+      font-size: clamp(1.8rem, 6vw, 2.5rem);
+      color: white;
+      text-align: center;
+      margin: 20px 0;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.3);
+      padding: 15px 30px;
+      border-radius: 25px;
+      border: 3px solid white;
+    }
+
+    .difficulty-selector,
+    .character-selector {
+      width: 90%;
+      max-width: 500px;
+      margin: 20px 0;
+    }
+
+    .dropdown-container {
+      position: relative;
+      width: 100%;
+    }
+
+    .dropdown-header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: clamp(1.2rem, 4vw, 1.5rem);
+      border: 3px solid #FFD700;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .selected-difficulty,
+    .selected-character {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .selected-emoji {
+      font-size: clamp(2rem, 6vw, 2.5rem);
+    }
+    
+    .selected-name {
+      color: #333;
+      font-weight: bold;
+    }
+
+    .dropdown-arrow {
+      font-size: 1.5em;
+      transition: transform 0.3s ease;
+    }
+
+    .dropdown-arrow.open {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 15px;
+      margin-top: 5px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      z-index: 1000;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .dropdown-list.open {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .difficulty-option,
+    .character-option {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid #eee;
+    }
+
+    .difficulty-option:last-child,
+    .character-option:last-child {
+      border-bottom: none;
+    }
+
+    .difficulty-option:hover,
+    .character-option:hover {
+      background: #f0f0f0;
+    }
+
+    .difficulty-option .emoji,
+    .character-option .emoji {
+      font-size: 1.8em;
+      margin-right: 15px;
+      width: 40px;
+      text-align: center;
+    }
+
+    .difficulty-option .name,
+    .character-option .name {
+      font-size: 1.1em;
+      color: #333;
+      font-weight: bold;
+      flex: 1;
+    }
+
+    .start-game-btn {
+      background: linear-gradient(45deg, #00b894, #00ced1);
+      border: none;
+      padding: 20px 50px;
+      border-radius: 50px;
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      color: white;
+      cursor: pointer;
+      font-family: arial;
+      font-weight: bold;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      margin-top: 30px;
+    }
+
+    .start-game-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    #gameScreen {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .game-header {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .game-title {
+      font-size: clamp(1.8rem, 6vw, 2.5rem);
+      color: white;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+      margin-bottom: 15px;
+    }
+    
+    .target-animal {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+      border: 4px solid #FF6B6B;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+      animation: pulseTarget 2s infinite;
+    }
+
+    .target-title {
+      font-size: clamp(1.3rem, 4vw, 1.7rem);
+      color: #FF6B6B;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .target-display {
+      font-size: clamp(4rem, 12vw, 6rem);
+      animation: glow 1.5s infinite;
+      margin: 10px 0;
+    }
+
+    .game-info {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .info-box {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px;
+      border-radius: 15px;
+      text-align: center;
+      font-size: clamp(1rem, 4vw, 1.3rem);
+      font-weight: bold;
+    }
+
+    .time-left {
+      color: #e17055;
+    }
+
+    .score {
+      color: #00b894;
+    }
+
+    .holes-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+      max-width: 500px;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hole {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      cursor: pointer;
+    }
+
+    .hole::before {
+      content: '';
+      position: absolute;
+      width: 80%;
+      height: 80%;
+      background: #8b4513;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: inset 0 -8px 15px rgba(0, 0, 0, 0.5);
+      border: 6px solid #5d4037;
+    }
+
+    .animal {
+      position: absolute;
+      width: 70%;
+      height: 70%;
+      background: white;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5em;
+      transition: all 0.4s ease;
+      z-index: 2;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border: 3px solid #ffd700;
+    }
+
+    .animal.pop-up {
+      transform: translate(-50%, -100%) scale(1);
+      animation: popUp 0.5s ease-out;
+    }
+
+    .animal.hit {
+      animation: hitAnimation 0.4s ease;
+      background: #ffeb3b;
+    }
+
+    .animal.wrong {
+      animation: wrongHit 0.4s ease;
+      background: #ff6b6b;
+      border-color: #ff4757;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      max-width: 400px;
+      width: 90%;
+      margin: 0 auto;
+    }
+
+    .control-btn {
+      background: linear-gradient(45deg, #00b894, #00ced1);
+      border: none;
+      padding: 15px;
+      border-radius: 20px;
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      color: white;
+      cursor: pointer;
+      font-family: arial;
+      font-weight: bold;
+    }
+
+    .game-over {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+
+    .game-over-content {
+      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+      padding: 30px;
+      border-radius: 25px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      color: white;
+    }
+
+    .final-score {
+      font-size: clamp(2.5rem, 10vw, 4rem);
+      color: #ffd700;
+      margin: 20px 0;
+    }
+
+    @keyframes glow {
+      0%,
+      100% {
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      }
+      50% {
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+      }
+    }
+
+    @keyframes popUp {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+      }
+      70% {
+        transform: translate(-50%, -120%) scale(1.1);
+      }
+      100% {
+        transform: translate(-50%, -100%) scale(1);
+      }
+    }
+
+    @keyframes hitAnimation {
+      0% {
+        transform: translate(-50%, -100%) scale(1);
+      }
+      50% {
+        transform: translate(-50%, -100%) scale(1.3);
+      }
+      100% {
+        transform: translate(-50%, -100%) scale(0);
+      }
+    }
+
+    @keyframes wrongHit {
+      0% {
+        transform: translate(-50%, -100%) scale(1);
+      }
+      25% {
+        transform: translate(-50%, -100%) scale(1.2) rotate(-5deg);
+      }
+      50% {
+        transform: translate(-50%, -100%) scale(1.2) rotate(5deg);
+      }
+      100% {
+        transform: translate(-50%, -100%) scale(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .controls {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <div class="header">
-        <div class="nav">
-            <a href="../index.html" class="btn">🏠 Αρχική</a>
-            <a href="../index.html#games" class="btn">🎮 Πίσω στα Παιχνίδια</a>
+  <div class="screen active" id="welcomeScreen">
+    <h1 class="welcome-title">Magic Animal Holes! 🎮</h1>
+    <p class="welcome-subtitle">Ψάξε να με Βρεις!</p>
+
+    <h2 class="choose-title">🎯 Διάλεξε Δυσκολία!</h2>
+
+    <div class="difficulty-selector">
+      <div class="dropdown-container">
+        <div class="dropdown-header" id="difficultyDropdownHeader">
+          <div class="selected-difficulty">
+            <span class="selected-name" id="selectedDifficultyName">Επέλεξε δυσκολία...</span>
+          </div>
+          <span class="dropdown-arrow">▼</span>
         </div>
+        <div class="dropdown-list" id="difficultyDropdownList"></div>
+      </div>
     </div>
 
-    <div class="game-container">
-        <h1 class="game-title">🐾 Animals Game</h1>
-        <p class="game-description">Μάθε τα ζώα και τους ήχους τους!</p>
-        
-        <!-- Animals Display -->
-        <div class="animals-grid">
-            <div class="animal-card" onclick="playSound('🐱', 'Νιάου!')">
-                <div class="animal-emoji">🐱</div>
-                <div class="animal-name">Γάτα</div>
-                <div class="animal-sound">Νιάου!</div>
-            </div>
-            
-            <div class="animal-card" onclick="playSound('🐶', 'Γαβ!')">
-                <div class="animal-emoji">🐶</div>
-                <div class="animal-name">Σκύλος</div>
-                <div class="animal-sound">Γαβ!</div>
-            </div>
-            
-            <div class="animal-card" onclick="playSound('🐄', 'Μου!')">
-                <div class="animal-emoji">🐄</div>
-                <div class="animal-name">Αγελάδα</div>
-                <div class="animal-sound">Μου!</div>
-            </div>
-            
-            <div class="animal-card" onclick="playSound('🐷', 'Οινκ!')">
-                <div class="animal-emoji">🐷</div>
-                <div class="animal-name">Γουρούνι</div>
-                <div class="animal-sound">Οινκ!</div>
-            </div>
-            
-            <div class="animal-card" onclick="playSound('🐔', 'Κουκουρίκου!')">
-                <div class="animal-emoji">🐔</div>
-                <div class="animal-name">Κότα</div>
-                <div class="animal-sound">Κουκουρίκου!</div>
-            </div>
-            
-            <div class="animal-card" onclick="playSound('🦁', 'Ρωχ!')">
-                <div class="animal-emoji">🦁</div>
-                <div class="animal-name">Λιοντάρι</div>
-                <div class="animal-sound">Ρωχ!</div>
-            </div>
+    <h2 class="choose-title">🎯 Διάλεξε το Ζωάκι!</h2>
+
+    <div class="character-selector">
+      <div class="dropdown-container">
+        <div class="dropdown-header" id="dropdownHeader">
+          <div class="selected-character">
+            <span class="selected-emoji">🐵</span>
+            <span class="selected-name">Επέλεξε χαρακτήρα...</span>
+          </div>
+          <span class="dropdown-arrow">▼</span>
         </div>
-        
-        <!-- Quiz Section -->
-        <div class="quiz-section">
-            <div class="quiz-question" id="question">Ποιο ζώο κάνει αυτόν τον ήχο;</div>
-            <div class="score">Score: <span id="score">0</span></div>
-            
-            <div class="quiz-options" id="options">
-                <!-- Options will be generated by JavaScript -->
-            </div>
-            
-            <button onclick="nextQuestion()" class="btn" style="margin-top: 20px; background: #e74c3c;">
-                🔄 Επόμενη Ερώτηση
-            </button>
-        </div>
-        
-        <div style="margin-top: 30px; color: #ccc;">
-            <p>🎯 Κάνε κλικ στα ζώα για να ακούσεις τους ήχους τους!</p>
-            <p>🧩 Απάντησε σωστά στις ερωτήσεις για να κερδίσεις πόντους!</p>
-        </div>
+        <div class="dropdown-list" id="dropdownList"></div>
+      </div>
     </div>
 
-    <script>
-        let score = 0;
-        let currentSound = '';
-        
-        const animals = [
-            { emoji: '🐱', name: 'Γάτα', sound: 'Νιάου!' },
-            { emoji: '🐶', name: 'Σκύλος', sound: 'Γαβ!' },
-            { emoji: '🐄', name: 'Αγελάδα', sound: 'Μου!' },
-            { emoji: '🐷', name: 'Γουρούνι', sound: 'Οινκ!' },
-            { emoji: '🐔', name: 'Κότα', sound: 'Κουκουρίκου!' },
-            { emoji: '🦁', name: 'Λιοντάρι', sound: 'Ρωχ!' },
-            { emoji: '🐘', name: 'Ελέφαντας', sound: 'Μπου!' },
-            { emoji: '🐺', name: 'Λύκος', sound: 'Οουού!' }
-        ];
-        
-        function playSound(emoji, sound) {
-            currentSound = sound;
-            // Create speech synthesis
-            const utterance = new SpeechSynthesisUtterance(sound);
-            utterance.lang = 'el-GR';
-            utterance.rate = 0.8;
-            window.speechSynthesis.speak(utterance);
-            
-            // Visual feedback
-            const animalCard = event.currentTarget;
-            animalCard.style.background = '#27ae60';
-            setTimeout(() => {
-                animalCard.style.background = '';
-            }, 500);
+    <button class="start-game-btn" id="startGameBtn" disabled>🚀 Έναρξη Παιχνιδιού</button>
+  </div>
+
+  <div class="screen" id="gameScreen">
+    <div class="game-header">
+      <h1 class="game-title">Πολλοί Χαρακτήρες! 🎯</h1>
+    </div>
+
+    <div class="target-animal">
+      <div class="target-title">🎯 Στόχος:</div>
+      <div class="target-display" id="targetAnimal">🐵</div>
+      <div>+<span id="targetPoints">10</span> Πόντοι ανά χτύπημα</div>
+    </div>
+
+    <div class="game-info">
+      <div class="info-box time-left">⏰ Χρόνος: <span id="timeLeft">60</span></div>
+      <div class="info-box score">⭐ Score: <span id="score">0</span></div>
+    </div>
+
+    <div class="holes-container" id="holesContainer"></div>
+
+    <div class="controls">
+      <button class="control-btn" onclick="restartGame()">🔄 Νέο Παιχνίδι</button>
+      <button class="control-btn" onclick="showWelcomeScreen()">🏠 Αρχική</button>
+    </div>
+  </div>
+
+  <div class="game-over" id="gameOver">
+    <div class="game-over-content">
+      <h2>🎯 Τέλος Παιχνιδιού!</h2>
+      <div class="final-score" id="finalScore">0</div>
+      
+      <p id="gameMessage"></p>
+      
+      <div class="controls">
+        <button class="control-btn" onclick="restartGame()">🎮 Παίξε Ξανά</button>
+        <button class="control-btn" onclick="showWelcomeScreen()">🏠 Αρχική</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const config = {
+      difficulties: {
+        easy: {
+          name: 'Εύκολο',
+          emoji: '🟢',
+          time: 60, // 1 λεπτό
+          animalSpeed: 5000, // Γρήγορη εμφάνιση
+          animalVisible: 5000,
+          charactersAtOnce: 4 // 4 χαρακτήρες ταυτόχρονα
+        },
+        medium: {
+          name: 'Μέτριο',
+          emoji: '🟡',
+          time: 60, // 45 δευτερόλεπτα
+          animalSpeed: 3500,
+          animalVisible: 3500,
+          charactersAtOnce: 4 // 4 χαρακτήρες ταυτόχρονα
+        },
+        hard: {
+          name: 'Δύσκολο',
+          emoji: '🔴',
+          time: 60, // 30 δευτερόλεπτα
+          animalSpeed: 2000,
+          animalVisible: 2000,
+          charactersAtOnce: 4 // 4 χαρακτήρες ταυτόχρονα (όλες οι τρύπες)
         }
-        
-        function generateQuestion() {
-            const correctAnimal = animals[Math.floor(Math.random() * animals.length)];
-            const questionElement = document.getElementById('question');
-            const optionsElement = document.getElementById('options');
-            
-            questionElement.textContent = `Ποιο ζώο κάνει: "${correctAnimal.sound}"`;
-            
-            // Create options (1 correct + 3 random wrong)
-            const options = [correctAnimal];
-            while (options.length < 4) {
-                const randomAnimal = animals[Math.floor(Math.random() * animals.length)];
-                if (!options.includes(randomAnimal)) {
-                    options.push(randomAnimal);
-                }
-            }
-            
-            // Shuffle options
-            options.sort(() => Math.random() - 0.5);
-            
-            // Generate HTML for options
-            optionsElement.innerHTML = '';
-            options.forEach(animal => {
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'quiz-option';
-                optionDiv.innerHTML = `
-                    <div style="font-size: 2rem;">${animal.emoji}</div>
-                    <div>${animal.name}</div>
-                `;
-                optionDiv.onclick = () => checkAnswer(animal, correctAnimal, optionDiv);
-                optionsElement.appendChild(optionDiv);
-            });
+      },
+      animals: [{
+          emoji: '🐵',
+          name: 'Μαϊμού',
+          points: 10
+        },
+        {
+          emoji: '🦊',
+          name: 'Αλεπού',
+          points: 7
+        },
+        {
+          emoji: '🦄',
+          name: 'Μονόκερος',
+          points: 15
+        },
+        {
+          emoji: '🦁',
+          name: 'Λιοντάρι',
+          points: 12
+        },
+        {
+          emoji: '🐼',
+          name: 'Πάντα',
+          points: 8
+        },
+        {
+          emoji: '🐬',
+          name: 'Δελφίνι',
+          points: 9
+        },
+        {
+          emoji: '🐶',
+          name: 'Σκύλος',
+          points: 6
+        },
+        {
+          emoji: '🐱',
+          name: 'Γάτα',
+          points: 5
+        },
+        {
+          emoji: '🐰',
+          name: 'Κουνέλι',
+          points: 4
+        },
+        {
+          emoji: '🐻',
+          name: 'Αρκούδα',
+          points: 11
+        },
+        {
+          emoji: '🐯',
+          name: 'Τίγρη',
+          points: 13
+        },
+        {
+          emoji: '🐨',
+          name: 'Koala',
+          points: 8
+        },
+        {
+          emoji: '🐹',
+          name: 'Χαμστερ',
+          points: 5
+        },
+        {
+          emoji: '🦝',
+          name: 'Ρακούν',
+          points: 9
+        },
+        {
+          emoji: '🐿️',
+          name: 'Σκίουρος',
+          points: 6
+        },
+        {
+          emoji: '🦥',
+          name: 'Βραδύπους',
+          points: 14
+        },
+        {
+          emoji: '🦦',
+          name: 'Βίδρα',
+          points: 11
+        },
+        {
+          emoji: '🐾',
+          name: 'Capybara',
+          points: 16
         }
-        
-        function checkAnswer(selectedAnimal, correctAnimal, element) {
-            const allOptions = document.querySelectorAll('.quiz-option');
-            
-            // Disable all options
-            allOptions.forEach(opt => {
-                opt.style.pointerEvents = 'none';
-            });
-            
-            if (selectedAnimal === correctAnimal) {
-                // Correct answer
-                element.classList.add('correct');
-                score += 10;
-                document.getElementById('score').textContent = score;
-                
-                // Play correct sound
-                const utterance = new SpeechSynthesisUtterance('Σωστά!');
-                utterance.lang = 'el-GR';
-                window.speechSynthesis.speak(utterance);
-            } else {
-                // Wrong answer
-                element.classList.add('wrong');
-                
-                // Highlight correct answer
-                allOptions.forEach(opt => {
-                    if (opt.textContent.includes(correctAnimal.emoji)) {
-                        opt.classList.add('correct');
-                    }
-                });
-                
-                // Play wrong sound
-                const utterance = new SpeechSynthesisUtterance('Λάθος!');
-                utterance.lang = 'el-GR';
-                window.speechSynthesis.speak(utterance);
-            }
+      ]
+    };
+    let selectedAnimal = null;
+    let selectedDifficulty = null;
+    let currentTargetAnimal = null;
+    let score = 0;
+    let timeLeft = 60;
+    let timer;
+    let gameStarted = false;
+    let activeAnimals = [];
+    let animalInterval;
+    let dropdownOpen = {
+      difficulty: false,
+      character: false
+    };
+    let gamesPlayed = 0;
+
+    // Sound objects
+    const correctSound = new Audio('https://www.soundboard.com/media/2405');
+    const wrongSound = new Audio('https://www.soundboard.com/media/2529');
+
+    function initializeDropdowns() {
+      // Initialize Difficulty Dropdown
+      const difficultyList = document.getElementById('difficultyDropdownList');
+      const difficultyNames = {
+        easy: 'Εύκολο',
+        medium: 'Μέτριο',
+        hard: 'Δύσκολο'
+      };
+      const difficultyEmojis = {
+        easy: '🟢',
+        medium: '🟡',
+        hard: '🔴'
+      };
+      
+      Object.keys(config.difficulties).forEach(key => {
+        const option = document.createElement('div');
+        option.className = 'difficulty-option';
+        option.innerHTML = `
+          <span class="emoji">${difficultyEmojis[key]}</span>
+          <span class="name">${difficultyNames[key]}</span>
+        `;
+        option.addEventListener('click', () => {
+          selectDifficulty(key);
+          toggleDropdown('difficulty');
+        });
+        difficultyList.appendChild(option);
+      });
+
+      document.getElementById('difficultyDropdownHeader').addEventListener('click', () => toggleDropdown('difficulty'));
+
+      // Initialize Character Dropdown
+      const characterList = document.getElementById('dropdownList');
+      config.animals.forEach(animal => {
+        const option = document.createElement('div');
+        option.className = 'character-option';
+        option.innerHTML = `
+          <span class="emoji">${animal.emoji}</span>
+          <span class="name">${animal.name}</span>
+        `;
+        option.addEventListener('click', () => {
+          selectAnimal(animal);
+          toggleDropdown('character');
+        });
+        characterList.appendChild(option);
+      });
+      document.getElementById('dropdownHeader').addEventListener('click', () => toggleDropdown('character'));
+
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.difficulty-selector')) closeDropdown('difficulty');
+        if (!e.target.closest('.character-selector')) closeDropdown('character');
+      });
+    }
+
+    function toggleDropdown(type) {
+      const list = type === 'difficulty' ? document.getElementById('difficultyDropdownList') : document.getElementById('dropdownList');
+      const arrow = type === 'difficulty' ? document.querySelector('.difficulty-selector .dropdown-arrow') : document.querySelector('.character-selector .dropdown-arrow');
+      
+      dropdownOpen[type] = !dropdownOpen[type];
+      list.classList.toggle('open', dropdownOpen[type]);
+      arrow.classList.toggle('open', dropdownOpen[type]);
+    }
+
+    function closeDropdown(type) {
+      if (dropdownOpen[type]) {
+        const list = type === 'difficulty' ? document.getElementById('difficultyDropdownList') : document.getElementById('dropdownList');
+        const arrow = type === 'difficulty' ? document.querySelector('.difficulty-selector .dropdown-arrow') : document.querySelector('.character-selector .dropdown-arrow');
+        dropdownOpen[type] = false;
+        list.classList.remove('open');
+        arrow.classList.remove('open');
+      }
+    }
+
+    function selectDifficulty(difficulty) {
+      selectedDifficulty = difficulty;
+      const difficultyInfo = config.difficulties[difficulty];
+      document.getElementById('selectedDifficultyName').textContent = difficultyInfo.name;
+      checkStartButton();
+    }
+
+    function selectAnimal(animal) {
+      selectedAnimal = animal;
+      document.querySelector('.selected-emoji').textContent = animal.emoji;
+      document.querySelector('.selected-name').textContent = animal.name;
+      document.querySelector('.selected-name').style.color = '#333';
+      checkStartButton();
+    }
+
+    function checkStartButton() {
+      document.getElementById('startGameBtn').disabled = !(selectedAnimal && selectedDifficulty);
+    }
+
+    function showWelcomeScreen() {
+      document.getElementById('welcomeScreen').classList.add('active');
+      document.getElementById('gameScreen').classList.remove('active');
+      document.getElementById('gameOver').style.display = 'none';
+      stopGame();
+      closeDropdown('difficulty');
+      closeDropdown('character');
+    }
+
+    function showGameScreen() {
+      if (!selectedAnimal || !selectedDifficulty) return;
+      document.getElementById('welcomeScreen').classList.remove('active');
+      document.getElementById('gameScreen').classList.add('active');
+      document.getElementById('gameOver').style.display = 'none';
+      correctSound.play().then(() => correctSound.pause()).catch(e => {});
+      wrongSound.play().then(() => wrongSound.pause()).catch(e => {});
+      currentTargetAnimal = selectedAnimal;
+      document.getElementById('targetAnimal').textContent = currentTargetAnimal.emoji;
+      document.getElementById('targetPoints').textContent = currentTargetAnimal.points;
+      document.getElementById('timeLeft').textContent = config.difficulties[selectedDifficulty].time;
+      startGame();
+    }
+
+    function startGame() {
+      gameStarted = true;
+      score = 0;
+      timeLeft = config.difficulties[selectedDifficulty].time;
+      activeAnimals = [];
+      updateDisplay();
+      createHoles();
+      startTimer();
+      const difficultyConfig = config.difficulties[selectedDifficulty];
+      clearInterval(animalInterval);
+      setTimeout(() => {
+        showMultipleAnimals();
+        animalInterval = setInterval(showMultipleAnimals, difficultyConfig.animalSpeed);
+      }, 500);
+    }
+
+    function createHoles() {
+      const container = document.getElementById('holesContainer');
+      container.innerHTML = '';
+      for (let i = 0; i < 6; i++) {
+        const hole = document.createElement('div');
+        hole.className = 'hole';
+        hole.dataset.index = i;
+        const animal = document.createElement('div');
+        animal.className = 'animal';
+        animal.textContent = '?';
+        hole.appendChild(animal);
+        hole.addEventListener('click', () => hitAnimal(hole));
+        container.appendChild(hole);
+      }
+    }
+
+    function showMultipleAnimals() {
+      if (!gameStarted) return;
+      const holes = document.querySelectorAll('.hole');
+      const availableHoles = Array.from(holes).filter(hole =>
+        !hole.querySelector('.animal').classList.contains('pop-up')
+      );
+      if (availableHoles.length === 0) return;
+      const difficultyConfig = config.difficulties[selectedDifficulty];
+      const numberOfAnimals = Math.min(difficultyConfig.charactersAtOnce, availableHoles.length);
+      const randomHoles = [];
+      while (randomHoles.length < numberOfAnimals && availableHoles.length > 0) {
+        const randomIndex = Math.floor(Math.random() * availableHoles.length);
+        randomHoles.push(availableHoles[randomIndex]);
+        availableHoles.splice(randomIndex, 1);
+      }
+      randomHoles.forEach(hole => {
+        const animalElement = hole.querySelector('.animal');
+        let animalToShow;
+        if (Math.random() < 0.3) {
+          animalToShow = currentTargetAnimal;
+        } else {
+          const otherAnimals = config.animals.filter(a => a.emoji !== currentTargetAnimal.emoji);
+          animalToShow = otherAnimals[Math.floor(Math.random() * otherAnimals.length)];
         }
-        
-        function nextQuestion() {
-            const allOptions = document.querySelectorAll('.quiz-option');
-            allOptions.forEach(opt => {
-                opt.classList.remove('correct', 'wrong');
-                opt.style.pointerEvents = 'auto';
-            });
-            
-            generateQuestion();
+        animalElement.textContent = animalToShow.emoji;
+        animalElement.dataset.animalType = animalToShow.emoji;
+        animalElement.classList.add('pop-up');
+        activeAnimals.push(animalElement);
+        setTimeout(() => {
+          if (animalElement.classList.contains('pop-up')) {
+            hideAnimal(animalElement);
+          }
+        }, difficultyConfig.animalVisible);
+      });
+    }
+
+    function hideAnimal(animalElement) {
+      animalElement.classList.remove('pop-up', 'hit', 'wrong');
+      animalElement.textContent = '?';
+      activeAnimals = activeAnimals.filter(a => a !== animalElement);
+    }
+
+    function hitAnimal(hole) {
+      if (!gameStarted) return;
+      const animalElement = hole.querySelector('.animal');
+      if (animalElement.classList.contains('pop-up') && !animalElement.classList.contains('hit')) {
+        const animalType = animalElement.dataset.animalType;
+        if (animalType === currentTargetAnimal.emoji) {
+          animalElement.classList.add('hit');
+          score += currentTargetAnimal.points;
+          correctSound.play();
+        } else {
+          animalElement.classList.add('wrong');
+          score = Math.max(0, score - 3);
+          wrongSound.play();
         }
-        
-        // Initialize game
-        generateQuestion();
-    </script>
+        updateDisplay();
+        setTimeout(() => hideAnimal(animalElement), 400);
+      }
+    }
+
+    function updateDisplay() {
+      document.getElementById('score').textContent = score;
+      document.getElementById('timeLeft').textContent = timeLeft;
+    }
+
+    function startTimer() {
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+        if (timeLeft <= 0) endGame();
+      }, 1000);
+    }
+
+    function stopGame() {
+      gameStarted = false;
+      clearInterval(timer);
+      clearInterval(animalInterval);
+      activeAnimals.forEach(hideAnimal);
+    }
+
+    function endGame() {
+      stopGame();
+      gamesPlayed++;
+      const finalScore = document.getElementById('finalScore');
+      const gameMessage = document.getElementById('gameMessage');
+      
+      finalScore.textContent = score;
+      if (score >= 100) {
+        gameMessage.textContent = '🎉 Εξαιρετικά! Πολλούς στόχους βρήκες!';
+      } else if (score >= 50) {
+        gameMessage.textContent = '👍 Πολύ καλά! Συνεχίστε έτσι!';
+      } else {
+        gameMessage.textContent = '💪 Καλή προσπάθεια! Όλο και καλύτερα!';
+      }
+
+      document.getElementById('gameOver').style.display = 'flex';
+    }
+
+    function restartGame() {
+      document.getElementById('gameOver').style.display = 'none';
+      startGame();
+    }
+    // Initialize
+    window.addEventListener('DOMContentLoaded', initializeDropdowns);
+    document.getElementById('startGameBtn').addEventListener('click', showGameScreen);
+    // Touch optimizations
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 1) e.preventDefault();
+    });
+  </script>
 </body>
+
 </html>
