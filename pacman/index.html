@@ -1,17 +1,630 @@
-
-<div class="game-card">
-    <div class="game-image">
-        👻
-    </div>
-    <div class="game-content">
-        <h3>Pacman</h3>
-        <p>Κλασικό arcade παιχνίδι</p>
-        <div class="game-stats">
-            <span>🎯 Μέτριο</span>
-            <span>⭐ 4.5/5</span>
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacman - FranklyMadEar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .nav {
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .game-header h1 {
+            font-size: 2.5rem;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .score-container {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid #ffd700;
+        }
+        
+        .score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .lives {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .life {
+            color: #ff6b6b;
+            font-size: 1.5rem;
+        }
+        
+        .game-board {
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        canvas {
+            border: 3px solid #333;
+            background: #000;
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .instructions h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        .key {
+            display: inline-block;
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            margin: 2px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        
+        .game-over {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 3px solid #ffd700;
+            z-index: 10;
+        }
+        
+        .game-over h2 {
+            color: #ffd700;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            canvas {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav">
+            <a href="../index.html" class="btn">🏠 Αρχική</a>
+            <a href="../index.html#games" class="btn">🎮 Πίσω στα Παιχνίδια</a>
         </div>
-        <a href="/pacman/index.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;">
-            Παίξε Τώρα
-        </a>
     </div>
-</div>
+
+    <div class="game-container">
+        <div class="game-header">
+            <h1>👻 PACMAN</h1>
+            <p>Φάε όλες τις τελείες και πρόσεχε τα φαντάσματα!</p>
+        </div>
+
+        <div class="controls">
+            <div class="score-container">
+                <div>Score: <span id="score" class="score">0</span></div>
+            </div>
+            <div class="lives">
+                Ζωές: <span id="lives" class="life">❤️❤️❤️</span>
+            </div>
+            <button onclick="resetGame()" class="btn" style="background: #e74c3c;">
+                🔁 Επαναφορά
+            </button>
+        </div>
+
+        <div class="game-board">
+            <canvas id="gameCanvas" width="600" height="500"></canvas>
+            
+            <div id="gameOver" class="game-over">
+                <h2 id="gameOverText">Game Over!</h2>
+                <p>Final Score: <span id="finalScore">0</span></p>
+                <button onclick="resetGame()" class="btn" style="background: #27ae60; margin-top: 15px;">
+                    🔄 Παίξε Ξανά
+                </button>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>🎯 Οδηγίες Παιχνιδιού</h3>
+            <p>Χρησιμοποίησε τα <span class="key">←</span> <span class="key">↑</span> <span class="key">→</span> <span class="key">↓</span> για να κινηθείς</p>
+            <p>Φάε όλες τις τελείες για να κερδίσεις!</p>
+            <p>Πρόσεχε τα φαντάσματα - σε τρώνε!</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const livesElement = document.getElementById('lives');
+        const gameOverElement = document.getElementById('gameOver');
+        const gameOverText = document.getElementById('gameOverText');
+        const finalScoreElement = document.getElementById('finalScore');
+
+        // Game constants
+        const GRID_SIZE = 20;
+        const TILE_COUNT_X = canvas.width / GRID_SIZE;
+        const TILE_COUNT_Y = canvas.height / GRID_SIZE;
+
+        // Game state
+        let score = 0;
+        let lives = 3;
+        let gameRunning = true;
+
+        // Player
+        let player = {
+            x: 10,
+            y: 10,
+            direction: 'right',
+            nextDirection: 'right'
+        };
+
+        // Dots
+        let dots = [];
+
+        // Ghosts
+        let ghosts = [
+            { x: 5, y: 5, color: '#ff0000', speed: 1 },
+            { x: 15, y: 5, color: '#ff88ff', speed: 0.8 },
+            { x: 5, y: 15, color: '#00ffff', speed: 0.7 },
+            { x: 15, y: 15, color: '#ffa500', speed: 0.9 }
+        ];
+
+        // Walls (simple maze)
+        const walls = [
+            // Horizontal walls
+            { x: 0, y: 0, width: TILE_COUNT_X, height: 1 },
+            { x: 0, y: TILE_COUNT_Y - 1, width: TILE_COUNT_X, height: 1 },
+            // Vertical walls
+            { x: 0, y: 0, width: 1, height: TILE_COUNT_Y },
+            { x: TILE_COUNT_X - 1, y: 0, width: 1, height: TILE_COUNT_Y },
+            // Some obstacles
+            { x: 5, y: 5, width: 10, height: 1 },
+            { x: 5, y: 15, width: 10, height: 1 },
+            { x: 8, y: 8, width: 5, height: 1 },
+            { x: 8, y: 12, width: 5, height: 1 }
+        ];
+
+        function initGame() {
+            createDots();
+            resetPlayer();
+            resetGhosts();
+        }
+
+        function createDots() {
+            dots = [];
+            for (let x = 1; x < TILE_COUNT_X - 1; x++) {
+                for (let y = 1; y < TILE_COUNT_Y - 1; y++) {
+                    // Don't place dots on walls
+                    let onWall = walls.some(wall => 
+                        x >= wall.x && x < wall.x + wall.width &&
+                        y >= wall.y && y < wall.y + wall.height
+                    );
+                    
+                    if (!onWall && Math.random() > 0.3) { // 70% chance for a dot
+                        dots.push({ x, y, collected: false });
+                    }
+                }
+            }
+        }
+
+        function resetPlayer() {
+            player = {
+                x: 10,
+                y: 10,
+                direction: 'right',
+                nextDirection: 'right'
+            };
+        }
+
+        function resetGhosts() {
+            ghosts = [
+                { x: 5, y: 5, color: '#ff0000', speed: 1 },
+                { x: 15, y: 5, color: '#ff88ff', speed: 0.8 },
+                { x: 5, y: 15, color: '#00ffff', speed: 0.7 },
+                { x: 15, y: 15, color: '#ffa500', speed: 0.9 }
+            ];
+        }
+
+        function drawPlayer() {
+            ctx.fillStyle = '#ffd700'; // Yellow
+            ctx.beginPath();
+            ctx.arc(
+                player.x * GRID_SIZE + GRID_SIZE / 2,
+                player.y * GRID_SIZE + GRID_SIZE / 2,
+                GRID_SIZE / 2 - 2,
+                0.2 * Math.PI,
+                1.8 * Math.PI
+            );
+            ctx.lineTo(
+                player.x * GRID_SIZE + GRID_SIZE / 2,
+                player.y * GRID_SIZE + GRID_SIZE / 2
+            );
+            ctx.fill();
+            
+            // Eye
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(
+                player.x * GRID_SIZE + GRID_SIZE / 2 + 3,
+                player.y * GRID_SIZE + GRID_SIZE / 2 - 3,
+                2,
+                0,
+                2 * Math.PI
+            );
+            ctx.fill();
+        }
+
+        function drawDots() {
+            ctx.fillStyle = '#ffffff';
+            dots.forEach(dot => {
+                if (!dot.collected) {
+                    ctx.beginPath();
+                    ctx.arc(
+                        dot.x * GRID_SIZE + GRID_SIZE / 2,
+                        dot.y * GRID_SIZE + GRID_SIZE / 2,
+                        3,
+                        0,
+                        2 * Math.PI
+                    );
+                    ctx.fill();
+                }
+            });
+        }
+
+        function drawGhosts() {
+            ghosts.forEach(ghost => {
+                ctx.fillStyle = ghost.color;
+                ctx.beginPath();
+                ctx.arc(
+                    ghost.x * GRID_SIZE + GRID_SIZE / 2,
+                    ghost.y * GRID_SIZE + GRID_SIZE / 2,
+                    GRID_SIZE / 2 - 2,
+                    0,
+                    Math.PI
+                );
+                ctx.arc(
+                    ghost.x * GRID_SIZE + GRID_SIZE / 2,
+                    ghost.y * GRID_SIZE + GRID_SIZE / 2,
+                    GRID_SIZE / 2 - 2,
+                    Math.PI,
+                    2 * Math.PI
+                );
+                ctx.fill();
+                
+                // Eyes
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(
+                    ghost.x * GRID_SIZE + GRID_SIZE / 2 - 3,
+                    ghost.y * GRID_SIZE + GRID_SIZE / 2 - 2,
+                    2,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.arc(
+                    ghost.x * GRID_SIZE + GRID_SIZE / 2 + 3,
+                    ghost.y * GRID_SIZE + GRID_SIZE / 2 - 2,
+                    2,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.fill();
+                
+                ctx.fillStyle = 'black';
+                ctx.beginPath();
+                ctx.arc(
+                    ghost.x * GRID_SIZE + GRID_SIZE / 2 - 3,
+                    ghost.y * GRID_SIZE + GRID_SIZE / 2 - 2,
+                    1,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.arc(
+                    ghost.x * GRID_SIZE + GRID_SIZE / 2 + 3,
+                    ghost.y * GRID_SIZE + GRID_SIZE / 2 - 2,
+                    1,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.fill();
+            });
+        }
+
+        function drawWalls() {
+            ctx.fillStyle = '#2233ff';
+            walls.forEach(wall => {
+                ctx.fillRect(
+                    wall.x * GRID_SIZE,
+                    wall.y * GRID_SIZE,
+                    wall.width * GRID_SIZE,
+                    wall.height * GRID_SIZE
+                );
+            });
+        }
+
+        function movePlayer() {
+            player.direction = player.nextDirection;
+            
+            let newX = player.x;
+            let newY = player.y;
+            
+            switch (player.direction) {
+                case 'up': newY--; break;
+                case 'down': newY++; break;
+                case 'left': newX--; break;
+                case 'right': newX++; break;
+            }
+            
+            // Check wall collision
+            const wallCollision = walls.some(wall => 
+                newX >= wall.x && newX < wall.x + wall.width &&
+                newY >= wall.y && newY < wall.y + wall.height
+            );
+            
+            if (!wallCollision && newX >= 0 && newX < TILE_COUNT_X && newY >= 0 && newY < TILE_COUNT_Y) {
+                player.x = newX;
+                player.y = newY;
+            }
+        }
+
+        function moveGhosts() {
+            ghosts.forEach(ghost => {
+                const directions = [
+                    { dx: 1, dy: 0 },
+                    { dx: -1, dy: 0 },
+                    { dx: 0, dy: 1 },
+                    { dx: 0, dy: -1 }
+                ];
+                
+                // Simple AI: move towards player
+                const bestDirection = directions.reduce((best, dir) => {
+                    const newX = ghost.x + dir.dx;
+                    const newY = ghost.y + dir.dy;
+                    
+                    // Check if move is valid
+                    const wallCollision = walls.some(wall => 
+                        newX >= wall.x && newX < wall.x + wall.width &&
+                        newY >= wall.y && newY < wall.y + wall.height
+                    );
+                    
+                    if (wallCollision || newX < 0 || newX >= TILE_COUNT_X || newY < 0 || newY >= TILE_COUNT_Y) {
+                        return best;
+                    }
+                    
+                    // Calculate distance to player
+                    const distance = Math.sqrt(
+                        Math.pow(newX - player.x, 2) + Math.pow(newY - player.y, 2)
+                    );
+                    
+                    if (!best || distance < best.distance) {
+                        return { dx: dir.dx, dy: dir.dy, distance };
+                    }
+                    
+                    return best;
+                }, null);
+                
+                if (bestDirection && Math.random() < ghost.speed) {
+                    ghost.x += bestDirection.dx;
+                    ghost.y += bestDirection.dy;
+                }
+            });
+        }
+
+        function checkDotCollision() {
+            dots.forEach(dot => {
+                if (!dot.collected && player.x === dot.x && player.y === dot.y) {
+                    dot.collected = true;
+                    score += 10;
+                    scoreElement.textContent = score;
+                }
+            });
+        }
+
+        function checkGhostCollision() {
+            ghosts.forEach(ghost => {
+                if (player.x === ghost.x && player.y === ghost.y) {
+                    lives--;
+                    updateLivesDisplay();
+                    
+                    if (lives <= 0) {
+                        gameOver(false);
+                    } else {
+                        resetPlayer();
+                        resetGhosts();
+                    }
+                }
+            });
+        }
+
+        function checkWin() {
+            const allCollected = dots.every(dot => dot.collected);
+            if (allCollected) {
+                gameOver(true);
+            }
+        }
+
+        function updateLivesDisplay() {
+            livesElement.textContent = '❤️'.repeat(lives);
+        }
+
+        function gameOver(isWin) {
+            gameRunning = false;
+            gameOverElement.style.display = 'block';
+            finalScoreElement.textContent = score;
+            
+            if (isWin) {
+                gameOverText.textContent = '🎉 Νίκη!';
+                gameOverText.style.color = '#27ae60';
+            } else {
+                gameOverText.textContent = '💀 Game Over';
+                gameOverText.style.color = '#e74c3c';
+            }
+        }
+
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            gameRunning = true;
+            scoreElement.textContent = score;
+            updateLivesDisplay();
+            gameOverElement.style.display = 'none';
+            initGame();
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            drawWalls();
+            drawDots();
+            drawGhosts();
+            drawPlayer();
+            
+            if (gameRunning) {
+                movePlayer();
+                moveGhosts();
+                checkDotCollision();
+                checkGhostCollision();
+                checkWin();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Controls
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowUp': player.nextDirection = 'up'; break;
+                case 'ArrowDown': player.nextDirection = 'down'; break;
+                case 'ArrowLeft': player.nextDirection = 'left'; break;
+                case 'ArrowRight': player.nextDirection = 'right'; break;
+                case 'r': resetGame(); break;
+            }
+        });
+
+        // Touch controls for mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        canvas.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            e.preventDefault();
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (!touchStartX || !touchStartY) return;
+            
+            const touchEndX = e.touches[0].clientX;
+            const touchEndY = e.touches[0].clientY;
+            
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+            
+            if (Math.abs(dx) > Math.abs(dy)) {
+                // Horizontal swipe
+                player.nextDirection = dx > 0 ? 'right' : 'left';
+            } else {
+                // Vertical swipe
+                player.nextDirection = dy > 0 ? 'down' : 'up';
+            }
+            
+            touchStartX = null;
+            touchStartY = null;
+            e.preventDefault();
+        });
+
+        // Initialize and start game
+        initGame();
+        gameLoop();
+    </script>
+</body>
+</html>
