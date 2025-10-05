@@ -16,31 +16,18 @@
     </script>
     
     <style>
-        :root {
-            --primary: #FF6B6B;
-            --secondary: #4ECDC4;
-            --accent: #FFD166;
-            --dark: #1A535C;
-            --light: #F7FFF7;
-            --background: linear-gradient(135deg, #FF9A8B 0%, #FF6A88 55%, #FF99AC 100%);
-        }
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             text-align: center;
-            background: var(--background);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             margin: 0;
             padding: 0;
-            min-height: 100vh;
         }
-        
         .navbar {
-            background: var(--dark);
+            background: #2c3e50;
             padding: 1rem 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        
         .nav-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -49,103 +36,38 @@
             justify-content: space-between;
             align-items: center;
         }
-        
         .nav-logo a {
             color: white;
             font-size: 1.5rem;
             font-weight: bold;
             text-decoration: none;
-            display: flex;
-            align-items: center;
         }
-        
-        .nav-logo a:before {
-            content: "🎮";
-            margin-right: 8px;
-        }
-        
         .nav-menu {
             display: flex;
             gap: 2rem;
         }
-        
         .nav-link {
             color: white;
             text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        .nav-link:hover {
-            color: var(--accent);
-        }
-        
-        /* Stats Container */
-        .stats-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 20px auto;
-            max-width: 800px;
-            flex-wrap: wrap;
-        }
-        
-        .stat-box {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 12px;
-            padding: 15px 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            color: var(--dark);
-            min-width: 150px;
-        }
-        
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            margin-top: 5px;
         }
         
         /* Ad Container */
         .ad-container {
             background: white;
-            padding: 15px;
-            margin: 20px auto;
-            border-radius: 12px;
+            padding: 10px;
+            margin: 10px auto;
+            border-radius: 8px;
             max-width: 728px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            min-height: 90px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #888;
-            font-style: italic;
         }
         
         .game-container {
             background: white;
             padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             display: inline-block;
             margin: 20px auto;
             max-width: 90%;
-        }
-        
-        .game-title {
-            color: var(--dark);
-            margin-bottom: 5px;
-            font-size: 2.2rem;
-        }
-        
-        .game-subtitle {
-            color: #666;
-            margin-top: 0;
-            margin-bottom: 20px;
         }
         
         .sudoku-grid {
@@ -153,10 +75,9 @@
             grid-template-columns: repeat(9, 50px);
             grid-gap: 2px;
             margin: 20px auto;
-            background: var(--dark);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: #333;
+            padding: 8px;
+            border-radius: 8px;
         }
         
         .sudoku-cell {
@@ -167,102 +88,41 @@
             font-weight: bold;
             border: 1px solid #999;
             background: white;
-            color: var(--dark);
-            transition: all 0.2s;
-        }
-        
-        .sudoku-cell:focus {
-            outline: none;
-            background: #FFF9C4;
-            box-shadow: 0 0 5px var(--accent);
+            color: #333;
         }
         
         .sudoku-cell:nth-child(3n) {
-            border-right: 3px solid var(--dark);
+            border-right: 3px solid #333;
         }
         
         .sudoku-cell:nth-child(n+19):nth-child(-n+27),
         .sudoku-cell:nth-child(n+46):nth-child(-n+54) {
-            border-bottom: 3px solid var(--dark);
+            border-bottom: 3px solid #333;
         }
         
         .controls {
-            margin: 25px 0;
+            margin: 20px 0;
         }
         
         .control-btn {
-            background: var(--primary);
+            background: #e74c3c;
             color: white;
             border: none;
-            padding: 12px 25px;
-            margin: 8px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .control-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-        
-        .control-btn:nth-child(2) {
-            background: var(--secondary);
-        }
-        
-        .control-btn:nth-child(3) {
-            background: var(--accent);
-            color: var(--dark);
         }
         
         .back-btn {
-            background: var(--dark);
+            background: #7f8c8d;
             color: white;
-            padding: 12px 25px;
+            padding: 10px 20px;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 5px;
             display: inline-block;
             margin-top: 20px;
-            font-weight: bold;
-            transition: all 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-            background: #2c3e50;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            padding: 20px;
-            color: white;
-            font-size: 0.9rem;
-        }
-        
-        @media (max-width: 600px) {
-            .sudoku-grid {
-                grid-template-columns: repeat(9, 35px);
-            }
-            
-            .sudoku-cell {
-                width: 35px;
-                height: 35px;
-                font-size: 16px;
-            }
-            
-            .stats-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .stat-box {
-                width: 80%;
-            }
         }
     </style>
 </head>
@@ -283,28 +143,11 @@
     <!-- TOP AD BANNER -->
     <div class="ad-container">
         <!-- Οι διαφημίσεις του Monetag θα εμφανιστούν εδώ -->
-        Διαφημιστικό Banner (728x90)
-    </div>
-
-    <!-- STATS COUNTERS -->
-    <div class="stats-container">
-        <div class="stat-box">
-            <div class="stat-number" id="onlineUsers">128</div>
-            <div class="stat-label">Online Τώρα</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-number" id="todayUsers">1,245</div>
-            <div class="stat-label">Σήμερα</div>
-        </div>
-        <div class="stat-box">
-            <div class="stat-number" id="monthUsers">28,417</div>
-            <div class="stat-label">Αυτόν τον Μήνα</div>
-        </div>
     </div>
 
     <div class="game-container">
-        <h1 class="game-title">Sudoku</h1>
-        <p class="game-subtitle">Συμπλήρωσε όλα τα κελιά χωρίς επαναλήψεις!</p>
+        <h1 style="color: #2c3e50;">Sudoku</h1>
+        <p style="color: #666;">Συμπλήρωσε όλα τα κελιά χωρίς επαναλήψεις!</p>
         
         <div class="sudoku-grid" id="sudokuGrid">
             <!-- Sudoku grid -->
@@ -316,27 +159,16 @@
             <button class="control-btn" onclick="newGame()">Νέο Παιχνίδι</button>
         </div>
         
-        <div id="message" style="font-weight: bold; margin: 15px 0; min-height: 24px;"></div>
-    </div>
-
-    <!-- MIDDLE AD BANNER -->
-    <div class="ad-container">
-        <!-- Οι διαφημίσεις του Monetag θα εμφανιστούν εδώ -->
-        Διαφημιστικό Banner (728x90)
-    </div>
-
-    <div style="text-align: center; margin: 20px;">
-        <a href="/" class="back-btn">← Πίσω στην Αρχική</a>
+        <div id="message" style="color: #2c3e50; font-weight: bold; margin: 10px 0;"></div>
     </div>
 
     <!-- BOTTOM AD BANNER -->
     <div class="ad-container">
         <!-- Οι διαφημίσεις του Monetag θα εμφανιστούν εδώ -->
-        Διαφημιστικό Banner (728x90)
     </div>
 
-    <div class="footer">
-        © 2023 FranklyMadEar - Όλα τα δικαιώματα διατηρούνται
+    <div style="text-align: center; margin: 20px;">
+        <a href="/" class="back-btn">← Πίσω στην Αρχική</a>
     </div>
 
     <script>
@@ -368,8 +200,7 @@
                     cell.value = currentBoard[i][j] !== 0 ? currentBoard[i][j] : '';
                     
                     if (initialBoard[i][j] !== 0) {
-                        cell.style.background = '#f8f9fa';
-                        cell.style.color = '#1A535C';
+                        cell.style.background = '#f0f0f0';
                         cell.readOnly = true;
                     } else {
                         cell.addEventListener('input', function(e) {
@@ -403,10 +234,10 @@
             
             if (solved) {
                 message.textContent = 'Συγχαρητήρια! Το λύσατε σωστά! 🎉';
-                message.style.color = '#2ecc71';
+                message.style.color = 'green';
             } else {
                 message.textContent = 'Συνεχίστε! Υπάρχουν ακόμα κενά κελιά.';
-                message.style.color = '#e67e22';
+                message.style.color = 'orange';
             }
         }
 
@@ -419,38 +250,9 @@
         function newGame() {
             resetGame();
             document.getElementById('message').textContent = 'Νέο παιχνίδι! Καλή επιτυχία!';
-            document.getElementById('message').style.color = '#3498db';
         }
 
-        // Ψεύτικοι μετρητές χρηστών
-        function updateCounters() {
-            // Online users - αλλάζει τυχαία μεταξύ 100-200
-            const onlineElement = document.getElementById('onlineUsers');
-            let onlineCount = parseInt(onlineElement.textContent.replace(',', ''));
-            onlineCount += Math.floor(Math.random() * 5) - 2; // -2 έως +2
-            if (onlineCount < 100) onlineCount = 100;
-            if (onlineCount > 200) onlineCount = 200;
-            onlineElement.textContent = onlineCount.toLocaleString();
-            
-            // Today users - αυξάνεται αργά
-            const todayElement = document.getElementById('todayUsers');
-            let todayCount = parseInt(todayElement.textContent.replace(',', ''));
-            todayCount += Math.floor(Math.random() * 3); // 0-2
-            todayElement.textContent = todayCount.toLocaleString();
-            
-            // Month users - αυξάνεται πιο γρήγορα
-            const monthElement = document.getElementById('monthUsers');
-            let monthCount = parseInt(monthElement.textContent.replace(',', ''));
-            monthCount += Math.floor(Math.random() * 5); // 0-4
-            monthElement.textContent = monthCount.toLocaleString();
-            
-            // Επανάληψη κάθε 5-10 δευτερόλεπτα
-            setTimeout(updateCounters, Math.random() * 5000 + 5000);
-        }
-
-        // Αρχικοποίηση
         createSudokuGrid();
-        updateCounters();
     </script>
 </body>
 </html>
