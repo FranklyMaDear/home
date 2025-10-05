@@ -1,4 +1,226 @@
-<script>
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacman - FranklyMadEar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .nav {
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .game-header h1 {
+            font-size: 2.5rem;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .score-container {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid #ffd700;
+        }
+        
+        .score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .lives {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .life {
+            color: #ff6b6b;
+            font-size: 1.5rem;
+        }
+        
+        .game-board {
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        canvas {
+            border: 3px solid #333;
+            background: #000;
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .instructions h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        .key {
+            display: inline-block;
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            margin: 2px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        
+        .game-over {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 3px solid #ffd700;
+            z-index: 10;
+        }
+        
+        .game-over h2 {
+            color: #ffd700;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            canvas {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="nav">
+            <a href="../index.html" class="btn">🏠 Αρχική</a>
+            <a href="../index.html#games" class="btn">🎮 Πίσω στα Παιχνίδια</a>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="game-header">
+            <h1>👻 PACMAN</h1>
+            <p>Φάε όλες τις τελείες και πρόσεχε τα φαντάσματα!</p>
+        </div>
+
+        <div class="controls">
+            <div class="score-container">
+                <div>Score: <span id="score" class="score">0</span></div>
+            </div>
+            <div class="lives">
+                Ζωές: <span id="lives" class="life">❤️❤️❤️</span>
+            </div>
+            <button onclick="resetGame()" class="btn" style="background: #e74c3c;">
+                🔁 Επαναφορά
+            </button>
+        </div>
+
+        <div class="game-board">
+            <canvas id="gameCanvas" width="600" height="500"></canvas>
+            
+            <div id="gameOver" class="game-over">
+                <h2 id="gameOverText">Game Over!</h2>
+                <p>Final Score: <span id="finalScore">0</span></p>
+                <button onclick="resetGame()" class="btn" style="background: #27ae60; margin-top: 15px;">
+                    🔄 Παίξε Ξανά
+                </button>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>🎯 Οδηγίες Παιχνιδιού</h3>
+            <p>Χρησιμοποίησε τα <span class="key">←</span> <span class="key">↑</span> <span class="key">→</span> <span class="key">↓</span> για να κινηθείς</p>
+            <p>Φάε όλες τις τελείες για να κερδίσεις!</p>
+            <p>Πρόσεχε τα φαντάσματα - σε τρώνε!</p>
+        </div>
+    </div>
+
+   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const scoreElement = document.getElementById('score');
