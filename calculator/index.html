@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>iOS Style Calculator</title>
 <style>
 :root {
@@ -30,6 +30,13 @@ flex-direction: column;
 -webkit-user-select: none;
 -ms-user-select: none;
 user-select: none;
+touch-action: pan-x pan-y;
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
 }
 
 .calc {
@@ -54,7 +61,6 @@ justify-content: flex-end;
 padding: 0 10px 20px 10px;
 box-sizing: border-box;
 font-size: 70px;
-/* Adjusted font size */
 line-height: 1;
 overflow-wrap: break-word;
 text-align: right;
@@ -274,9 +280,9 @@ let lastResult = null;
 function updateDisplay() {
 displayEl.textContent = expression || "0";
 if (displayEl.scrollWidth > displayEl.clientWidth) {
-displayEl.style.fontSize = "50px"; /* Adjusted font size for long numbers */
+displayEl.style.fontSize = "50px";
 } else {
-displayEl.style.fontSize = "70px"; /* Keep the new default size */
+displayEl.style.fontSize = "70px";
 }
 }
 
