@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="el">
 
@@ -32,11 +31,69 @@
       justify-content: center;
     }
 
+    /* Ad Banner Styles */
+    .ad-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff6b6b);
+      background-size: 400% 400%;
+      color: white;
+      text-align: center;
+      padding: 12px 15px;
+      font-size: clamp(0.9rem, 3vw, 1.1rem);
+      font-weight: bold;
+      z-index: 10000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      animation: gradientShift 3s ease infinite;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .ad-banner .ad-emoji {
+      font-size: 1.2em;
+    }
+
+    .ad-banner .ad-text {
+      flex: 1;
+    }
+
+    .ad-banner .ad-close {
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9em;
+      cursor: pointer;
+    }
+
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
     .screen {
       display: none;
       width: 100%;
       min-height: 100vh;
       padding: 10px;
+      padding-top: 60px; /* Space for ad banner */
     }
 
     .screen.active {
@@ -452,6 +509,13 @@
 </head>
 
 <body>
+  <!-- Ad Banner -->
+  <div class="ad-banner" id="adBanner">
+    <span class="ad-emoji">👉</span>
+    <span class="ad-text">Πάτησε κλικ και βοήθησέ μας να συνεχίσουμε!</span>
+    <button class="ad-close" id="adClose">✕</button>
+  </div>
+
   <div class="screen active" id="welcomeScreen">
     <h1 class="welcome-title">Magic Animal Holes!</h1>
 
@@ -663,6 +727,30 @@
     // Sound objects
     const correctSound = new Audio('https://www.soundboard.com/media/2405');
     const wrongSound = new Audio('https://www.soundboard.com/media/2529');
+
+    // Ad banner functionality
+    function initializeAdBanner() {
+      const adBanner = document.getElementById('adBanner');
+      const adClose = document.getElementById('adClose');
+      
+      // Show ad banner
+      adBanner.style.display = 'flex';
+      
+      // Close button functionality
+      adClose.addEventListener('click', function(e) {
+        e.stopPropagation();
+        adBanner.style.display = 'none';
+      });
+      
+      // Banner click functionality
+      adBanner.addEventListener('click', function() {
+        // Load ad script
+        (function(s){s.dataset.zone='9981373',s.src='https://groleegni.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
+        
+        // Hide banner after click
+        adBanner.style.display = 'none';
+      });
+    }
 
     function initializeDropdowns() {
       // Initialize Difficulty Dropdown
@@ -915,8 +1003,12 @@
       document.getElementById('gameOver').style.display = 'none';
       startGame();
     }
+    
     // Initialize
-    window.addEventListener('DOMContentLoaded', initializeDropdowns);
+    window.addEventListener('DOMContentLoaded', function() {
+      initializeDropdowns();
+      initializeAdBanner();
+    });
     document.getElementById('startGameBtn').addEventListener('click', showGameScreen);
     // Touch optimizations
     document.addEventListener('touchstart', (e) => {
