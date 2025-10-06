@@ -65,37 +65,23 @@ line-height: 1;
 overflow-wrap: break-word;
 text-align: right;
 flex-grow: 1;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
 }
 
-.top-row-buttons {
-display: flex;
-justify-content: space-between;
-align-items: center;
-width: 100%;
-padding: 0 var(--gap);
-box-sizing: border-box;
-margin-top: 10px;
-margin-bottom: 5px;
+.display.result {
+background: rgba(255, 149, 0, 0.1);
+border: 2px solid var(--btn-orange);
+border-radius: 20px;
+padding: 10px;
+margin-bottom: 10px;
+animation: resultGlow 0.5s ease-in-out;
 }
 
-.menu-btn {
-font-size: 32px;
-color: var(--display-color);
-background: none;
-border: none;
-cursor: pointer;
-z-index: 1001;
-padding: 0;
--webkit-tap-highlight-color: transparent;
-}
-
-.fullscreen-btn {
-background: none;
-border: none;
-color: var(--display-color);
-cursor: pointer;
-font-size: 24px;
-padding: 0;
+@keyframes resultGlow {
+0% { background: rgba(255, 149, 0, 0.3); }
+100% { background: rgba(255, 149, 0, 0.1); }
 }
 
 .pad {
@@ -158,53 +144,6 @@ align-items: center;
 cursor: pointer;
 }
 
-.history {
-position: fixed;
-bottom: -50vh;
-left: 0;
-width: 100%;
-height: 50vh;
-background: #1c1c1c;
-color: white;
-overflow-y: auto;
-transition: transform 0.3s ease-out;
-padding: 20px;
-box-sizing: border-box;
-z-index: 1000;
-border-top: 1px solid #333;
-border-radius: 20px 20px 0 0;
-}
-
-.history.open {
-transform: translateY(-100%);
-}
-
-.history h2 {
-margin-top: 0;
-font-size: 24px;
-color: var(--btn-orange);
-text-align: center;
-margin-bottom: 10px;
-}
-
-.history ul {
-list-style: none;
-padding: 0;
-margin: 0;
-}
-
-.history li {
-padding: 8px 0;
-border-bottom: 1px solid #333;
-font-size: 18px;
-text-align: right;
-direction: rtl;
-}
-
-.history li:last-child {
-border-bottom: none;
-}
-
 @media (max-width: 480px) {
 :root {
 --gap: 10px;
@@ -213,28 +152,20 @@ border-bottom: none;
 }
 
 .display {
-font-size: 90px;
+font-size: 60px;
+}
+}
+
+@media (max-width: 380px) {
+.display {
+font-size: 50px;
 }
 }
 </style>
 </head>
 
 <body>
-<div class="history" id="historyPanel">
-<h2>Ιστορικό</h2>
-<ul id="historyList"></ul>
-</div>
-
 <main class="calc" id="calculatorApp">
-<div class="top-row-buttons">
-<button class="menu-btn" id="menuToggle">☰</button>
-<button class="fullscreen-btn" id="fullscreenButton">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-maximize">
-<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
-</svg>
-</button>
-</div>
-
 <div class="display" id="display">0</div>
 
 <div class="pad">
@@ -268,21 +199,32 @@ font-size: 90px;
 <script>
 (() => {
 const displayEl = document.getElementById('display');
-const historyList = document.getElementById('historyList');
-const historyPanel = document.getElementById('historyPanel');
-const menuToggle = document.getElementById('menuToggle');
-const fullscreenButton = document.getElementById('fullscreenButton');
-const calculatorApp = document.getElementById('calculatorApp');
 const btns = document.querySelectorAll('.pad button');
 let expression = "";
 let lastResult = null;
+let isResultDisplayed = false;
 
 function updateDisplay() {
 displayEl.textContent = expression || "0";
-if (displayEl.scrollWidth > displayEl.clientWidth) {
-displayEl.style.fontSize = "50px";
+    
+// Αυτόματη προσαρμογή μεγέθους γραμματοσειράς για μεγάλους αριθμούς
+const displayWidth = displayEl.clientWidth;
+const textWidth = displayEl.scrollWidth;
+    
+if (textWidth > displayWidth - 20) {
+// Υπολογισμός νέου μεγέθους γραμματοσειράς βάσει αναλογίας
+const scaleFactor = (displayWidth - 40) / textWidth;
+const newFontSize = Math.floor(70 * scaleFactor);
+displayEl.style.fontSize = Math.max(30, newFontSize) + 'px';
 } else {
-displayEl.style.fontSize = "70px";
+displayEl.style.fontSize = '70px';
+}
+    
+// Προσθήκη κλάσης result όταν εμφανίζεται αποτέλεσμα
+if (isResultDisplayed) {
+displayEl.classList.add('result');
+} else {
+displayEl.classList.remove('result');
 }
 }
 
@@ -290,15 +232,13 @@ function toEvalExpr(expr) {
 return expr.replace(/,/g, ".").replace(/÷/g, "/").replace(/×/g, "*").replace(/−/g, "-").replace(/%/g, "/100");
 }
 
-function addHistory(entry) {
-const li = document.createElement('li');
-li.textContent = entry;
-historyList.prepend(li);
-}
-
 function inputDigit(d) {
 if (expression === "Error") {
 clearAll();
+}
+if (isResultDisplayed) {
+expression = "";
+isResultDisplayed = false;
 }
 if (expression === "0" && d === "0") return;
 if (expression === "0" && d !== "0") {
@@ -313,13 +253,17 @@ function inputDot() {
 if (expression === "Error") {
 clearAll();
 }
-if (expression === "") {
+if (isResultDisplayed) {
 expression = "0,";
-}
+isResultDisplayed = false;
+} else if (expression === "") {
+expression = "0,";
+} else {
 const parts = expression.split(/([+\-×÷])/);
 const lastPart = parts[parts.length - 1];
 if (!lastPart.includes(',')) {
 expression += ',';
+}
 }
 updateDisplay();
 }
@@ -327,6 +271,7 @@ updateDisplay();
 function clearAll() {
 expression = "";
 lastResult = null;
+isResultDisplayed = false;
 updateDisplay();
 }
 
@@ -363,6 +308,7 @@ if (expression === "") return;
 if (expression === "Error") {
 expression = String(lastResult).replace('.', ',');
 }
+isResultDisplayed = false;
 const lastChar = expression.slice(-1);
 if ("+−×÷".includes(lastChar)) {
 expression = expression.slice(0, -1);
@@ -379,15 +325,17 @@ let result = eval(evalExpr);
 if (result % 1 !== 0) {
 result = parseFloat(result.toFixed(10));
 }
-addHistory(expression + " = " + result);
 expression = String(result).replace('.', ',');
 lastResult = result;
+isResultDisplayed = true;
 updateDisplay();
 } catch (e) {
 expression = "Error";
+isResultDisplayed = false;
 updateDisplay();
 }
 }
+
 btns.forEach(b => {
 b.addEventListener('click', () => {
 if (b.dataset.num) inputDigit(b.dataset.num);
@@ -399,21 +347,7 @@ else if (b.id === 'equals') calculateEquals();
 else if (b.dataset.op) inputOperator(b.dataset.op);
 });
 });
-menuToggle.addEventListener('click', () => historyPanel.classList.toggle('open'));
-fullscreenButton.addEventListener('click', () => {
-const elementToToggle = document.getElementById('calculatorApp');
-if (document.fullscreenElement) {
-document.exitFullscreen();
-} else if (elementToToggle.requestFullscreen) {
-elementToToggle.requestFullscreen();
-} else if (elementToToggle.mozRequestFullScreen) {
-elementToToggle.mozRequestFullScreen();
-} else if (elementToToggle.webkitRequestFullscreen) {
-elementToToggle.webkitRequestFullscreen();
-} else if (elementToToggle.msRequestFullscreen) {
-elementToToggle.msRequestFullscreen();
-}
-});
+
 updateDisplay();
 })();
 </script>
