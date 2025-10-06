@@ -24,14 +24,15 @@
             line-height: 1.6;
             color: #333;
             background: var(--light);
+            margin-left: 250px; /* Space for sidebar */
         }
         
         /* Roll-up Banner */
         .roll-up-banner {
             position: fixed;
             top: 0;
-            left: 0;
-            width: 100%;
+            left: 250px; /* Account for sidebar */
+            width: calc(100% - 250px);
             background: linear-gradient(135deg, #ff7e5f, #feb47b);
             color: white;
             text-align: center;
@@ -141,70 +142,71 @@
             color: #999;
         }
         
-        /* Header */
-        .header {
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 1rem 0;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: top 0.3s ease;
-        }
-        
-        .header.with-banner {
-            top: 50px;
-        }
-        
-        .nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+            z-index: 1500;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
         }
         
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
+            padding: 2rem 1.5rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         
         .logo a {
             color: white;
             text-decoration: none;
+            font-size: 1.8rem;
+            font-weight: bold;
         }
         
         .nav-links {
-            display: flex;
-            gap: 2rem;
             list-style: none;
-            align-items: center;
+            padding: 1.5rem 0;
+            flex-grow: 1;
+        }
+        
+        .nav-links li {
+            margin-bottom: 0.5rem;
         }
         
         .nav-links a {
+            display: block;
             color: white;
             text-decoration: none;
+            padding: 12px 1.5rem;
             font-weight: 500;
-            transition: color 0.3s;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
         }
         
         .nav-links a:hover {
-            color: #ffd700;
+            background: rgba(255,255,255,0.1);
+            border-left: 3px solid #ffd700;
+            padding-left: 1.7rem;
         }
         
-        /* Language Selector */
         .language-selector {
-            position: relative;
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
         
         .language-dropdown {
+            width: 100%;
             background: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
-            padding: 5px 10px;
+            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: 500;
@@ -221,12 +223,12 @@
             color: white;
             padding: 150px 0 80px;
             text-align: center;
-            margin-top: 60px;
+            margin-top: 0;
             transition: margin-top 0.3s ease;
         }
         
         .hero.with-banner {
-            margin-top: 110px;
+            margin-top: 50px;
         }
         
         .hero h1 {
@@ -467,9 +469,22 @@
         
         /* Responsive */
         @media (max-width: 768px) {
-            .nav-links {
-                flex-direction: column;
-                gap: 1rem;
+            body {
+                margin-left: 0;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .roll-up-banner {
+                left: 0;
+                width: 100%;
             }
             
             .hero h1 {
@@ -493,10 +508,34 @@
             .popup-buttons {
                 flex-direction: column;
             }
+            
+            .mobile-menu-toggle {
+                display: block;
+                position: fixed;
+                top: 15px;
+                left: 15px;
+                background: var(--primary);
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px;
+                z-index: 2000;
+                cursor: pointer;
+                font-size: 1.2rem;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-menu-toggle {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+
     <!-- Roll-up Banner -->
     <div class="roll-up-banner" id="rollUpBanner">
         <div class="banner-content">
@@ -513,37 +552,35 @@
             <h2 class="popup-title">Βοήθησέ μας να συνεχίσουμε!</h2>
             <p class="popup-text">Η υποστήριξή σας μας βοηθά να προσφέρουμε δωρεάν παιχνίδια για όλους. Πατώντας το παρακάτω κουμπί θα μας βοηθήσετε να συνεχίσουμε!</p>
             <div class="popup-buttons">
-                <a href="<script>(function(s){s.dataset.zone='9981373',s.src='https://groleegni.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>" target="_blank" class="btn btn-primary">Βοήθησε τώρα</a>
+                <button class="btn btn-primary" id="supportBtn">Βοήθησε τώρα</button>
                 <button class="btn btn-secondary" id="closePopupBtn">Όχι τώρα</button>
             </div>
         </div>
     </div>
 
-    <!-- Header -->
-    <header class="header" id="mainHeader">
-        <nav class="nav">
-            <div class="logo">
-                <a href="/">FmD</a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="/" data-key="home">Αρχική</a></li>
-                <li><a href="#games" data-key="games">Παιχνίδια</a></li>
-                <li><a href="#features" data-key="features">Πλεονεκτήματα</a></li>
-                <li class="language-selector">
-                    <select id="language-select" class="language-dropdown">
-                        <option value="el">Ελληνικά</option>
-                        <option value="en">English</option>
-                        <option value="de">Deutsch</option>
-                        <option value="es">Español</option>
-                        <option value="it">Italiano</option>
-                        <option value="ar">العربية</option>
-                        <option value="ru">Русский</option>
-                        <option value="hi">हिन्दी</option>
-                    </select>
-                </li>
-            </ul>
-        </nav>
-    </header>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="logo">
+            <a href="/">FranklyMaDear</a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" data-key="home">Αρχική</a></li>
+            <li><a href="#games" data-key="games">Παιχνίδια</a></li>
+            <li><a href="#features" data-key="features">Πλεονεκτήματα</a></li>
+        </ul>
+        <div class="language-selector">
+            <select id="language-select" class="language-dropdown">
+                <option value="el">Ελληνικά</option>
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+                <option value="es">Español</option>
+                <option value="it">Italiano</option>
+                <option value="ar">العربية</option>
+                <option value="ru">Русский</option>
+                <option value="hi">हिन्दी</option>
+            </select>
+        </div>
+    </nav>
 
     <!-- Hero Section -->
     <section class="hero" id="mainHero">
@@ -707,13 +744,14 @@
         const popupModal = document.getElementById('popupModal');
         const closePopup = document.getElementById('closePopup');
         const closePopupBtn = document.getElementById('closePopupBtn');
-        const mainHeader = document.getElementById('mainHeader');
+        const supportBtn = document.getElementById('supportBtn');
         const mainHero = document.getElementById('mainHero');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
         
         // Show banner after a short delay
         setTimeout(() => {
             rollUpBanner.classList.add('show');
-            mainHeader.classList.add('with-banner');
             mainHero.classList.add('with-banner');
         }, 1500);
         
@@ -721,7 +759,6 @@
         closeBanner.addEventListener('click', (e) => {
             e.stopPropagation();
             rollUpBanner.classList.remove('show');
-            mainHeader.classList.remove('with-banner');
             mainHero.classList.remove('with-banner');
         });
         
@@ -739,11 +776,27 @@
             popupModal.style.display = 'none';
         });
         
+        // Support button - load the vignette script
+        supportBtn.addEventListener('click', () => {
+            // Load the vignette script
+            (function(s){
+                s.dataset.zone='9981373',
+                s.src='https://groleegni.net/vignette.min.js'
+            })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
+            
+            popupModal.style.display = 'none';
+        });
+        
         // Close pop-up when clicking outside the content
         popupModal.addEventListener('click', (e) => {
             if (e.target === popupModal) {
                 popupModal.style.display = 'none';
             }
+        });
+        
+        // Mobile menu toggle
+        mobileMenuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('mobile-open');
         });
 
         // Language translations
@@ -945,7 +998,7 @@
                 popularGames: "Популярные Игры",
                 chooseGames: "Выбирайте из нашей коллекции лучших игр",
                 sudoku1Desc: "Классическая головоломка для одного игрока",
-                sudoku2Desc: "Классическая головоломка для двух игроков",
+                sudoku2Desc: "Κлассическая головоломка для двух игроков",
                 pacmanDesc: "Классическая аркадная игра",
                 animalsDesc: "Узнайте о животных в увлекательной форме!",
                 difficultyEasy: "🎯 Легко",
