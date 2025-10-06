@@ -1,102 +1,888 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dark Pac-Man: Nightmare Edition 3D</title>
-<style>
-body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#020308; color:#fff; font-family:sans-serif;}
-canvas { display:block; margin:0 auto; background: #07121a; }
-#joystick { position:absolute; left:20px; bottom:20px; width:120px; height:120px; border-radius:50%; background: rgba(255,255,255,0.05); touch-action:none;}
-#knob { width:50px; height:50px; border-radius:50%; background: rgba(255,255,255,0.1); position:relative; left:35px; top:35px;}
-#menu { position:absolute; right:20px; top:20px; background: rgba(0,0,0,0.7); padding:10px; border-radius:10px;}
-button { margin:4px; padding:6px 10px; border:none; border-radius:6px; background:#333; color:#fff; cursor:pointer;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pac-Man Mobile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: none;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #game-canvas {
+            background-color: #000;
+            border: 2px solid #333;
+            width: 100%;
+            height: 100%;
+            max-height: 500px;
+        }
+        
+        #game-ui {
+            width: 100%;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        #score, #level {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff0;
+        }
+        
+        #lives {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .life {
+            width: 20px;
+            height: 20px;
+            background-color: #ff0;
+            border-radius: 50%;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 70%, 0 100%);
+        }
+        
+        #controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            width: 150px;
+            height: 150px;
+        }
+        
+        .control-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        #up-btn {
+            grid-column: 2;
+            grid-row: 1;
+        }
+        
+        #left-btn {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        
+        #down-btn {
+            grid-column: 2;
+            grid-row: 3;
+        }
+        
+        #right-btn {
+            grid-column: 3;
+            grid-row: 2;
+        }
+        
+        #menu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        #menu h1 {
+            color: #ff0;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #ff0;
+        }
+        
+        #menu button {
+            background-color: #ff0;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        #level-select {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .level-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 200px;
+        }
+        
+        .level-btn.active {
+            background-color: #ff0;
+            color: #000;
+        }
+        
+        #game-over {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        #game-over h2 {
+            color: #ff0;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        #final-score {
+            color: #fff;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        #sound-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-<canvas id="gameCanvas"></canvas>
-<div id="joystick"><div id="knob"></div></div>
-<div id="menu">
-<h3>Dark Pac-Man 3D</h3>
-<div>Πίστες:<br>
-<button data-map="1">A</button>
-<button data-map="2">B</button>
-<button data-map="3">C</button>
-</div>
-<div>Δυσκολία:<br>
-<button data-diff="easy">Εύκολο</button>
-<button data-diff="normal">Κανονικό</button>
-<button data-diff="hard">Δύσκολο</button>
-</div>
-<button id="startBtn">Start</button>
-</div>
-<script>
-const canvas=document.getElementById('gameCanvas');
-const ctx=canvas.getContext('2d');
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+        <div id="game-ui">
+            <div id="score">Βαθμολογία: 0</div>
+            <div id="lives">
+                <div class="life"></div>
+                <div class="life"></div>
+                <div class="life"></div>
+            </div>
+            <div id="level">Πίστα: 1</div>
+        </div>
+        <div id="controls">
+            <button id="up-btn" class="control-btn">↑</button>
+            <button id="left-btn" class="control-btn">←</button>
+            <button id="down-btn" class="control-btn">↓</button>
+            <button id="right-btn" class="control-btn">→</button>
+        </div>
+        
+        <div id="menu">
+            <h1>PAC-MAN</h1>
+            <div id="level-select">
+                <button class="level-btn active" data-level="1">Πίστα 1: Αρχική</button>
+                <button class="level-btn" data-level="2">Πίστα 2: Λαβύρινθος</button>
+                <button class="level-btn" data-level="3">Πίστα 3: Τρομακτικό</button>
+            </div>
+            <button id="start-btn">Έναρξη Παιχνιδιού</button>
+            <button id="sound-toggle">🔊</button>
+        </div>
+        
+        <div id="game-over">
+            <h2>Τέλος Παιχνιδιού</h2>
+            <div id="final-score">Βαθμολογία: 0</div>
+            <button id="restart-btn">Παίξτε Ξανά</button>
+        </div>
+    </div>
 
-// Placeholder 3D effect Pac-Man
-function drawPacman(x,y,r){
-    ctx.save();
-    let gradient=ctx.createRadialGradient(x,y,r*0.2,x,y,r);
-    gradient.addColorStop(0,'#ffd400');
-    gradient.addColorStop(1,'#ffaa00');
-    ctx.fillStyle=gradient;
-    ctx.beginPath();
-    ctx.arc(x,y,r,0.25*Math.PI,1.75*Math.PI);
-    ctx.lineTo(x,y);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-}
-
-let pacX=canvas.width/2, pacY=canvas.height/2, radius=30;
-function loop(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    drawPacman(pacX,pacY,radius);
-    requestAnimationFrame(loop);
-}
-loop();
-
-// Basic joystick functionality
-const joystick=document.getElementById('joystick');
-const knob=document.getElementById('knob');
-let dragging=false, startX=0, startY=0;
-let dirX=0, dirY=0;
-
-joystick.addEventListener('pointerdown',e=>{
-    dragging=true;
-    startX=e.clientX;
-    startY=e.clientY;
-});
-window.addEventListener('pointerup',e=>{
-    dragging=false;
-    knob.style.transform='translate(0px,0px)';
-    dirX=0; dirY=0;
-});
-window.addEventListener('pointermove',e=>{
-    if(!dragging) return;
-    let dx=e.clientX-startX;
-    let dy=e.clientY-startY;
-    let maxDist=40;
-    let distance=Math.min(Math.sqrt(dx*dx+dy*dy),maxDist);
-    let angle=Math.atan2(dy,dx);
-    let nx=Math.cos(angle)*distance;
-    let ny=Math.sin(angle)*distance;
-    knob.style.transform=`translate(${nx}px,${ny}px)`;
-    dirX=dx/maxDist; dirY=dy/maxDist;
-});
-
-// Move Pac-Man based on joystick
-function movePacman(){
-    pacX+=dirX*2;
-    pacY+=dirY*2;
-    pacX=Math.max(radius,Math.min(canvas.width-radius,pacX));
-    pacY=Math.max(radius,Math.min(canvas.height-radius,pacY));
-    requestAnimationFrame(movePacman);
-}
-movePacman();
-</script>
+    <script>
+        // Στοιχεία DOM
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const levelElement = document.getElementById('level');
+        const livesElement = document.getElementById('lives');
+        const menu = document.getElementById('menu');
+        const gameOverScreen = document.getElementById('game-over');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const finalScoreElement = document.getElementById('final-score');
+        const soundToggle = document.getElementById('sound-toggle');
+        const levelBtns = document.querySelectorAll('.level-btn');
+        
+        // Στοιχεία ελέγχου
+        const upBtn = document.getElementById('up-btn');
+        const leftBtn = document.getElementById('left-btn');
+        const downBtn = document.getElementById('down-btn');
+        const rightBtn = document.getElementById('right-btn');
+        
+        // Ρυθμίσεις παιχνιδιού
+        let score = 0;
+        let lives = 3;
+        let currentLevel = 1;
+        let gameRunning = false;
+        let soundEnabled = true;
+        
+        // Ρυθμίσεις canvas
+        function resizeCanvas() {
+            const container = document.getElementById('game-container');
+            const maxSize = Math.min(container.clientWidth, container.clientHeight * 0.7);
+            canvas.width = maxSize;
+            canvas.height = maxSize;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        // Ορισμός πλακιδίων
+        const tileSize = 20;
+        const rows = Math.floor(canvas.height / tileSize);
+        const cols = Math.floor(canvas.width / tileSize);
+        
+        // Ορισμός πιστών
+        const levels = {
+            1: [
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,0,1],
+                [1,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,1,0,1],
+                [1,0,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,0,1,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,0,1,0,1],
+                [1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,1],
+                [1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+            ],
+            2: [
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1],
+                [1,0,1,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
+                [1,0,1,0,1,1,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,0,1,0,1],
+                [1,0,1,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,1,0,1,0,1],
+                [1,0,1,0,1,0,1,1,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,0,1],
+                [1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,1,0,1,0,1],
+                [1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+            ],
+            3: [
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                [1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1],
+                [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
+                [1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1],
+                [1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1],
+                [1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1],
+                [1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1],
+                [1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0,1],
+                [1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+            ]
+        };
+        
+        // Ορισμός ήχων
+        const sounds = {
+            eat: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='),
+            ghost: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='),
+            death: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='),
+            win: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==')
+        };
+        
+        // Προσομοίωση τρομακτικών ήχων με βάση 64
+        // Στην πραγματικότητα, θα χρειαζόταν πραγματικά αρχεία ήχου
+        
+        // Ορισμός Pac-Man
+        let pacman = {
+            x: 1,
+            y: 1,
+            direction: 'right',
+            nextDirection: 'right',
+            mouthOpen: true,
+            mouthAngle: 0.2,
+            speed: 1
+        };
+        
+        // Ορισμός φαντασμάτων
+        let ghosts = [
+            { x: 10, y: 5, color: '#ff0000', direction: 'left', speed: 0.5 },
+            { x: 14, y: 5, color: '#ff00ff', direction: 'up', speed: 0.5 },
+            { x: 10, y: 7, color: '#00ffff', direction: 'right', speed: 0.5 },
+            { x: 14, y: 7, color: '#ffa500', direction: 'down', speed: 0.5 }
+        ];
+        
+        // Ορισμός dots
+        let dots = [];
+        
+        // Αρχικοποίηση dots
+        function initDots() {
+            dots = [];
+            const map = levels[currentLevel];
+            
+            for (let y = 0; y < map.length; y++) {
+                for (let x = 0; x < map[y].length; x++) {
+                    if (map[y][x] === 0) {
+                        dots.push({ x, y });
+                    }
+                }
+            }
+        }
+        
+        // Σχεδίαση χάρτη
+        function drawMap() {
+            const map = levels[currentLevel];
+            
+            for (let y = 0; y < map.length; y++) {
+                for (let x = 0; x < map[y].length; x++) {
+                    if (map[y][x] === 1) {
+                        ctx.fillStyle = '#0000ff';
+                        ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+                    }
+                }
+            }
+        }
+        
+        // Σχεδίαση dots
+        function drawDots() {
+            ctx.fillStyle = '#fff';
+            
+            for (let dot of dots) {
+                ctx.beginPath();
+                ctx.arc(
+                    dot.x * tileSize + tileSize / 2,
+                    dot.y * tileSize + tileSize / 2,
+                    3,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+            }
+        }
+        
+        // Σχεδίαση Pac-Man
+        function drawPacman() {
+            ctx.save();
+            ctx.translate(
+                pacman.x * tileSize + tileSize / 2,
+                pacman.y * tileSize + tileSize / 2
+            );
+            
+            // Περιστροφή ανάλογα με την κατεύθυνση
+            switch (pacman.direction) {
+                case 'right':
+                    ctx.rotate(0);
+                    break;
+                case 'down':
+                    ctx.rotate(Math.PI / 2);
+                    break;
+                case 'left':
+                    ctx.rotate(Math.PI);
+                    break;
+                case 'up':
+                    ctx.rotate(-Math.PI / 2);
+                    break;
+            }
+            
+            // Σχεδίαση Pac-Man
+            ctx.fillStyle = '#ff0';
+            ctx.beginPath();
+            
+            if (pacman.mouthOpen) {
+                ctx.arc(0, 0, tileSize / 2, pacman.mouthAngle, Math.PI * 2 - pacman.mouthAngle);
+            } else {
+                ctx.arc(0, 0, tileSize / 2, 0, Math.PI * 2);
+            }
+            
+            ctx.lineTo(0, 0);
+            ctx.fill();
+            
+            ctx.restore();
+        }
+        
+        // Σχεδίαση φαντασμάτων
+        function drawGhosts() {
+            for (let ghost of ghosts) {
+                ctx.fillStyle = ghost.color;
+                
+                // Σώμα
+                ctx.beginPath();
+                ctx.arc(
+                    ghost.x * tileSize + tileSize / 2,
+                    ghost.y * tileSize + tileSize / 2,
+                    tileSize / 2,
+                    Math.PI,
+                    0,
+                    false
+                );
+                ctx.arc(
+                    ghost.x * tileSize + tileSize / 2,
+                    ghost.y * tileSize + tileSize / 2 + tileSize / 4,
+                    tileSize / 2,
+                    0,
+                    Math.PI,
+                    true
+                );
+                ctx.fill();
+                
+                // Μάτια
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(
+                    ghost.x * tileSize + tileSize / 2 - tileSize / 5,
+                    ghost.y * tileSize + tileSize / 2 - tileSize / 10,
+                    tileSize / 6,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.arc(
+                    ghost.x * tileSize + tileSize / 2 + tileSize / 5,
+                    ghost.y * tileSize + tileSize / 2 - tileSize / 10,
+                    tileSize / 6,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+                
+                // Κόρες
+                ctx.fillStyle = '#000';
+                let pupilOffsetX = 0;
+                let pupilOffsetY = 0;
+                
+                switch (ghost.direction) {
+                    case 'left':
+                        pupilOffsetX = -tileSize / 10;
+                        break;
+                    case 'right':
+                        pupilOffsetX = tileSize / 10;
+                        break;
+                    case 'up':
+                        pupilOffsetY = -tileSize / 10;
+                        break;
+                    case 'down':
+                        pupilOffsetY = tileSize / 10;
+                        break;
+                }
+                
+                ctx.beginPath();
+                ctx.arc(
+                    ghost.x * tileSize + tileSize / 2 - tileSize / 5 + pupilOffsetX,
+                    ghost.y * tileSize + tileSize / 2 - tileSize / 10 + pupilOffsetY,
+                    tileSize / 10,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.arc(
+                    ghost.x * tileSize + tileSize / 2 + tileSize / 5 + pupilOffsetX,
+                    ghost.y * tileSize + tileSize / 2 - tileSize / 10 + pupilOffsetY,
+                    tileSize / 10,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+            }
+        }
+        
+        // Ενημέρωση Pac-Man
+        function updatePacman() {
+            // Άνοιγμα/κλείσιμο στόματος
+            pacman.mouthOpen = !pacman.mouthOpen;
+            
+            // Μετακίνηση
+            const map = levels[currentLevel];
+            let newX = pacman.x;
+            let newY = pacman.y;
+            
+            // Έλεγχος εάν η επόμενη κατεύθυνση είναι δυνατή
+            switch (pacman.nextDirection) {
+                case 'left':
+                    if (pacman.x > 0 && map[pacman.y][pacman.x - 1] !== 1) {
+                        pacman.direction = pacman.nextDirection;
+                    }
+                    break;
+                case 'right':
+                    if (pacman.x < cols - 1 && map[pacman.y][pacman.x + 1] !== 1) {
+                        pacman.direction = pacman.nextDirection;
+                    }
+                    break;
+                case 'up':
+                    if (pacman.y > 0 && map[pacman.y - 1][pacman.x] !== 1) {
+                        pacman.direction = pacman.nextDirection;
+                    }
+                    break;
+                case 'down':
+                    if (pacman.y < rows - 1 && map[pacman.y + 1][pacman.x] !== 1) {
+                        pacman.direction = pacman.nextDirection;
+                    }
+                    break;
+            }
+            
+            // Μετακίνηση στην τρέχουσα κατεύθυνση
+            switch (pacman.direction) {
+                case 'left':
+                    if (pacman.x > 0 && map[pacman.y][pacman.x - 1] !== 1) {
+                        newX = pacman.x - pacman.speed;
+                    }
+                    break;
+                case 'right':
+                    if (pacman.x < cols - 1 && map[pacman.y][pacman.x + 1] !== 1) {
+                        newX = pacman.x + pacman.speed;
+                    }
+                    break;
+                case 'up':
+                    if (pacman.y > 0 && map[pacman.y - 1][pacman.x] !== 1) {
+                        newY = pacman.y - pacman.speed;
+                    }
+                    break;
+                case 'down':
+                    if (pacman.y < rows - 1 && map[pacman.y + 1][pacman.x] !== 1) {
+                        newY = pacman.y + pacman.speed;
+                    }
+                    break;
+            }
+            
+            // Έλεγχος για dots
+            const dotIndex = dots.findIndex(dot => 
+                Math.floor(dot.x) === Math.floor(newX) && 
+                Math.floor(dot.y) === Math.floor(newY)
+            );
+            
+            if (dotIndex !== -1) {
+                dots.splice(dotIndex, 1);
+                score += 10;
+                scoreElement.textContent = `Βαθμολογία: ${score}`;
+                
+                if (soundEnabled) {
+                    sounds.eat.play().catch(e => console.log("Αποτυχία αναπαραγωγής ήχου"));
+                }
+            }
+            
+            // Ενημέρωση θέσης
+            pacman.x = newX;
+            pacman.y = newY;
+            
+            // Έλεγχος για τηλεργασία
+            if (pacman.x < 0) pacman.x = cols - 1;
+            if (pacman.x >= cols) pacman.x = 0;
+        }
+        
+        // Ενημέρωση φαντασμάτων
+        function updateGhosts() {
+            const map = levels[currentLevel];
+            
+            for (let ghost of ghosts) {
+                // Απλή τεχνητή νοημοσύνη για τα φαντάσματα
+                const directions = ['left', 'right', 'up', 'down'];
+                let possibleDirections = [];
+                
+                for (let dir of directions) {
+                    let testX = Math.floor(ghost.x);
+                    let testY = Math.floor(ghost.y);
+                    
+                    switch (dir) {
+                        case 'left':
+                            testX--;
+                            break;
+                        case 'right':
+                            testX++;
+                            break;
+                        case 'up':
+                            testY--;
+                            break;
+                        case 'down':
+                            testY++;
+                            break;
+                    }
+                    
+                    if (testX >= 0 && testX < cols && testY >= 0 && testY < rows && 
+                        map[testY][testX] !== 1) {
+                        possibleDirections.push(dir);
+                    }
+                }
+                
+                // Αφαίρεση της αντίθετης κατεύθυνσης
+                const oppositeDir = {
+                    'left': 'right',
+                    'right': 'left',
+                    'up': 'down',
+                    'down': 'up'
+                };
+                
+                const filteredDirections = possibleDirections.filter(dir => 
+                    dir !== oppositeDir[ghost.direction]
+                );
+                
+                // Επιλογή νέας κατεύθυνσης
+                if (filteredDirections.length > 0) {
+                    ghost.direction = filteredDirections[Math.floor(Math.random() * filteredDirections.length)];
+                } else if (possibleDirections.length > 0) {
+                    ghost.direction = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
+                }
+                
+                // Μετακίνηση
+                switch (ghost.direction) {
+                    case 'left':
+                        ghost.x -= ghost.speed;
+                        break;
+                    case 'right':
+                        ghost.x += ghost.speed;
+                        break;
+                    case 'up':
+                        ghost.y -= ghost.speed;
+                        break;
+                    case 'down':
+                        ghost.y += ghost.speed;
+                        break;
+                }
+                
+                // Έλεγχος για τηλεργασία
+                if (ghost.x < 0) ghost.x = cols - 1;
+                if (ghost.x >= cols) ghost.x = 0;
+                
+                // Έλεγχος σύγκρουσης με Pac-Man
+                if (Math.abs(ghost.x - pacman.x) < 0.8 && Math.abs(ghost.y - pacman.y) < 0.8) {
+                    loseLife();
+                }
+            }
+        }
+        
+        // Απώλεια ζωής
+        function loseLife() {
+            lives--;
+            updateLivesDisplay();
+            
+            if (soundEnabled) {
+                sounds.death.play().catch(e => console.log("Αποτυχία αναπαραγωγής ήχου"));
+            }
+            
+            if (lives <= 0) {
+                gameOver();
+            } else {
+                // Επαναφορά θέσεων
+                pacman.x = 1;
+                pacman.y = 1;
+                pacman.direction = 'right';
+                pacman.nextDirection = 'right';
+                
+                ghosts[0].x = 10;
+                ghosts[0].y = 5;
+                ghosts[1].x = 14;
+                ghosts[1].y = 5;
+                ghosts[2].x = 10;
+                ghosts[2].y = 7;
+                ghosts[3].x = 14;
+                ghosts[3].y = 7;
+            }
+        }
+        
+        // Ενημέρωση εμφάνισης ζωών
+        function updateLivesDisplay() {
+            const lifeElements = document.querySelectorAll('.life');
+            
+            for (let i = 0; i < lifeElements.length; i++) {
+                if (i < lives) {
+                    lifeElements[i].style.display = 'block';
+                } else {
+                    lifeElements[i].style.display = 'none';
+                }
+            }
+        }
+        
+        // Τέλος παιχνιδιού
+        function gameOver() {
+            gameRunning = false;
+            finalScoreElement.textContent = `Βαθμολογία: ${score}`;
+            gameOverScreen.style.display = 'flex';
+            
+            if (soundEnabled) {
+                sounds.death.play().catch(e => console.log("Αποτυχία αναπαραγωγής ήχου"));
+            }
+        }
+        
+        // Επανεκκίνηση παιχνιδιού
+        function restartGame() {
+            score = 0;
+            lives = 3;
+            scoreElement.textContent = `Βαθμολογία: ${score}`;
+            updateLivesDisplay();
+            gameOverScreen.style.display = 'none';
+            initDots();
+            startGame();
+        }
+        
+        // Έναρξη παιχνιδιού
+        function startGame() {
+            menu.style.display = 'none';
+            gameRunning = true;
+            gameLoop();
+        }
+        
+        // Κύριος βρόχος παιχνιδιού
+        function gameLoop() {
+            if (!gameRunning) return;
+            
+            // Καθαρισμός canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Σχεδίαση
+            drawMap();
+            drawDots();
+            drawPacman();
+            drawGhosts();
+            
+            // Ενημέρωση
+            updatePacman();
+            updateGhosts();
+            
+            // Έλεγχος νίκης
+            if (dots.length === 0) {
+                if (soundEnabled) {
+                    sounds.win.play().catch(e => console.log("Αποτυχία αναπαραγωγής ήχου"));
+                }
+                
+                // Μετάβαση στην επόμενη πίστα
+                currentLevel++;
+                if (currentLevel > 3) currentLevel = 1;
+                
+                levelElement.textContent = `Πίστα: ${currentLevel}`;
+                initDots();
+                
+                // Επαναφορά θέσεων
+                pacman.x = 1;
+                pacman.y = 1;
+                pacman.direction = 'right';
+                pacman.nextDirection = 'right';
+                
+                ghosts[0].x = 10;
+                ghosts[0].y = 5;
+                ghosts[1].x = 14;
+                ghosts[1].y = 5;
+                ghosts[2].x = 10;
+                ghosts[2].y = 7;
+                ghosts[3].x = 14;
+                ghosts[3].y = 7;
+            }
+            
+            // Επανάληψη
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Εκκίνηση
+        initDots();
+        updateLivesDisplay();
+        
+        // Ακροατές συμβάντων
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', restartGame);
+        
+        // Επιλογή πίστας
+        levelBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                levelBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentLevel = parseInt(btn.dataset.level);
+                levelElement.textContent = `Πίστα: ${currentLevel}`;
+                initDots();
+            });
+        });
+        
+        // Έλεγχος ήχου
+        soundToggle.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+        });
+        
+        // Έλεγχος πλήκτρων
+        upBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            pacman.nextDirection = 'up';
+        });
+        
+        leftBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            pacman.nextDirection = 'left';
+        });
+        
+        downBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            pacman.nextDirection = 'down';
+        });
+        
+        rightBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            pacman.nextDirection = 'right';
+        });
+        
+        // Έλεγχος πληκτρολογίου για δοκιμή σε υπολογιστή
+        document.addEventListener('keydown', (e) => {
+            if (!gameRunning) return;
+            
+            switch (e.key) {
+                case 'ArrowUp':
+                    pacman.nextDirection = 'up';
+                    break;
+                case 'ArrowLeft':
+                    pacman.nextDirection = 'left';
+                    break;
+                case 'ArrowDown':
+                    pacman.nextDirection = 'down';
+                    break;
+                case 'ArrowRight':
+                    pacman.nextDirection = 'right';
+                    break;
+            }
+        });
+    </script>
 </body>
 </html>
