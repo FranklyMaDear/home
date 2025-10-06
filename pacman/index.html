@@ -1,220 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="el">
 <head>
-    <title>Pac-Man Starter Kit</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #000;
-            flex-direction: column;
-            font-family: Arial, sans-serif;
-            color: white;
-        }
-
-        #grid {
-            display: inline-grid;
-            grid-gap: 0;
-            border: 5px solid darkblue;
-            background-color: black;
-        }
-
-        .cell {
-            width: 30px; /* Μέγεθος κάθε κελιού */
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-sizing: border-box;
-        }
-
-        .wall {
-            background-color: #0000FF; /* Μπλε για τους τοίχους */
-            border: 1px solid #0000FF;
-        }
-
-        .empty {
-            /* Κενό κελί */
-        }
-        
-        .dot {
-            background-color: black;
-        }
-
-        .dot::after {
-            content: '';
-            display: block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: #FFB847; /* Χρυσό για τους πόντους */
-        }
-
-        .pacman {
-            background-color: black;
-        }
-
-        .pacman::after {
-            content: '⬤'; /* Σύμβολο για τον Pac-Man (ή μπορείς να χρησιμοποιήσεις εικόνα) */
-            font-size: 28px;
-            color: #FFFF00; /* Κίτρινο */
-            line-height: 1;
-            /* Για να φαίνεται σαν να ανοίγει το στόμα, μπορεί να χρειαστεί animation/rotation */
-        }
-        
-        #score {
-            margin: 20px;
-            font-size: 1.5em;
-        }
-        
-    </style>
+  <meta charset="UTF-8">
+  <title>Pac-Man Game</title>
+  <style>
+    body { background: black; margin: 0; overflow: hidden; }
+    canvas { display: block; margin: auto; background: #000; }
+  </style>
 </head>
 <body>
+  <canvas id="gameCanvas" width="448" height="496"></canvas>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
 
-    <div id="score">Score: <span id="scoreValue">0</span></div>
-    <div id="grid"></div>
-    <p>Χρησιμοποίησε τα βελάκια (↑↓←→) για να κινηθείς!</p>
+    const tileSize = 16;
+    const rows = 31;
+    const cols = 28;
 
-    <script>
-        // Ορισμός του χάρτη (1=Τοίχος, 0=Κενό, 2=Πόντος)
-        const layout = [
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1],
-            [1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 2, 1],
-            [1, 2, 1, 2, 2, 1, 2, 2, 2, 1, 2, 2, 1, 2, 2, 1],
-            [1, 2, 1, 2, 2, 1, 1, 1, 1, 1, 2, 2, 1, 2, 2, 1],
-            [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        ];
+    // Παράδειγμα απλού χάρτη (0 = δρόμος, 1 = τοίχος, 2 = κουκκίδα)
+    const map = Array(rows).fill().map(() => Array(cols).fill(2));
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (x === 0 || x === cols - 1 || y === 0 || y === rows - 1) map[y][x] = 1;
+      }
+    }
 
-        const gridElement = document.getElementById('grid');
-        const rows = layout.length;
-        const cols = layout[0].length;
-        const cellSize = 30; // 30px, όπως στο CSS
+    let pacman = { x: 14, y: 23, dx: 0, dy: 0 };
 
-        let pacmanPosition = { row: 1, col: 1 };
-        let score = 0;
-        let cells = []; // Θα αποθηκεύσει τα DOM elements για εύκολη πρόσβαση
-
-        // 1. Ρύθμιση CSS Grid
-        gridElement.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
-        gridElement.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
-
-        // 2. Σχεδίαση του Χάρτη
-        function drawGrid() {
-            gridElement.innerHTML = ''; // Καθαρισμός του grid
-            cells = []; // Επαναφορά του πίνακα κελιών
-
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('cell');
-
-                    if (layout[r][c] === 1) {
-                        cell.classList.add('wall');
-                    } else if (layout[r][c] === 2) {
-                        cell.classList.add('dot');
-                    } else {
-                        cell.classList.add('empty');
-                    }
-
-                    gridElement.appendChild(cell);
-                    cells.push(cell); // Αποθήκευση του στοιχείου
-                }
-            }
+    function drawMap() {
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          if (map[y][x] === 1) {
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+          } else if (map[y][x] === 2) {
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
+      }
+    }
 
-        // Βοηθητική συνάρτηση για να παίρνει το DOM element από τις συντεταγμένες
-        function getCellElement(row, col) {
-            return cells[row * cols + col];
-        }
+    function drawPacman() {
+      ctx.fillStyle = 'yellow';
+      ctx.beginPath();
+      ctx.arc(pacman.x * tileSize + tileSize / 2, pacman.y * tileSize + tileSize / 2, tileSize / 2, 0.25 * Math.PI, 1.75 * Math.PI);
+      ctx.lineTo(pacman.x * tileSize + tileSize / 2, pacman.y * tileSize + tileSize / 2);
+      ctx.fill();
+    }
 
-        // 3. Αρχικοποίηση Θέσης Pac-Man
-        function initializePacman() {
-            const initialCell = getCellElement(pacmanPosition.row, pacmanPosition.col);
-            initialCell.classList.add('pacman');
-            
-            // Καταναλώνει τον αρχικό πόντο αν υπάρχει
-            if (layout[pacmanPosition.row][pacmanPosition.col] === 2) {
-                eatDot(pacmanPosition.row, pacmanPosition.col);
-            }
-        }
-        
-        // 4. Λογική Κατανάλωσης Πόντου
-        function eatDot(row, col) {
-            if (layout[row][col] === 2) {
-                layout[row][col] = 0; // Ο πόντος εξαφανίζεται από το μοντέλο
-                score++;
-                document.getElementById('scoreValue').textContent = score;
-                
-                // Ενημέρωση της εμφάνισης (αφαίρεση της κλάσης dot)
-                const cell = getCellElement(row, col);
-                cell.classList.remove('dot');
-                cell.classList.add('empty');
-            }
-        }
+    function update() {
+      const nextX = pacman.x + pacman.dx;
+      const nextY = pacman.y + pacman.dy;
+      if (map[nextY][nextX] !== 1) {
+        pacman.x = nextX;
+        pacman.y = nextY;
+        if (map[nextY][nextX] === 2) map[nextY][nextX] = 0;
+      }
+    }
 
-        // 5. Λογική Κίνησης
-        function movePacman(newRow, newCol) {
-            // Έλεγχος συνόρων
-            if (newRow < 0 || newRow >= rows || newCol < 0 || newCol >= cols) {
-                return;
-            }
-            
-            // Έλεγχος σύγκρουσης με τοίχο (1)
-            if (layout[newRow][newCol] === 1) {
-                return; 
-            }
+    function loop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawMap();
+      drawPacman();
+      update();
+      requestAnimationFrame(loop);
+    }
 
-            // Καθαρισμός της παλιάς θέσης
-            const oldCell = getCellElement(pacmanPosition.row, pacmanPosition.col);
-            oldCell.classList.remove('pacman');
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowUp') { pacman.dx = 0; pacman.dy = -1; }
+      else if (e.key === 'ArrowDown') { pacman.dx = 0; pacman.dy = 1; }
+      else if (e.key === 'ArrowLeft') { pacman.dx = -1; pacman.dy = 0; }
+      else if (e.key === 'ArrowRight') { pacman.dx = 1; pacman.dy = 0; }
+    });
 
-            // Ενημέρωση της θέσης
-            pacmanPosition.row = newRow;
-            pacmanPosition.col = newCol;
-
-            // Κατανάλωση πόντου
-            eatDot(newRow, newCol);
-
-            // Σχεδίαση Pac-Man στη νέα θέση
-            const newCell = getCellElement(pacmanPosition.row, pacmanPosition.col);
-            newCell.classList.add('pacman');
-        }
-
-        // 6. Χειρισμός Πληκτρολογίου
-        document.addEventListener('keydown', (e) => {
-            let newRow = pacmanPosition.row;
-            let newCol = pacmanPosition.col;
-
-            switch (e.key) {
-                case 'ArrowUp':
-                    newRow--;
-                    break;
-                case 'ArrowDown':
-                    newRow++;
-                    break;
-                case 'ArrowLeft':
-                    newCol--;
-                    break;
-                case 'ArrowRight':
-                    newCol++;
-                    break;
-                default:
-                    return; // Αγνοεί άλλα πλήκτρα
-            }
-            
-            e.preventDefault(); // Αποτρέπει το scrolling της σελίδας
-            movePacman(newRow, newCol);
-        });
-
-        // Εκτέλεση του παιχνιδιού
-        drawGrid();
-        initializePacman();
-    </script>
-
+    loop();
+  </script>
 </body>
 </html>
