@@ -1,789 +1,102 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="el">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
-<title>Dark Pac-Man — Mobile</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dark Pac-Man: Nightmare Edition 3D</title>
 <style>
-  :root{
-    --bg1:#03050a; --bg2:#09121a; --accent:#ffd400;
-    --wall:#0a2a3a; --wall-edge:#071c28; --pellet:#d7b86a;
-    --energ:#ffffff; --ghost-red:#ff3b5c; --ghost-cyan:#49f0f0;
-    --ghost-pink:#ff7fcf; --ghost-orange:#ff9a4d;
-    --hud:#cfe9ff;
-  }
-  html,body{height:100%;margin:0;font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;color:var(--hud);-webkit-user-select:none;-ms-user-select:none;user-select:none}
-  body{display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,0.02), transparent 10%), linear-gradient(180deg,var(--bg1),var(--bg2));padding:10px}
-  #container{width:100%;max-width:960px;min-height:640px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:12px;padding:6px;box-shadow:0 10px 40px rgba(0,0,0,0.7);position:relative;overflow:hidden}
-  .topbar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px}
-  .badges{display:flex;gap:8px;align-items:center}
-  .badge{background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:9px;font-size:13px}
-  #canvas-wrap{display:flex;justify-content:center;align-items:center;padding:6px}
-  canvas{border-radius:8px;background:transparent;touch-action:none}
-  .controls{position:absolute;left:0;right:0;bottom:8px;display:flex;justify-content:space-between;padding:0 12px;pointer-events:none}
-  .joystick-area{width:50%;height:180px;margin:0 6px;display:flex;align-items:center;justify-content:center;pointer-events:auto}
-  .joystick-visual{width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;position:relative;box-shadow: inset 0 8px 20px rgba(0,0,0,0.6)}
-  .stick{width:56px;height:56px;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.25));position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:0 6px 18px rgba(0,0,0,0.7)}
-  .menu{position:absolute;left:8px;top:60px;right:8px;background:rgba(2,4,10,0.75);backdrop-filter: blur(4px);padding:12px;border-radius:10px;box-shadow:0 8px 40px rgba(0,0,0,0.7)}
-  .menu h2{margin:0 0 10px 0;font-size:18px}
-  .menu .row{display:flex;gap:8px;flex-wrap:wrap}
-  .btn{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);cursor:pointer;color:var(--hud);font-weight:600}
-  .btn.small{padding:6px 10px;font-size:13px}
-  .overlay-title{position:absolute;left:0;right:0;top:10px;text-align:center;font-size:20px;pointer-events:none;color:#f8f5e6;text-shadow:0 2px 8px rgba(0,0,0,0.8)}
-  .small{font-size:12px;opacity:0.9}
-  .ghost-hint{display:flex;gap:6px;align-items:center}
-  .toggle{display:inline-flex;align-items:center;gap:8px}
-  /* responsive tweaks */
-  @media (min-width:720px){
-    .joystick-area{height:220px}
-    .joystick-visual{width:160px;height:160px}
-    .stick{width:64px;height:64px}
-  }
+body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#020308; color:#fff; font-family:sans-serif;}
+canvas { display:block; margin:0 auto; background: #07121a; }
+#joystick { position:absolute; left:20px; bottom:20px; width:120px; height:120px; border-radius:50%; background: rgba(255,255,255,0.05); touch-action:none;}
+#knob { width:50px; height:50px; border-radius:50%; background: rgba(255,255,255,0.1); position:relative; left:35px; top:35px;}
+#menu { position:absolute; right:20px; top:20px; background: rgba(0,0,0,0.7); padding:10px; border-radius:10px;}
+button { margin:4px; padding:6px 10px; border:none; border-radius:6px; background:#333; color:#fff; cursor:pointer;}
 </style>
 </head>
 <body>
-<div id="container">
-  <div class="topbar">
-    <div class="badges">
-      <div class="badge">Score: <span id="score">0</span></div>
-      <div class="badge">Lives: <span id="lives">3</span></div>
-      <div class="badge">Level: <span id="level">1</span></div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <div class="small">Dark Pac-Man</div>
-      <button class="btn small" id="soundToggle">Ήχος: ON</button>
-      <button class="btn small" id="pauseBtn">Pause</button>
-      <button class="btn small" id="menuBtn">Menu</button>
-    </div>
-  </div>
-
-  <div id="canvas-wrap">
-    <canvas id="gameCanvas" width="540" height="640"></canvas>
-  </div>
-
-  <div class="controls">
-    <div class="joystick-area" id="leftStickArea" aria-hidden="true">
-      <div class="joystick-visual" id="leftStick">
-        <div class="stick" id="leftKnob"></div>
-      </div>
-    </div>
-    <div style="width:24px"></div>
-    <div class="joystick-area" id="rightStickArea" aria-hidden="true">
-      <div class="joystick-visual" id="rightStick">
-        <div class="stick" id="rightKnob"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="overlay-title" id="overlayTitle">— Dark Pac-Man —</div>
-
-  <div class="menu" id="menuPanel" style="display:block">
-    <h2>Ξεκίνα — Επιλογή Δυσκολίας & Πίστας</h2>
-    <div class="row" style="margin-bottom:8px">
-      <button class="btn" data-diff="easy">Easy</button>
-      <button class="btn" data-diff="normal">Normal</button>
-      <button class="btn" data-diff="hard">Hard</button>
-    </div>
-    <div class="row" style="margin-bottom:10px">
-      <button class="btn" data-map="m1">Πίστα A (Compact)</button>
-      <button class="btn" data-map="m2">Πίστα B (Maze)</button>
-      <button class="btn" data-map="m3">Πίστα C (Dark Labyrinth)</button>
-    </div>
-    <div class="row" style="align-items:center;justify-content:space-between;margin-top:6px">
-      <div class="small">Ήχος Τρόμου</div>
-      <div class="toggle">
-        <label class="small">Ambient</label>
-        <button class="btn small" id="ambientToggle">ON</button>
-      </div>
-    </div>
-    <div style="margin-top:10px" class="small">Σύρε/σβάρνα πάνω στην αριστερή ή δεξιά τροχιά για να κινήσεις το Pac-Man. Μπορείς να χρησιμοποιήσεις οποιαδήποτε από τις δύο περιοχές — και οι δύο ελέγχουν την ίδια κίνηση (ανεξάρτητα από orientation).</div>
-  </div>
-
+<canvas id="gameCanvas"></canvas>
+<div id="joystick"><div id="knob"></div></div>
+<div id="menu">
+<h3>Dark Pac-Man 3D</h3>
+<div>Πίστες:<br>
+<button data-map="1">A</button>
+<button data-map="2">B</button>
+<button data-map="3">C</button>
 </div>
-
+<div>Δυσκολία:<br>
+<button data-diff="easy">Εύκολο</button>
+<button data-diff="normal">Κανονικό</button>
+<button data-diff="hard">Δύσκολο</button>
+</div>
+<button id="startBtn">Start</button>
+</div>
 <script>
-/* Dark Pac-Man — Mobile friendly single file
-   Features:
-   - portrait & landscape responsive canvas
-   - swipe/drag joystick (two independent touch areas controlling the same movement)
-   - spooky ambient sound + SFX (Web Audio)
-   - difficulty selection, map selection, auto-level progression
-   - condensed grid for mobile (smaller map per level)
-   - ghosts with simple A* pathfinding, frightened mode, eaten animation, points popups
-   - visual horror effects: fog, vignette, glow, occasional distort creaks
-*/
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-/* ---------------- SETUP & CONFIG ---------------- */
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-ctx.imageSmoothingEnabled = true;
-
-const scoreEl = document.getElementById('score');
-const livesEl = document.getElementById('lives');
-const levelEl = document.getElementById('level');
-const menuPanel = document.getElementById('menuPanel');
-const pauseBtn = document.getElementById('pauseBtn');
-const soundToggle = document.getElementById('soundToggle');
-const ambientToggle = document.getElementById('ambientToggle');
-const menuBtn = document.getElementById('menuBtn');
-
-let WIDTH = canvas.width;
-let HEIGHT = canvas.height;
-
-// Game tuning (mobile-friendly)
-let TILE = 20;      // will scale with map size
-let COLS = 21; ROWS = 23; // default compact
-const HUD_PADDING = 20;
-
-// Base speeds adjusted per difficulty
-const DIFF = {
-  easy: {pacSpeed:1.6, ghostSpeed:1.0, frightened:7000},
-  normal:{pacSpeed:2.1, ghostSpeed:1.5, frightened:7000},
-  hard:{pacSpeed:2.6, ghostSpeed:1.9, frightened:6000}
-};
-let currentDifficulty = 'normal';
-let currentMapKey = 'm1';
-
-// Audio
-let audioOn = true;
-let ambientOn = true;
-let audioCtx = null;
-function ensureAudio(){ if(!audioOn) return; if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }
-soundToggle.addEventListener('click', ()=>{ audioOn = !audioOn; soundToggle.textContent = 'Ήχος: ' + (audioOn? 'ON':'OFF'); if(audioOn) ensureAudio(); });
-ambientToggle.addEventListener('click', ()=>{ ambientOn = !ambientOn; ambientToggle.textContent = (ambientOn? 'ON':'OFF'); if(ambientOn) startAmbient(); else stopAmbient(); });
-
-// Ambient synthesizer (simple)
-let ambientNode = null;
-let ambientGain = null;
-function startAmbient(){
-  if(!audioOn || !ambientOn) return;
-  ensureAudio();
-  if(ambientNode) return;
-  const ctxA = audioCtx;
-  ambientGain = ctxA.createGain(); ambientGain.gain.value = 0.06;
-  const osc = ctxA.createOscillator(); osc.type = 'sawtooth'; osc.frequency.value = 60;
-  const lfo = ctxA.createOscillator(); lfo.frequency.value = 0.08;
-  const lfoGain = ctxA.createGain(); lfoGain.gain.value = 20;
-  lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
-  osc.connect(ambientGain); ambientGain.connect(ctxA.destination);
-  osc.start(); lfo.start();
-  ambientNode = {osc,lfo, gain:ambientGain};
-  // occasional creak
-  ambientCreakLoop();
-}
-function stopAmbient(){
-  if(!ambientNode) return;
-  ambientNode.osc.stop(); ambientNode.lfo.stop();
-  ambientNode = null;
-}
-function ambientCreakLoop(){
-  if(!audioOn || !ambientOn || !audioCtx) return;
-  // random creak every 6-20s
-  const t = 6000 + Math.random()*14000;
-  setTimeout(()=>{ playCreak(); ambientCreakLoop(); }, t);
-}
-function playCreak(){
-  if(!audioOn || !audioCtx || !ambientOn) return;
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-  o.type = 'sine'; o.frequency.value = 120;
-  g.gain.value = 0.001;
-  o.connect(g); g.connect(audioCtx.destination);
-  o.start();
-  o.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 1.2);
-  g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
-  setTimeout(()=>o.stop(), 1400);
-}
-
-// SFX small helpers
-function sfxBeep(freq, dur=0.06, type='square', vol=0.08){
-  if(!audioOn) return;
-  ensureAudio();
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-  o.type = type; o.frequency.value = freq; g.gain.value = vol;
-  o.connect(g); g.connect(audioCtx.destination);
-  o.start(); o.stop(audioCtx.currentTime + dur);
-}
-function sfxPower(){ sfxBeep(180,0.25,'sawtooth',0.14); }
-function sfxEat(){ sfxBeep(900,0.06,'square',0.08); }
-function sfxDeath(){ if(!audioOn) return; ensureAudio(); const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type='sine'; o.frequency.value=80; g.gain.value=0.28; o.connect(g); g.connect(audioCtx.destination); o.start(); o.frequency.exponentialRampToValueAtTime(28,audioCtx.currentTime+0.9); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.9); setTimeout(()=>o.stop(),1000); }
-
-// ---------------- MAPS (compact mobile-friendly) ----------------
-// 0 path, 1 wall, 2 pellet, 3 energizer
-const MAPS = {
-  // m1 compact: smaller grid 21x23
-  m1: {
-    cols:21, rows:23,
-    raw:[
-"111111111111111111111",
-"100000011000000110001",
-"101110011011011100101",
-"103000000000000000301",
-"101011111011111010101",
-"100010000010000010001",
-"111011110011101110111",
-"000001000000000100000",
-"111101011111011010111",
-"100001000010000001001",
-"101111011011110111101",
-"100000011000000011001",
-"101111011011111011101",
-"101111011000000011101",
-"100000000011000000001",
-"111111111111111111111",
-"100000000001000000001",
-"101111011111011111101",
-"100000010000010000001",
-"111011111011111011111",
-"100000000000000000001",
-"101111111011111111101",
-"111111111111111111111"
-    ]
-  },
-  // m2 maze: a bit more corridors
-  m2: {
-    cols:21, rows:23,
-    raw:[
-"111111111111111111111",
-"100000000011000000001",
-"101111111011011111101",
-"103000011000000110301",
-"101111011111011111101",
-"100000011000000011001",
-"111111011011111011111",
-"000001011000000110000",
-"111101011011111101011",
-"100001000010000001001",
-"101111011111011111101",
-"100000011000000011001",
-"101111011011111011101",
-"101111011000000011101",
-"100000000011000000001",
-"111111111111111111111",
-"100001000000010000001",
-"101101011111011011101",
-"100001000010000001001",
-"111011111011111011111",
-"100000000000000000001",
-"101111111011111111101",
-"111111111111111111111"
-    ]
-  },
-  // m3 dark labyrinth: more twisted
-  m3: {
-    cols:21, rows:23,
-    raw:[
-"111111111111111111111",
-"100000010000010000001",
-"101110010111010111101",
-"103000010000000010301",
-"101011111011111010101",
-"100010000010000010001",
-"111011110011101110111",
-"000001000000000100000",
-"111101011111011010111",
-"100001000010000001001",
-"101111011011110111101",
-"100000011000000011001",
-"101111011011111011101",
-"101111011000000011101",
-"100000000011000000001",
-"111111111111111111111",
-"100000011000000110001",
-"101110011011011100101",
-"100000000000000000001",
-"111011111011111011111",
-"100000000000000000001",
-"101111111011111111101",
-"111111111111111111111"
-    ]
-  }
-};
-
-// CURRENT MAP STATE (will be initialized)
-let MAP = [];
-let COLS_CUR = COLS, ROWS_CUR = ROWS, TILE_CUR = TILE;
-
-// Initialize map from key
-function loadMap(key){
-  currentMapKey = key;
-  const m = MAPS[key];
-  COLS_CUR = m.cols; ROWS_CUR = m.rows;
-  // scale canvas tile size to fit available vertical space nicely
-  // aim for canvas height ~ ROWS_CUR * tile + padding
-  // We keep canvas size static but compute TILE to fit
-  const avail = Math.min(window.innerWidth - 40, 640);
-  TILE_CUR = Math.floor(Math.min( Math.floor((avail - 20) / COLS_CUR * 1.0), Math.floor((window.innerHeight - 200)/ ROWS_CUR * 1.0)));
-  if(TILE_CUR < 14) TILE_CUR = 14;
-  // update canvas sizes
-  canvas.width = COLS_CUR * TILE_CUR;
-  canvas.height = ROWS_CUR * TILE_CUR + 40;
-  WIDTH = canvas.width; HEIGHT = canvas.height;
-  // parse raw rows
-  MAP = m.raw.slice(0, ROWS_CUR).map(r => r.split("").map(ch => {
-    if(ch === "0") return 2;
-    if(ch === "1") return 1;
-    if(ch === "3") return 3;
-    return Number(ch);
-  }));
-  // ensure energizers exist in corners if missing
-  if(MAP[3][3] !== 3) MAP[3][3] = 3;
-  if(MAP[3][COLS_CUR-4] !== 3) MAP[3][COLS_CUR-4] = 3;
-  if(MAP[ROWS_CUR-4][3] !== 3) MAP[ROWS_CUR-4][3] = 3;
-  if(MAP[ROWS_CUR-4][COLS_CUR-4] !== 3) MAP[ROWS_CUR-4][COLS_CUR-4] = 3;
-}
-
-/* ---------------- GAME STATE ---------------- */
-let score = 0, lives = 3, level = 1;
-scoreEl.textContent = score; livesEl.textContent = lives; levelEl.textContent = level;
-
-let pac = {
-  x:0, y:0, dir:{x:0,y:0}, nextDir:{x:0,y:0}, radius: TILE_CUR*0.45, speed: DIFF.normal.pacSpeed
-};
-
-const ghostDefBase = [
-  {name:'Blinky', color:'--ghost-red'},
-  {name:'Pinky',  color:'--ghost-pink'},
-  {name:'Inky',   color:'--ghost-cyan'},
-  {name:'Clyde',  color:'--ghost-orange'}
-];
-let ghosts = [];
-let ghostSpawnTile = {c: Math.floor(COLS_CUR/2), r: Math.floor(ROWS_CUR/3)};
-
-// helper to init positions
-function resetPositions(){
-  const start = tileCenter(Math.floor(COLS_CUR/2), Math.floor(ROWS_CUR*0.75));
-  pac.x = start.x; pac.y = start.y; pac.dir = {x:0,y:0}; pac.nextDir={x:0,y:0};
-  ghosts = ghostDefBase.map((g,i)=>{
-    const sx = ghostSpawnTile.c * TILE_CUR + TILE_CUR/2 + (i-1.5)*(TILE_CUR*0.6);
-    const sy = ghostSpawnTile.r * TILE_CUR + TILE_CUR/2;
-    return {id:i, name:g.name, colorVar:g.color, x:sx, y:sy, dir:{x:0,y:0}, state:'scatter', speed: DIFF[currentDifficulty].ghostSpeed, path:null, pathIndex:0, frightenedUntil:0};
-  });
-}
-
-/* ---------------- PATHFINDING (A* on tile graph) ---------------- */
-function isWall(c,r){ if(c<0||c>=COLS_CUR||r<0||r>=ROWS_CUR) return true; return MAP[r][c] === 1; }
-function neighbors(c,r){
-  const ds = [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
-  const out = [];
-  for(const d of ds){ const nc=c+d.x, nr=r+d.y; if(!isWall(nc,nr)) out.push({c:nc,r:nr}); }
-  return out;
-}
-function heur(a,b){ return Math.abs(a.c-b.c)+Math.abs(a.r-b.r); }
-function astar(start,goal,maxNodes=2000){
-  const key = p => `${p.c},${p.r}`;
-  const open = new Map(); const gScore = {}; const fScore = {}; const cameFrom = {};
-  const sk = key(start); open.set(sk,start); gScore[sk]=0; fScore[sk]=heur(start,goal);
-  let nodes = 0;
-  while(open.size && nodes++ < maxNodes){
-    let curKey=null,cur=null,min=1e9;
-    for(const [k,v] of open){ if(fScore[k] < min){ min=fScore[k]; cur=v; curKey=k; } }
-    if(!cur) break;
-    if(cur.c===goal.c && cur.r===goal.r){
-      const path=[]; let ck=curKey;
-      while(cameFrom[ck]){ const [cc,rr]=ck.split(',').map(Number); path.push({c:cc,r:rr}); ck=cameFrom[ck]; }
-      path.push(start); path.reverse(); return path;
-    }
-    open.delete(curKey);
-    for(const nb of neighbors(cur.c,cur.r)){
-      const nk = key(nb);
-      const tentative = gScore[curKey] + 1;
-      if(gScore[nk] === undefined || tentative < gScore[nk]){ cameFrom[nk]=curKey; gScore[nk]=tentative; fScore[nk]=tentative+heur(nb,goal); if(!open.has(nk)) open.set(nk,nb); }
-    }
-  }
-  return null;
-}
-
-/* ---------------- HELPERS ---------------- */
-function tileCenter(c,r){ return {x: c*TILE_CUR + TILE_CUR/2, y: r*TILE_CUR + TILE_CUR/2 + 20}; } // +20 top padding
-function pixelToTile(x,y){ return {c: Math.floor(x / TILE_CUR), r: Math.floor((y-20) / TILE_CUR)}; }
-function canMoveTo(x,y){
-  const m = TILE_CUR*0.28;
-  const corners = [{x:x-m,y:y-m},{x:x+m,y:y-m},{x:x-m,y:y+m},{x:x+m,y:y+m}];
-  return corners.every(pt => {
-    const t = pixelToTile(pt.x,pt.y);
-    if(t.r<0||t.r>=ROWS_CUR||t.c<0||t.c>=COLS_CUR) return false;
-    return !isWall(t.c,t.r);
-  });
-}
-
-/* ---------------- GAME LOOP & LOGIC ---------------- */
-let paused = false;
-let lastFrame = performance.now();
-let chaseMode = true;
-let ghostModeTimer = performance.now();
-let frightenedDuration = DIFF.normal.frightened;
-
-function setDifficulty(d){
-  currentDifficulty = d;
-  pac.speed = DIFF[d].pacSpeed;
-  frightenedDuration = DIFF[d].frightened;
-  // update ghost base speed
-  if(ghosts) ghosts.forEach(g=> g.speed = DIFF[d].ghostSpeed);
-}
-function setMap(key){
-  loadMap(key);
-  ghostSpawnTile = {c: Math.floor(COLS_CUR/2), r: Math.floor(ROWS_CUR/3)};
-  resetPositions();
-}
-function newGame(){
-  score = 0; lives = 3; level = 1; scoreEl.textContent = score; livesEl.textContent = lives; levelEl.textContent = level;
-  setDifficulty(currentDifficulty);
-  setMap(currentMapKey);
-}
-
-// Menu actions
-document.querySelectorAll('.menu .btn[data-diff]').forEach(b=>{
-  b.addEventListener('click', ()=>{ setDifficulty(b.dataset.diff); document.querySelectorAll('.menu .btn[data-diff]').forEach(x=>x.style.boxShadow=''); b.style.boxShadow='inset 0 0 18px rgba(255,255,255,0.03)'; });
-});
-document.querySelectorAll('.menu .btn[data-map]').forEach(b=>{
-  b.addEventListener('click', ()=>{ setMap(b.dataset.map); document.querySelectorAll('.menu .btn[data-map]').forEach(x=>x.style.boxShadow=''); b.style.boxShadow='inset 0 0 18px rgba(255,255,255,0.03)'; });
-});
-menuPanel.querySelectorAll('.btn[data-map]')[0].style.boxShadow='inset 0 0 18px rgba(255,255,255,0.03)'; // highlight default
-
-// Start button: tap anywhere on panel to start
-menuPanel.addEventListener('click', (e)=>{
-  menuPanel.style.display='none';
-  // try to enable audio on first user gesture
-  if(audioOn){ try{ ensureAudio(); startAmbient(); }catch(err){} }
-  newGame();
-});
-
-// pause
-pauseBtn.addEventListener('click', ()=>{ paused = !paused; pauseBtn.textContent = paused? 'Resume':'Pause'; });
-
-// menu open
-menuBtn.addEventListener('click', ()=>{ menuPanel.style.display = 'block'; });
-
-// sound toggle
-soundToggle.addEventListener('click', ()=>{ if(audioOn) { audioOn=false; stopAmbient(); } else { audioOn=true; try{ ensureAudio(); startAmbient(); }catch(e){} } soundToggle.textContent = 'Ήχος: ' + (audioOn? 'ON':'OFF'); });
-
-// start ambient initially if enabled after user gesture
-function tryStartAmbient(){ if(audioOn && ambientOn) startAmbient(); }
-
-// Pac dies & respawn
-function pacDies(){
-  lives--; livesEl.textContent = lives;
-  sfxDeath();
-  if(lives <= 0){
-    // game over -> show menu
-    menuPanel.style.display = 'block';
-    // reset pellets and level
-    for(let r=0;r<ROWS_CUR;r++) for(let c=0;c<COLS_CUR;c++) if(MAP[r][c] !== 1) MAP[r][c] = 2;
-    score = 0; scoreEl.textContent = score;
-    level = 1; levelEl.textContent = level;
-    lives = 3; livesEl.textContent = lives;
-  }
-  // reset positions
-  resetPositions();
-  chaseMode = true; ghostModeTimer = performance.now();
-}
-
-// Level up
-function levelUp(){
-  level++; levelEl.textContent = level;
-  // speed up a tiny bit per level
-  pac.speed += 0.08;
-  ghosts.forEach(g=> g.speed += 0.06);
-  // restore pellets for next level (or choose next map)
-  for(let r=0;r<ROWS_CUR;r++) for(let c=0;c<COLS_CUR;c++) if(MAP[r][c] === 0) MAP[r][c] = 2;
-  // small fanfare
-  sfxBeep(1200,0.08,'triangle',0.09);
-}
-
-// Update function
-function update(dt){
-  if(paused) return;
-  const now = performance.now();
-  // toggle chase/scatter
-  if(now - ghostModeTimer > (chaseMode ? 20000 : 6000)){ chaseMode = !chaseMode; ghostModeTimer = now; ghosts.forEach(g=> { if(g.state !== 'frightened' && g.state !== 'eaten') g.state = chaseMode ? 'chase' : 'scatter'; }); }
-
-  // movement input already set by joystick -> pac.nextDir
-  if((pac.nextDir.x !== pac.dir.x || pac.nextDir.y !== pac.dir.y) && (pac.nextDir.x !==0 || pac.nextDir.y !==0)){
-    const nx = pac.x + pac.nextDir.x * pac.speed;
-    const ny = pac.y + pac.nextDir.y * pac.speed;
-    if(canMoveTo(nx, ny)) pac.dir = pac.nextDir;
-  }
-  // move pac
-  let nx = pac.x + pac.dir.x * pac.speed;
-  let ny = pac.y + pac.dir.y * pac.speed;
-  // horizontal wrap (tunnels)
-  if(nx < -TILE_CUR) nx = WIDTH + TILE_CUR;
-  if(nx > WIDTH + TILE_CUR) nx = -TILE_CUR;
-  if(canMoveTo(nx, ny)){ pac.x = nx; pac.y = ny; } else { pac.dir = {x:0,y:0}; }
-  // pellet check
-  const t = pixelToTile(pac.x, pac.y);
-  if(t.r>=0 && t.r < ROWS_CUR && t.c>=0 && t.c < COLS_CUR){
-    if(MAP[t.r][t.c] === 2){ MAP[t.r][t.c] = 0; score += 10; scoreEl.textContent = score; sfxEat(); }
-    else if(MAP[t.r][t.c] === 3){ MAP[t.r][t.c] = 0; score += 50; scoreEl.textContent = score; pac.powered = true; pac.powerUntil = now + frightenedDuration; sfxPower();
-      ghosts.forEach(g => { if(g.state !== 'eaten'){ g.state = 'frightened'; g.frightenedUntil = now + frightenedDuration; } });
-    }
-  }
-  // power timeout
-  if(pac.powered && now > pac.powerUntil){ pac.powered = false; ghosts.forEach(g => { if(g.state === 'frightened') g.state = chaseMode ? 'chase' : 'scatter'; }); }
-
-  // update ghosts
-  ghosts.forEach(ghost => {
-    // frightened timeout
-    if(ghost.state === 'frightened' && now > ghost.frightenedUntil) ghost.state = chaseMode ? 'chase' : 'scatter';
-    if(ghost.state === 'eaten'){
-      // return to spawn
-      const target = tileCenter(ghostSpawnTile.c, ghostSpawnTile.r);
-      const dx = target.x - ghost.x, dy = target.y - ghost.y; const dist = Math.hypot(dx,dy);
-      if(dist < 4){ ghost.state = chaseMode ? 'chase' : 'scatter'; ghost.path = null; }
-      else { ghost.x += (dx/dist) * (ghost.speed*1.4); ghost.y += (dy/dist) * (ghost.speed*1.4); }
-      return;
-    }
-    // compute target tile depending on behavior
-    let targetTile = null;
-    if(ghost.state === 'scatter'){
-      // corners
-      const corners = [{c:COLS_CUR-2,r:1},{c:1,r:1},{c:COLS_CUR-2,r:ROWS_CUR-2},{c:1,r:ROWS_CUR-2}];
-      const corner = corners[ghost.id % corners.length];
-      targetTile = corner;
-    } else if(ghost.state === 'frightened'){
-      // random roam
-      if(!ghost._randTarget || Math.random() < 0.02) ghost._randTarget = {c: Math.floor(Math.random()*COLS_CUR), r: Math.floor(Math.random()*ROWS_CUR)};
-      targetTile = ghost._randTarget;
-    } else { // chase
-      const pacT = pixelToTile(pac.x,pac.y);
-      if(ghost.name === 'Blinky') targetTile = pacT;
-      else if(ghost.name === 'Pinky'){ targetTile = clampTile({c: pacT.c + pac.dir.x*4, r: pacT.r + pac.dir.y*4}); }
-      else if(ghost.name === 'Inky'){
-        const bl = ghosts.find(g=>g.name==='Blinky');
-        const twoAhead = {c: pacT.c + pac.dir.x*2, r: pacT.r + pac.dir.y*2};
-        const blT = pixelToTile(bl.x, bl.y);
-        targetTile = clampTile({c: twoAhead.c + (twoAhead.c - blT.c), r: twoAhead.r + (twoAhead.r - blT.r)});
-      } else if(ghost.name === 'Clyde'){
-        const gT = pixelToTile(ghost.x, ghost.y);
-        const dist = Math.hypot(pacT.c - gT.c, pacT.r - gT.r);
-        if(dist > 8) targetTile = pacT; else targetTile = {c:1, r:ROWS_CUR-2};
-      } else targetTile = pacT;
-    }
-    // compute path occasionally
-    if(!ghost.path || Math.random() < 0.03){
-      const start = pixelToTile(ghost.x, ghost.y);
-      const path = astar(start, targetTile, 600);
-      ghost.path = path; ghost.pathIndex = 0;
-    }
-    // follow path
-    if(ghost.path && ghost.pathIndex < ghost.path.length){
-      const tile = ghost.path[ghost.pathIndex];
-      const center = tileCenter(tile.c, tile.r);
-      const dx = center.x - ghost.x, dy = center.y - ghost.y; const dist = Math.hypot(dx,dy);
-      if(dist < 2) ghost.pathIndex++;
-      else { ghost.x += (dx/dist) * ghost.speed; ghost.y += (dy/dist) * ghost.speed; ghost.dir = {x: Math.sign(dx), y: Math.sign(dy)}; }
-    } else {
-      // fallback chase vector
-      const pacPos = tileCenter(targetTile.c, targetTile.r);
-      const dx = pacPos.x - ghost.x, dy = pacPos.y - ghost.y; const dist = Math.hypot(dx,dy);
-      if(dist > 1) { ghost.x += (dx/dist) * ghost.speed; ghost.y += (dy/dist) * ghost.speed; }
-    }
-    // collision with pac
-    const d = Math.hypot(ghost.x - pac.x, ghost.y - pac.y);
-    if(d < TILE_CUR*0.7){
-      if(ghost.state === 'frightened'){
-        // eat ghost
-        score += 200; scoreEl.textContent = score; ghost.state = 'eaten'; ghost.path = null; sfxEat();
-      } else if(ghost.state !== 'eaten'){
-        pacDies();
-      }
-    }
-  });
-
-  // check level cleared
-  if(!MAP.some(row => row.some(cell => cell === 2 || cell === 3))){
-    levelUp();
-  }
-}
-
-/* ---------------- RENDER ---------------- */
-function draw(){
-  // clear
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  // ambient vignette
-  const vg = ctx.createRadialGradient(canvas.width*0.5, canvas.height*0.3, 10, canvas.width*0.5, canvas.height*0.3, canvas.width);
-  vg.addColorStop(0, 'rgba(255,255,255,0.02)');
-  vg.addColorStop(1, 'rgba(0,0,0,0.5)');
-  ctx.fillStyle = vg; ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  // subtle fog (animated)
-  const fogAlpha = 0.02 + 0.01*Math.sin(performance.now()/2000);
-  ctx.globalAlpha = fogAlpha; ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.globalAlpha = 1;
-
-  // draw map (offset top 20)
-  ctx.save(); ctx.translate(0,20);
-  // floor
-  ctx.fillStyle = 'rgba(255,255,255,0.01)'; ctx.fillRect(0,0,canvas.width, ROWS_CUR*TILE_CUR);
-  for(let r=0;r<ROWS_CUR;r++){
-    for(let c=0;c<COLS_CUR;c++){
-      const val = MAP[r][c];
-      if(val === 1){
-        const x = c*TILE_CUR + 2, y = r*TILE_CUR + 2, w = TILE_CUR - 4, h = TILE_CUR - 4;
-        const g = ctx.createLinearGradient(x,y,x+w,y+h); g.addColorStop(0,getVar('--wall')); g.addColorStop(1,getVar('--wall-edge'));
-        ctx.fillStyle = g; roundRect(ctx,x,y,w,h,6,true,false);
-      } else if(val === 2){
-        const pos = tileCenter(c,r); const g = ctx.createRadialGradient(pos.x,pos.y+1,1,pos.x,pos.y-1,6);
-        g.addColorStop(0,'#fff'); g.addColorStop(1,getVar('--pellet')); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(pos.x,pos.y, Math.max(2, TILE_CUR*0.12),0,Math.PI*2); ctx.fill();
-      } else if(val === 3){
-        const pos = tileCenter(c,r);
-        const g = ctx.createRadialGradient(pos.x,pos.y,1,pos.x,pos.y,14); g.addColorStop(0,'#fff'); g.addColorStop(1,getVar('--energ'));
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(pos.x,pos.y, Math.max(5, TILE_CUR*0.35),0,Math.PI*2); ctx.fill();
-        ctx.globalAlpha = 0.12; ctx.fillStyle = "#a6d8ff"; ctx.beginPath(); ctx.arc(pos.x,pos.y, Math.max(12, TILE_CUR*0.8),0,Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
-      }
-    }
-  }
-  ctx.restore();
-
-  // draw pacman (with slight scary shading)
-  ctx.save(); ctx.translate(0,20);
-  const p = pac; const pr = Math.max(6, TILE_CUR*0.45);
-  const pg = ctx.createRadialGradient(p.x-6,p.y-6,4,p.x,p.y,pr+6); pg.addColorStop(0,'#fff8c0'); pg.addColorStop(0.5,getVar('--accent'));
-  ctx.fillStyle = pg;
-  let angle = 0;
-  if(p.dir.x === 1) angle = 0; else if(p.dir.x === -1) angle = Math.PI; else if(p.dir.y === 1) angle = Math.PI/2; else if(p.dir.y === -1) angle = -Math.PI/2;
-  const mouth = 0.12 + 0.6 * Math.abs(Math.sin(performance.now()/120));
-  ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.arc(p.x,p.y,pr, angle + mouth*Math.PI, angle - mouth*Math.PI, false); ctx.closePath(); ctx.fill();
-  // eye dark
-  ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(p.x + (p.dir.x?Math.sign(p.dir.x)*pr*0.25:0), p.y - 6, Math.max(2, pr*0.12), 0, Math.PI*2); ctx.fill();
-  ctx.restore();
-
-  // draw ghosts (glowy + eerie)
-  ghosts.forEach(g=>{
-    ctx.save(); ctx.translate(0,20);
-    const x = g.x, y = g.y, r = Math.max(6, TILE_CUR*0.45);
-    // color
-    const base = getVar(g.colorVar) || '#ff4d6d';
-    if(g.state === 'frightened'){
-      const fg = ctx.createLinearGradient(x-r,y-r,x+r,y+r); fg.addColorStop(0,'#bbbbff'); fg.addColorStop(1,'#7586ff'); ctx.fillStyle = fg;
-    } else {
-      const fg = ctx.createLinearGradient(x-r,y-r,x+r,y+r); fg.addColorStop(0,'#ffffff22'); fg.addColorStop(0.4,base); fg.addColorStop(1,'#00000022'); ctx.fillStyle = fg;
-    }
-    // head
-    ctx.beginPath(); ctx.moveTo(x-r,y); ctx.arc(x,y-r,r,Math.PI,0,false);
-    // scallops
-    const scallops = 5; const step = (r*2)/scallops;
-    for(let i=0;i<=scallops;i++){ const sx = x-r + i*step; ctx.lineTo(sx, y + r*0.35 + Math.sin(performance.now()/200 + i)*2); }
-    ctx.closePath(); ctx.fill();
-    // glow
-    if(g.state !== 'frightened'){
-      ctx.globalAlpha = 0.08; ctx.fillStyle = base; ctx.beginPath(); ctx.arc(x,y,r*1.8,0,Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
-    } else {
-      ctx.globalAlpha = 0.12; ctx.fillStyle = '#7fb0ff'; ctx.beginPath(); ctx.arc(x,y,r*1.8,0,Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
-    }
-    // eyes
-    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(x - r*0.35, y - r*0.15, r*0.22, r*0.28, 0, 0, Math.PI*2); ctx.ellipse(x + r*0.18, y - r*0.15, r*0.22, r*0.28, 0, 0, Math.PI*2); ctx.fill();
-    const dx = Math.sign(p.x - x) * 2.2; const dy = Math.sign(p.y - y) * 1.2;
-    ctx.fillStyle = g.state === 'frightened' ? '#000' : '#06233a';
-    ctx.beginPath(); ctx.arc(x - r*0.35 + dx, y - r*0.15 + dy, r*0.08, 0, Math.PI*2); ctx.arc(x + r*0.18 + dx, y - r*0.15 + dy, r*0.08, 0, Math.PI*2); ctx.fill();
+// Placeholder 3D effect Pac-Man
+function drawPacman(x,y,r){
+    ctx.save();
+    let gradient=ctx.createRadialGradient(x,y,r*0.2,x,y,r);
+    gradient.addColorStop(0,'#ffd400');
+    gradient.addColorStop(1,'#ffaa00');
+    ctx.fillStyle=gradient;
+    ctx.beginPath();
+    ctx.arc(x,y,r,0.25*Math.PI,1.75*Math.PI);
+    ctx.lineTo(x,y);
+    ctx.closePath();
+    ctx.fill();
     ctx.restore();
-  });
-
-  // HUD overlay: scary subtle text
-  ctx.save();
-  ctx.fillStyle = 'rgba(255,255,255,0.02)'; ctx.fillRect(6,6,200,26);
-  ctx.font = '12px system-ui'; ctx.fillStyle = '#f8f5e6'; ctx.textAlign = 'left';
-  ctx.fillText('Level: ' + level + '   Difficulty: ' + currentDifficulty.toUpperCase(), 12, 24);
-  ctx.restore();
 }
 
-/* ---------------- JOYSTICK (drag) ----------------
-   Two separate areas (left & right) control the same direction.
-   When user touches and drags, the knob follows finger inside the visual.
-   The stick position determines desired direction vector (normalized to 1 step).
-*/
-const leftArea = document.getElementById('leftStickArea');
-const rightArea = document.getElementById('rightStickArea');
-const leftKnob = document.getElementById('leftKnob');
-const rightKnob = document.getElementById('rightKnob');
-const leftVisual = document.getElementById('leftStick');
-const rightVisual = document.getElementById('rightStick');
-
-function setupJoystick(area, visual, knob){
-  let active = false, id = null;
-  let rect = null, cx=0, cy=0, maxR = 50;
-  function start(t){
-    active = true; id = t.identifier; rect = visual.getBoundingClientRect(); cx = rect.left + rect.width/2; cy = rect.top + rect.height/2;
-    maxR = Math.min(rect.width, rect.height)/2 - 10;
-    move(t.clientX, t.clientY);
-    // unpause on first touch
-    if(paused){ paused=false; pauseBtn.textContent='Pause'; }
-    // allow audio after gesture
-    tryStartAmbient();
-  }
-  function move(x,y){
-    if(!active) return;
-    const dx = x - cx, dy = y - cy;
-    const dist = Math.hypot(dx,dy);
-    const limited = dist > maxR ? (maxR/dist) : 1;
-    const sx = dx * limited, sy = dy * limited;
-    knob.style.transform = `translate(${sx}px, ${sy}px)`;
-    // map to direction (use angle)
-    const ang = Math.atan2(sy, sx);
-    const mag = Math.min(1, dist / maxR);
-    // deadzone small
-    if(mag < 0.15){ pac.nextDir = {x:0,y:0}; return; }
-    const nx = Math.round(Math.cos(ang)); const ny = Math.round(Math.sin(ang));
-    // prefer 4-directional movement: choose largest axis
-    const absx = Math.abs(Math.cos(ang)), absy = Math.abs(Math.sin(ang));
-    if(absx > absy) pac.nextDir = {x: Math.sign(Math.cos(ang)), y:0};
-    else pac.nextDir = {x:0, y: Math.sign(Math.sin(ang))};
-  }
-  function end(t){
-    if(!active) return;
-    if(t && t.identifier !== id) return;
-    active=false; id=null; knob.style.transform='translate(-50%,-50%)'; pac.nextDir = {x:0,y:0};
-  }
-  // touch events
-  area.addEventListener('touchstart', e=>{
-    for(const t of e.changedTouches) { start(t); break; }
-  });
-  area.addEventListener('touchmove', e=>{
-    for(const t of e.changedTouches) { if(id===null || t.identifier===id){ move(t.clientX, t.clientY); e.preventDefault(); } }
-  }, {passive:false});
-  area.addEventListener('touchend', e=>{ for(const t of e.changedTouches) end(t); });
-  area.addEventListener('touchcancel', e=>{ for(const t of e.changedTouches) end(t); });
-  // mouse fallback for desktop testing
-  let mouseDown = false;
-  area.addEventListener('mousedown', e=>{ mouseDown=true; start({identifier:'mouse', clientX:e.clientX, clientY:e.clientY}); });
-  window.addEventListener('mousemove', e=>{ if(mouseDown) move(e.clientX, e.clientY); });
-  window.addEventListener('mouseup', e=>{ if(mouseDown){ mouseDown=false; end({identifier:'mouse'}); } });
+let pacX=canvas.width/2, pacY=canvas.height/2, radius=30;
+function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    drawPacman(pacX,pacY,radius);
+    requestAnimationFrame(loop);
 }
-setupJoystick(leftArea, leftVisual, leftKnob);
-setupJoystick(rightArea, rightVisual, rightKnob);
+loop();
 
-/* ---------------- UTIL & INIT ---------------- */
-function getVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name) || '#fff'; }
-function roundRect(ctx,x,y,w,h,r,fill,stroke){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); if(fill) ctx.fill(); if(stroke) ctx.stroke(); }
-function clampTile(t){ return {c: Math.max(0, Math.min(COLS_CUR-1, Math.floor(t.c))), r: Math.max(0, Math.min(ROWS_CUR-1, Math.floor(t.r))) }; }
+// Basic joystick functionality
+const joystick=document.getElementById('joystick');
+const knob=document.getElementById('knob');
+let dragging=false, startX=0, startY=0;
+let dirX=0, dirY=0;
 
-// resize handling - keep canvas moderate for device
-function onResize(){
-  // recalc TILE_CUR if map loaded
-  if(MAPS[currentMapKey]) loadMap(currentMapKey);
+joystick.addEventListener('pointerdown',e=>{
+    dragging=true;
+    startX=e.clientX;
+    startY=e.clientY;
+});
+window.addEventListener('pointerup',e=>{
+    dragging=false;
+    knob.style.transform='translate(0px,0px)';
+    dirX=0; dirY=0;
+});
+window.addEventListener('pointermove',e=>{
+    if(!dragging) return;
+    let dx=e.clientX-startX;
+    let dy=e.clientY-startY;
+    let maxDist=40;
+    let distance=Math.min(Math.sqrt(dx*dx+dy*dy),maxDist);
+    let angle=Math.atan2(dy,dx);
+    let nx=Math.cos(angle)*distance;
+    let ny=Math.sin(angle)*distance;
+    knob.style.transform=`translate(${nx}px,${ny}px)`;
+    dirX=dx/maxDist; dirY=dy/maxDist;
+});
+
+// Move Pac-Man based on joystick
+function movePacman(){
+    pacX+=dirX*2;
+    pacY+=dirY*2;
+    pacX=Math.max(radius,Math.min(canvas.width-radius,pacX));
+    pacY=Math.max(radius,Math.min(canvas.height-radius,pacY));
+    requestAnimationFrame(movePacman);
 }
-window.addEventListener('resize', onResize);
-
-/* ---------------- MAIN LOOP ---------------- */
-function mainLoop(now){
-  const dt = now - lastFrame; lastFrame = now;
-  update(dt);
-  draw();
-  requestAnimationFrame(mainLoop);
-}
-
-// initialize default menu selections
-document.querySelector('.menu .btn[data-diff="normal"]').style.boxShadow='inset 0 0 18px rgba(255,255,255,0.03)';
-
-// initial load
-loadMap('m1');
-setDifficulty('normal');
-// ensure joystick visuals centered
-leftKnob.style.transform='translate(-50%,-50%)';
-rightKnob.style.transform='translate(-50%,-50%)';
-
-// Kick off loop after initial user start (menu click)
-requestAnimationFrame(mainLoop);
-
+movePacman();
 </script>
 </body>
 </html>
