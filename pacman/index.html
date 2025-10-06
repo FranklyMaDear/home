@@ -1,1154 +1,220 @@
 <!DOCTYPE html>
-<html lang="el">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pac-Man Mobile</title>
+    <title>Pac-Man Starter Kit</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            touch-action: manipulation;
-        }
-        
         body {
-            font-family: 'Arial', sans-serif;
-            background: #000;
-            color: #fff;
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
             display: flex;
-            position: fixed;
-        }
-        
-        #game-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            background: #000;
-            overflow: hidden;
-        }
-        
-        #game-canvas {
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
             background-color: #000;
-            width: 100%;
-            height: 100%;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        #grid {
+            display: inline-grid;
+            grid-gap: 0;
+            border: 5px solid darkblue;
+            background-color: black;
+        }
+
+        .cell {
+            width: 30px; /* Μέγεθος κάθε κελιού */
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .wall {
+            background-color: #0000FF; /* Μπλε για τους τοίχους */
+            border: 1px solid #0000FF;
+        }
+
+        .empty {
+            /* Κενό κελί */
+        }
+        
+        .dot {
+            background-color: black;
+        }
+
+        .dot::after {
+            content: '';
             display: block;
-        }
-        
-        #game-ui {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
-            z-index: 5;
-        }
-        
-        #score, #level {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #ff0;
-            text-shadow: 0 0 8px #ff0;
-            font-family: 'Courier New', monospace;
-        }
-        
-        #lives {
-            display: flex;
-            gap: 6px;
-        }
-        
-        .life {
-            width: 20px;
-            height: 20px;
-            background-color: #ff0;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 70%, 0 100%);
-            box-shadow: 0 0 6px #ff0;
+            background-color: #FFB847; /* Χρυσό για τους πόντους */
+        }
+
+        .pacman {
+            background-color: black;
+        }
+
+        .pacman::after {
+            content: '⬤'; /* Σύμβολο για τον Pac-Man (ή μπορείς να χρησιμοποιήσεις εικόνα) */
+            font-size: 28px;
+            color: #FFFF00; /* Κίτρινο */
+            line-height: 1;
+            /* Για να φαίνεται σαν να ανοίγει το στόμα, μπορεί να χρειαστεί animation/rotation */
         }
         
-        #touch-controls {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 120px;
-            height: 120px;
-            background: rgba(30, 30, 30, 0.6);
-            border-radius: 60px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 5px;
-            padding: 10px;
-            z-index: 5;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
+        #score {
+            margin: 20px;
+            font-size: 1.5em;
         }
         
-        .touch-btn {
-            background: rgba(60, 60, 60, 0.7);
-            color: rgba(255, 255, 255, 0.8);
-            border: none;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.1s ease;
-        }
-        
-        .touch-btn:active {
-            background: rgba(255, 255, 0, 0.4);
-            transform: scale(0.9);
-        }
-        
-        #up-btn {
-            grid-column: 2;
-            grid-row: 1;
-        }
-        
-        #left-btn {
-            grid-column: 1;
-            grid-row: 2;
-        }
-        
-        #down-btn {
-            grid-column: 2;
-            grid-row: 3;
-        }
-        
-        #right-btn {
-            grid-column: 3;
-            grid-row: 2;
-        }
-        
-        #menu {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-        
-        #menu h1 {
-            color: #ff0;
-            font-size: 2.8rem;
-            margin-bottom: 25px;
-            text-shadow: 0 0 15px #ff0;
-            font-family: 'Arial Black', sans-serif;
-            letter-spacing: 2px;
-            text-align: center;
-        }
-        
-        #menu button {
-            background: linear-gradient(to bottom, #ff0 0%, #ff9900 100%);
-            color: #000;
-            border: none;
-            padding: 14px 28px;
-            margin: 12px;
-            font-size: 1.3rem;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 0 15px #ff0;
-            transition: all 0.2s ease;
-            font-family: 'Arial', sans-serif;
-            width: 220px;
-        }
-        
-        #menu button:active {
-            transform: scale(0.98);
-        }
-        
-        #level-select {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 25px 0;
-        }
-        
-        .level-btn {
-            background: rgba(40, 40, 40, 0.8);
-            color: #fff;
-            border: 1px solid #555;
-            padding: 12px 20px;
-            margin: 6px;
-            font-size: 1.1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 220px;
-            transition: all 0.2s ease;
-            font-family: 'Arial', sans-serif;
-        }
-        
-        .level-btn.active {
-            background: linear-gradient(to right, #ff0 0%, #ff9900 100%);
-            color: #000;
-            box-shadow: 0 0 10px #ff0;
-            border: 1px solid #ff0;
-        }
-        
-        #game-over {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-        
-        #game-over h2 {
-            color: #ff0;
-            font-size: 2.5rem;
-            margin-bottom: 25px;
-            text-shadow: 0 0 15px #ff0;
-            font-family: 'Arial Black', sans-serif;
-            text-align: center;
-        }
-        
-        #final-score {
-            color: #fff;
-            font-size: 2rem;
-            margin-bottom: 25px;
-            text-shadow: 0 0 8px #fff;
-            font-family: 'Courier New', monospace;
-        }
-        
-        #sound-toggle {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(40, 40, 40, 0.8);
-            color: #ff0;
-            border: 1px solid #555;
-            padding: 10px 12px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.3rem;
-            z-index: 10;
-            box-shadow: 0 0 8px rgba(255, 255, 0, 0.3);
-        }
-        
-        .game-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: #ff0;
-            padding: 15px 25px;
-            border-radius: 10px;
-            font-size: 1.5rem;
-            text-align: center;
-            z-index: 20;
-            display: none;
-            border: 2px solid #ff0;
-            box-shadow: 0 0 20px #ff0;
-        }
-        
-        @media (max-height: 700px) {
-            #menu h1 {
-                font-size: 2.2rem;
-            }
-            
-            #menu button {
-                padding: 12px 24px;
-                font-size: 1.1rem;
-                width: 200px;
-            }
-            
-            .level-btn {
-                width: 200px;
-                padding: 10px 18px;
-                font-size: 1rem;
-            }
-            
-            #touch-controls {
-                width: 110px;
-                height: 110px;
-            }
-        }
-        
-        @media (max-width: 350px) {
-            #touch-controls {
-                width: 100px;
-                height: 100px;
-                bottom: 15px;
-                right: 15px;
-            }
-            
-            .touch-btn {
-                font-size: 1rem;
-            }
-        }
     </style>
 </head>
 <body>
-    <div id="game-container">
-        <canvas id="game-canvas"></canvas>
-        <div id="game-ui">
-            <div id="score">Βαθμολογία: 0</div>
-            <div id="lives">
-                <div class="life"></div>
-                <div class="life"></div>
-                <div class="life"></div>
-            </div>
-            <div id="level">Πίστα: 1</div>
-        </div>
-        
-        <div id="touch-controls">
-            <div id="up-btn" class="touch-btn">↑</div>
-            <div id="left-btn" class="touch-btn">←</div>
-            <div id="down-btn" class="touch-btn">↓</div>
-            <div id="right-btn" class="touch-btn">→</div>
-        </div>
-        
-        <div id="menu">
-            <h1>PAC-MAN</h1>
-            <div id="level-select">
-                <button class="level-btn active" data-level="1">Πίστα 1: Αρχική</button>
-                <button class="level-btn" data-level="2">Πίστα 2: Λαβύρινθος</button>
-                <button class="level-btn" data-level="3">Πίστα 3: Προχωρημένη</button>
-            </div>
-            <button id="start-btn">Έναρξη Παιχνιδιού</button>
-            <button id="sound-toggle">🔊</button>
-        </div>
-        
-        <div id="game-over">
-            <h2>Τέλος Παιχνιδιού</h2>
-            <div id="final-score">Βαθμολογία: 0</div>
-            <button id="restart-btn">Παίξτε Ξανά</button>
-        </div>
-        
-        <div id="level-up" class="game-message">Νέα Πίστα!</div>
-    </div>
+
+    <div id="score">Score: <span id="scoreValue">0</span></div>
+    <div id="grid"></div>
+    <p>Χρησιμοποίησε τα βελάκια (↑↓←→) για να κινηθείς!</p>
 
     <script>
-        // Στοιχεία DOM
-        const canvas = document.getElementById('game-canvas');
-        const ctx = canvas.getContext('2d');
-        const scoreElement = document.getElementById('score');
-        const levelElement = document.getElementById('level');
-        const livesElement = document.getElementById('lives');
-        const menu = document.getElementById('menu');
-        const gameOverScreen = document.getElementById('game-over');
-        const startBtn = document.getElementById('start-btn');
-        const restartBtn = document.getElementById('restart-btn');
-        const finalScoreElement = document.getElementById('final-score');
-        const soundToggle = document.getElementById('sound-toggle');
-        const levelBtns = document.querySelectorAll('.level-btn');
-        const levelUpMessage = document.getElementById('level-up');
-        
-        // Στοιχεία ελέγχου αφής
-        const upBtn = document.getElementById('up-btn');
-        const leftBtn = document.getElementById('left-btn');
-        const downBtn = document.getElementById('down-btn');
-        const rightBtn = document.getElementById('right-btn');
-        
-        // Ρυθμίσεις παιχνιδιού
-        let score = 0;
-        let lives = 3;
-        let currentLevel = 1;
-        let gameRunning = false;
-        let soundEnabled = true;
-        let frightenedMode = false;
-        let frightenedTimer = 0;
-        
-        // Ρυθμίσεις canvas
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-        
-        // Ορισμός πλακιδίων
-        const tileSize = Math.min(canvas.width, canvas.height) / 21;
-        const rows = 19;
-        const cols = 19;
-        
-        // Ορισμός πιστών
-        const levels = {
-            1: [
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
-                [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,0,1],
-                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-                [1,0,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,0,1],
-                [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1],
-                [1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,1],
-                [1,1,1,1,0,1,0,0,0,0,0,0,0,1,0,1,1,1,1],
-                [1,1,1,1,0,1,0,1,1,0,1,1,0,1,0,1,1,1,1],
-                [0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0],
-                [1,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,1],
-                [1,1,1,1,0,1,0,0,0,0,0,0,0,1,0,1,1,1,1],
-                [1,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,1],
-                [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
-                [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,0,1],
-                [1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1],
-                [1,1,0,1,0,1,0,1,1,1,1,1,0,1,0,1,0,1,1],
-                [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1],
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-            ],
-            2: [
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-                [1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1],
-                [1,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,1],
-                [1,0,1,0,1,1,1,0,1,0,1,0,1,1,1,0,1,0,1],
-                [1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1],
-                [1,0,1,0,1,0,1,1,1,0,1,1,1,0,1,0,1,0,1],
-                [1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,1],
-                [1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1],
-                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-                [1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1],
-                [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
-                [1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1],
-                [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
-                [1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1],
-                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-                [1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1],
-                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-            ],
-            3: [
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-                [1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1],
-                [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
-                [1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1],
-                [1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,1],
-                [1,0,1,0,1,0,1,1,1,1,1,1,1,0,1,0,1,0,1],
-                [1,0,1,0,1,0,1,0,0,0,0,0,1,0,1,0,1,0,1],
-                [1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1],
-                [1,0,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0,1],
-                [1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1],
-                [1,0,1,0,1,0,1,0,0,0,0,0,1,0,1,0,1,0,1],
-                [1,0,1,0,1,0,1,1,1,1,1,1,1,0,1,0,1,0,1],
-                [1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,1],
-                [1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1],
-                [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
-                [1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1],
-                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-            ]
-        };
-        
-        // Δημιουργία ήχων με Web Audio API
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
-        function playSound(frequency, duration, type = 'sine', volume = 0.1) {
-            if (!soundEnabled) return;
-            
-            try {
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.type = type;
-                oscillator.frequency.value = frequency;
-                
-                gainNode.gain.value = volume;
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + duration);
-            } catch(e) {
-                console.log("Αποτυχία αναπαραγωγής ήχου");
-            }
-        }
-        
-        // Ορισμός Pac-Man
-        let pacman = {
-            x: 1,
-            y: 1,
-            direction: 'right',
-            nextDirection: 'right',
-            mouthOpen: true,
-            mouthAngle: 0.25,
-            speed: 0.1
-        };
-        
-        // Ορισμός φαντασμάτων
-        let ghosts = [
-            { 
-                x: 9, y: 7, color: '#ff0000', direction: 'left', 
-                speed: 0.06, mode: 'chase', targetX: 1, targetY: 1,
-                name: 'BLINKY'
-            },
-            { 
-                x: 9, y: 9, color: '#ff00ff', direction: 'up', 
-                speed: 0.06, mode: 'chase', targetX: 17, targetY: 1,
-                name: 'PINKY'
-            },
-            { 
-                x: 7, y: 9, color: '#00ffff', direction: 'right', 
-                speed: 0.06, mode: 'chase', targetX: 1, targetY: 17,
-                name: 'INKY'
-            },
-            { 
-                x: 11, y: 9, color: '#ffa500', direction: 'down', 
-                speed: 0.06, mode: 'chase', targetX: 17, targetY: 17,
-                name: 'CLYDE'
-            }
+        // Ορισμός του χάρτη (1=Τοίχος, 0=Κενό, 2=Πόντος)
+        const layout = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1],
+            [1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 2, 2, 1],
+            [1, 2, 1, 2, 2, 1, 2, 2, 2, 1, 2, 2, 1, 2, 2, 1],
+            [1, 2, 1, 2, 2, 1, 1, 1, 1, 1, 2, 2, 1, 2, 2, 1],
+            [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ];
-        
-        // Ορισμός dots
-        let dots = [];
-        let powerPellets = [];
-        
-        // Αρχικοποίηση dots
-        function initDots() {
-            dots = [];
-            powerPellets = [];
-            const map = levels[currentLevel];
-            
-            for (let y = 0; y < map.length; y++) {
-                for (let x = 0; x < map[y].length; x++) {
-                    if (map[y][x] === 0) {
-                        // Power pellets στις γωνίες
-                        if ((x === 1 && y === 1) || (x === 17 && y === 1) || 
-                            (x === 1 && y === 17) || (x === 17 && y === 17)) {
-                            powerPellets.push({ x, y });
-                        } else {
-                            dots.push({ x, y });
-                        }
-                    }
-                }
-            }
-        }
-        
-        // Σχεδίαση χάρτη
-        function drawMap() {
-            const map = levels[currentLevel];
-            const offsetX = (canvas.width - cols * tileSize) / 2;
-            const offsetY = (canvas.height - rows * tileSize) / 2;
-            
-            // Φόντο
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Σχεδίαση τοίχων
-            for (let y = 0; y < map.length; y++) {
-                for (let x = 0; x < map[y].length; x++) {
-                    if (map[y][x] === 1) {
-                        // Βασικός τοίχος
-                        ctx.fillStyle = '#0000cc';
-                        ctx.fillRect(
-                            offsetX + x * tileSize, 
-                            offsetY + y * tileSize, 
-                            tileSize, 
-                            tileSize
-                        );
-                        
-                        // Σκιά
-                        ctx.fillStyle = 'rgba(0, 0, 80, 0.6)';
-                        ctx.fillRect(
-                            offsetX + x * tileSize, 
-                            offsetY + y * tileSize, 
-                            tileSize, 
-                            tileSize / 4
-                        );
-                    }
-                }
-            }
-        }
-        
-        // Σχεδίαση dots
-        function drawDots() {
-            const offsetX = (canvas.width - cols * tileSize) / 2;
-            const offsetY = (canvas.height - rows * tileSize) / 2;
-            
-            // Κανονικά dots
-            ctx.fillStyle = '#fff';
-            for (let dot of dots) {
-                ctx.beginPath();
-                ctx.arc(
-                    offsetX + dot.x * tileSize + tileSize / 2,
-                    offsetY + dot.y * tileSize + tileSize / 2,
-                    tileSize / 7,
-                    0,
-                    Math.PI * 2
-                );
-                ctx.fill();
-            }
-            
-            // Power pellets
-            ctx.fillStyle = '#ff0';
-            for (let pellet of powerPellets) {
-                ctx.beginPath();
-                ctx.arc(
-                    offsetX + pellet.x * tileSize + tileSize / 2,
-                    offsetY + pellet.y * tileSize + tileSize / 2,
-                    tileSize / 4,
-                    0,
-                    Math.PI * 2
-                );
-                ctx.fill();
-                
-                // Αναβοσβήνουσα animaton
-                if (Math.floor(Date.now() / 250) % 2 === 0) {
-                    ctx.fillStyle = '#fff';
-                    ctx.beginPath();
-                    ctx.arc(
-                        offsetX + pellet.x * tileSize + tileSize / 2,
-                        offsetY + pellet.y * tileSize + tileSize / 2,
-                        tileSize / 6,
-                        0,
-                        Math.PI * 2
-                    );
-                    ctx.fill();
-                }
-                ctx.fillStyle = '#ff0';
-            }
-        }
-        
-        // Σχεδίαση Pac-Man
-        function drawPacman() {
-            const offsetX = (canvas.width - cols * tileSize) / 2;
-            const offsetY = (canvas.height - rows * tileSize) / 2;
-            
-            ctx.save();
-            ctx.translate(
-                offsetX + pacman.x * tileSize + tileSize / 2,
-                offsetY + pacman.y * tileSize + tileSize / 2
-            );
-            
-            // Περιστροφή ανάλογα με την κατεύθυνση
-            switch (pacman.direction) {
-                case 'right':
-                    ctx.rotate(0);
-                    break;
-                case 'down':
-                    ctx.rotate(Math.PI / 2);
-                    break;
-                case 'left':
-                    ctx.rotate(Math.PI);
-                    break;
-                case 'up':
-                    ctx.rotate(-Math.PI / 2);
-                    break;
-            }
-            
-            // Σώμα Pac-Man
-            ctx.fillStyle = '#ff0';
-            ctx.beginPath();
-            
-            if (pacman.mouthOpen) {
-                ctx.arc(0, 0, tileSize / 2, pacman.mouthAngle, Math.PI * 2 - pacman.mouthAngle);
-            } else {
-                ctx.arc(0, 0, tileSize / 2, 0, Math.PI * 2);
-            }
-            
-            ctx.lineTo(0, 0);
-            ctx.fill();
-            
-            // Μάτι
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(tileSize / 6, -tileSize / 6, tileSize / 8, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.restore();
-        }
-        
-        // Σχεδίαση φαντασμάτων
-        function drawGhosts() {
-            const offsetX = (canvas.width - cols * tileSize) / 2;
-            const offsetY = (canvas.height - rows * tileSize) / 2;
-            
-            for (let ghost of ghosts) {
-                ctx.save();
-                ctx.translate(
-                    offsetX + ghost.x * tileSize + tileSize / 2,
-                    offsetY + ghost.y * tileSize + tileSize / 2
-                );
-                
-                // Σώμα φαντάσματος
-                if (ghost.mode === 'frightened') {
-                    ctx.fillStyle = frightenedTimer > 100 ? '#0000ff' : 
-                                  (Math.floor(Date.now() / 200) % 2 === 0 ? '#0000ff' : '#ffffff');
-                } else {
-                    ctx.fillStyle = ghost.color;
-                }
-                
-                ctx.beginPath();
-                ctx.arc(0, 0, tileSize / 2, Math.PI, 0, false);
-                ctx.arc(0, tileSize / 4, tileSize / 2, 0, Math.PI, true);
-                ctx.fill();
-                
-                // Κάτω μέρος με "ποδαράκια"
-                ctx.beginPath();
-                for (let i = 0; i < 3; i++) {
-                    ctx.arc(
-                        -tileSize / 3 + i * tileSize / 3, 
-                        tileSize / 4, 
-                        tileSize / 6, 
-                        0, 
-                        Math.PI
-                    );
-                }
-                ctx.fill();
-                
-                // Μάτια
-                ctx.fillStyle = '#fff';
-                ctx.beginPath();
-                ctx.arc(-tileSize / 5, -tileSize / 10, tileSize / 6, 0, Math.PI * 2);
-                ctx.arc(tileSize / 5, -tileSize / 10, tileSize / 6, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Κόρες
-                ctx.fillStyle = '#000';
-                let pupilOffsetX = 0;
-                let pupilOffsetY = 0;
-                
-                if (ghost.mode !== 'frightened') {
-                    switch (ghost.direction) {
-                        case 'left':
-                            pupilOffsetX = -tileSize / 10;
-                            break;
-                        case 'right':
-                            pupilOffsetX = tileSize / 10;
-                            break;
-                        case 'up':
-                            pupilOffsetY = -tileSize / 10;
-                            break;
-                        case 'down':
-                            pupilOffsetY = tileSize / 10;
-                            break;
-                    }
-                }
-                
-                ctx.beginPath();
-                ctx.arc(-tileSize / 5 + pupilOffsetX, -tileSize / 10 + pupilOffsetY, tileSize / 10, 0, Math.PI * 2);
-                ctx.arc(tileSize / 5 + pupilOffsetX, -tileSize / 10 + pupilOffsetY, tileSize / 10, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.restore();
-            }
-        }
-        
-        // Ενημέρωση Pac-Man
-        function updatePacman() {
-            // Άνοιγμα/κλείσιμο στόματος
-            pacman.mouthOpen = !pacman.mouthOpen;
-            
-            // Μετακίνηση
-            const map = levels[currentLevel];
-            let newX = pacman.x;
-            let newY = pacman.y;
-            
-            // Έλεγχος εάν η επόμενη κατεύθυνση είναι δυνατή
-            switch (pacman.nextDirection) {
-                case 'left':
-                    if (pacman.x > 0 && map[Math.floor(pacman.y)][Math.floor(pacman.x) - 1] !== 1) {
-                        pacman.direction = pacman.nextDirection;
-                    }
-                    break;
-                case 'right':
-                    if (pacman.x < cols - 1 && map[Math.floor(pacman.y)][Math.floor(pacman.x) + 1] !== 1) {
-                        pacman.direction = pacman.nextDirection;
-                    }
-                    break;
-                case 'up':
-                    if (pacman.y > 0 && map[Math.floor(pacman.y) - 1][Math.floor(pacman.x)] !== 1) {
-                        pacman.direction = pacman.nextDirection;
-                    }
-                    break;
-                case 'down':
-                    if (pacman.y < rows - 1 && map[Math.floor(pacman.y) + 1][Math.floor(pacman.x)] !== 1) {
-                        pacman.direction = pacman.nextDirection;
-                    }
-                    break;
-            }
-            
-            // Μετακίνηση στην τρέχουσα κατεύθυνση
-            switch (pacman.direction) {
-                case 'left':
-                    if (pacman.x > 0 && map[Math.floor(pacman.y)][Math.floor(pacman.x) - 1] !== 1) {
-                        newX = pacman.x - pacman.speed;
-                    }
-                    break;
-                case 'right':
-                    if (pacman.x < cols - 1 && map[Math.floor(pacman.y)][Math.floor(pacman.x) + 1] !== 1) {
-                        newX = pacman.x + pacman.speed;
-                    }
-                    break;
-                case 'up':
-                    if (pacman.y > 0 && map[Math.floor(pacman.y) - 1][Math.floor(pacman.x)] !== 1) {
-                        newY = pacman.y - pacman.speed;
-                    }
-                    break;
-                case 'down':
-                    if (pacman.y < rows - 1 && map[Math.floor(pacman.y) + 1][Math.floor(pacman.x)] !== 1) {
-                        newY = pacman.y + pacman.speed;
-                    }
-                    break;
-            }
-            
-            // Έλεγχος για dots
-            const dotIndex = dots.findIndex(dot => 
-                Math.floor(dot.x) === Math.floor(newX) && 
-                Math.floor(dot.y) === Math.floor(newY)
-            );
-            
-            if (dotIndex !== -1) {
-                dots.splice(dotIndex, 1);
-                score += 10;
-                scoreElement.textContent = `Βαθμολογία: ${score}`;
-                playSound(800, 0.1, 'square');
-            }
-            
-            // Έλεγχος για power pellets
-            const pelletIndex = powerPellets.findIndex(pellet => 
-                Math.floor(pellet.x) === Math.floor(newX) && 
-                Math.floor(pellet.y) === Math.floor(newY)
-            );
-            
-            if (pelletIndex !== -1) {
-                powerPellets.splice(pelletIndex, 1);
-                score += 50;
-                scoreElement.textContent = `Βαθμολογία: ${score}`;
-                playSound(200, 0.3, 'sawtooth');
-                
-                // Ενεργοποίηση frightened mode
-                frightenedMode = true;
-                frightenedTimer = 300; // 5 seconds at 60fps
-                
-                for (let ghost of ghosts) {
-                    ghost.mode = 'frightened';
-                }
-            }
-            
-            // Ενημέρωση θέσης
-            pacman.x = newX;
-            pacman.y = newY;
-            
-            // Έλεγχος για τηλεργασία
-            if (pacman.x < 0) pacman.x = cols - 1;
-            if (pacman.x >= cols) pacman.x = 0;
-        }
-        
-        // Ενημέρωση φαντασμάτων
-        function updateGhosts() {
-            const map = levels[currentLevel];
-            
-            // Ενημέρωση frightened mode
-            if (frightenedMode) {
-                frightenedTimer--;
-                if (frightenedTimer <= 0) {
-                    frightenedMode = false;
-                    for (let ghost of ghosts) {
-                        ghost.mode = 'chase';
-                    }
-                }
-            }
-            
-            for (let ghost of ghosts) {
-                // Υπολογισμός στόχου ανάλογα με τη λειτουργία
-                if (ghost.mode === 'chase') {
-                    ghost.targetX = Math.floor(pacman.x);
-                    ghost.targetY = Math.floor(pacman.y);
-                } else if (ghost.mode === 'frightened') {
-                    // Τυχαία κίνηση όταν φοβισμένα
-                    ghost.targetX = Math.floor(Math.random() * cols);
-                    ghost.targetY = Math.floor(Math.random() * rows);
-                }
-                
-                // Βελτιωμένη τεχνητή νοημοσύνη
-                const directions = ['left', 'right', 'up', 'down'];
-                let bestDirection = ghost.direction;
-                let minDistance = Infinity;
-                
-                for (let dir of directions) {
-                    let testX = Math.floor(ghost.x);
-                    let testY = Math.floor(ghost.y);
-                    
-                    switch (dir) {
-                        case 'left':
-                            testX--;
-                            break;
-                        case 'right':
-                            testX++;
-                            break;
-                        case 'up':
-                            testY--;
-                            break;
-                        case 'down':
-                            testY++;
-                            break;
-                    }
-                    
-                    // Έλεγχος εάν η κατεύθυνση είναι έγκυρη
-                    if (testX >= 0 && testX < cols && testY >= 0 && testY < rows && 
-                        map[testY][testX] !== 1) {
-                        
-                        // Υπολογισμός απόστασης από τον στόχο
-                        const distance = Math.sqrt(
-                            Math.pow(testX - ghost.targetX, 2) + 
-                            Math.pow(testY - ghost.targetY, 2)
-                        );
-                        
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            bestDirection = dir;
-                        }
-                    }
-                }
-                
-                ghost.direction = bestDirection;
-                
-                // Μετακίνηση
-                switch (ghost.direction) {
-                    case 'left':
-                        ghost.x -= ghost.speed;
-                        break;
-                    case 'right':
-                        ghost.x += ghost.speed;
-                        break;
-                    case 'up':
-                        ghost.y -= ghost.speed;
-                        break;
-                    case 'down':
-                        ghost.y += ghost.speed;
-                        break;
-                }
-                
-                // Έλεγχος για τηλεργασία
-                if (ghost.x < 0) ghost.x = cols - 1;
-                if (ghost.x >= cols) ghost.x = 0;
-                
-                // Έλεγχος σύγκρουσης με Pac-Man
-                if (Math.abs(ghost.x - pacman.x) < 0.7 && Math.abs(ghost.y - pacman.y) < 0.7) {
-                    if (ghost.mode === 'frightened') {
-                        // Τρώει το φάντασμα
-                        ghost.x = 9;
-                        ghost.y = 9;
-                        score += 200;
-                        scoreElement.textContent = `Βαθμολογία: ${score}`;
-                        playSound(150, 0.5, 'sawtooth');
+
+        const gridElement = document.getElementById('grid');
+        const rows = layout.length;
+        const cols = layout[0].length;
+        const cellSize = 30; // 30px, όπως στο CSS
+
+        let pacmanPosition = { row: 1, col: 1 };
+        let score = 0;
+        let cells = []; // Θα αποθηκεύσει τα DOM elements για εύκολη πρόσβαση
+
+        // 1. Ρύθμιση CSS Grid
+        gridElement.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+        gridElement.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
+
+        // 2. Σχεδίαση του Χάρτη
+        function drawGrid() {
+            gridElement.innerHTML = ''; // Καθαρισμός του grid
+            cells = []; // Επαναφορά του πίνακα κελιών
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+
+                    if (layout[r][c] === 1) {
+                        cell.classList.add('wall');
+                    } else if (layout[r][c] === 2) {
+                        cell.classList.add('dot');
                     } else {
-                        loseLife();
+                        cell.classList.add('empty');
                     }
+
+                    gridElement.appendChild(cell);
+                    cells.push(cell); // Αποθήκευση του στοιχείου
                 }
             }
         }
-        
-        // Απώλεια ζωής
-        function loseLife() {
-            lives--;
-            updateLivesDisplay();
+
+        // Βοηθητική συνάρτηση για να παίρνει το DOM element από τις συντεταγμένες
+        function getCellElement(row, col) {
+            return cells[row * cols + col];
+        }
+
+        // 3. Αρχικοποίηση Θέσης Pac-Man
+        function initializePacman() {
+            const initialCell = getCellElement(pacmanPosition.row, pacmanPosition.col);
+            initialCell.classList.add('pacman');
             
-            playSound(100, 0.8, 'sawtooth', 0.3);
-            
-            if (lives <= 0) {
-                gameOver();
-            } else {
-                resetPositions();
+            // Καταναλώνει τον αρχικό πόντο αν υπάρχει
+            if (layout[pacmanPosition.row][pacmanPosition.col] === 2) {
+                eatDot(pacmanPosition.row, pacmanPosition.col);
             }
         }
         
-        // Επαναφορά θέσεων
-        function resetPositions() {
-            pacman.x = 1;
-            pacman.y = 1;
-            pacman.direction = 'right';
-            pacman.nextDirection = 'right';
-            
-            ghosts[0].x = 9;
-            ghosts[0].y = 7;
-            ghosts[1].x = 9;
-            ghosts[1].y = 9;
-            ghosts[2].x = 7;
-            ghosts[2].y = 9;
-            ghosts[3].x = 11;
-            ghosts[3].y = 9;
-            
-            for (let ghost of ghosts) {
-                ghost.mode = 'chase';
-            }
-            
-            frightenedMode = false;
-            frightenedTimer = 0;
-        }
-        
-        // Ενημέρωση εμφάνισης ζωών
-        function updateLivesDisplay() {
-            const lifeElements = document.querySelectorAll('.life');
-            
-            for (let i = 0; i < lifeElements.length; i++) {
-                if (i < lives) {
-                    lifeElements[i].style.display = 'block';
-                } else {
-                    lifeElements[i].style.display = 'none';
-                }
-            }
-        }
-        
-        // Τέλος παιχνιδιού
-        function gameOver() {
-            gameRunning = false;
-            finalScoreElement.textContent = `Βαθμολογία: ${score}`;
-            gameOverScreen.style.display = 'flex';
-            
-            playSound(80, 1.5, 'sawtooth', 0.4);
-        }
-        
-        // Επανεκκίνηση παιχνιδιού
-        function restartGame() {
-            score = 0;
-            lives = 3;
-            scoreElement.textContent = `Βαθμολογία: ${score}`;
-            updateLivesDisplay();
-            gameOverScreen.style.display = 'none';
-            initDots();
-            resetPositions();
-            startGame();
-        }
-        
-        // Έναρξη παιχνιδιού
-        function startGame() {
-            menu.style.display = 'none';
-            gameRunning = true;
-            gameLoop();
-        }
-        
-        // Κύριος βρόχος παιχνιδιού
-        function gameLoop() {
-            if (!gameRunning) return;
-            
-            // Καθαρισμός canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Σχεδίαση
-            drawMap();
-            drawDots();
-            drawPacman();
-            drawGhosts();
-            
-            // Ενημέρωση
-            updatePacman();
-            updateGhosts();
-            
-            // Έλεγχος νίκης
-            if (dots.length === 0 && powerPellets.length === 0) {
-                playSound(600, 0.5, 'sine');
+        // 4. Λογική Κατανάλωσης Πόντου
+        function eatDot(row, col) {
+            if (layout[row][col] === 2) {
+                layout[row][col] = 0; // Ο πόντος εξαφανίζεται από το μοντέλο
+                score++;
+                document.getElementById('scoreValue').textContent = score;
                 
-                // Εμφάνιση μηνύματος νέας πίστας
-                levelUpMessage.style.display = 'block';
-                setTimeout(() => {
-                    levelUpMessage.style.display = 'none';
-                }, 1500);
-                
-                // Μετάβαση στην επόμενη πίστα
-                currentLevel++;
-                if (currentLevel > 3) currentLevel = 1;
-                
-                levelElement.textContent = `Πίστα: ${currentLevel}`;
-                initDots();
-                resetPositions();
+                // Ενημέρωση της εμφάνισης (αφαίρεση της κλάσης dot)
+                const cell = getCellElement(row, col);
+                cell.classList.remove('dot');
+                cell.classList.add('empty');
+            }
+        }
+
+        // 5. Λογική Κίνησης
+        function movePacman(newRow, newCol) {
+            // Έλεγχος συνόρων
+            if (newRow < 0 || newRow >= rows || newCol < 0 || newCol >= cols) {
+                return;
             }
             
-            // Επανάληψη
-            requestAnimationFrame(gameLoop);
+            // Έλεγχος σύγκρουσης με τοίχο (1)
+            if (layout[newRow][newCol] === 1) {
+                return; 
+            }
+
+            // Καθαρισμός της παλιάς θέσης
+            const oldCell = getCellElement(pacmanPosition.row, pacmanPosition.col);
+            oldCell.classList.remove('pacman');
+
+            // Ενημέρωση της θέσης
+            pacmanPosition.row = newRow;
+            pacmanPosition.col = newCol;
+
+            // Κατανάλωση πόντου
+            eatDot(newRow, newCol);
+
+            // Σχεδίαση Pac-Man στη νέα θέση
+            const newCell = getCellElement(pacmanPosition.row, pacmanPosition.col);
+            newCell.classList.add('pacman');
         }
-        
-        // Εκκίνηση
-        initDots();
-        updateLivesDisplay();
-        
-        // Ακροατές συμβάντων
-        startBtn.addEventListener('click', startGame);
-        restartBtn.addEventListener('click', restartGame);
-        
-        // Επιλογή πίστας
-        levelBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                levelBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentLevel = parseInt(btn.dataset.level);
-                levelElement.textContent = `Πίστα: ${currentLevel}`;
-                initDots();
-            });
-        });
-        
-        // Έλεγχος ήχου
-        soundToggle.addEventListener('click', () => {
-            soundEnabled = !soundEnabled;
-            soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
-        });
-        
-        // Έλεγχος αφής
-        upBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            pacman.nextDirection = 'up';
-        });
-        
-        leftBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            pacman.nextDirection = 'left';
-        });
-        
-        downBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            pacman.nextDirection = 'down';
-        });
-        
-        rightBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            pacman.nextDirection = 'right';
-        });
-        
-        // Έλεγχος πληκτρολογίου για δοκιμή σε υπολογιστή
+
+        // 6. Χειρισμός Πληκτρολογίου
         document.addEventListener('keydown', (e) => {
-            if (!gameRunning) return;
-            
+            let newRow = pacmanPosition.row;
+            let newCol = pacmanPosition.col;
+
             switch (e.key) {
                 case 'ArrowUp':
-                    pacman.nextDirection = 'up';
-                    break;
-                case 'ArrowLeft':
-                    pacman.nextDirection = 'left';
+                    newRow--;
                     break;
                 case 'ArrowDown':
-                    pacman.nextDirection = 'down';
+                    newRow++;
+                    break;
+                case 'ArrowLeft':
+                    newCol--;
                     break;
                 case 'ArrowRight':
-                    pacman.nextDirection = 'right';
+                    newCol++;
                     break;
+                default:
+                    return; // Αγνοεί άλλα πλήκτρα
             }
+            
+            e.preventDefault(); // Αποτρέπει το scrolling της σελίδας
+            movePacman(newRow, newCol);
         });
-        
-        // Αποφυγή κύλισης σε κινητά
-        document.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-        }, { passive: false });
+
+        // Εκτέλεση του παιχνιδιού
+        drawGrid();
+        initializePacman();
     </script>
+
 </body>
 </html>
