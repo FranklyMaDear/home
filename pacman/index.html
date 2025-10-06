@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pac-Man Mobile</title>
+    <title>Τρομακτικός Pac-Man</title>
     <style>
         * {
             margin: 0;
@@ -14,26 +14,23 @@
         
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #000;
+            background: #000;
             color: #fff;
             overflow: hidden;
             height: 100vh;
             width: 100vw;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             position: fixed;
         }
         
         #game-container {
             position: relative;
-            width: 100%;
+            width: 75%;
             height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             background: #000;
         }
         
@@ -53,7 +50,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0, 0, 0, 0.7);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%);
             z-index: 5;
         }
         
@@ -61,7 +58,8 @@
             font-size: 1.5rem;
             font-weight: bold;
             color: #ff0;
-            text-shadow: 0 0 5px #ff0;
+            text-shadow: 0 0 10px #ff0, 0 0 20px #ff0;
+            font-family: 'Courier New', monospace;
         }
         
         #lives {
@@ -75,55 +73,81 @@
             background-color: #ff0;
             border-radius: 50%;
             clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 70%, 0 100%);
+            box-shadow: 0 0 8px #ff0;
         }
         
-        #controls {
-            position: absolute;
-            bottom: 20px;
-            left: 0;
-            width: 100%;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 15px;
-            padding: 0 20px;
-            z-index: 5;
-        }
-        
-        .control-btn {
-            background-color: rgba(51, 51, 51, 0.8);
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            font-size: 2rem;
+        #swipe-controls {
+            width: 25%;
+            height: 100%;
+            background: linear-gradient(to left, #111 0%, #000 100%);
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            cursor: pointer;
-            user-select: none;
-            height: 70px;
-            width: 70px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            align-items: center;
+            padding: 20px;
+            border-left: 2px solid #333;
         }
         
-        #up-btn {
-            grid-column: 2;
-            grid-row: 1;
+        #swipe-area {
+            width: 100%;
+            height: 70%;
+            background: rgba(20, 20, 20, 0.8);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #444;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
         }
         
-        #left-btn {
-            grid-column: 1;
-            grid-row: 2;
+        #swipe-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255,0,0,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(0,0,255,0.1) 0%, transparent 50%);
+            z-index: 1;
         }
         
-        #down-btn {
-            grid-column: 2;
-            grid-row: 3;
+        .swipe-direction {
+            width: 80%;
+            height: 22%;
+            margin: 8px 0;
+            background: rgba(40, 40, 40, 0.7);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            color: #ff0;
+            text-shadow: 0 0 10px #ff0;
+            border: 2px solid #555;
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.2);
+            transition: all 0.2s ease;
+            position: relative;
+            z-index: 2;
         }
         
-        #right-btn {
-            grid-column: 3;
-            grid-row: 2;
+        .swipe-direction:active {
+            background: rgba(255, 255, 0, 0.3);
+            box-shadow: 0 0 20px #ff0;
+            transform: scale(0.95);
+        }
+        
+        #swipe-instructions {
+            color: #ff0;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-top: 20px;
+            text-shadow: 0 0 5px #ff0;
+            font-family: 'Courier New', monospace;
         }
         
         #menu {
@@ -132,7 +156,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background: 
+                radial-gradient(circle at center, rgba(0,0,0,0.95) 0%, rgba(0,0,0,1) 100%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="black"/><path d="M0,0 L100,100 M100,0 L0,100" stroke="red" stroke-width="1" opacity="0.1"/></svg>');
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -142,23 +168,44 @@
         
         #menu h1 {
             color: #ff0;
-            font-size: 3.5rem;
+            font-size: 4rem;
             margin-bottom: 30px;
-            text-shadow: 0 0 15px #ff0;
-            font-family: 'Arial Black', sans-serif;
+            text-shadow: 0 0 20px #ff0, 0 0 40px #ff0;
+            font-family: 'Impact', sans-serif;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(to bottom, #ff0 0%, #ff9900 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         
         #menu button {
-            background-color: #ff0;
+            background: linear-gradient(to bottom, #ff0 0%, #ff9900 100%);
             color: #000;
             border: none;
-            padding: 15px 30px;
+            padding: 18px 35px;
             margin: 15px;
             font-size: 1.5rem;
-            border-radius: 10px;
+            border-radius: 15px;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 0 15px #ff0;
+            box-shadow: 0 0 20px #ff0, 0 0 40px rgba(255, 255, 0, 0.5);
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        #menu button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #ff0, 0 0 50px rgba(255, 255, 0, 0.7);
         }
         
         #level-select {
@@ -169,21 +216,24 @@
         }
         
         .level-btn {
-            background-color: #333;
+            background: rgba(40, 40, 40, 0.8);
             color: #fff;
-            border: none;
+            border: 2px solid #555;
             padding: 15px 25px;
             margin: 8px;
             font-size: 1.3rem;
             border-radius: 10px;
             cursor: pointer;
             width: 250px;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
         }
         
         .level-btn.active {
-            background-color: #ff0;
+            background: linear-gradient(to right, #ff0 0%, #ff9900 100%);
             color: #000;
-            box-shadow: 0 0 10px #ff0;
+            box-shadow: 0 0 15px #ff0;
+            border: 2px solid #ff0;
         }
         
         #game-over {
@@ -193,7 +243,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background: 
+                radial-gradient(circle at center, rgba(0,0,0,0.95) 0%, rgba(0,0,0,1) 100%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="black"/><path d="M0,0 L100,100 M100,0 L0,100" stroke="red" stroke-width="2" opacity="0.2"/></svg>');
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -202,51 +254,78 @@
         
         #game-over h2 {
             color: #ff0;
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 30px;
-            text-shadow: 0 0 15px #ff0;
+            text-shadow: 0 0 20px #ff0;
+            font-family: 'Impact', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         
         #final-score {
             color: #fff;
-            font-size: 2rem;
+            font-size: 2.5rem;
             margin-bottom: 30px;
+            text-shadow: 0 0 10px #fff;
+            font-family: 'Courier New', monospace;
         }
         
         #sound-toggle {
             position: absolute;
             top: 20px;
             right: 20px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 10px 15px;
+            background: rgba(40, 40, 40, 0.8);
+            color: #ff0;
+            border: 2px solid #555;
+            padding: 12px 15px;
             border-radius: 50%;
             cursor: pointer;
             font-size: 1.5rem;
             z-index: 10;
+            box-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
+            transition: all 0.3s ease;
         }
         
-        @media (max-height: 700px) {
-            .control-btn {
-                height: 60px;
-                width: 60px;
-                font-size: 1.7rem;
+        #sound-toggle:hover {
+            box-shadow: 0 0 15px #ff0;
+            transform: scale(1.1);
+        }
+        
+        .blood-splatter {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.1;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255,0,0,0.3) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(255,0,0,0.2) 0%, transparent 20%),
+                radial-gradient(circle at 40% 80%, rgba(255,0,0,0.25) 0%, transparent 20%);
+        }
+        
+        @media (max-width: 768px) {
+            #game-container {
+                width: 70%;
+            }
+            
+            #swipe-controls {
+                width: 30%;
             }
             
             #menu h1 {
                 font-size: 2.5rem;
             }
             
-            #menu button {
-                padding: 12px 25px;
-                font-size: 1.3rem;
+            .swipe-direction {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
     <div id="game-container">
+        <div class="blood-splatter"></div>
         <canvas id="game-canvas"></canvas>
         <div id="game-ui">
             <div id="score">Βαθμολογία: 0</div>
@@ -257,29 +336,33 @@
             </div>
             <div id="level">Πίστα: 1</div>
         </div>
-        <div id="controls">
-            <button id="up-btn" class="control-btn">↑</button>
-            <button id="left-btn" class="control-btn">←</button>
-            <button id="down-btn" class="control-btn">↓</button>
-            <button id="right-btn" class="control-btn">→</button>
-        </div>
         
         <div id="menu">
-            <h1>PAC-MAN</h1>
+            <h1>Τρομακτικός PAC-MAN</h1>
             <div id="level-select">
-                <button class="level-btn active" data-level="1">Πίστα 1: Αρχική</button>
-                <button class="level-btn" data-level="2">Πίστα 2: Λαβύρινθος</button>
-                <button class="level-btn" data-level="3">Πίστα 3: Τρομακτικό</button>
+                <button class="level-btn active" data-level="1">Αίμα στο Λαβύρινθο</button>
+                <button class="level-btn" data-level="2">Σκοτεινό Περάσματα</button>
+                <button class="level-btn" data-level="3">Τέλος της Νύχτας</button>
             </div>
-            <button id="start-btn">Έναρξη Παιχνιδιού</button>
+            <button id="start-btn">ΑΡΧΗ ΤΟΥ ΤΡΟΜΟΥ</button>
             <button id="sound-toggle">🔊</button>
         </div>
         
         <div id="game-over">
-            <h2>Τέλος Παιχνιδιού</h2>
+            <h2>ΤΕΛΟΣ ΠΑΙΧΝΙΔΙΟΥ</h2>
             <div id="final-score">Βαθμολογία: 0</div>
-            <button id="restart-btn">Παίξτε Ξανά</button>
+            <button id="restart-btn">ΞΑΝΑΠΑΙΞΕ ΜΕ ΤΡΟΜΟ</button>
         </div>
+    </div>
+
+    <div id="swipe-controls">
+        <div id="swipe-area">
+            <div id="up-btn" class="swipe-direction">↑</div>
+            <div id="left-btn" class="swipe-direction">←</div>
+            <div id="down-btn" class="swipe-direction">↓</div>
+            <div id="right-btn" class="swipe-direction">→</div>
+        </div>
+        <div id="swipe-instructions">ΣΒΑΡΝΑΡΕ ΓΙΑ ΝΑ ΚΙΝΗΘΕΙΣ</div>
     </div>
 
     <script>
@@ -297,7 +380,7 @@
         const soundToggle = document.getElementById('sound-toggle');
         const levelBtns = document.querySelectorAll('.level-btn');
         
-        // Στοιχεία ελέγχου
+        // Στοιχεία ελέγχου swipe
         const upBtn = document.getElementById('up-btn');
         const leftBtn = document.getElementById('left-btn');
         const downBtn = document.getElementById('down-btn');
@@ -312,7 +395,7 @@
         
         // Ρυθμίσεις canvas
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
+            canvas.width = document.getElementById('game-container').clientWidth;
             canvas.height = window.innerHeight;
         }
         
@@ -320,11 +403,11 @@
         resizeCanvas();
         
         // Ορισμός πλακιδίων
-        const tileSize = Math.min(canvas.width, canvas.height) / 20;
+        const tileSize = Math.min(canvas.width, canvas.height) / 19;
         const rows = 19;
         const cols = 19;
         
-        // Ορισμός πιστών
+        // Ορισμός πιστών με τρομακτικό στυλ
         const levels = {
             1: [
                 [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -413,34 +496,39 @@
             oscillator.stop(audioContext.currentTime + duration);
         }
         
-        // Ορισμός Pac-Man
+        // Ορισμός Pac-Man - πιο ρεαλιστικός
         let pacman = {
             x: 1,
             y: 1,
             direction: 'right',
             nextDirection: 'right',
             mouthOpen: true,
-            mouthAngle: 0.2,
-            speed: 0.08  // Πιο αργή κίνηση
+            mouthAngle: 0.3,
+            speed: 0.08,
+            rotation: 0
         };
         
-        // Ορισμός φαντασμάτων με βελτιωμένη τεχνητή νοημοσύνη
+        // Ορισμός φαντασμάτων με τρομακτικό στυλ
         let ghosts = [
             { 
                 x: 9, y: 7, color: '#ff0000', direction: 'left', 
-                speed: 0.05, mode: 'chase', targetX: 1, targetY: 1 
+                speed: 0.05, mode: 'chase', targetX: 1, targetY: 1,
+                name: 'BLINKY', eyesColor: '#ffffff'
             },
             { 
                 x: 9, y: 9, color: '#ff00ff', direction: 'up', 
-                speed: 0.05, mode: 'chase', targetX: 17, targetY: 1 
+                speed: 0.05, mode: 'chase', targetX: 17, targetY: 1,
+                name: 'PINKY', eyesColor: '#ffffff'
             },
             { 
                 x: 7, y: 9, color: '#00ffff', direction: 'right', 
-                speed: 0.05, mode: 'chase', targetX: 1, targetY: 17 
+                speed: 0.05, mode: 'chase', targetX: 1, targetY: 17,
+                name: 'INKY', eyesColor: '#ffffff'
             },
             { 
                 x: 11, y: 9, color: '#ffa500', direction: 'down', 
-                speed: 0.05, mode: 'chase', targetX: 17, targetY: 17 
+                speed: 0.05, mode: 'chase', targetX: 17, targetY: 17,
+                name: 'CLYDE', eyesColor: '#ffffff'
             }
         ];
         
@@ -457,7 +545,7 @@
             for (let y = 0; y < map.length; y++) {
                 for (let x = 0; x < map[y].length; x++) {
                     if (map[y][x] === 0) {
-                        // Προσθήκη power pellets στις γωνίες
+                        // Power pellets στις γωνίες
                         if ((x === 1 && y === 1) || (x === 17 && y === 1) || 
                             (x === 1 && y === 17) || (x === 17 && y === 17)) {
                             powerPellets.push({ x, y });
@@ -469,16 +557,36 @@
             }
         }
         
-        // Σχεδίαση χάρτη
+        // Σχεδίαση χάρτη με τρομακτικό στυλ
         function drawMap() {
             const map = levels[currentLevel];
             const offsetX = (canvas.width - cols * tileSize) / 2;
             const offsetY = (canvas.height - rows * tileSize) / 2;
             
+            // Φόντο με μοτίβο
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Σχεδίαση τρομακτικού φόντου
+            ctx.fillStyle = '#100';
+            for (let i = 0; i < 50; i++) {
+                ctx.beginPath();
+                ctx.arc(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height,
+                    Math.random() * 3,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+            }
+            
+            // Σχεδίαση τοίχων
             for (let y = 0; y < map.length; y++) {
                 for (let x = 0; x < map[y].length; x++) {
                     if (map[y][x] === 1) {
-                        ctx.fillStyle = '#0000ff';
+                        // Βασικός τοίχος
+                        ctx.fillStyle = '#0000aa';
                         ctx.fillRect(
                             offsetX + x * tileSize, 
                             offsetY + y * tileSize, 
@@ -486,12 +594,21 @@
                             tileSize
                         );
                         
-                        // Προσθήκη σκιών για πιο ρεαλιστικό εφέ
-                        ctx.fillStyle = 'rgba(0, 0, 150, 0.5)';
+                        // Σκιά
+                        ctx.fillStyle = 'rgba(0, 0, 50, 0.7)';
                         ctx.fillRect(
                             offsetX + x * tileSize, 
                             offsetY + y * tileSize, 
                             tileSize, 
+                            tileSize / 4
+                        );
+                        
+                        // Αντανάκλαση
+                        ctx.fillStyle = 'rgba(100, 100, 255, 0.3)';
+                        ctx.fillRect(
+                            offsetX + x * tileSize, 
+                            offsetY + y * tileSize, 
+                            tileSize / 4, 
                             tileSize / 4
                         );
                     }
@@ -499,7 +616,7 @@
             }
         }
         
-        // Σχεδίαση dots
+        // Σχεδίαση dots με τρομακτικό στυλ
         function drawDots() {
             const offsetX = (canvas.width - cols * tileSize) / 2;
             const offsetY = (canvas.height - rows * tileSize) / 2;
@@ -516,11 +633,27 @@
                     Math.PI * 2
                 );
                 ctx.fill();
+                
+                // Αναβοσβήνουσα animaton
+                if (Math.floor(Date.now() / 300) % 2 === 0) {
+                    ctx.fillStyle = '#ff0';
+                    ctx.beginPath();
+                    ctx.arc(
+                        offsetX + dot.x * tileSize + tileSize / 2,
+                        offsetY + dot.y * tileSize + tileSize / 2,
+                        tileSize / 10,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                }
+                ctx.fillStyle = '#fff';
             }
             
             // Power pellets
             ctx.fillStyle = '#ff0';
             for (let pellet of powerPellets) {
+                // Κύκλος
                 ctx.beginPath();
                 ctx.arc(
                     offsetX + pellet.x * tileSize + tileSize / 2,
@@ -533,6 +666,7 @@
                 
                 // Αναβοσβήνουσα animaton
                 if (Math.floor(Date.now() / 200) % 2 === 0) {
+                    ctx.fillStyle = '#fff';
                     ctx.beginPath();
                     ctx.arc(
                         offsetX + pellet.x * tileSize + tileSize / 2,
@@ -541,13 +675,13 @@
                         0,
                         Math.PI * 2
                     );
-                    ctx.fillStyle = '#fff';
                     ctx.fill();
                 }
+                ctx.fillStyle = '#ff0';
             }
         }
         
-        // Σχεδίαση Pac-Man
+        // Σχεδίαση Pac-Man - πιο ρεαλιστικός
         function drawPacman() {
             const offsetX = (canvas.width - cols * tileSize) / 2;
             const offsetY = (canvas.height - rows * tileSize) / 2;
@@ -574,7 +708,7 @@
                     break;
             }
             
-            // Σχεδίαση Pac-Man
+            // Σώμα Pac-Man
             ctx.fillStyle = '#ff0';
             ctx.beginPath();
             
@@ -587,16 +721,28 @@
             ctx.lineTo(0, 0);
             ctx.fill();
             
+            // Σκιά
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.beginPath();
+            ctx.arc(-tileSize/10, tileSize/10, tileSize/2.2, 0, Math.PI * 2);
+            ctx.fill();
+            
             // Μάτι
             ctx.fillStyle = '#000';
             ctx.beginPath();
             ctx.arc(tileSize / 6, -tileSize / 6, tileSize / 8, 0, Math.PI * 2);
             ctx.fill();
             
+            // Αντανάκλαση στο μάτι
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(tileSize / 7, -tileSize / 7, tileSize / 20, 0, Math.PI * 2);
+            ctx.fill();
+            
             ctx.restore();
         }
         
-        // Σχεδίαση φαντασμάτων
+        // Σχεδίαση φαντασμάτων με τρομακτικό στυλ
         function drawGhosts() {
             const offsetX = (canvas.width - cols * tileSize) / 2;
             const offsetY = (canvas.height - rows * tileSize) / 2;
@@ -608,8 +754,8 @@
                     offsetY + ghost.y * tileSize + tileSize / 2
                 );
                 
-                // Σώμα
-                ctx.fillStyle = ghost.color;
+                // Σώμα φαντάσματος
+                ctx.fillStyle = ghost.mode === 'frightened' ? '#0000ff' : ghost.color;
                 ctx.beginPath();
                 ctx.arc(0, 0, tileSize / 2, Math.PI, 0, false);
                 ctx.arc(0, tileSize / 4, tileSize / 2, 0, Math.PI, true);
@@ -629,7 +775,7 @@
                 ctx.fill();
                 
                 // Μάτια
-                ctx.fillStyle = '#fff';
+                ctx.fillStyle = ghost.eyesColor;
                 ctx.beginPath();
                 ctx.arc(-tileSize / 5, -tileSize / 10, tileSize / 6, 0, Math.PI * 2);
                 ctx.arc(tileSize / 5, -tileSize / 10, tileSize / 6, 0, Math.PI * 2);
@@ -658,6 +804,13 @@
                 ctx.beginPath();
                 ctx.arc(-tileSize / 5 + pupilOffsetX, -tileSize / 10 + pupilOffsetY, tileSize / 10, 0, Math.PI * 2);
                 ctx.arc(tileSize / 5 + pupilOffsetX, -tileSize / 10 + pupilOffsetY, tileSize / 10, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Αντανάκλαση στα μάτια
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(-tileSize / 5 + pupilOffsetX - tileSize/20, -tileSize / 10 + pupilOffsetY - tileSize/20, tileSize/25, 0, Math.PI * 2);
+                ctx.arc(tileSize / 5 + pupilOffsetX - tileSize/20, -tileSize / 10 + pupilOffsetY - tileSize/20, tileSize/25, 0, Math.PI * 2);
                 ctx.fill();
                 
                 ctx.restore();
@@ -732,7 +885,7 @@
                 dots.splice(dotIndex, 1);
                 score += 10;
                 scoreElement.textContent = `Βαθμολογία: ${score}`;
-                playSound(800, 0.1, 'square'); // Ήχος κατανάλωσης dot
+                playSound(800, 0.1, 'square');
             }
             
             // Έλεγχος για power pellets
@@ -745,14 +898,14 @@
                 powerPellets.splice(pelletIndex, 1);
                 score += 50;
                 scoreElement.textContent = `Βαθμολογία: ${score}`;
-                playSound(200, 0.3, 'sawtooth'); // Ήχος power pellet
+                playSound(200, 0.3, 'sawtooth');
                 
                 // Αλλαγή λειτουργίας φαντασμάτων σε φοβισμένα
                 for (let ghost of ghosts) {
                     ghost.mode = 'frightened';
                     setTimeout(() => {
                         ghost.mode = 'chase';
-                    }, 5000); // 5 δευτερόλεπτα φόβου
+                    }, 5000);
                 }
             }
             
@@ -765,14 +918,13 @@
             if (pacman.x >= cols) pacman.x = 0;
         }
         
-        // Βελτιωμένη ενημέρωση φαντασμάτων
+        // Ενημέρωση φαντασμάτων
         function updateGhosts() {
             const map = levels[currentLevel];
             
             for (let ghost of ghosts) {
                 // Υπολογισμός στόχου ανάλογα με τη λειτουργία
                 if (ghost.mode === 'chase') {
-                    // Καθοδήγηση προς τον Pac-Man
                     ghost.targetX = Math.floor(pacman.x);
                     ghost.targetY = Math.floor(pacman.y);
                 } else if (ghost.mode === 'frightened') {
@@ -781,7 +933,7 @@
                     ghost.targetY = Math.floor(Math.random() * rows);
                 }
                 
-                // Βελτιωμένη τεχνητή νοημοσύνη με αλγόριθμο A*
+                // Βελτιωμένη τεχνητή νοημοσύνη
                 const directions = ['left', 'right', 'up', 'down'];
                 let bestDirection = ghost.direction;
                 let minDistance = Infinity;
@@ -852,7 +1004,7 @@
                         ghost.y = 9;
                         score += 200;
                         scoreElement.textContent = `Βαθμολογία: ${score}`;
-                        playSound(150, 0.5, 'sawtooth'); // Ήχος τρώγοντας φάντασμα
+                        playSound(150, 0.5, 'sawtooth');
                     } else {
                         loseLife();
                     }
@@ -865,12 +1017,11 @@
             lives--;
             updateLivesDisplay();
             
-            playSound(100, 0.8, 'sawtooth', 0.3); // Τρομακτικός ήχος θανάτου
+            playSound(100, 0.8, 'sawtooth', 0.3);
             
             if (lives <= 0) {
                 gameOver();
             } else {
-                // Επαναφορά θέσεων
                 resetPositions();
             }
         }
@@ -915,7 +1066,7 @@
             finalScoreElement.textContent = `Βαθμολογία: ${score}`;
             gameOverScreen.style.display = 'flex';
             
-            playSound(80, 1.5, 'sawtooth', 0.4); // Τρομακτικός ήχος τέλους παιχνιδιού
+            playSound(80, 1.5, 'sawtooth', 0.4);
         }
         
         // Επανεκκίνηση παιχνιδιού
@@ -935,7 +1086,6 @@
             menu.style.display = 'none';
             gameRunning = true;
             
-            // Εκκίνηση ήχου φόντου
             if (soundEnabled) {
                 const backgroundOscillator = audioContext.createOscillator();
                 const backgroundGain = audioContext.createGain();
@@ -949,7 +1099,6 @@
                 
                 backgroundOscillator.start();
                 
-                // Σταμάτημα του ήχου φόντου όταν τελειώσει το παιχνίδι
                 setTimeout(() => {
                     if (!gameRunning) {
                         backgroundOscillator.stop();
@@ -979,7 +1128,7 @@
             
             // Έλεγχος νίκης
             if (dots.length === 0 && powerPellets.length === 0) {
-                playSound(600, 0.5, 'sine'); // Ήχος νίκης
+                playSound(600, 0.5, 'sine');
                 
                 // Μετάβαση στην επόμενη πίστα
                 currentLevel++;
@@ -1019,25 +1168,41 @@
             soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
         });
         
-        // Έλεγχος πλήκτρων
+        // Έλεγχος swipe
         upBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             pacman.nextDirection = 'up';
+            upBtn.style.background = 'rgba(255, 255, 0, 0.5)';
+            setTimeout(() => {
+                upBtn.style.background = 'rgba(40, 40, 40, 0.7)';
+            }, 200);
         });
         
         leftBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             pacman.nextDirection = 'left';
+            leftBtn.style.background = 'rgba(255, 255, 0, 0.5)';
+            setTimeout(() => {
+                leftBtn.style.background = 'rgba(40, 40, 40, 0.7)';
+            }, 200);
         });
         
         downBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             pacman.nextDirection = 'down';
+            downBtn.style.background = 'rgba(255, 255, 0, 0.5)';
+            setTimeout(() => {
+                downBtn.style.background = 'rgba(40, 40, 40, 0.7)';
+            }, 200);
         });
         
         rightBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             pacman.nextDirection = 'right';
+            rightBtn.style.background = 'rgba(255, 255, 0, 0.5)';
+            setTimeout(() => {
+                rightBtn.style.background = 'rgba(40, 40, 40, 0.7)';
+            }, 200);
         });
         
         // Έλεγχος πληκτρολογίου για δοκιμή σε υπολογιστή
