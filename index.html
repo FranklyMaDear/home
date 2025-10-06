@@ -61,6 +61,7 @@
             display: flex;
             gap: 2rem;
             list-style: none;
+            align-items: center;
         }
         
         .nav-links a {
@@ -72,6 +73,26 @@
         
         .nav-links a:hover {
             color: #ffd700;
+        }
+        
+        /* Language Selector */
+        .language-selector {
+            position: relative;
+        }
+        
+        .language-dropdown {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .language-dropdown option {
+            background: var(--dark);
+            color: white;
         }
         
         /* Hero Section */
@@ -312,12 +333,24 @@
     <header class="header">
         <nav class="nav">
             <div class="logo">
-                <a href="/">FranklyMaDear</a>
+                <a href="/">FmD</a>
             </div>
             <ul class="nav-links">
-                <li><a href="/">Αρχική</a></li>
-                <li><a href="#games">Παιχνίδια</a></li>
-                <li><a href="#features">Πλεονεκτήματα</a></li>
+                <li><a href="/" data-key="home">Αρχική</a></li>
+                <li><a href="#games" data-key="games">Παιχνίδια</a></li>
+                <li><a href="#features" data-key="features">Πλεονεκτήματα</a></li>
+                <li class="language-selector">
+                    <select id="language-select" class="language-dropdown">
+                        <option value="el">Ελληνικά</option>
+                        <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                        <option value="es">Español</option>
+                        <option value="it">Italiano</option>
+                        <option value="ar">العربية</option>
+                        <option value="ru">Русский</option>
+                        <option value="hi">हिन्दी</option>
+                    </select>
+                </li>
             </ul>
         </nav>
     </header>
@@ -325,11 +358,11 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h1>Καλώς Ηρθες στο FranklyMaDear</h1>
-            <p>Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!</p>
+            <h1 data-key="welcome">Καλώς Ηρθες στο FranklyMaDear</h1>
+            <p data-key="subtitle">Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!</p>
             <div class="cta-buttons">
-                <a href="sudoku.html" class="btn btn-primary">Παίξε Sudoku</a>
-                <a href="#games" class="btn btn-secondary">Δες Όλα τα Παιχνίδια</a>
+                <a href="sudoku.html" class="btn btn-primary" data-key="playSudoku">Παίξε Sudoku</a>
+                <a href="#games" class="btn btn-secondary" data-key="viewAllGames">Δες Όλα τα Παιχνίδια</a>
             </div>
         </div>
     </section>
@@ -338,23 +371,41 @@
     <section id="games" class="games-section">
         <div class="container">
             <div class="section-title">
-                <h2>Δημοφιλή Παιχνίδια</h2>
-                <p>Διάλεξε από τη συλλογή μας με τα καλύτερα παιχνίδια</p>
+                <h2 data-key="popularGames">Δημοφιλή Παιχνίδια</h2>
+                <p data-key="chooseGames">Διάλεξε από τη συλλογή μας με τα καλύτερα παιχνίδια</p>
             </div>
             <div class="games-grid">
-                <!-- Sudoku -->
+                <!-- Sudoku 1 Player -->
                 <div class="game-card">
                     <div class="game-image">
                         🧩
                     </div>
                     <div class="game-content">
-                        <h3>Sudoku</h3>
-                        <p>Κλασικό puzzle παιχνίδι για όλες τις ηλικίες για 2 Παίκτες </p>
+                        <h3>Sudoku 1 Player</h3>
+                        <p data-key="sudoku1Desc">Κλασικό puzzle παιχνίδι για έναν παίκτη</p>
                         <div class="game-stats">
-                            <span>🎯 Δύσκολο</span>
+                            <span data-key="difficultyMedium">🎯 Μέτριο</span>
+                            <span>⭐ 4.7/5</span>
+                        </div>
+                        <a href="sudoku-1player.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;" data-key="playNow">
+                            Παίξε Τώρα
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Sudoku 2 Players -->
+                <div class="game-card">
+                    <div class="game-image">
+                        🧩
+                    </div>
+                    <div class="game-content">
+                        <h3>Sudoku 2 Players</h3>
+                        <p data-key="sudoku2Desc">Κλασικό puzzle παιχνίδι για δύο παίκτες</p>
+                        <div class="game-stats">
+                            <span data-key="difficultyHard">🎯 Δύσκολο</span>
                             <span>⭐ 4.8/5</span>
                         </div>
-                        <a href="sudoku.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;">
+                        <a href="sudoku.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;" data-key="playNow">
                             Παίξε Τώρα
                         </a>
                     </div>
@@ -367,12 +418,12 @@
                     </div>
                     <div class="game-content">
                         <h3>Pacman</h3>
-                        <p>Κλασικό arcade παιχνίδι</p>
+                        <p data-key="pacmanDesc">Κλασικό arcade παιχνίδι</p>
                         <div class="game-stats">
-                            <span>🎯 Μέτριο</span>
+                            <span data-key="difficultyMedium">🎯 Μέτριο</span>
                             <span>⭐ 4.5/5</span>
                         </div>
-                        <a href="pacman/index.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;">
+                        <a href="pacman/index.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;" data-key="playNow">
                             Παίξε Τώρα
                         </a>
                     </div>
@@ -385,12 +436,12 @@
                     </div>
                     <div class="game-content">
                         <h3>Animals</h3>
-                        <p>Μάθε τα ζώα με διασκεδαστικό τρόπο!</p>
+                        <p data-key="animalsDesc">Μάθε τα ζώα με διασκεδαστικό τρόπο!</p>
                         <div class="game-stats">
-                            <span>🎯 Εύκολο</span>
+                            <span data-key="difficultyEasy">🎯 Εύκολο</span>
                             <span>⭐ 4.7/5</span>
                         </div>
-                        <a href="animals/index.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;">
+                        <a href="animals/index.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;" data-key="playNow">
                             Παίξε Τώρα
                         </a>
                     </div>
@@ -403,29 +454,29 @@
     <section id="features" class="features">
         <div class="container">
             <div class="section-title">
-                <h2>Γιατί να παίξεις με εμάς;</h2>
-                <p>Ολα τα πλεονεκτήματα των παιχνιδιών μας</p>
+                <h2 data-key="whyPlay">Γιατί να παίξεις με εμάς;</h2>
+                <p data-key="advantages">Ολα τα πλεονεκτήματα των παιχνιδιών μας</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">🎯</div>
-                    <h3>Δωρεάν</h3>
-                    <p>Όλα τα παιχνίδια είναι 100% δωρεάν</p>
+                    <h3 data-key="free">Δωρεάν</h3>
+                    <p data-key="freeDesc">Όλα τα παιχνίδια είναι 100% δωρεάν</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">📱</div>
-                    <h3>Responsive</h3>
-                    <p>Δουλεύουν σε όλες τις συσκευές</p>
+                    <h3 data-key="responsive">Responsive</h3>
+                    <p data-key="responsiveDesc">Δουλεύουν σε όλες τις συσκευές</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">⚡</div>
-                    <h3>Γρήγορα</h3>
-                    <p>Φορτώνονται αμέσως χωρίς εγκατάσταση</p>
+                    <h3 data-key="fast">Γρήγορα</h3>
+                    <p data-key="fastDesc">Φορτώνονται αμέσως χωρίς εγκατάσταση</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🎮</div>
-                    <h3>Ποικιλία</h3>
-                    <p>Συνεχώς νέα παιχνίδια προστίθενται</p>
+                    <h3 data-key="variety">Ποικιλία</h3>
+                    <p data-key="varietyDesc">Συνεχώς νέα παιχνίδια προστίθενται</p>
                 </div>
             </div>
         </div>
@@ -437,19 +488,19 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>FranklyMaDear</h3>
-                    <p>Η καλύτερη πλατφόρμα για δωρεάν HTML5 παιχνίδια online.</p>
+                    <p data-key="footerDesc">Η καλύτερη πλατφόρμα για δωρεάν HTML5 παιχνίδια online.</p>
                 </div>
                 <div class="footer-section">
-                    <h3>Παιχνίδια</h3>
+                    <h3 data-key="games">Παιχνίδια</h3>
                     <ul style="list-style: none;">
-                        <li><a href="sudoku.html" style="color: #ccc; text-decoration: none;">Sudoku</a></li>
+                        <li><a href="sudoku-1player.html" style="color: #ccc; text-decoration: none;">Sudoku 1 Player</a></li>
+                        <li><a href="sudoku.html" style="color: #ccc; text-decoration: none;">Sudoku 2 Players</a></li>
                         <li><a href="pacman/index.html" style="color: #ccc; text-decoration: none;">Pacman</a></li>
                         <li><a href="animals/index.html" style="color: #ccc; text-decoration: none;">Animals</a></li>
-                        <li><a href="#" style="color: #ccc; text-decoration: none;">Φίδι</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h3>Επικοινωνία</h3>
+                    <h3 data-key="contact">Επικοινωνία</h3>
                     <p>Email: info@franklymadear.com</p>
                 </div>
             </div>
@@ -460,6 +511,283 @@
     </footer>
 
     <script>
+        // Language translations
+        const translations = {
+            el: {
+                home: "Αρχική",
+                games: "Παιχνίδια",
+                features: "Πλεονεκτήματα",
+                welcome: "Καλώς Ηρθες στο FranklyMaDear",
+                subtitle: "Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!",
+                playSudoku: "Παίξε Sudoku",
+                viewAllGames: "Δες Όλα τα Παιχνίδια",
+                popularGames: "Δημοφιλή Παιχνίδια",
+                chooseGames: "Διάλεξε από τη συλλογή μας με τα καλύτερα παιχνίδια",
+                sudoku1Desc: "Κλασικό puzzle παιχνίδι για έναν παίκτη",
+                sudoku2Desc: "Κλασικό puzzle παιχνίδι για δύο παίκτες",
+                pacmanDesc: "Κλασικό arcade παιχνίδι",
+                animalsDesc: "Μάθε τα ζώα με διασκεδαστικό τρόπο!",
+                difficultyEasy: "🎯 Εύκολο",
+                difficultyMedium: "🎯 Μέτριο",
+                difficultyHard: "🎯 Δύσκολο",
+                playNow: "Παίξε Τώρα",
+                whyPlay: "Γιατί να παίξεις με εμάς;",
+                advantages: "Ολα τα πλεονεκτήματα των παιχνιδιών μας",
+                free: "Δωρεάν",
+                freeDesc: "Όλα τα παιχνίδια είναι 100% δωρεάν",
+                responsive: "Responsive",
+                responsiveDesc: "Δουλεύουν σε όλες τις συσκευές",
+                fast: "Γρήγορα",
+                fastDesc: "Φορτώνονται αμέσως χωρίς εγκατάσταση",
+                variety: "Ποικιλία",
+                varietyDesc: "Συνεχώς νέα παιχνίδια προστίθενται",
+                footerDesc: "Η καλύτερη πλατφόρμα για δωρεάν HTML5 παιχνίδια online.",
+                contact: "Επικοινωνία"
+            },
+            en: {
+                home: "Home",
+                games: "Games",
+                features: "Features",
+                welcome: "Welcome to FranklyMaDear",
+                subtitle: "Discover the best free HTML5 games online!",
+                playSudoku: "Play Sudoku",
+                viewAllGames: "View All Games",
+                popularGames: "Popular Games",
+                chooseGames: "Choose from our collection of the best games",
+                sudoku1Desc: "Classic puzzle game for one player",
+                sudoku2Desc: "Classic puzzle game for two players",
+                pacmanDesc: "Classic arcade game",
+                animalsDesc: "Learn about animals in a fun way!",
+                difficultyEasy: "🎯 Easy",
+                difficultyMedium: "🎯 Medium",
+                difficultyHard: "🎯 Hard",
+                playNow: "Play Now",
+                whyPlay: "Why Play With Us?",
+                advantages: "All the advantages of our games",
+                free: "Free",
+                freeDesc: "All games are 100% free",
+                responsive: "Responsive",
+                responsiveDesc: "Work on all devices",
+                fast: "Fast",
+                fastDesc: "Load immediately without installation",
+                variety: "Variety",
+                varietyDesc: "New games are constantly added",
+                footerDesc: "The best platform for free HTML5 games online.",
+                contact: "Contact"
+            },
+            de: {
+                home: "Startseite",
+                games: "Spiele",
+                features: "Funktionen",
+                welcome: "Willkommen bei FranklyMaDear",
+                subtitle: "Entdecken Sie die besten kostenlosen HTML5-Spiele online!",
+                playSudoku: "Sudoku spielen",
+                viewAllGames: "Alle Spiele ansehen",
+                popularGames: "Beliebte Spiele",
+                chooseGames: "Wählen Sie aus unserer Sammlung der besten Spiele",
+                sudoku1Desc: "Klassisches Puzzlespiel für einen Spieler",
+                sudoku2Desc: "Klassisches Puzzlespiel für zwei Spieler",
+                pacmanDesc: "Klassisches Arcade-Spiel",
+                animalsDesc: "Lernen Sie Tiere auf unterhaltsame Weise kennen!",
+                difficultyEasy: "🎯 Einfach",
+                difficultyMedium: "🎯 Mittel",
+                difficultyHard: "🎯 Schwer",
+                playNow: "Jetzt spielen",
+                whyPlay: "Warum mit uns spielen?",
+                advantages: "Alle Vorteile unserer Spiele",
+                free: "Kostenlos",
+                freeDesc: "Alle Spiele sind 100% kostenlos",
+                responsive: "Responsive",
+                responsiveDesc: "Funktionieren auf allen Geräten",
+                fast: "Schnell",
+                fastDesc: "Laden sofort ohne Installation",
+                variety: "Vielfalt",
+                varietyDesc: "Ständig werden neue Spiele hinzugefügt",
+                footerDesc: "Die beste Plattform für kostenlose HTML5-Spiele online.",
+                contact: "Kontakt"
+            },
+            es: {
+                home: "Inicio",
+                games: "Juegos",
+                features: "Características",
+                welcome: "Bienvenido a FranklyMaDear",
+                subtitle: "¡Descubre los mejores juegos HTML5 gratuitos en línea!",
+                playSudoku: "Jugar Sudoku",
+                viewAllGames: "Ver Todos los Juegos",
+                popularGames: "Juegos Populares",
+                chooseGames: "Elige de nuestra colección de los mejores juegos",
+                sudoku1Desc: "Juego de rompecabezas clásico para un jugador",
+                sudoku2Desc: "Juego de rompecabezas clásico para dos jugadores",
+                pacmanDesc: "Juego arcade clásico",
+                animalsDesc: "¡Aprende sobre animales de forma divertida!",
+                difficultyEasy: "🎯 Fácil",
+                difficultyMedium: "🎯 Medio",
+                difficultyHard: "🎯 Difícil",
+                playNow: "Jugar Ahora",
+                whyPlay: "¿Por qué jugar con nosotros?",
+                advantages: "Todas las ventajas de nuestros juegos",
+                free: "Gratis",
+                freeDesc: "Todos los juegos son 100% gratuitos",
+                responsive: "Responsive",
+                responsiveDesc: "Funcionan en todos los dispositivos",
+                fast: "Rápido",
+                fastDesc: "Se cargan inmediatamente sin instalación",
+                variety: "Variedad",
+                varietyDesc: "Constantemente se añaden nuevos juegos",
+                footerDesc: "La mejor plataforma para juegos HTML5 gratuitos en línea.",
+                contact: "Contacto"
+            },
+            it: {
+                home: "Home",
+                games: "Giochi",
+                features: "Caratteristiche",
+                welcome: "Benvenuto su FranklyMaDear",
+                subtitle: "Scopri i migliori giochi HTML5 gratuiti online!",
+                playSudoku: "Gioca a Sudoku",
+                viewAllGames: "Vedi Tutti i Giochi",
+                popularGames: "Giochi Popolari",
+                chooseGames: "Scegli dalla nostra collezione dei migliori giochi",
+                sudoku1Desc: "Gioco di puzzle classico per un giocatore",
+                sudoku2Desc: "Gioco di puzzle classico per due giocatori",
+                pacmanDesc: "Gioco arcade classico",
+                animalsDesc: "Impara gli animali in modo divertente!",
+                difficultyEasy: "🎯 Facile",
+                difficultyMedium: "🎯 Medio",
+                difficultyHard: "🎯 Difficile",
+                playNow: "Gioca Ora",
+                whyPlay: "Perché giocare con noi?",
+                advantages: "Tutti i vantaggi dei nostri giochi",
+                free: "Gratuito",
+                freeDesc: "Tutti i giochi sono 100% gratuiti",
+                responsive: "Responsive",
+                responsiveDesc: "Funzionano su tutti i dispositivi",
+                fast: "Veloce",
+                fastDesc: "Si caricano immediatamente senza installazione",
+                variety: "Varietà",
+                varietyDesc: "Nuovi giochi vengono costantemente aggiunti",
+                footerDesc: "La migliore piattaforma per giochi HTML5 gratuiti online.",
+                contact: "Contatto"
+            },
+            ar: {
+                home: "الرئيسية",
+                games: "الألعاب",
+                features: "الميزات",
+                welcome: "مرحبًا بك في FranklyMaDear",
+                subtitle: "اكتشف أفضل ألعاب HTML5 المجانية عبر الإنترنت!",
+                playSudoku: "العب سودوكو",
+                viewAllGames: "عرض جميع الألعاب",
+                popularGames: "الألعاب الشعبية",
+                chooseGames: "اختر من مجموعتنا لأفضل الألعاب",
+                sudoku1Desc: "لعبة ألغاز كلاسيكية لشخص واحد",
+                sudoku2Desc: "لعبة ألغاز كلاسيكية لشخصين",
+                pacmanDesc: "لعبة أركيد كلاسيكية",
+                animalsDesc: "تعرف على الحيوانات بطريقة ممتعة!",
+                difficultyEasy: "🎯 سهل",
+                difficultyMedium: "🎯 متوسط",
+                difficultyHard: "🎯 صعب",
+                playNow: "العب الآن",
+                whyPlay: "لماذا تلعب معنا؟",
+                advantages: "جميع مزايا ألعابنا",
+                free: "مجاني",
+                freeDesc: "جميع الألعاب مجانية 100%",
+                responsive: "متجاوب",
+                responsiveDesc: "تعمل على جميع الأجهزة",
+                fast: "سريع",
+                fastDesc: "تحمّل فورًا بدون تثبيت",
+                variety: "تنوع",
+                varietyDesc: "يتم إضافة ألعاب جديدة باستمرار",
+                footerDesc: "أفضل منصة لألعاب HTML5 المجانية عبر الإنترنت.",
+                contact: "اتصال"
+            },
+            ru: {
+                home: "Главная",
+                games: "Игры",
+                features: "Особенности",
+                welcome: "Добро пожаловать в FranklyMaDear",
+                subtitle: "Откройте для себя лучшие бесплатные HTML5 игры онлайн!",
+                playSudoku: "Играть в Судоку",
+                viewAllGames: "Посмотреть Все Игры",
+                popularGames: "Популярные Игры",
+                chooseGames: "Выбирайте из нашей коллекции лучших игр",
+                sudoku1Desc: "Классическая головоломка для одного игрока",
+                sudoku2Desc: "Классическая головоломка для двух игроков",
+                pacmanDesc: "Классическая аркадная игра",
+                animalsDesc: "Узнайте о животных в увлекательной форме!",
+                difficultyEasy: "🎯 Легко",
+                difficultyMedium: "🎯 Средне",
+                difficultyHard: "🎯 Сложно",
+                playNow: "Играть Сейчас",
+                whyPlay: "Почему стоит играть с нами?",
+                advantages: "Все преимущества наших игр",
+                free: "Бесплатно",
+                freeDesc: "Все игры на 100% бесплатны",
+                responsive: "Адаптивный",
+                responsiveDesc: "Работают на всех устройствах",
+                fast: "Быстро",
+                fastDesc: "Загружаются мгновенно без установки",
+                variety: "Разнообразие",
+                varietyDesc: "Постоянно добавляются новые игры",
+                footerDesc: "Лучшая платформа для бесплатных HTML5 игр онлайн.",
+                contact: "Контакт"
+            },
+            hi: {
+                home: "होम",
+                games: "गेम्स",
+                features: "फीचर्स",
+                welcome: "FranklyMaDear में आपका स्वागत है",
+                subtitle: "ऑनलाइन सर्वश्रेष्ठ मुफ्त HTML5 गेम्स खोजें!",
+                playSudoku: "सुडोकू खेलें",
+                viewAllGames: "सभी गेम्स देखें",
+                popularGames: "लोकप्रिय गेम्स",
+                chooseGames: "हमारे सर्वश्रेष्ठ गेम्स के संग्रह से चुनें",
+                sudoku1Desc: "एक खिलाड़ी के लिए क्लासिक पहेली गेम",
+                sudoku2Desc: "दो खिलाड़ियों के लिए क्लासिक पहेली गेम",
+                pacmanDesc: "क्लासिक आर्केड गेम",
+                animalsDesc: "मजेदार तरीके से जानवरों के बारे में जानें!",
+                difficultyEasy: "🎯 आसान",
+                difficultyMedium: "🎯 मध्यम",
+                difficultyHard: "🎯 कठिन",
+                playNow: "अभी खेलें",
+                whyPlay: "हमारे साथ क्यों खेलें?",
+                advantages: "हमारे गेम्स के सभी फायदे",
+                free: "मुफ्त",
+                freeDesc: "सभी गेम्स 100% मुफ्त हैं",
+                responsive: "उत्तरदायी",
+                responsiveDesc: "सभी उपकरणों पर काम करते हैं",
+                fast: "तेज़",
+                fastDesc: "बिना इंस्टॉलेशन के तुरंत लोड होते हैं",
+                variety: "विविधता",
+                varietyDesc: "नए गेम्स लगातार जोड़े जाते हैं",
+                footerDesc: "मुफ्त HTML5 गेम्स के लिए सर्वश्रेष्ठ प्लेटफॉर्म।",
+                contact: "संपर्क"
+            }
+        };
+
+        // Language selection functionality
+        document.getElementById('language-select').addEventListener('change', function() {
+            const selectedLanguage = this.value;
+            changeLanguage(selectedLanguage);
+            localStorage.setItem('preferred-language', selectedLanguage);
+        });
+
+        function changeLanguage(language) {
+            // Update HTML lang attribute
+            document.documentElement.lang = language;
+            
+            // Update all elements with data-key attribute
+            document.querySelectorAll('[data-key]').forEach(element => {
+                const key = element.getAttribute('data-key');
+                if (translations[language] && translations[language][key]) {
+                    element.textContent = translations[language][key];
+                }
+            });
+        }
+
+        // Check for saved language preference
+        const savedLanguage = localStorage.getItem('preferred-language') || 'el';
+        document.getElementById('language-select').value = savedLanguage;
+        changeLanguage(savedLanguage);
+
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
