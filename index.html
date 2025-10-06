@@ -26,6 +26,121 @@
             background: var(--light);
         }
         
+        /* Roll-up Banner */
+        .roll-up-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: white;
+            text-align: center;
+            padding: 12px 20px;
+            z-index: 2000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.5s ease, opacity 0.3s ease;
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        
+        .roll-up-banner.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .banner-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .banner-icon {
+            font-size: 1.4rem;
+            animation: bounce 2s infinite;
+        }
+        
+        .banner-text {
+            animation: pulse 1.5s infinite;
+        }
+        
+        .close-banner {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Pop-up Modal */
+        .popup-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .popup-content {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            animation: popIn 0.4s ease;
+        }
+        
+        .popup-title {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .popup-text {
+            margin-bottom: 1.5rem;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .popup-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .close-popup {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+        
         /* Header */
         .header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -36,6 +151,11 @@
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: top 0.3s ease;
+        }
+        
+        .header.with-banner {
+            top: 50px;
         }
         
         .nav {
@@ -102,6 +222,11 @@
             padding: 150px 0 80px;
             text-align: center;
             margin-top: 60px;
+            transition: margin-top 0.3s ease;
+        }
+        
+        .hero.with-banner {
+            margin-top: 110px;
         }
         
         .hero h1 {
@@ -305,6 +430,41 @@
             }
         }
         
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-5px);
+            }
+            60% {
+                transform: translateY(-3px);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .nav-links {
@@ -325,12 +485,42 @@
                 width: 200px;
                 text-align: center;
             }
+            
+            .banner-content {
+                font-size: 0.9rem;
+            }
+            
+            .popup-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Roll-up Banner -->
+    <div class="roll-up-banner" id="rollUpBanner">
+        <div class="banner-content">
+            <span class="banner-icon">👉</span>
+            <span class="banner-text">Πάτησε κλικ και βοήθησέ μας να συνεχίσουμε!</span>
+        </div>
+        <button class="close-banner" id="closeBanner">×</button>
+    </div>
+
+    <!-- Pop-up Modal -->
+    <div class="popup-modal" id="popupModal">
+        <div class="popup-content">
+            <button class="close-popup" id="closePopup">×</button>
+            <h2 class="popup-title">Βοήθησέ μας να συνεχίσουμε!</h2>
+            <p class="popup-text">Η υποστήριξή σας μας βοηθά να προσφέρουμε δωρεάν παιχνίδια για όλους. Πατώντας το παρακάτω κουμπί θα μας βοηθήσετε να συνεχίσουμε!</p>
+            <div class="popup-buttons">
+                <a href="https://otieu.com/4/9967690" target="_blank" class="btn btn-primary">Βοήθησε τώρα</a>
+                <button class="btn btn-secondary" id="closePopupBtn">Όχι τώρα</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Header -->
-    <header class="header">
+    <header class="header" id="mainHeader">
         <nav class="nav">
             <div class="logo">
                 <a href="/">FmD</a>
@@ -356,7 +546,7 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="mainHero">
         <div class="container">
             <h1 data-key="welcome">Καλώς Ηρθες στο FranklyMaDear</h1>
             <p data-key="subtitle">Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!</p>
@@ -511,6 +701,51 @@
     </footer>
 
     <script>
+        // Banner and Pop-up functionality
+        const rollUpBanner = document.getElementById('rollUpBanner');
+        const closeBanner = document.getElementById('closeBanner');
+        const popupModal = document.getElementById('popupModal');
+        const closePopup = document.getElementById('closePopup');
+        const closePopupBtn = document.getElementById('closePopupBtn');
+        const mainHeader = document.getElementById('mainHeader');
+        const mainHero = document.getElementById('mainHero');
+        
+        // Show banner after a short delay
+        setTimeout(() => {
+            rollUpBanner.classList.add('show');
+            mainHeader.classList.add('with-banner');
+            mainHero.classList.add('with-banner');
+        }, 1500);
+        
+        // Close banner
+        closeBanner.addEventListener('click', (e) => {
+            e.stopPropagation();
+            rollUpBanner.classList.remove('show');
+            mainHeader.classList.remove('with-banner');
+            mainHero.classList.remove('with-banner');
+        });
+        
+        // Open pop-up when banner is clicked
+        rollUpBanner.addEventListener('click', () => {
+            popupModal.style.display = 'flex';
+        });
+        
+        // Close pop-up
+        closePopup.addEventListener('click', () => {
+            popupModal.style.display = 'none';
+        });
+        
+        closePopupBtn.addEventListener('click', () => {
+            popupModal.style.display = 'none';
+        });
+        
+        // Close pop-up when clicking outside the content
+        popupModal.addEventListener('click', (e) => {
+            if (e.target === popupModal) {
+                popupModal.style.display = 'none';
+            }
+        });
+
         // Language translations
         const translations = {
             el: {
