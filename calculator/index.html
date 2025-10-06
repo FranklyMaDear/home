@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="el">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iOS Style Calculator</title>
+<style>
+:root {
+--bg: #000000;
+--btn-dark: #333333;
+--btn-grey: #a6a6a6;
+--btn-orange: #ff9500;
+--display-color: #ffffff;
+--gap: 12px;
+--font-size-btn: 48px;
+--font-size-op: 52px;
+}
+
+body {
+margin: 0;
+background: var(--bg);
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+color: var(--display-color);
+display: flex;
+justify-content: center;
+align-items: flex-end;
+height: 100vh;
+flex-direction: column;
+-webkit-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+
+.calc {
+width: 100vw;
+height: 100vh;
+max-width: none;
+padding: var(--gap);
+box-sizing: border-box;
+position: relative;
+margin-top: 0;
+display: flex;
+flex-direction: column;
+justify-content: flex-end;
+}
+
+.display {
+min-height: 20vh;
+width: 100%;
+display: flex;
+align-items: flex-end;
+justify-content: flex-end;
+padding: 0 10px 20px 10px;
+box-sizing: border-box;
+font-size: 70px;
+/* Adjusted font size */
+line-height: 1;
+overflow-wrap: break-word;
+text-align: right;
+flex-grow: 1;
+}
+
+.top-row-buttons {
+display: flex;
+justify-content: space-between;
+align-items: center;
+width: 100%;
+padding: 0 var(--gap);
+box-sizing: border-box;
+margin-top: 10px;
+margin-bottom: 5px;
+}
+
+.menu-btn {
+font-size: 32px;
+color: var(--display-color);
+background: none;
+border: none;
+cursor: pointer;
+z-index: 1001;
+padding: 0;
+-webkit-tap-highlight-color: transparent;
+}
+
+.fullscreen-btn {
+background: none;
+border: none;
+color: var(--display-color);
+cursor: pointer;
+font-size: 24px;
+padding: 0;
+}
+
+.pad {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: var(--gap);
+margin-top: 12px;
+justify-items: center;
+width: 100%;
+grid-auto-rows: 1fr;
+}
+
+button {
+width: 100%;
+aspect-ratio: 1;
+border-radius: 50%;
+border: none;
+font-size: var(--font-size-btn);
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: transform 0.06s ease;
+color: var(--display-color);
+-webkit-tap-highlight-color: transparent;
+}
+
+button:active {
+transform: scale(0.95);
+filter: brightness(1.2);
+}
+
+.btn-ac,
+.btn-fn {
+background: var(--btn-grey);
+color: var(--bg);
+}
+
+.btn-num {
+background: var(--btn-dark);
+color: var(--display-color);
+}
+
+.btn-op {
+background: var(--btn-orange);
+color: var(--display-color);
+font-size: var(--font-size-op);
+}
+
+.ads-button {
+background-color: var(--btn-dark);
+color: var(--display-color);
+font-size: 20px;
+width: 100%;
+height: 100%;
+border-radius: 50%;
+display: flex;
+justify-content: center;
+align-items: center;
+cursor: pointer;
+}
+
+.history {
+position: fixed;
+bottom: -50vh;
+left: 0;
+width: 100%;
+height: 50vh;
+background: #1c1c1c;
+color: white;
+overflow-y: auto;
+transition: transform 0.3s ease-out;
+padding: 20px;
+box-sizing: border-box;
+z-index: 1000;
+border-top: 1px solid #333;
+border-radius: 20px 20px 0 0;
+}
+
+.history.open {
+transform: translateY(-100%);
+}
+
+.history h2 {
+margin-top: 0;
+font-size: 24px;
+color: var(--btn-orange);
+text-align: center;
+margin-bottom: 10px;
+}
+
+.history ul {
+list-style: none;
+padding: 0;
+margin: 0;
+}
+
+.history li {
+padding: 8px 0;
+border-bottom: 1px solid #333;
+font-size: 18px;
+text-align: right;
+direction: rtl;
+}
+
+.history li:last-child {
+border-bottom: none;
+}
+
+@media (max-width: 480px) {
+:root {
+--gap: 10px;
+--font-size-btn: 44px;
+--font-size-op: 48px;
+}
+
+.display {
+font-size: 90px;
+}
+}
+</style>
+</head>
+
+<body>
+<div class="history" id="historyPanel">
+<h2>Ιστορικό</h2>
+<ul id="historyList"></ul>
+</div>
+
+<main class="calc" id="calculatorApp">
+<div class="top-row-buttons">
+<button class="menu-btn" id="menuToggle">☰</button>
+<button class="fullscreen-btn" id="fullscreenButton">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-maximize">
+<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+</svg>
+</button>
+</div>
+
+<div class="display" id="display">0</div>
+
+<div class="pad">
+<button class="btn-ac" id="ac">AC</button>
+<button class="btn-fn" id="plusminus">+/-</button>
+<button class="btn-fn" id="percent">%</button>
+<button class="btn-op" data-op="/">÷</button>
+
+<button class="btn-num" data-num="7">7</button>
+<button class="btn-num" data-num="8">8</button>
+<button class="btn-num" data-num="9">9</button>
+<button class="btn-op" data-op="*">×</button>
+
+<button class="btn-num" data-num="4">4</button>
+<button class="btn-num" data-num="5">5</button>
+<button class="btn-num" data-num="6">6</button>
+<button class="btn-op" data-op="-">−</button>
+
+<button class="btn-num" data-num="1">1</button>
+<button class="btn-num" data-num="2">2</button>
+<button class="btn-num" data-num="3">3</button>
+<button class="btn-op" data-op="+">+</button>
+
+<button class="ads-button" id="adsButton" onclick="window.open('https://otieu.com/4/10000601', '_blank')">ads</button>
+<button class="btn-num" data-num="0">0</button>
+<button class="btn-num" id="dot">,</button>
+<button class="btn-op" id="equals">=</button>
+</div>
+</main>
+
+<script>
+(() => {
+const displayEl = document.getElementById('display');
+const historyList = document.getElementById('historyList');
+const historyPanel = document.getElementById('historyPanel');
+const menuToggle = document.getElementById('menuToggle');
+const fullscreenButton = document.getElementById('fullscreenButton');
+const calculatorApp = document.getElementById('calculatorApp');
+const btns = document.querySelectorAll('.pad button');
+let expression = "";
+let lastResult = null;
+
+function updateDisplay() {
+displayEl.textContent = expression || "0";
+if (displayEl.scrollWidth > displayEl.clientWidth) {
+displayEl.style.fontSize = "50px"; /* Adjusted font size for long numbers */
+} else {
+displayEl.style.fontSize = "70px"; /* Keep the new default size */
+}
+}
+
+function toEvalExpr(expr) {
+return expr.replace(/,/g, ".").replace(/÷/g, "/").replace(/×/g, "*").replace(/−/g, "-").replace(/%/g, "/100");
+}
+
+function addHistory(entry) {
+const li = document.createElement('li');
+li.textContent = entry;
+historyList.prepend(li);
+}
+
+function inputDigit(d) {
+if (expression === "Error") {
+clearAll();
+}
+if (expression === "0" && d === "0") return;
+if (expression === "0" && d !== "0") {
+expression = d;
+} else {
+expression += d;
+}
+updateDisplay();
+}
+
+function inputDot() {
+if (expression === "Error") {
+clearAll();
+}
+if (expression === "") {
+expression = "0,";
+}
+const parts = expression.split(/([+\-×÷])/);
+const lastPart = parts[parts.length - 1];
+if (!lastPart.includes(',')) {
+expression += ',';
+}
+updateDisplay();
+}
+
+function clearAll() {
+expression = "";
+lastResult = null;
+updateDisplay();
+}
+
+function toggleSign() {
+if (expression === "" || expression === "0" || expression === "Error") return;
+const parts = expression.split(/([+\-×÷])/);
+let lastPart = parts.pop().trim();
+if (lastPart === "") return;
+let newValue;
+if (lastPart.startsWith('−')) {
+newValue = lastPart.substring(1);
+} else {
+newValue = '−' + lastPart;
+}
+parts.push(newValue);
+expression = parts.join('');
+updateDisplay();
+}
+
+function percent() {
+if (expression === "" || expression === "0" || expression === "Error") return;
+const parts = expression.split(/([+\-×÷])/);
+const lastNumberStr = parts.pop().replace(',', '.');
+const lastNumber = parseFloat(lastNumberStr);
+if (isNaN(lastNumber)) return;
+let newValue = (lastNumber / 100).toString().replace('.', ',');
+parts.push(newValue);
+expression = parts.join('');
+updateDisplay();
+}
+
+function inputOperator(op) {
+if (expression === "") return;
+if (expression === "Error") {
+expression = String(lastResult).replace('.', ',');
+}
+const lastChar = expression.slice(-1);
+if ("+−×÷".includes(lastChar)) {
+expression = expression.slice(0, -1);
+}
+expression += (op === "*" ? "×" : op === "/" ? "÷" : op === "-" ? "−" : "+") + " ";
+updateDisplay();
+}
+
+function calculateEquals() {
+if (expression === "" || expression === "Error") return;
+try {
+let evalExpr = toEvalExpr(expression);
+let result = eval(evalExpr);
+if (result % 1 !== 0) {
+result = parseFloat(result.toFixed(10));
+}
+addHistory(expression + " = " + result);
+expression = String(result).replace('.', ',');
+lastResult = result;
+updateDisplay();
+} catch (e) {
+expression = "Error";
+updateDisplay();
+}
+}
+btns.forEach(b => {
+b.addEventListener('click', () => {
+if (b.dataset.num) inputDigit(b.dataset.num);
+else if (b.id === 'dot') inputDot();
+else if (b.id === 'ac') clearAll();
+else if (b.id === 'plusminus') toggleSign();
+else if (b.id === 'percent') percent();
+else if (b.id === 'equals') calculateEquals();
+else if (b.dataset.op) inputOperator(b.dataset.op);
+});
+});
+menuToggle.addEventListener('click', () => historyPanel.classList.toggle('open'));
+fullscreenButton.addEventListener('click', () => {
+const elementToToggle = document.getElementById('calculatorApp');
+if (document.fullscreenElement) {
+document.exitFullscreen();
+} else if (elementToToggle.requestFullscreen) {
+elementToToggle.requestFullscreen();
+} else if (elementToToggle.mozRequestFullScreen) {
+elementToToggle.mozRequestFullScreen();
+} else if (elementToToggle.webkitRequestFullscreen) {
+elementToToggle.webkitRequestFullscreen();
+} else if (elementToToggle.msRequestFullscreen) {
+elementToToggle.msRequestFullscreen();
+}
+});
+updateDisplay();
+})();
+</script>
+</body>
+
+</html>
