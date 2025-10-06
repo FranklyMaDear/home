@@ -391,6 +391,70 @@
             background: #6d4c41;
         }
         
+        /* Διαφήμιση */
+        .ad-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 6000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+        
+        .ad-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .ad-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        .ad-close:hover {
+            background: #ff3742;
+        }
+        
+        .ad-countdown {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .ad-frame {
+            width: 100%;
+            height: 300px;
+            border: none;
+            border-radius: 8px;
+            background: #f5f5f5;
+        }
+        
         @media (max-width: 500px) {
             .container {
                 max-width: 380px;
@@ -416,6 +480,10 @@
             .number-btn {
                 padding: 8px 0;
                 font-size: 15px;
+            }
+            
+            .ad-frame {
+                height: 250px;
             }
         }
         
@@ -521,8 +589,6 @@
                 <div class="theme-btn theme-sunset" data-theme="sunset"></div>
             </div>
         </div>
-        
-        <!-- Διαφημίσεις αφαιρέθηκαν -->
     </div>
     
     <!-- Victory Modal -->
@@ -552,6 +618,15 @@
         <div class="score">Πόντοι: <span id="score-points">0</span></div>
         <p>Πάτησε οποιοδήποτε πλήκτρο για να συνεχίσει</p>
         <button class="continue-btn" id="continue-btn">Συνέχεια</button>
+    </div>
+    
+    <!-- Ad Container -->
+    <div class="ad-container" id="ad-container" style="display: none;">
+        <div class="ad-content">
+            <button class="ad-close" id="ad-close" disabled>Χ</button>
+            <iframe class="ad-frame" src="https://otieu.com/4/10000601" frameborder="0"></iframe>
+            <div class="ad-countdown" id="ad-countdown">Η διαφήμιση θα κλείσει σε 5 δευτερόλεπτα...</div>
+        </div>
     </div>
 
     <!-- Ηχητικά εφέ -->
@@ -583,7 +658,8 @@
                 level: "Level",
                 success: "Success!",
                 nextLevel: "Moving to the next level!",
-                pressAnyKey: "Press any key to continue"
+                pressAnyKey: "Press any key to continue",
+                adCountdown: "Ad will close in {seconds} seconds..."
             },
             el: {
                 title: "My Sudoku",
@@ -605,7 +681,8 @@
                 level: "Επίπεδο",
                 success: "Επιτυχία!",
                 nextLevel: "Προχωράς στο επόμενο επίπεδο!",
-                pressAnyKey: "Πάτησε οποιοδήποτε πλήκτρο για να συνεχίσει"
+                pressAnyKey: "Πάτησε οποιοδήποτε πλήκτρο για να συνεχίσει",
+                adCountdown: "Η διαφήμιση θα κλείσει σε {seconds} δευτερόλεπτα..."
             },
             es: {
                 title: "My Sudoku",
@@ -627,7 +704,8 @@
                 level: "Nivel",
                 success: "¡Éxito!",
                 nextLevel: "¡Pasando al siguiente nivel!",
-                pressAnyKey: "Presiona cualquier tecla para continuar"
+                pressAnyKey: "Presiona cualquier tecla para continuar",
+                adCountdown: "El anuncio se cerrará en {seconds} segundos..."
             },
             de: {
                 title: "My Sudoku",
@@ -649,7 +727,8 @@
                 level: "Level",
                 success: "Erfolg!",
                 nextLevel: "Weiter zum nächsten Level!",
-                pressAnyKey: "Drücke eine beliebige Taste, um fortzufahren"
+                pressAnyKey: "Drücke eine beliebige Taste, um fortzufahren",
+                adCountdown: "Die Anzeige schließt in {seconds} Sekunden..."
             },
             zh: {
                 title: "My Sudoku",
@@ -671,7 +750,8 @@
                 level: "等级",
                 success: "成功！",
                 nextLevel: "进入下一关！",
-                pressAnyKey: "按任意键继续"
+                pressAnyKey: "按任意键继续",
+                adCountdown: "广告将在{seconds}秒后关闭..."
             },
             ru: {
                 title: "My Sudoku",
@@ -693,7 +773,8 @@
                 level: "Уровень",
                 success: "Успех!",
                 nextLevel: "Переход на следующий уровень!",
-                pressAnyKey: "Нажмите любую клавишу для продолжения"
+                pressAnyKey: "Нажмите любую клавишу для продолжения",
+                adCountdown: "Реклама закроется через {seconds} секунд..."
             },
             tr: {
                 title: "My Sudoku",
@@ -715,7 +796,8 @@
                 level: "Seviye",
                 success: "Başarı!",
                 nextLevel: "Sonraki seviyeye geçiliyor!",
-                pressAnyKey: "Devam etmek için herhangi bir tuşa basın"
+                pressAnyKey: "Devam etmek için herhangi bir tuşa basın",
+                adCountdown: "Reklam {seconds} saniye içinde kapanacak..."
             },
             ar: {
                 title: "My Sudoku",
@@ -737,7 +819,8 @@
                 level: "مستوى",
                 success: "نجاح!",
                 nextLevel: "الانتقال إلى المستوى التالي!",
-                pressAnyKey: "اضغط على أي مفتاح للمتابعة"
+                pressAnyKey: "اضغط على أي مفتاح للمتابعة",
+                adCountdown: "سيتم إغلاق الإعلان خلال {seconds} ثانية..."
             },
             af: {
                 title: "My Sudoku",
@@ -759,7 +842,8 @@
                 level: "Vlak",
                 success: "Sukses!",
                 nextLevel: "Beweeg na die volgende vlak!",
-                pressAnyKey: "Druk enige sleutel om voort te gaan"
+                pressAnyKey: "Druk enige sleutel om voort te gaan",
+                adCountdown: "Die advertensie sal oor {seconds} sekondes sluit..."
             }
         };
 
@@ -871,479 +955,323 @@
                 
                 for (let i = startRow; i < startRow + subSize; i++) {
                     for (let j = startCol; j < startCol + subSize; j++) {
-                        if (this.board[i][j] === num && i !== row && j !== col) return false;
+                        if (this.board[i][j] === num && (i !== row || j !== col)) return false;
                     }
                 }
                 
                 return true;
             }
             
-            // Τοποθέτηση αριθμού
-            placeNumber(row, col, num) {
-                if (this.board[row][col] !== '') return false;
-                
-                const isValid = this.isValidMove(row, col, num);
-                
-                if (isValid) {
-                    this.moveHistory.push({row, col, previousValue: this.board[row][col]});
-                    this.board[row][col] = num;
-                    this.redoHistory = [];
-                    return true;
-                } else {
-                    this.errors++;
-                    return false;
+            // Έλεγχος αν το Sudoku έχει λυθεί
+            isSolved() {
+                for (let i = 0; i < this.size; i++) {
+                    for (let j = 0; j < this.size; j++) {
+                        if (this.board[i][j] === '' || this.board[i][j] !== this.solution[i][j]) {
+                            return false;
+                        }
+                    }
                 }
+                return true;
             }
             
-            // Εκκαθάριση κελιού
-            clearCell(row, col) {
-                if (this.board[row][col] !== '') {
-                    this.moveHistory.push({row, col, previousValue: this.board[row][col]});
-                    this.board[row][col] = '';
-                    this.redoHistory = [];
-                    return true;
-                }
-                return false;
+            // Καταχώρηση κίνησης στο ιστορικό
+            recordMove(row, col, prevValue, newValue) {
+                this.moveHistory.push({row, col, prevValue, newValue});
             }
             
             // Undo τελευταίας κίνησης
             undo() {
-                if (this.moveHistory.length > 0) {
-                    const lastMove = this.moveHistory.pop();
-                    this.redoHistory.push({row: lastMove.row, col: lastMove.col, previousValue: this.board[lastMove.row][lastMove.col]});
-                    this.board[lastMove.row][lastMove.col] = lastMove.previousValue;
-                    this.selectedCell = {row: lastMove.row, col: lastMove.col};
-                    return true;
-                }
-                return false;
+                if (this.moveHistory.length === 0) return false;
+                
+                const lastMove = this.moveHistory.pop();
+                this.redoHistory.push({
+                    row: lastMove.row, 
+                    col: lastMove.col, 
+                    prevValue: this.board[lastMove.row][lastMove.col], 
+                    newValue: lastMove.prevValue
+                });
+                
+                this.board[lastMove.row][lastMove.col] = lastMove.prevValue;
+                return true;
             }
             
             // Redo τελευταίας κίνησης
             redo() {
-                if (this.redoHistory.length > 0) {
-                    const lastRedo = this.redoHistory.pop();
-                    this.moveHistory.push({row: lastRedo.row, col: lastRedo.col, previousValue: this.board[lastRedo.row][lastRedo.col]});
-                    this.board[lastRedo.row][lastRedo.col] = lastRedo.previousValue;
-                    this.selectedCell = {row: lastRedo.row, col: lastRedo.col};
-                    return true;
-                }
-                return false;
-            }
-            
-            // Έλεγχος αν το παιχνίδι έχει ολοκληρωθεί
-            isComplete() {
-                for (let row = 0; row < this.size; row++) {
-                    for (let col = 0; col < this.size; col++) {
-                        if (this.board[row][col] === '') return false;
-                        if (this.board[row][col] !== this.solution[row][col]) return false;
-                    }
-                }
-                return true;
-            }
-            
-            // Έλεγχος αν το ταμπλό είναι πλήρες αλλά όχι απαραίτητα σωστό
-            isBoardFull() {
-                for (let row = 0; row < this.size; row++) {
-                    for (let col = 0; col < this.size; col++) {
-                        if (this.board[row][col] === '') return false;
-                    }
-                }
+                if (this.redoHistory.length === 0) return false;
+                
+                const lastRedo = this.redoHistory.pop();
+                this.moveHistory.push({
+                    row: lastRedo.row, 
+                    col: lastRedo.col, 
+                    prevValue: this.board[lastRedo.row][lastRedo.col], 
+                    newValue: lastRedo.newValue
+                });
+                
+                this.board[lastRedo.row][lastRedo.col] = lastRedo.newValue;
                 return true;
             }
             
             // Υπολογισμός πόντων
             calculateScore() {
-                const basePoints = 1000;
-                const timeBonus = Math.max(0, 300 - this.gameTime); // Μπόνους για γρήγορο χρόνο
-                const errorPenalty = this.errors * 50; // Ποινή για λάθη
-                const levelMultiplier = this.currentLevel; // Πολλαπλασιαστής για επίπεδο
+                const timeBonus = Math.max(0, 1000 - this.gameTime * 2);
+                const errorPenalty = this.errors * 50;
+                const levelBonus = this.currentLevel * 200;
                 
-                const score = Math.max(0, (basePoints + timeBonus - errorPenalty) * levelMultiplier);
-                return score;
+                return Math.max(0, timeBonus + levelBonus - errorPenalty);
             }
         }
 
         // Αρχικοποίηση του παιχνιδιού
-        let game = new SudokuGame(6, 'easy');
-        let confettiElements = [];
-
+        let game;
+        let currentLanguage = 'el';
+        
         // DOM Elements
-        const sudokuBoard = document.getElementById('sudoku-board');
-        const numberPad = document.getElementById('number-pad');
-        const timerElement = document.getElementById('timer');
-        const errorCountElement = document.getElementById('error-count');
-        const undoCountElement = document.getElementById('undo-count');
-        const currentLevelElement = document.getElementById('current-level');
-        const victoryModal = document.getElementById('victory-modal');
-        const levelTransition = document.getElementById('level-transition');
-        const scoreScreen = document.getElementById('score-screen');
-        const languageSelect = document.getElementById('language');
-        const sizeSelect = document.getElementById('size');
-        const levelSelect = document.getElementById('level');
-
+        const elements = {
+            board: document.getElementById('sudoku-board'),
+            timer: document.getElementById('timer'),
+            errorCount: document.getElementById('error-count'),
+            undoCount: document.getElementById('undo-count'),
+            currentLevel: document.getElementById('current-level'),
+            numberPad: document.getElementById('number-pad'),
+            newGameBtn: document.getElementById('new-game'),
+            checkSolutionBtn: document.getElementById('check-solution'),
+            undoBtn: document.getElementById('undo-btn'),
+            sizeSelect: document.getElementById('size'),
+            levelSelect: document.getElementById('level'),
+            languageSelect: document.getElementById('language'),
+            victoryModal: document.getElementById('victory-modal'),
+            closeModal: document.getElementById('close-modal'),
+            finalTime: document.getElementById('final-time'),
+            finalErrors: document.getElementById('final-errors'),
+            levelTransition: document.getElementById('level-transition'),
+            transitionCountdown: document.getElementById('transition-countdown'),
+            scoreScreen: document.getElementById('score-screen'),
+            scoreTime: document.getElementById('score-time'),
+            scoreErrors: document.getElementById('score-errors'),
+            scorePoints: document.getElementById('score-points'),
+            continueBtn: document.getElementById('continue-btn'),
+            adContainer: document.getElementById('ad-container'),
+            adClose: document.getElementById('ad-close'),
+            adCountdown: document.getElementById('ad-countdown')
+        };
+        
         // Αρχικοποίηση του παιχνιδιού
-        function initializeGame() {
+        function initGame() {
+            const size = parseInt(elements.sizeSelect.value);
+            const level = elements.levelSelect.value;
+            
+            game = new SudokuGame(size, level);
+            game.currentLanguage = currentLanguage;
+            
             renderBoard();
-            renderNumberPad();
+            updateNumberPad();
             updateStats();
             startTimer();
+            
+            // Ενημέρωση επιπέδου
+            elements.currentLevel.textContent = game.currentLevel;
         }
-
-        // Απόδοση του ταμπλό
+        
+        // Απόδοση του πίνακα
         function renderBoard() {
-            sudokuBoard.innerHTML = '';
-            sudokuBoard.style.gridTemplateColumns = `repeat(${game.size}, 1fr)`;
+            elements.board.innerHTML = '';
+            elements.board.style.gridTemplateColumns = `repeat(${game.size}, 1fr)`;
+            elements.board.style.gridTemplateRows = `repeat(${game.size}, 1fr)`;
             
-            const cellSize = Math.min(50, 400 / game.size);
+            const cellSize = Math.min(400 / game.size, 50);
+            elements.board.style.width = `${cellSize * game.size}px`;
+            elements.board.style.height = `${cellSize * game.size}px`;
             
-            for (let row = 0; row < game.size; row++) {
-                for (let col = 0; col < game.size; col++) {
+            for (let i = 0; i < game.size; i++) {
+                for (let j = 0; j < game.size; j++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    cell.style.width = `${cellSize}px`;
-                    cell.style.height = `${cellSize}px`;
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
                     
-                    if (game.board[row][col] !== '') {
-                        cell.textContent = game.board[row][col];
+                    // Προσθήκη κλάσεων για τα σύνορα των υπο-τετραγώνων
+                    const subSize = Math.sqrt(game.size);
+                    if (i % subSize === 0) cell.style.borderTopWidth = '2px';
+                    if (j % subSize === 0) cell.style.borderLeftWidth = '2px';
+                    if (i === game.size - 1) cell.style.borderBottomWidth = '2px';
+                    if (j === game.size - 1) cell.style.borderRightWidth = '2px';
+                    
+                    if (game.board[i][j] !== '') {
+                        cell.textContent = game.board[i][j];
                         cell.classList.add('prefilled');
                     }
                     
-                    // Προσθήκη χοντρών ορίων για τα υπο-τετράγωνα
-                    const subSize = Math.sqrt(game.size);
-                    if (row % subSize === 0) cell.style.borderTopWidth = '2px';
-                    if (col % subSize === 0) cell.style.borderLeftWidth = '2px';
-                    if (row === game.size - 1) cell.style.borderBottomWidth = '2px';
-                    if (col === game.size - 1) cell.style.borderRightWidth = '2px';
-                    
-                    cell.addEventListener('click', () => selectCell(row, col));
-                    
-                    sudokuBoard.appendChild(cell);
+                    cell.addEventListener('click', () => selectCell(i, j));
+                    elements.board.appendChild(cell);
                 }
             }
-            
-            // Ενημέρωση επιλεγμένου κελιού
-            if (game.selectedCell) {
-                highlightSelectedCell();
-            }
         }
-
-        // Απόδοση του πληκτρολογίου αριθμών
-        function renderNumberPad() {
-            numberPad.innerHTML = '';
-            numberPad.style.gridTemplateColumns = `repeat(${Math.min(game.size, 6)}, 1fr)`;
+        
+        // Ενημέρωση του πληκτρολογίου αριθμών
+        function updateNumberPad() {
+            elements.numberPad.innerHTML = '';
+            elements.numberPad.style.gridTemplateColumns = `repeat(${Math.min(game.size, 5)}, 1fr)`;
             
             for (let i = 1; i <= game.size; i++) {
-                const button = document.createElement('button');
-                button.className = 'number-btn';
-                button.textContent = i;
-                button.addEventListener('click', () => placeNumber(i));
-                numberPad.appendChild(button);
+                const btn = document.createElement('button');
+                btn.className = 'number-btn';
+                btn.textContent = i;
+                btn.addEventListener('click', () => fillCell(i));
+                elements.numberPad.appendChild(btn);
             }
             
-            // Κουμπί εκκαθάρισης
-            const clearButton = document.createElement('button');
-            clearButton.className = 'number-btn clear-btn';
-            clearButton.textContent = 'X';
-            clearButton.addEventListener('click', clearSelectedCell);
-            numberPad.appendChild(clearButton);
+            // Κουμπί Clear
+            const clearBtn = document.createElement('button');
+            clearBtn.className = 'number-btn clear-btn';
+            clearBtn.textContent = 'X';
+            clearBtn.addEventListener('click', clearCell);
+            elements.numberPad.appendChild(clearBtn);
         }
-
+        
         // Επιλογή κελιού
         function selectCell(row, col) {
-            // Αν το κελί είναι προ-συμπληρωμένο, μην επιτρέψεις την επιλογή
-            if (game.board[row][col] !== '' && game.moveHistory.findIndex(move => 
-                move.row === row && move.col === col) === -1) {
-                return;
+            // Καθαρισμός προηγούμενης επιλογής
+            if (game.selectedCell) {
+                const prevCell = document.querySelector(`.cell[data-row="${game.selectedCell.row}"][data-col="${game.selectedCell.col}"]`);
+                if (prevCell) {
+                    prevCell.classList.remove('selected');
+                    
+                    // Καθαρισμός των σχετικών κελιών
+                    document.querySelectorAll('.cell').forEach(cell => {
+                        cell.classList.remove('related');
+                    });
+                }
             }
             
+            // Επιλογή νέου κελιού
             game.selectedCell = { row, col };
-            highlightSelectedCell();
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            cell.classList.add('selected');
             
-            // Αναπαραγωγή ήχου κλικ
+            // Επισήμανση σχετικών κελιών
+            highlightRelatedCells(row, col);
+            
+            // Αναπαραγωγή ήχου
             playSound('click');
         }
-
-        // Επισήμανση επιλεγμένου κελιού
-        function highlightSelectedCell() {
-            // Κατάργηση όλων των προηγούμενων επιλογών
-            const cells = document.querySelectorAll('.cell');
-            cells.forEach(cell => {
-                cell.classList.remove('selected', 'related', 'error');
-            });
-            
-            if (!game.selectedCell) return;
-            
-            const { row, col } = game.selectedCell;
-            const selectedIndex = row * game.size + col;
-            
-            // Επισήμανση επιλεγμένου κελιού
-            cells[selectedIndex].classList.add('selected');
-            
-            // Επισήμανση σχετικών κελιών (ίδια γραμμή, στήλη, ή υπο-τετράγωνο)
+        
+        // Επισήμανση σχετικών κελιών
+        function highlightRelatedCells(row, col) {
+            // Γραμμή
             for (let i = 0; i < game.size; i++) {
-                // Ίδια γραμμή
-                if (i !== col) {
-                    cells[row * game.size + i].classList.add('related');
-                }
-                
-                // Ίδια στήλη
-                if (i !== row) {
-                    cells[i * game.size + col].classList.add('related');
+                const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${i}"]`);
+                if (cell && !cell.classList.contains('selected')) {
+                    cell.classList.add('related');
                 }
             }
             
-            // Επισήμανση υπο-τετραγώνου
+            // Στήλη
+            for (let i = 0; i < game.size; i++) {
+                const cell = document.querySelector(`.cell[data-row="${i}"][data-col="${col}"]`);
+                if (cell && !cell.classList.contains('selected')) {
+                    cell.classList.add('related');
+                }
+            }
+            
+            // Υπο-τετράγωνο
             const subSize = Math.sqrt(game.size);
             const startRow = Math.floor(row / subSize) * subSize;
             const startCol = Math.floor(col / subSize) * subSize;
             
             for (let i = startRow; i < startRow + subSize; i++) {
                 for (let j = startCol; j < startCol + subSize; j++) {
-                    if (i !== row || j !== col) {
-                        cells[i * game.size + j].classList.add('related');
-                    }
-                }
-            }
-            
-            // Επισήμανση κελιών με λάθη
-            for (let i = 0; i < game.size; i++) {
-                for (let j = 0; j < game.size; j++) {
-                    const index = i * game.size + j;
-                    if (game.board[i][j] !== '' && game.board[i][j] !== game.solution[i][j]) {
-                        cells[index].classList.add('error');
+                    const cell = document.querySelector(`.cell[data-row="${i}"][data-col="${j}"]`);
+                    if (cell && !cell.classList.contains('selected')) {
+                        cell.classList.add('related');
                     }
                 }
             }
         }
-
-        // Τοποθέτηση αριθμού στο επιλεγμένο κελί
-        function placeNumber(num) {
+        
+        // Συμπλήρωση κελιού
+        function fillCell(num) {
             if (!game.selectedCell) {
-                alert(translations[game.currentLanguage].selectEmpty);
+                alert(translations[currentLanguage].selectEmpty);
                 return;
             }
             
             const { row, col } = game.selectedCell;
-            const success = game.placeNumber(row, col, num);
             
-            if (success) {
-                const cellIndex = row * game.size + col;
-                const cells = document.querySelectorAll('.cell');
-                cells[cellIndex].textContent = num;
-                cells[cellIndex].classList.remove('prefilled');
-                cells[cellIndex].classList.add('user-filled');
-                
-                // Ενημέρωση στατιστικών
-                updateStats();
-                
-                // Έλεγχος αν το παιχνίδι ολοκληρώθηκε
-                if (game.isComplete()) {
-                    completeGame();
-                } else if (game.isBoardFull()) {
-                    // Έλεγχος αν ο πίνακας είναι πλήρης αλλά όχι σωστός
-                    checkSolution();
-                }
-                
-                // Αναπαραγωγή ήχου επιτυχίας
-                playSound('click');
-            } else {
-                // Αναπαραγωγή ήχου λάθους
+            // Έλεγχος αν το κελί είναι προ-συμπληρωμένο
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            if (cell.classList.contains('prefilled')) {
+                return;
+            }
+            
+            // Καταγραφή της προηγούμενης τιμής
+            const prevValue = game.board[row][col];
+            
+            // Ενημέρωση του πίνακα
+            game.board[row][col] = num;
+            cell.textContent = num;
+            cell.classList.add('user-filled');
+            
+            // Καταγραφή της κίνησης
+            game.recordMove(row, col, prevValue, num);
+            
+            // Έλεγχος εγκυρότητας
+            if (!game.isValidMove(row, col, num)) {
+                cell.classList.add('error');
+                game.errors++;
                 playSound('error');
-                
-                // Προσωρινή επισήμανση λάθους
-                const cellIndex = row * game.size + col;
-                const cells = document.querySelectorAll('.cell');
-                cells[cellIndex].classList.add('error');
-                setTimeout(() => {
-                    if (game.selectedCell && game.selectedCell.row === row && game.selectedCell.col === col) {
-                        cells[cellIndex].classList.remove('error');
-                    }
-                }, 500);
-                
-                // Ενημέρωση στατιστικών
-                updateStats();
+            } else {
+                cell.classList.remove('error');
+                playSound('click');
             }
             
-            // Επανεπισήμανση του κελιού
-            highlightSelectedCell();
+            // Ενημέρωση στατιστικών
+            updateStats();
+            
+            // Έλεγχος αν ολοκληρώθηκε το παιχνίδι
+            if (game.isSolved()) {
+                endGame();
+            }
         }
-
-        // Εκκαθάριση επιλεγμένου κελιού
-        function clearSelectedCell() {
+        
+        // Καθαρισμός κελιού
+        function clearCell() {
             if (!game.selectedCell) {
-                alert(translations[game.currentLanguage].selectEmpty);
+                alert(translations[currentLanguage].selectEmpty);
                 return;
             }
             
             const { row, col } = game.selectedCell;
-            const success = game.clearCell(row, col);
             
-            if (success) {
-                const cellIndex = row * game.size + col;
-                const cells = document.querySelectorAll('.cell');
-                cells[cellIndex].textContent = '';
-                cells[cellIndex].classList.remove('user-filled', 'error');
-                
-                // Ενημέρωση στατιστικών
-                updateStats();
-                
-                // Αναπαραγωγή ήχου
-                playSound('click');
-            }
-            
-            // Επανεπισήμανση του κελιού
-            highlightSelectedCell();
-        }
-
-        // Έλεγχος λύσης
-        function checkSolution() {
-            if (!game.isBoardFull()) {
-                alert(translations[game.currentLanguage].notComplete);
+            // Έλεγχος αν το κελί είναι προ-συμπληρωμένο
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            if (cell.classList.contains('prefilled')) {
                 return;
             }
             
-            if (game.isComplete()) {
-                completeGame();
-            } else {
-                alert(translations[game.currentLanguage].incorrect);
-                // Επισήμανση λανθασμένων κελιών
-                const cells = document.querySelectorAll('.cell');
-                for (let row = 0; row < game.size; row++) {
-                    for (let col = 0; col < game.size; col++) {
-                        const index = row * game.size + col;
-                        if (game.board[row][col] !== game.solution[row][col]) {
-                            cells[index].classList.add('error');
-                        }
-                    }
-                }
-            }
+            // Καταγραφή της προηγούμενης τιμής
+            const prevValue = game.board[row][col];
+            
+            // Ενημέρωση του πίνακα
+            game.board[row][col] = '';
+            cell.textContent = '';
+            cell.classList.remove('user-filled', 'error');
+            
+            // Καταγραφή της κίνησης
+            game.recordMove(row, col, prevValue, '');
+            
+            // Ενημέρωση στατιστικών
+            updateStats();
+            
+            playSound('click');
         }
-
-        // Ολοκλήρωση παιχνιδιού
-        function completeGame() {
-            clearInterval(game.timerInterval);
-            
-            // Προσθήκη πόντων στον παίκτη
-            const score = game.calculateScore();
-            game.playerScore += score;
-            
-            // Αναπαραγωγή ήχου ολοκλήρωσης
-            playSound('complete');
-            
-            // Δημιουργία confetti
-            createConfetti();
-            
-            // Εμφάνιση οθόνης πόνων
-            showScoreScreen(score);
-            
-            // Αύξηση του επιπέδου
-            game.currentLevel++;
-            game.completedLevels++;
-        }
-
-        // Εμφάνιση οθόνης πόνων
-        function showScoreScreen(score) {
-            const scoreScreen = document.getElementById('score-screen');
-            const scoreTime = document.getElementById('score-time');
-            const scoreErrors = document.getElementById('score-errors');
-            const scorePoints = document.getElementById('score-points');
-            const continueBtn = document.getElementById('continue-btn');
-            
-            // Ενημέρωση κειμένων
-            scoreTime.textContent = formatTime(game.gameTime);
-            scoreErrors.textContent = game.errors;
-            scorePoints.textContent = score;
-            
-            // Εμφάνιση οθόνης
-            scoreScreen.style.display = 'flex';
-            
-            // Προσθήκη event listeners
-            continueBtn.addEventListener('click', hideScoreScreen);
-            document.addEventListener('keydown', hideScoreScreen);
-        }
-
-        // Απόκρυψη οθόνης πόνων
-        function hideScoreScreen() {
-            const scoreScreen = document.getElementById('score-screen');
-            scoreScreen.style.display = 'none';
-            
-            // Καθαρισμός event listeners
-            document.removeEventListener('keydown', hideScoreScreen);
-            
-            // Μετάβαση στο επόμενο επίπεδο
-            nextLevel();
-        }
-
-        // Μετάβαση στο επόμενο επίπεδο
-        function nextLevel() {
-            // Εμφάνιση οθόνης μετάβασης επιπέδου
-            showLevelTransition();
-            
-            // Αναπαραγωγή ήχου μετάβασης επιπέδου
-            playSound('level-up');
-            
-            // Αύξηση δυσκολίας
-            let newLevel = game.level;
-            if (game.completedLevels >= 2 && game.level === 'easy') {
-                newLevel = 'medium';
-            } else if (game.completedLevels >= 4 && game.level === 'medium') {
-                newLevel = 'hard';
-            }
-            
-            // Δημιουργία νέου παιχνιδιού
-            setTimeout(() => {
-                game = new SudokuGame(game.size, newLevel);
-                game.currentLevel = game.currentLevel;
-                game.completedLevels = game.completedLevels;
-                game.playerScore = game.playerScore;
-                
-                initializeGame();
-                hideLevelTransition();
-            }, 3000);
-        }
-
-        // Εμφάνιση οθόνης μετάβασης επιπέδου
-        function showLevelTransition() {
-            const levelTransition = document.getElementById('level-transition');
-            const transitionTitle = document.getElementById('transition-title');
-            const transitionText = document.getElementById('transition-text');
-            const countdown = document.getElementById('transition-countdown');
-            
-            // Ενημέρωση κειμένων
-            transitionTitle.textContent = translations[game.currentLanguage].success;
-            transitionText.textContent = translations[game.currentLanguage].nextLevel;
-            
-            // Εμφάνιση οθόνης
-            levelTransition.classList.add('active');
-            
-            // Ανανέωση αντίστροφης μέτρησης
-            let count = 3;
-            countdown.textContent = count;
-            
-            const countdownInterval = setInterval(() => {
-                count--;
-                countdown.textContent = count;
-                
-                if (count <= 0) {
-                    clearInterval(countdownInterval);
-                }
-            }, 1000);
-        }
-
-        // Απόκρυψη οθόνης μετάβασης επιπέδου
-        function hideLevelTransition() {
-            const levelTransition = document.getElementById('level-transition');
-            levelTransition.classList.remove('active');
-        }
-
+        
         // Ενημέρωση στατιστικών
         function updateStats() {
-            errorCountElement.textContent = game.errors;
-            undoCountElement.textContent = game.moveHistory.length > 0 ? game.moveHistory.length : '∞';
-            currentLevelElement.textContent = game.currentLevel;
+            elements.errorCount.textContent = game.errors;
+            elements.undoCount.textContent = game.moveHistory.length > 0 ? '✓' : '∞';
         }
-
-        // Χρονομέτρηση
+        
+        // Χρονόμετρο
         function startTimer() {
             clearInterval(game.timerInterval);
             game.gameTime = 0;
@@ -1354,19 +1282,152 @@
                 updateTimerDisplay();
             }, 1000);
         }
-
+        
         function updateTimerDisplay() {
             const minutes = Math.floor(game.gameTime / 60);
             const seconds = game.gameTime % 60;
-            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            elements.timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
-
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        
+        function stopTimer() {
+            clearInterval(game.timerInterval);
         }
-
+        
+        // Τέλος παιχνιδιού
+        function endGame() {
+            stopTimer();
+            playSound('complete');
+            createConfetti();
+            
+            // Υπολογισμός πόντων
+            game.playerScore = game.calculateScore();
+            
+            // Εμφάνιση διαφήμισης πριν το επόμενο επίπεδο
+            showAdBeforeNextLevel();
+        }
+        
+        // Εμφάνιση διαφήμισης πριν το επόμενο επίπεδο
+        function showAdBeforeNextLevel() {
+            // Εμφάνιση της διαφήμισης
+            elements.adContainer.style.display = 'flex';
+            
+            let countdown = 5;
+            elements.adCountdown.textContent = translations[currentLanguage].adCountdown.replace('{seconds}', countdown);
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                elements.adCountdown.textContent = translations[currentLanguage].adCountdown.replace('{seconds}', countdown);
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    elements.adClose.disabled = false;
+                }
+            }, 1000);
+            
+            // Κλείσιμο διαφήμισης
+            elements.adClose.onclick = () => {
+                clearInterval(countdownInterval);
+                elements.adContainer.style.display = 'none';
+                showScoreScreen();
+            };
+            
+            // Αυτόματο κλείσιμο μετά από 10 δευτερόλεπτα
+            setTimeout(() => {
+                clearInterval(countdownInterval);
+                elements.adContainer.style.display = 'none';
+                showScoreScreen();
+            }, 10000);
+        }
+        
+        // Εμφάνιση οθόνης πόνων
+        function showScoreScreen() {
+            elements.scoreTime.textContent = elements.timer.textContent;
+            elements.scoreErrors.textContent = game.errors;
+            elements.scorePoints.textContent = game.playerScore;
+            
+            elements.scoreScreen.style.display = 'flex';
+            
+            // Προσθήκη event listener για το πλήκτρο συνέχειας
+            document.addEventListener('keydown', handleContinueKey);
+            elements.continueBtn.addEventListener('click', continueToNextLevel);
+        }
+        
+        // Χειρισμός πλήκτρου συνέχειας
+        function handleContinueKey(e) {
+            if (elements.scoreScreen.style.display === 'flex') {
+                document.removeEventListener('keydown', handleContinueKey);
+                continueToNextLevel();
+            }
+        }
+        
+        // Συνέχεια στο επόμενο επίπεδο
+        function continueToNextLevel() {
+            elements.scoreScreen.style.display = 'none';
+            
+            // Αύξηση επιπέδου
+            game.currentLevel++;
+            elements.currentLevel.textContent = game.currentLevel;
+            
+            // Εμφάνιση οθόνης μετάβασης
+            showLevelTransition();
+        }
+        
+        // Εμφάνιση οθόνης μετάβασης επιπέδου
+        function showLevelTransition() {
+            elements.levelTransition.classList.add('active');
+            
+            let countdown = 3;
+            elements.transitionCountdown.textContent = countdown;
+            playSound('level-up');
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                elements.transitionCountdown.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    elements.levelTransition.classList.remove('active');
+                    startNextLevel();
+                }
+            }, 1000);
+        }
+        
+        // Έναρξη επόμενου επιπέδου
+        function startNextLevel() {
+            // Αύξηση δυσκολίας κάθε 3 επίπεδα
+            if (game.currentLevel % 3 === 0) {
+                const levels = ['easy', 'medium', 'hard'];
+                const currentIndex = levels.indexOf(game.level);
+                if (currentIndex < levels.length - 1) {
+                    game.level = levels[currentIndex + 1];
+                    elements.levelSelect.value = game.level;
+                }
+            }
+            
+            // Επαναφορά χρονομέτρου και σφαλμάτων
+            game.errors = 0;
+            game.moveHistory = [];
+            game.redoHistory = [];
+            
+            // Δημιουργία νέου Sudoku
+            game.generateSudoku();
+            
+            // Απόδοση νέου πίνακα
+            renderBoard();
+            updateNumberPad();
+            updateStats();
+            startTimer();
+        }
+        
+        // Αναπαραγωγή ήχου
+        function playSound(soundType) {
+            const sound = document.getElementById(`${soundType}-sound`);
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Αποτυχία αναπαραγωγής ήχου:", e));
+            }
+        }
+        
         // Δημιουργία confetti
         function createConfetti() {
             const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50'];
@@ -1374,142 +1435,138 @@
             for (let i = 0; i < 100; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
-                confetti.style.left = `${Math.random() * 100}vw`;
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.animation = `confettiFall ${Math.random() * 3 + 2}s linear forwards`;
-                document.body.appendChild(confetti);
-                confettiElements.push(confetti);
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = `${Math.random() * -20}vh`;
+                confetti.style.width = `${Math.random() * 10 + 5}px`;
+                confetti.style.height = confetti.style.width;
                 
-                // Αφαίρεση μετά το τέλος της κίνησης
+                document.body.appendChild(confetti);
+                
+                const animationDuration = Math.random() * 3 + 2;
+                confetti.style.animation = `confettiFall ${animationDuration}s linear forwards`;
+                
                 setTimeout(() => {
                     confetti.remove();
-                }, 5000);
+                }, animationDuration * 1000);
             }
         }
-
-        // Αναπαραγωγή ήχου
-        function playSound(type) {
-            try {
-                const sound = document.getElementById(`${type}-sound`);
-                if (sound) {
-                    sound.currentTime = 0;
-                    sound.play();
-                }
-            } catch (e) {
-                console.log('Αδυναμία αναπαραγωγής ήχου:', e);
-            }
-        }
-
-        // Αλλαγή γλώσσας
-        function changeLanguage() {
-            game.currentLanguage = languageSelect.value;
-            applyTranslations();
-        }
-
-        // Εφαρμογή μεταφράσεων
-        function applyTranslations() {
-            const t = translations[game.currentLanguage];
+        
+        // Ενημέρωση γλώσσας
+        function updateLanguage(lang) {
+            currentLanguage = lang;
+            game.currentLanguage = lang;
             
-            // Τίτλος παιχνιδιού
+            const t = translations[lang];
+            
+            // Ενημέρωση κειμένων
             document.getElementById('game-title').textContent = t.title;
-            
-            // Ετικέτες στατιστικών
             document.getElementById('errors-label').textContent = t.errors;
             document.getElementById('undo-label').textContent = t.undo;
             document.getElementById('level-label').textContent = t.level;
-            
-            // Επιλογές δυσκολίας
             document.getElementById('easy-label').textContent = t.easy;
             document.getElementById('medium-label').textContent = t.medium;
             document.getElementById('hard-label').textContent = t.hard;
-            
-            // Κουμπιά
             document.getElementById('new-game').textContent = t.newGame;
             document.getElementById('check-solution').textContent = t.check;
             document.getElementById('undo-btn').textContent = t.undo;
-            
-            // Modal
             document.getElementById('congrats-title').textContent = t.congrats;
             document.getElementById('completed-text').textContent = t.completed;
             document.getElementById('time-text').textContent = t.time;
             document.getElementById('errors-text').textContent = t.errors;
             document.getElementById('close-modal').textContent = t.newGameBtn;
-            
-            // Οθόνη μετάβασης επιπέδου
             document.getElementById('transition-title').textContent = t.success;
             document.getElementById('transition-text').textContent = t.nextLevel;
             
-            // Οθόνη πόνων
-            document.getElementById('continue-btn').textContent = t.pressAnyKey;
+            // Ενημέρωση διαφήμισης
+            elements.adCountdown.textContent = t.adCountdown.replace('{seconds}', '5');
         }
-
-        // Νέο παιχνίδι
-        function newGame() {
-            clearInterval(game.timerInterval);
-            game = new SudokuGame(parseInt(sizeSelect.value), levelSelect.value);
-            initializeGame();
+        
+        // Event Listeners
+        elements.newGameBtn.addEventListener('click', initGame);
+        elements.checkSolutionBtn.addEventListener('click', checkSolution);
+        elements.undoBtn.addEventListener('click', undoMove);
+        elements.sizeSelect.addEventListener('change', initGame);
+        elements.levelSelect.addEventListener('change', initGame);
+        elements.languageSelect.addEventListener('change', (e) => {
+            updateLanguage(e.target.value);
+        });
+        elements.closeModal.addEventListener('click', () => {
+            elements.victoryModal.style.display = 'none';
+            initGame();
+        });
+        
+        // Έλεγχος λύσης
+        function checkSolution() {
+            if (!game.isSolved()) {
+                alert(translations[currentLanguage].notComplete);
+                return;
+            }
             
-            // Κλείσιμο modal αν είναι ανοιχτό
-            victoryModal.style.display = 'none';
-            scoreScreen.style.display = 'none';
+            let hasErrors = false;
+            for (let i = 0; i < game.size; i++) {
+                for (let j = 0; j < game.size; j++) {
+                    const cell = document.querySelector(`.cell[data-row="${i}"][data-col="${j}"]`);
+                    if (game.board[i][j] !== game.solution[i][j]) {
+                        cell.classList.add('error');
+                        hasErrors = true;
+                    }
+                }
+            }
+            
+            if (hasErrors) {
+                alert(translations[currentLanguage].incorrect);
+            } else {
+                endGame();
+            }
         }
-
-        // Undo τελευταίας κίνησης
-        function undo() {
+        
+        // Undo κίνησης
+        function undoMove() {
             if (game.undo()) {
-                renderBoard();
+                const lastMove = game.moveHistory[game.moveHistory.length - 1];
+                if (lastMove) {
+                    const cell = document.querySelector(`.cell[data-row="${lastMove.row}"][data-col="${lastMove.col}"]`);
+                    if (cell) {
+                        cell.textContent = lastMove.prevValue;
+                        if (lastMove.prevValue === '') {
+                            cell.classList.remove('user-filled');
+                        }
+                        cell.classList.remove('error');
+                    }
+                }
                 updateStats();
                 playSound('click');
             }
         }
-
-        // Εναλλαγή θέματος
-        function changeTheme(theme) {
-            const body = document.body;
-            
-            // Κατάργηση όλων των theme classes
-            body.classList.remove('theme-classic', 'theme-dark', 'theme-nature', 'theme-sunset');
-            
-            // Προσθήκη του νέου theme
-            body.classList.add(`theme-${theme}`);
-            
-            // Ενημέρωση ενεργού theme button
-            document.querySelectorAll('.theme-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`.theme-btn[data-theme="${theme}"]`).classList.add('active');
-        }
-
-        // Event Listeners
-        document.getElementById('new-game').addEventListener('click', newGame);
-        document.getElementById('check-solution').addEventListener('click', checkSolution);
-        document.getElementById('undo-btn').addEventListener('click', undo);
-        document.getElementById('close-modal').addEventListener('click', newGame);
-        languageSelect.addEventListener('change', changeLanguage);
-        sizeSelect.addEventListener('change', newGame);
-        levelSelect.addEventListener('change', newGame);
-
-        // Theme buttons
+        
+        // Αλλαγή θέματος
         document.querySelectorAll('.theme-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                changeTheme(btn.getAttribute('data-theme'));
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const theme = this.dataset.theme;
+                document.body.className = '';
+                document.body.classList.add(`theme-${theme}`);
             });
         });
-
+        
         // Πλήκτρα πληκτρολογίου
         document.addEventListener('keydown', (e) => {
             if (e.key >= '1' && e.key <= '9' && parseInt(e.key) <= game.size) {
-                placeNumber(parseInt(e.key));
+                fillCell(parseInt(e.key));
             } else if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') {
-                clearSelectedCell();
+                clearCell();
             } else if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
-                undo();
+                e.preventDefault();
+                undoMove();
             }
         });
-
+        
         // Αρχικοποίηση
-        initializeGame();
-        applyTranslations();
+        initGame();
+        updateLanguage(currentLanguage);
     </script>
 </body>
 </html>
