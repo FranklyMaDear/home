@@ -4,7 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>iOS Style Calculator</title>
+<title>Calculator</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧮</text></svg>">
 <style>
 :root {
 --bg: #000000;
@@ -142,6 +143,25 @@ display: flex;
 justify-content: center;
 align-items: center;
 cursor: pointer;
+animation: blink 2s infinite;
+}
+
+@keyframes blink {
+0% { opacity: 1; }
+50% { opacity: 0.7; }
+100% { opacity: 1; }
+}
+
+.support-text {
+position: absolute;
+top: 10px;
+left: 50%;
+transform: translateX(-50%);
+font-size: 12px;
+color: #888;
+text-align: center;
+width: 80%;
+opacity: 0.8;
 }
 
 @media (max-width: 480px) {
@@ -154,11 +174,19 @@ cursor: pointer;
 .display {
 font-size: 60px;
 }
+
+.support-text {
+font-size: 11px;
+}
 }
 
 @media (max-width: 380px) {
 .display {
 font-size: 50px;
+}
+
+.support-text {
+font-size: 10px;
 }
 }
 </style>
@@ -166,6 +194,7 @@ font-size: 50px;
 
 <body>
 <main class="calc" id="calculatorApp">
+<div class="support-text">Ένα κλικ στο κουμπί ads αρκεί. Στηρίξτε μας να Συνεχίσουμε</div>
 <div class="display" id="display">0</div>
 
 <div class="pad">
