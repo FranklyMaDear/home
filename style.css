@@ -589,7 +589,7 @@ body {
 
 /* ΜΕΤΡΙΟΙ ΤΙΤΛΟΙ - Αντικαταστάθηκε από τον χρήστη */
 .section-title h2 {
-    font-size: 2rem !important;
+    font-size: 1.8rem !important;
 }
 
 .section-title p {
@@ -605,7 +605,7 @@ body {
 }
 
 .quick-access h2 {
-    font-size: 2.2rem !important;
+    font-size: 1.8rem !important;
 }
 
 .quick-access .quick-access-subtitle {
@@ -613,7 +613,7 @@ body {
 }
 
 .hero h1 {
-    font-size: 2.5rem !important;
+    font-size: 2.1rem !important;
 }
 
 .hero p {
