@@ -586,3 +586,56 @@ body {
 .feature-title { font-size: 1.3rem; }             /* Τίτλοι features */
 .quick-access-main { font-size: 2rem; }           /* Κύριος τίτλος Quick Access */
 .quick-access-sub { font-size: 1.2rem; }          /* Υπότιτλος Quick Access */
+
+/* ΜΕΤΡΙΟΙ ΤΙΤΛΟΙ - Αντικαταστάθηκε από τον χρήστη */
+.section-title h2 {
+    font-size: 2rem !important;
+}
+
+.section-title p {
+    font-size: 1.1rem !important;
+}
+
+.game-card h3 {
+    font-size: 1.3rem !important;
+}
+
+.feature-card h3 {
+    font-size: 1.4rem !important;
+}
+
+.quick-access h2 {
+    font-size: 2.2rem !important;
+}
+
+.quick-access .quick-access-subtitle {
+    font-size: 1.2rem !important;
+}
+
+.hero h1 {
+    font-size: 2.5rem !important;
+}
+
+.hero p {
+    font-size: 1.2rem !important;
+}
+
+.footer-section h3 {
+    font-size: 1.2rem !important;
+}
+
+.instructions h3 {
+    font-size: 1.4rem !important;
+}
+
+.instruction-group h4 {
+    font-size: 1.1rem !important;
+}
+
+.game-content h3 {
+    font-size: 1.3rem !important;
+}
+
+.feature-card h3 {
+    font-size: 1.4rem !important;
+}
