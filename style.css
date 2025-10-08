@@ -580,7 +580,7 @@ body {
 .subtitle-lg { font-size: 1.1rem; opacity: 0.8; }
 
 /* Specific Classes για Συγκεκριμένες Περιοχές - ΕΔΩ ΘΑ ΑΛΛΑΖΕΤΕ ΤΑ ΜΕΓΕΘΗ */
-.section-main-title { font-size: 2rem; }        /* Κύριοι τίτλοι sections */
+.section-main-title { font-size: 1.8rem; }        /* Κύριοι τίτλοι sections */
 .section-subtitle { font-size: 1.1rem; }          /* Υπότιτλοι sections */
 .game-card-title { font-size: 1.2rem; }           /* Τίτλοι game cards */
 .feature-title { font-size: 1.3rem; }             /* Τίτλοι features */
@@ -589,7 +589,7 @@ body {
 
 /* ΜΕΤΡΙΟΙ ΤΙΤΛΟΙ - Αντικαταστάθηκε από τον χρήστη */
 .section-title h2 {
-    font-size: 1.8rem !important;
+    font-size: 1.5rem !important;
 }
 
 .section-title p {
