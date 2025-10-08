@@ -5,12 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Sudoku</title>
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="sudoku/sudoku1.png">
+    <link rel="icon" type="image/png" href="sudoku1.png">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+        
+        /* Μπάνερ υποστήριξης - ΣΤΟ ΠΑΝΩ ΜΕΡΟΣ */
+        .support-banner {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            padding: 12px 15px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: pulse 2s infinite;
+            position: relative;
+            z-index: 1000;
+            width: 100%;
+        }
+        
+        .banner-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .banner-text {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .banner-btn {
+            background: white;
+            color: #ff9800;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+        
+        .banner-btn:hover {
+            background: #fff3e0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
         body {
@@ -30,6 +74,7 @@
         .container {
             width: 100%;
             max-width: 450px;
+            margin-top: 20px; /* Απόσταση από το banner */
         }
         
         .app-card {
@@ -393,49 +438,34 @@
             background: #6d4c41;
         }
         
-        /* Μπάνερ υποστήριξης */
-        .support-banner {
-            background: linear-gradient(135deg, #ff9800, #f57c00);
-            color: white;
-            padding: 12px 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            animation: pulse 2s infinite;
+        @keyframes success {
+            0% { 
+                background-color: rgba(76, 175, 80, 0.3);
+            }
+            50% { 
+                background-color: rgba(76, 175, 80, 0.7);
+            }
+            100% { 
+                background-color: rgba(76, 175, 80, 0.3);
+            }
         }
         
-        .banner-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         
-        .banner-text {
-            font-weight: 600;
-            font-size: 14px;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
-        .banner-btn {
-            background: white;
-            color: #ff9800;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 13px;
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
-        
-        .banner-btn:hover {
-            background: #fff3e0;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        
+
         @media (max-width: 500px) {
             .container {
                 max-width: 380px;
@@ -471,38 +501,22 @@
             .banner-text {
                 font-size: 13px;
             }
-        }
-        
-        @keyframes success {
-            0% { 
-                background-color: rgba(76, 175, 80, 0.3);
+
+            .support-banner {
+                padding: 10px 12px;
             }
-            50% { 
-                background-color: rgba(76, 175, 80, 0.7);
-            }
-            100% { 
-                background-color: rgba(76, 175, 80, 0.3);
-            }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
     </style>
 </head>
 <body>
+    <!-- Μπάνερ υποστήριξης - ΣΤΟ ΠΑΝΩ ΜΕΡΟΣ -->
+    <div class="support-banner" id="support-banner">
+        <div class="banner-content">
+            <span class="banner-text">👉 Πάτησε κλικ και βοήθησέ μας να συνεχίσουμε!</span>
+            <button class="banner-btn" id="support-btn">Υποστήριξη</button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="app-card">
             <div class="header-row">
@@ -574,17 +588,7 @@
                 <div class="theme-btn theme-nature" data-theme="nature"></div>
                 <div class="theme-btn theme-sunset" data-theme="sunset"></div>
             </div>
-            
-            <!-- Μπάνερ για υποστήριξη -->
-            <div class="support-banner" id="support-banner">
-                <div class="banner-content">
-                    <span class="banner-text">👉 Πάτησε κλικ και βοήθησέ μας να συνεχίσουμε!</span>
-                    <button class="banner-btn" id="support-btn">Υποστήριξη</button>
-                </div>
-            </div>
         </div>
-        
-        <!-- Διαφημίσεις αφαιρέθηκαν -->
     </div>
     
     <!-- Victory Modal -->
