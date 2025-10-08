@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 <title>Calculator</title>
 
 <!-- Icons για αρχική οθόνη -->
@@ -17,6 +17,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#000000">
 <meta name="msapplication-TileColor" content="#000000">
+
+<!-- Προσθήκη για σταθερότητα σε κινητά -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
 
 <link rel="manifest" href="data:application/json,{
   \"name\": \"Calculator\",
@@ -53,6 +57,15 @@
 --font-size-op: 52px;
 }
 
+/* Απενεργοποίηση επιλογής κειμένου και μετακίνησης */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
 body {
 margin: 0;
 background: var(--bg);
@@ -66,13 +79,16 @@ flex-direction: column;
 -webkit-user-select: none;
 -ms-user-select: none;
 user-select: none;
-touch-action: pan-x pan-y;
+touch-action: manipulation;
 -webkit-touch-callout: none;
 -webkit-user-select: none;
 -khtml-user-select: none;
 -moz-user-select: none;
 -ms-user-select: none;
 user-select: none;
+/* Απενεργοποίηση bounce effect σε iOS */
+overscroll-behavior: none;
+-webkit-overflow-scrolling: touch;
 }
 
 .calc {
@@ -86,6 +102,8 @@ margin-top: 0;
 display: flex;
 flex-direction: column;
 justify-content: flex-end;
+/* Απενεργοποίηση scroll */
+overflow: hidden;
 }
 
 .display {
@@ -143,6 +161,10 @@ justify-content: center;
 transition: transform 0.06s ease;
 color: var(--display-color);
 -webkit-tap-highlight-color: transparent;
+/* Απενεργοποίηση highlight σε κινητά */
+-webkit-tap-highlight-color: rgba(0,0,0,0);
+-webkit-user-select: none;
+user-select: none;
 }
 
 button:active {
@@ -179,6 +201,7 @@ justify-content: center;
 align-items: center;
 cursor: pointer;
 animation: blink 2s infinite;
+-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 @keyframes blink {
@@ -216,6 +239,25 @@ padding: 0 10px;
 0% { opacity: 0.7; }
 50% { opacity: 1; }
 100% { opacity: 0.7; }
+}
+
+/* Βελτιστοποίηση για tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+:root {
+--gap: 15px;
+--font-size-btn: 52px;
+--font-size-op: 56px;
+}
+
+.display {
+font-size: 80px;
+min-height: 25vh;
+}
+
+.calc {
+max-width: 500px;
+margin: 0 auto;
+}
 }
 
 @media (max-width: 480px) {
@@ -267,6 +309,23 @@ margin: 3px 0;
 margin-top: 6px;
 }
 }
+
+/* Απενεργοποίηση pull-to-refresh */
+body {
+overscroll-behavior-y: none;
+}
+
+/* Βελτιστοποίηση για οριζόντια orientation */
+@media (max-height: 500px) {
+.display {
+min-height: 15vh;
+font-size: 50px;
+}
+
+.pad {
+margin-top: 5px;
+}
+}
 </style>
 </head>
 
@@ -313,6 +372,22 @@ const btns = document.querySelectorAll('.pad button');
 let expression = "";
 let lastResult = null;
 let isResultDisplayed = false;
+
+// Απενεργοποίηση context menu σε κινητά
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault();
+return false;
+});
+
+// Απενεργοποίηση double tap zoom
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+const now = (new Date()).getTime();
+if (now - lastTouchEnd <= 300) {
+event.preventDefault();
+}
+lastTouchEnd = now;
+}, false);
 
 function updateDisplay() {
 displayEl.textContent = expression || "0";
