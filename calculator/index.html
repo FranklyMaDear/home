@@ -1,52 +1,47 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="el">  <!-- Αλλαγή σε ελληνικά -->
 
 <head>
 <meta charset="UTF-8">
+<!-- ΒΕΛΤΙΩΜΕΝΟ VIEWPORT -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Calculator</title>
 
 <!-- Icons για αρχική οθόνη -->
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><text x='50' y='65' font-family='Arial' font-size='40' text-anchor='middle' fill='white'>🧮</text></svg>">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><text x='50' y='65' font-family='Arial' font-size='40' text-anchor='middle' fill='white'>🧮</text></svg>">
-<meta name="msapplication-TileImage" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><text x='50' y='65' font-family='Arial' font-size='40' text-anchor='middle' fill='white'>🧮</text></svg>">
+<link rel="apple-touch-icon" href="-icon.png">
+<link rel="icon" href="-icon.png">
+<meta name="msapplication-TileImage" content="-icon.png">
 
-<!-- ΒΕΛΤΙΩΜΕΝΕΣ ΡΥΘΜΙΣΕΙΣ PWA -->
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Calculator">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#000000">
 <meta name="msapplication-TileColor" content="#000000">
 
-<!-- ΝΕΕΣ ΡΥΘΜΙΣΕΙΣ ΓΙΑ ΚΑΛΥΤΕΡΗ ΠΡΟΕΠΙΣΚΟΠΗΣΗ -->
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- Προσθήκη για σταθερότητα σε κινητά -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="format-detection" content="telephone=no">
 
-<!-- ΒΕΛΤΙΩΜΕΝΟ MANIFEST -->
 <link rel="manifest" href="data:application/json,{
   \"name\": \"Calculator\",
-  \"short_name\": \"Calculator\", 
+  \"short_name\": \"Calculator\",
   \"description\": \"iOS Style Calculator\",
   \"start_url\": \"./\",
-  \"display\": \"fullscreen\",
+  \"display\": \"standalone\",
   \"background_color\": \"#000000\",
   \"theme_color\": \"#000000\",
-  \"orientation\": \"portrait\",
-  \"scope\": \"./\",
-  \"categories\": [\"utilities\", \"productivity\"],
+  \"orientation\": \"portrait-primary\",
   \"icons\": [
     {
-      \"src\": \"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzAwMDAwMCIvPjx0ZXh0IHg9IjUwIiB5PSI2NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSI+8J+OriM8L3RleHQ+PC9zdmc+\",
+      \"src\": \"-icon.png\",
       \"sizes\": \"192x192\",
-      \"type\": \"image/svg+xml\",
-      \"purpose\": \"any maskable\"
+      \"type\": \"image/png\"
     },
     {
-      \"src\": \"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzAwMDAwMCIvPjx0ZXh0IHg9IjUwIiB5PSI2NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSI+8J+OriM8L3RleHQ+PC9zdmc+\",
+      \"src\": \"-icon.png\",
       \"sizes\": \"512x512\",
-      \"type\": \"image/svg+xml\",
-      \"purpose\": \"any maskable\"
+      \"type\": \"image/png\"
     }
   ]
 }">
@@ -74,7 +69,6 @@ html, body {
   -webkit-overflow-scrolling: touch;
   /* SAFE AREA SUPPORT */
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  background: var(--bg);
 }
 
 body {
@@ -84,9 +78,8 @@ color: var(--display-color);
 display: flex;
 justify-content: center;
 align-items: flex-end;
-/* ΒΕΛΤΙΩΜΕΝΟ ΥΨΟΣ ΓΙΑ FULLSCREEN */
-height: 100vh;
-height: 100dvh;
+/* ΒΕΛΤΙΩΜΕΝΟ ΥΨΟΣ */
+height: 100%;
 min-height: -webkit-fill-available;
 flex-direction: column;
 -webkit-user-select: none;
@@ -107,12 +100,12 @@ overscroll-behavior: none;
 .calc {
 width: 100vw;
 height: 100vh;
-height: 100dvh;
+/* ΒΕΛΤΙΩΜΕΝΟ ΥΨΟΣ ΓΙΑ ΚΙΝΗΤΑ */
+height: 100%;
 min-height: -webkit-fill-available;
 max-width: none;
-/* ΒΕΛΤΙΩΜΕΝΟ PADDING ΓΙΑ FULLSCREEN */
-padding: 0;
-padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+/* SAFE AREA PADDING */
+padding: max(15px, env(safe-area-inset-top)) max(15px, env(safe-area-inset-right)) max(15px, env(safe-area-inset-bottom)) max(15px, env(safe-area-inset-left));
 box-sizing: border-box;
 position: relative;
 margin: 0;
@@ -129,8 +122,7 @@ width: 100%;
 display: flex;
 align-items: flex-end;
 justify-content: flex-end;
-/* ΒΕΛΤΙΩΜΕΝΟ PADDING */
-padding: env(safe-area-inset-top) 15px 10px 15px;
+padding: 0 15px 10px 15px;
 box-sizing: border-box;
 font-size: 60px;
 line-height: 1;
@@ -165,8 +157,6 @@ justify-items: center;
 width: 100%;
 grid-auto-rows: 1fr;
 flex-shrink: 0;
-/* ΒΕΛΤΙΩΜΕΝΟ PADDING */
-padding: 0 15px env(safe-area-inset-bottom) 15px;
 }
 
 button {
@@ -253,7 +243,7 @@ opacity: 0.8;
 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 font-weight: normal;
 margin: 3px 0;
-padding: 0 10px env(safe-area-inset-bottom) 10px;
+padding: 0 10px;
 }
 
 @keyframes textBlink {
@@ -290,7 +280,7 @@ margin: 0 auto;
 
 .display {
 font-size: 50px;
-padding: env(safe-area-inset-top) 10px 8px 10px;
+padding: 0 10px 8px 10px;
 margin-bottom: 3px;
 min-height: 20vh;
 }
@@ -307,14 +297,13 @@ margin: 2px 0;
 
 .pad {
 margin-top: 3px;
-padding: 0 10px env(safe-area-inset-bottom) 10px;
 }
 }
 
 @media (max-width: 380px) {
 .display {
 font-size: 45px;
-padding: env(safe-area-inset-top) 10px 5px 10px;
+padding: 0 10px 5px 10px;
 margin-bottom: 2px;
 min-height: 18vh;
 }
@@ -331,7 +320,6 @@ margin: 2px 0;
 
 .pad {
 margin-top: 2px;
-padding: 0 10px env(safe-area-inset-bottom) 10px;
 }
 }
 
@@ -378,28 +366,6 @@ height: -webkit-fill-available;
 height: -webkit-fill-available;
 }
 }
-
-/* ΝΕΟ: Στυλ για fullscreen PWA */
-@media all and (display-mode: fullscreen) {
-body {
-padding: 0;
-}
-.calc {
-padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-}
-}
-
-@media all and (display-mode: standalone) {
-body {
-padding: 0;
-}
-.calc {
-padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-}
-.display {
-padding-top: env(safe-area-inset-top);
-}
-}
 </style>
 </head>
 
@@ -436,7 +402,7 @@ padding-top: env(safe-area-inset-top);
 <button class="btn-op" id="equals">=</button>
 </div>
 
-<div class="support-text-bottom">franklymadear.com</div>
+<div class="support-text-bottom">Add to Home Screen</div>
 </main>
 
 <script>
@@ -469,11 +435,6 @@ if (e.touches.length > 1) {
 e.preventDefault();
 }
 }, { passive: false });
-
-// ΠΡΟΣΘΗΚΗ: Καταγραφή PWA εγκατάστασης
-window.addEventListener('beforeinstallprompt', (e) => {
-console.log('PWA can be installed');
-});
 
 function updateDisplay() {
 displayEl.textContent = expression || "0";
