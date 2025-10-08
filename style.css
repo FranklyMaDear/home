@@ -564,3 +564,25 @@ body {
         padding: 1.5rem;
     }
 }
+/* Utility Classes για Μέγεθος Τίτλων - ΕΥΚΟΛΗ ΤΡΟΠΟΠΟΙΗΣΗ */
+.text-xs { font-size: 0.75rem; }      /* Πολύ μικρό */
+.text-sm { font-size: 0.875rem; }     /* Μικρό */
+.text-base { font-size: 1rem; }       /* Κανονικό */
+.text-lg { font-size: 1.125rem; }     /* Μεγάλο */
+.text-xl { font-size: 1.25rem; }      /* Πολύ μεγάλο */
+.text-2xl { font-size: 1.5rem; }      /* Εxtra large */
+.text-3xl { font-size: 1.875rem; }    /* 3XL */
+.text-4xl { font-size: 2.25rem; }     /* 4XL */
+
+/* Utility Classes για Υπότιτλους */
+.subtitle-sm { font-size: 0.9rem; opacity: 0.8; }
+.subtitle-md { font-size: 1rem; opacity: 0.8; }
+.subtitle-lg { font-size: 1.1rem; opacity: 0.8; }
+
+/* Specific Classes για Συγκεκριμένες Περιοχές - ΕΔΩ ΘΑ ΑΛΛΑΖΕΤΕ ΤΑ ΜΕΓΕΘΗ */
+.section-main-title { font-size: 2.2rem; }        /* Κύριοι τίτλοι sections */
+.section-subtitle { font-size: 1.1rem; }          /* Υπότιτλοι sections */
+.game-card-title { font-size: 1.2rem; }           /* Τίτλοι game cards */
+.feature-title { font-size: 1.3rem; }             /* Τίτλοι features */
+.quick-access-main { font-size: 2rem; }           /* Κύριος τίτλος Quick Access */
+.quick-access-sub { font-size: 1.2rem; }          /* Υπότιτλος Quick Access */
