@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 
 <head>
 <meta charset="UTF-8">
@@ -30,7 +30,7 @@
   \"display\": \"standalone\",
   \"background_color\": \"#000000\",
   \"theme_color\": \"#000000\",
-  \"orientation\": \"portrait\",
+  \"orientation\": \"portrait-primary\",
   \"icons\": [
     {
       \"src\": \"-icon.png\",
@@ -52,9 +52,9 @@
 --btn-grey: #a6a6a6;
 --btn-orange: #ff9500;
 --display-color: #ffffff;
---gap: 12px;
---font-size-btn: 48px;
---font-size-op: 52px;
+--gap: 10px;
+--font-size-btn: 32px;
+--font-size-op: 36px;
 }
 
 /* Απενεργοποίηση επιλογής κειμένου και μετακίνησης */
@@ -63,11 +63,12 @@ html, body {
   overflow: hidden;
   position: fixed;
   width: 100%;
+  margin: 0;
+  padding: 0;
   -webkit-overflow-scrolling: touch;
 }
 
 body {
-margin: 0;
 background: var(--bg);
 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 color: var(--display-color);
@@ -95,10 +96,10 @@ overscroll-behavior: none;
 width: 100vw;
 height: 100vh;
 max-width: none;
-padding: var(--gap);
+padding: 15px;
 box-sizing: border-box;
 position: relative;
-margin-top: 0;
+margin: 0;
 display: flex;
 flex-direction: column;
 justify-content: flex-end;
@@ -107,14 +108,14 @@ overflow: hidden;
 }
 
 .display {
-min-height: 20vh;
+min-height: 25vh;
 width: 100%;
 display: flex;
 align-items: flex-end;
 justify-content: flex-end;
-padding: 0 10px 15px 10px;
+padding: 0 15px 10px 15px;
 box-sizing: border-box;
-font-size: 70px;
+font-size: 60px;
 line-height: 1;
 overflow-wrap: break-word;
 text-align: right;
@@ -142,10 +143,11 @@ animation: resultGlow 0.5s ease-in-out;
 display: grid;
 grid-template-columns: repeat(4, 1fr);
 gap: var(--gap);
-margin-top: 10px;
+margin-top: 5px;
 justify-items: center;
 width: 100%;
 grid-auto-rows: 1fr;
+flex-shrink: 0;
 }
 
 button {
@@ -192,7 +194,7 @@ font-size: var(--font-size-op);
 .ads-button {
 background-color: var(--btn-dark);
 color: var(--display-color);
-font-size: 20px;
+font-size: 16px;
 width: 100%;
 height: 100%;
 border-radius: 50%;
@@ -212,26 +214,26 @@ animation: blink 2s infinite;
 
 .support-text {
 text-align: center;
-font-size: 14px;
+font-size: 12px;
 color: #ff9500;
 width: 100%;
 opacity: 0.9;
 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 font-weight: normal;
-margin: 8px 0;
+margin: 5px 0;
 padding: 0 10px;
 animation: textBlink 3s infinite;
 }
 
 .support-text-bottom {
 text-align: center;
-font-size: 12px;
+font-size: 10px;
 color: #aaa;
 width: 100%;
 opacity: 0.8;
 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 font-weight: normal;
-margin: 5px 0;
+margin: 3px 0;
 padding: 0 10px;
 }
 
@@ -244,14 +246,14 @@ padding: 0 10px;
 /* Βελτιστοποίηση για tablet */
 @media (min-width: 768px) and (max-width: 1024px) {
 :root {
---gap: 15px;
---font-size-btn: 52px;
---font-size-op: 56px;
+--gap: 12px;
+--font-size-btn: 40px;
+--font-size-op: 44px;
 }
 
 .display {
-font-size: 80px;
-min-height: 25vh;
+font-size: 70px;
+min-height: 20vh;
 }
 
 .calc {
@@ -262,51 +264,53 @@ margin: 0 auto;
 
 @media (max-width: 480px) {
 :root {
---gap: 10px;
---font-size-btn: 44px;
---font-size-op: 48px;
+--gap: 8px;
+--font-size-btn: 28px;
+--font-size-op: 32px;
 }
 
 .display {
-font-size: 60px;
-padding: 0 10px 12px 10px;
+font-size: 50px;
+padding: 0 10px 8px 10px;
 margin-bottom: 3px;
+min-height: 20vh;
 }
 
 .support-text {
-font-size: 13px;
-margin: 6px 0;
-}
-
-.support-text-bottom {
 font-size: 11px;
 margin: 4px 0;
 }
 
+.support-text-bottom {
+font-size: 9px;
+margin: 2px 0;
+}
+
 .pad {
-margin-top: 8px;
+margin-top: 3px;
 }
 }
 
 @media (max-width: 380px) {
 .display {
-font-size: 50px;
-padding: 0 10px 10px 10px;
+font-size: 45px;
+padding: 0 10px 5px 10px;
 margin-bottom: 2px;
+min-height: 18vh;
 }
 
 .support-text {
-font-size: 12px;
-margin: 5px 0;
-}
-
-.support-text-bottom {
 font-size: 10px;
 margin: 3px 0;
 }
 
+.support-text-bottom {
+font-size: 8px;
+margin: 2px 0;
+}
+
 .pad {
-margin-top: 6px;
+margin-top: 2px;
 }
 }
 
@@ -318,12 +322,29 @@ overscroll-behavior-y: none;
 /* Βελτιστοποίηση για οριζόντια orientation */
 @media (max-height: 500px) {
 .display {
-min-height: 15vh;
-font-size: 50px;
+min-height: 20vh;
+font-size: 40px;
 }
 
 .pad {
-margin-top: 5px;
+margin-top: 3px;
+}
+
+:root {
+--font-size-btn: 24px;
+--font-size-op: 28px;
+}
+}
+
+/* Βελτιστοποίηση για πολύ μικρές οθόνες */
+@media (max-height: 600px) {
+.display {
+min-height: 15vh;
+font-size: 45px;
+}
+
+.pad {
+margin-top: 2px;
 }
 }
 </style>
@@ -333,7 +354,7 @@ margin-top: 5px;
 <main class="calc" id="calculatorApp">
 <div class="display" id="display">0</div>
 
-<div class="support-text">Ένα κλικ στο κουμπί ads αρκεί. Στηρίξτε μας να Συνεχίσουμε</div>
+<div class="support-text">One click on the ads button is enough. Support us to Continue</div>
 
 <div class="pad">
 <button class="btn-ac" id="ac">AC</button>
@@ -358,11 +379,11 @@ margin-top: 5px;
 
 <button class="ads-button" id="adsButton" onclick="window.open('https://otieu.com/4/10000601', '_blank')">ads</button>
 <button class="btn-num" data-num="0">0</button>
-<button class="btn-num" id="dot">,</button>
+<button class="btn-num" id="dot">.</button>
 <button class="btn-op" id="equals">=</button>
 </div>
 
-<div class="support-text-bottom">Κοινοποίηση στην Αρχική Οθόνη</div>
+<div class="support-text-bottom">Add to Home Screen</div>
 </main>
 
 <script>
@@ -399,10 +420,10 @@ const textWidth = displayEl.scrollWidth;
 if (textWidth > displayWidth - 20) {
 // Υπολογισμός νέου μεγέθους γραμματοσειράς βάσει αναλογίας
 const scaleFactor = (displayWidth - 40) / textWidth;
-const newFontSize = Math.floor(70 * scaleFactor);
-displayEl.style.fontSize = Math.max(30, newFontSize) + 'px';
+const newFontSize = Math.floor(60 * scaleFactor);
+displayEl.style.fontSize = Math.max(25, newFontSize) + 'px';
 } else {
-displayEl.style.fontSize = '70px';
+displayEl.style.fontSize = '60px';
 }
     
 // Προσθήκη κλάσης result όταν εμφανίζεται αποτέλεσμα
@@ -439,15 +460,15 @@ if (expression === "Error") {
 clearAll();
 }
 if (isResultDisplayed) {
-expression = "0,";
+expression = "0.";
 isResultDisplayed = false;
 } else if (expression === "") {
-expression = "0,";
+expression = "0.";
 } else {
 const parts = expression.split(/([+\-×÷])/);
 const lastPart = parts[parts.length - 1];
-if (!lastPart.includes(',')) {
-expression += ',';
+if (!lastPart.includes('.')) {
+expression += '.';
 }
 }
 updateDisplay();
@@ -482,7 +503,7 @@ const parts = expression.split(/([+\-×÷])/);
 const lastNumberStr = parts.pop().replace(',', '.');
 const lastNumber = parseFloat(lastNumberStr);
 if (isNaN(lastNumber)) return;
-let newValue = (lastNumber / 100).toString().replace('.', ',');
+let newValue = (lastNumber / 100).toString().replace('.', '.');
 parts.push(newValue);
 expression = parts.join('');
 updateDisplay();
@@ -491,7 +512,7 @@ updateDisplay();
 function inputOperator(op) {
 if (expression === "") return;
 if (expression === "Error") {
-expression = String(lastResult).replace('.', ',');
+expression = String(lastResult).replace('.', '.');
 }
 isResultDisplayed = false;
 const lastChar = expression.slice(-1);
@@ -510,7 +531,7 @@ let result = eval(evalExpr);
 if (result % 1 !== 0) {
 result = parseFloat(result.toFixed(10));
 }
-expression = String(result).replace('.', ',');
+expression = String(result).replace('.', '.');
 lastResult = result;
 isResultDisplayed = true;
 updateDisplay();
