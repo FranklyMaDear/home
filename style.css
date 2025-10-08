@@ -487,3 +487,80 @@ body {
         flex-direction: column;
     }
 }
+/* Quick Access Section */
+.quick-access {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.quick-access-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.quick-access-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: bounce 2s infinite;
+}
+
+.quick-access h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.quick-access-subtitle {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.quick-access-text {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: left;
+    margin-top: 2rem;
+}
+
+.instructions {
+    margin-top: 2rem;
+}
+
+.instruction-group {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.instruction-group h4 {
+    color: #ffd700;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.instruction-group ol {
+    padding-left: 1.5rem;
+}
+
+.instruction-group li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .quick-access h2 {
+        font-size: 2rem;
+    }
+    
+    .quick-access-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .quick-access-text {
+        padding: 1.5rem;
+    }
+}
