@@ -1,0 +1,82 @@
+:root {
+    --primary: #667eea;
+    --secondary: #764ba2;
+    --dark: #2c3e50;
+    --light: #f8f9fa;
+    --accent: #e74c3c;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: var(--light);
+}
+
+/* Roll-up Banner */
+.roll-up-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+    color: white;
+    text-align: center;
+    padding: 12px 20px;
+    z-index: 2000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: transform 0.5s ease, opacity 0.3s ease;
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+.roll-up-banner.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.banner-icon {
+    font-size: 1.4rem;
+    animation: bounce 2s infinite;
+}
+
+.banner-text {
+    animation: pulse 1.5s infinite;
+}
+
+.close-banner {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ... και όλα τα υπόλοιπα στυλ μέχρι το τέλος ... */
