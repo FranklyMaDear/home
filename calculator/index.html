@@ -1,589 +1,587 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="el">  <!-- Αλλαγή σε ελληνικά -->
 
 <head>
-    <meta charset="UTF-8">
-    <!-- Βελτιωμένο viewport για καλύτερη συμβατότητα -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Αριθμομηχανή</title>
+<meta charset="UTF-8">
+<!-- ΒΕΛΤΙΩΜΕΝΟ VIEWPORT -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Calculator</title>
 
-    <!-- Icons για αρχική οθόνη -->
-    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000000'/><text x='50' y='60' font-family='Arial' font-size='40' text-anchor='middle' fill='white'>🧮</text></svg>">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000000'/><text x='50' y='60' font-family='Arial' font-size='40' text-anchor='middle' fill='white'>🧮</text></svg>">
-    
-    <!-- PWA Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Αριθμομηχανή">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#000000">
-    <meta name="msapplication-TileColor" content="#000000">
-    <meta name="msapplication-TileImage" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000000'/><text x='50' y='60' font-family='Arial' font-size='40' text-anchor='middle' fill='white'>🧮</text></svg>">
+<!-- Icons για αρχική οθόνη -->
+<link rel="apple-touch-icon" href="-icon.png">
+<link rel="icon" href="-icon.png">
+<meta name="msapplication-TileImage" content="-icon.png">
 
-    <!-- Προσθήκη για σταθερότητα σε κινητά -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Calculator">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+<meta name="msapplication-TileColor" content="#000000">
 
-    <!-- Κανονικό manifest αρχείο -->
-    <link rel="manifest" href="manifest.json">
+<!-- Προσθήκη για σταθερότητα σε κινητά -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
 
-    <style>
-        :root {
-            --bg: #000000;
-            --btn-dark: #333333;
-            --btn-grey: #a6a6a6;
-            --btn-orange: #ff9500;
-            --display-color: #ffffff;
-            --gap: 10px;
-            --font-size-btn: 32px;
-            --font-size-op: 36px;
-        }
+<link rel="manifest" href="data:application/json,{
+  \"name\": \"Calculator\",
+  \"short_name\": \"Calculator\",
+  \"description\": \"iOS Style Calculator\",
+  \"start_url\": \"./\",
+  \"display\": \"standalone\",
+  \"background_color\": \"#000000\",
+  \"theme_color\": \"#000000\",
+  \"orientation\": \"portrait-primary\",
+  \"icons\": [
+    {
+      \"src\": \"-icon.png\",
+      \"sizes\": \"192x192\",
+      \"type\": \"image/png\"
+    },
+    {
+      \"src\": \"-icon.png\",
+      \"sizes\": \"512x512\",
+      \"type\": \"image/png\"
+    }
+  ]
+}">
 
-        /* Απενεργοποίηση επιλογής κειμένου και μετακίνησης */
-        html, body {
-            height: 100%;
-            overflow: hidden;
-            position: fixed;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            -webkit-overflow-scrolling: touch;
-            background: var(--bg);
-        }
+<style>
+:root {
+--bg: #000000;
+--btn-dark: #333333;
+--btn-grey: #a6a6a6;
+--btn-orange: #ff9500;
+--display-color: #ffffff;
+--gap: 10px;
+--font-size-btn: 32px;
+--font-size-op: 36px;
+}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            color: var(--display-color);
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            height: 100vh;
-            flex-direction: column;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            touch-action: manipulation;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            /* Απενεργοποίηση bounce effect σε iOS */
-            overscroll-behavior: none;
-            -webkit-overflow-scrolling: touch;
-            /* Ασφάλεια για notch */
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-        }
+/* Απενεργοποίηση επιλογής κειμένου και μετακίνησης */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  -webkit-overflow-scrolling: touch;
+  /* SAFE AREA SUPPORT */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
 
-        .calc {
-            width: 100vw;
-            height: 100vh;
-            max-width: none;
-            padding: 15px;
-            box-sizing: border-box;
-            position: relative;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            /* Απενεργοποίηση scroll */
-            overflow: hidden;
-            /* Ασφάλεια για notch */
-            padding-top: max(15px, env(safe-area-inset-top));
-            padding-bottom: max(15px, env(safe-area-inset-bottom));
-        }
+body {
+background: var(--bg);
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+color: var(--display-color);
+display: flex;
+justify-content: center;
+align-items: flex-end;
+/* ΒΕΛΤΙΩΜΕΝΟ ΥΨΟΣ */
+height: 100%;
+min-height: -webkit-fill-available;
+flex-direction: column;
+-webkit-user-select: none;
+-ms-user-select: none;
+user-select: none;
+touch-action: manipulation;
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+/* Απενεργοποίηση bounce effect σε iOS */
+overscroll-behavior: none;
+-webkit-overflow-scrolling: touch;
+}
 
-        .display {
-            min-height: 25vh;
-            width: 100%;
-            display: flex;
-            align-items: flex-end;
-            justify-content: flex-end;
-            padding: 0 15px 10px 15px;
-            box-sizing: border-box;
-            font-size: 60px;
-            line-height: 1;
-            overflow-wrap: break-word;
-            text-align: right;
-            flex-grow: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 5px;
-        }
+.calc {
+width: 100vw;
+height: 100vh;
+/* ΒΕΛΤΙΩΜΕΝΟ ΥΨΟΣ ΓΙΑ ΚΙΝΗΤΑ */
+height: 100%;
+min-height: -webkit-fill-available;
+max-width: none;
+/* SAFE AREA PADDING */
+padding: max(15px, env(safe-area-inset-top)) max(15px, env(safe-area-inset-right)) max(15px, env(safe-area-inset-bottom)) max(15px, env(safe-area-inset-left));
+box-sizing: border-box;
+position: relative;
+margin: 0;
+display: flex;
+flex-direction: column;
+justify-content: flex-end;
+/* Απενεργοποίηση scroll */
+overflow: hidden;
+}
 
-        .display.result {
-            background: rgba(255, 149, 0, 0.1);
-            border: 2px solid var(--btn-orange);
-            border-radius: 20px;
-            padding: 10px;
-            animation: resultGlow 0.5s ease-in-out;
-        }
+.display {
+min-height: 25vh;
+width: 100%;
+display: flex;
+align-items: flex-end;
+justify-content: flex-end;
+padding: 0 15px 10px 15px;
+box-sizing: border-box;
+font-size: 60px;
+line-height: 1;
+overflow-wrap: break-word;
+text-align: right;
+flex-grow: 1;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+margin-bottom: 5px;
+}
 
-        @keyframes resultGlow {
-            0% { background: rgba(255, 149, 0, 0.3); }
-            100% { background: rgba(255, 149, 0, 0.1); }
-        }
+.display.result {
+background: rgba(255, 149, 0, 0.1);
+border: 2px solid var(--btn-orange);
+border-radius: 20px;
+padding: 10px;
+animation: resultGlow 0.5s ease-in-out;
+}
 
-        .pad {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: var(--gap);
-            margin-top: 5px;
-            justify-items: center;
-            width: 100%;
-            grid-auto-rows: 1fr;
-            flex-shrink: 0;
-        }
+@keyframes resultGlow {
+0% { background: rgba(255, 149, 0, 0.3); }
+100% { background: rgba(255, 149, 0, 0.1); }
+}
 
-        button {
-            width: 100%;
-            aspect-ratio: 1;
-            border-radius: 50%;
-            border: none;
-            font-size: var(--font-size-btn);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.06s ease;
-            color: var(--display-color);
-            -webkit-tap-highlight-color: transparent;
-            /* Απενεργοποίηση highlight σε κινητά */
-            -webkit-tap-highlight-color: rgba(0,0,0,0);
-            -webkit-user-select: none;
-            user-select: none;
-        }
+.pad {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: var(--gap);
+margin-top: 5px;
+justify-items: center;
+width: 100%;
+grid-auto-rows: 1fr;
+flex-shrink: 0;
+}
 
-        button:active {
-            transform: scale(0.95);
-            filter: brightness(1.2);
-        }
+button {
+width: 100%;
+aspect-ratio: 1;
+border-radius: 50%;
+border: none;
+font-size: var(--font-size-btn);
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: transform 0.06s ease;
+color: var(--display-color);
+-webkit-tap-highlight-color: transparent;
+/* Απενεργοποίηση highlight σε κινητά */
+-webkit-tap-highlight-color: rgba(0,0,0,0);
+-webkit-user-select: none;
+user-select: none;
+}
 
-        .btn-ac,
-        .btn-fn {
-            background: var(--btn-grey);
-            color: var(--bg);
-        }
+button:active {
+transform: scale(0.95);
+filter: brightness(1.2);
+}
 
-        .btn-num {
-            background: var(--btn-dark);
-            color: var(--display-color);
-        }
+.btn-ac,
+.btn-fn {
+background: var(--btn-grey);
+color: var(--bg);
+}
 
-        .btn-op {
-            background: var(--btn-orange);
-            color: var(--display-color);
-            font-size: var(--font-size-op);
-        }
+.btn-num {
+background: var(--btn-dark);
+color: var(--display-color);
+}
 
-        .ads-button {
-            background-color: var(--btn-dark);
-            color: var(--display-color);
-            font-size: 16px;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            animation: blink 2s infinite;
-            -webkit-tap-highlight-color: rgba(0,0,0,0);
-        }
+.btn-op {
+background: var(--btn-orange);
+color: var(--display-color);
+font-size: var(--font-size-op);
+}
 
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
-        }
+.ads-button {
+background-color: var(--btn-dark);
+color: var(--display-color);
+font-size: 16px;
+width: 100%;
+height: 100%;
+border-radius: 50%;
+display: flex;
+justify-content: center;
+align-items: center;
+cursor: pointer;
+animation: blink 2s infinite;
+-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
 
-        .support-text {
-            text-align: center;
-            font-size: 12px;
-            color: #ff9500;
-            width: 100%;
-            opacity: 0.9;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            font-weight: normal;
-            margin: 5px 0;
-            padding: 0 10px;
-            animation: textBlink 3s infinite;
-        }
+@keyframes blink {
+0% { opacity: 1; }
+50% { opacity: 0.7; }
+100% { opacity: 1; }
+}
 
-        .support-text-bottom {
-            text-align: center;
-            font-size: 10px;
-            color: #aaa;
-            width: 100%;
-            opacity: 0.8;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            font-weight: normal;
-            margin: 3px 0;
-            padding: 0 10px;
-        }
+.support-text {
+text-align: center;
+font-size: 12px;
+color: #ff9500;
+width: 100%;
+opacity: 0.9;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+font-weight: normal;
+margin: 5px 0;
+padding: 0 10px;
+animation: textBlink 3s infinite;
+}
 
-        @keyframes textBlink {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
-        }
+.support-text-bottom {
+text-align: center;
+font-size: 10px;
+color: #aaa;
+width: 100%;
+opacity: 0.8;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+font-weight: normal;
+margin: 3px 0;
+padding: 0 10px;
+}
 
-        /* Βελτιστοποίηση για tablet */
-        @media (min-width: 768px) and (max-width: 1024px) {
-            :root {
-                --gap: 12px;
-                --font-size-btn: 40px;
-                --font-size-op: 44px;
-            }
+@keyframes textBlink {
+0% { opacity: 0.7; }
+50% { opacity: 1; }
+100% { opacity: 0.7; }
+}
 
-            .display {
-                font-size: 70px;
-                min-height: 20vh;
-            }
+/* Βελτιστοποίηση για tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+:root {
+--gap: 12px;
+--font-size-btn: 40px;
+--font-size-op: 44px;
+}
 
-            .calc {
-                max-width: 500px;
-                margin: 0 auto;
-            }
-        }
+.display {
+font-size: 70px;
+min-height: 20vh;
+}
 
-        /* Βελτιστοποίηση για μεγάλα κινητά */
-        @media (min-width: 481px) and (max-width: 767px) {
-            .calc {
-                max-width: 400px;
-                margin: 0 auto;
-            }
-        }
+.calc {
+max-width: 500px;
+margin: 0 auto;
+}
+}
 
-        @media (max-width: 480px) {
-            :root {
-                --gap: 8px;
-                --font-size-btn: 28px;
-                --font-size-op: 32px;
-            }
+@media (max-width: 480px) {
+:root {
+--gap: 8px;
+--font-size-btn: 28px;
+--font-size-op: 32px;
+}
 
-            .display {
-                font-size: 50px;
-                padding: 0 10px 8px 10px;
-                margin-bottom: 3px;
-                min-height: 20vh;
-            }
+.display {
+font-size: 50px;
+padding: 0 10px 8px 10px;
+margin-bottom: 3px;
+min-height: 20vh;
+}
 
-            .support-text {
-                font-size: 11px;
-                margin: 4px 0;
-            }
+.support-text {
+font-size: 11px;
+margin: 4px 0;
+}
 
-            .support-text-bottom {
-                font-size: 9px;
-                margin: 2px 0;
-            }
+.support-text-bottom {
+font-size: 9px;
+margin: 2px 0;
+}
 
-            .pad {
-                margin-top: 3px;
-            }
-        }
+.pad {
+margin-top: 3px;
+}
+}
 
-        @media (max-width: 380px) {
-            .display {
-                font-size: 45px;
-                padding: 0 10px 5px 10px;
-                margin-bottom: 2px;
-                min-height: 18vh;
-            }
+@media (max-width: 380px) {
+.display {
+font-size: 45px;
+padding: 0 10px 5px 10px;
+margin-bottom: 2px;
+min-height: 18vh;
+}
 
-            .support-text {
-                font-size: 10px;
-                margin: 3px 0;
-            }
+.support-text {
+font-size: 10px;
+margin: 3px 0;
+}
 
-            .support-text-bottom {
-                font-size: 8px;
-                margin: 2px 0;
-            }
+.support-text-bottom {
+font-size: 8px;
+margin: 2px 0;
+}
 
-            .pad {
-                margin-top: 2px;
-            }
-        }
+.pad {
+margin-top: 2px;
+}
+}
 
-        /* Απενεργοποίηση pull-to-refresh */
-        body {
-            overscroll-behavior-y: none;
-        }
+/* Απενεργοποίηση pull-to-refresh */
+body {
+overscroll-behavior-y: none;
+}
 
-        /* Βελτιστοποίηση για οριζόντια orientation */
-        @media (max-height: 500px) and (orientation: landscape) {
-            .display {
-                min-height: 25vh;
-                font-size: 40px;
-            }
+/* Βελτιστοποίηση για οριζόντια orientation */
+@media (max-height: 500px) {
+.display {
+min-height: 20vh;
+font-size: 40px;
+}
 
-            .pad {
-                margin-top: 3px;
-                grid-template-columns: repeat(4, 1fr);
-            }
+.pad {
+margin-top: 3px;
+}
 
-            :root {
-                --font-size-btn: 24px;
-                --font-size-op: 28px;
-                --gap: 6px;
-            }
-            
-            .calc {
-                padding: 10px;
-            }
-        }
+:root {
+--font-size-btn: 24px;
+--font-size-op: 28px;
+}
+}
 
-        /* Βελτιστοποίηση για πολύ μικρές οθόνες */
-        @media (max-height: 600px) {
-            .display {
-                min-height: 20vh;
-                font-size: 45px;
-            }
+/* Βελτιστοποίηση για πολύ μικρές οθόνες */
+@media (max-height: 600px) {
+.display {
+min-height: 15vh;
+font-size: 45px;
+}
 
-            .pad {
-                margin-top: 2px;
-            }
-        }
+.pad {
+margin-top: 2px;
+}
+}
 
-        /* Στυλ για PWA fullscreen */
-        @media all and (display-mode: fullscreen) {
-            body {
-                padding: 0;
-            }
-            
-            .calc {
-                padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-            }
-        }
-
-        @media all and (display-mode: standalone) {
-            body {
-                padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-            }
-        }
-    </style>
+/* ΝΕΟ: Βελτιστοποίηση για Safari iOS */
+@supports (-webkit-touch-callout: none) {
+body {
+height: -webkit-fill-available;
+}
+.calc {
+height: -webkit-fill-available;
+}
+}
+</style>
 </head>
 
 <body>
-    <main class="calc" id="calculatorApp">
-        <div class="display" id="display">0</div>
+<main class="calc" id="calculatorApp">
+<div class="display" id="display">0</div>
 
-        <div class="support-text">Ένα κλικ στο κουμπί ads αρκεί. Στηρίξτε μας να Συνεχίσουμε</div>
+<div class="support-text">One click on the ads button is enough. Support us to Continue</div>
 
-        <div class="pad">
-            <button class="btn-ac" id="ac">AC</button>
-            <button class="btn-fn" id="plusminus">+/-</button>
-            <button class="btn-fn" id="percent">%</button>
-            <button class="btn-op" data-op="/">÷</button>
+<div class="pad">
+<button class="btn-ac" id="ac">AC</button>
+<button class="btn-fn" id="plusminus">+/-</button>
+<button class="btn-fn" id="percent">%</button>
+<button class="btn-op" data-op="/">÷</button>
 
-            <button class="btn-num" data-num="7">7</button>
-            <button class="btn-num" data-num="8">8</button>
-            <button class="btn-num" data-num="9">9</button>
-            <button class="btn-op" data-op="*">×</button>
+<button class="btn-num" data-num="7">7</button>
+<button class="btn-num" data-num="8">8</button>
+<button class="btn-num" data-num="9">9</button>
+<button class="btn-op" data-op="*">×</button>
 
-            <button class="btn-num" data-num="4">4</button>
-            <button class="btn-num" data-num="5">5</button>
-            <button class="btn-num" data-num="6">6</button>
-            <button class="btn-op" data-op="-">−</button>
+<button class="btn-num" data-num="4">4</button>
+<button class="btn-num" data-num="5">5</button>
+<button class="btn-num" data-num="6">6</button>
+<button class="btn-op" data-op="-">−</button>
 
-            <button class="btn-num" data-num="1">1</button>
-            <button class="btn-num" data-num="2">2</button>
-            <button class="btn-num" data-num="3">3</button>
-            <button class="btn-op" data-op="+">+</button>
+<button class="btn-num" data-num="1">1</button>
+<button class="btn-num" data-num="2">2</button>
+<button class="btn-num" data-num="3">3</button>
+<button class="btn-op" data-op="+">+</button>
 
-            <button class="ads-button" id="adsButton" onclick="window.open('https://otieu.com/4/10000601', '_blank')">ads</button>
-            <button class="btn-num" data-num="0">0</button>
-            <button class="btn-num" id="dot">.</button>
-            <button class="btn-op" id="equals">=</button>
-        </div>
+<button class="ads-button" id="adsButton" onclick="window.open('https://otieu.com/4/10000601', '_blank')">ads</button>
+<button class="btn-num" data-num="0">0</button>
+<button class="btn-num" id="dot">.</button>
+<button class="btn-op" id="equals">=</button>
+</div>
 
-        <div class="support-text-bottom">franklymadear.com</div>
-    </main>
+<div class="support-text-bottom">Add to Home Screen</div>
+</main>
 
-    <script>
-        (() => {
-            const displayEl = document.getElementById('display');
-            const btns = document.querySelectorAll('.pad button');
-            let expression = "";
-            let lastResult = null;
-            let isResultDisplayed = false;
+<script>
+(() => {
+const displayEl = document.getElementById('display');
+const btns = document.querySelectorAll('.pad button');
+let expression = "";
+let lastResult = null;
+let isResultDisplayed = false;
 
-            // Απενεργοποίηση context menu σε κινητά
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
-            });
+// Απενεργοποίηση context menu σε κινητά
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault();
+return false;
+});
 
-            // Απενεργοποίηση double tap zoom
-            let lastTouchEnd = 0;
-            document.addEventListener('touchend', function (event) {
-                const now = (new Date()).getTime();
-                if (now - lastTouchEnd <= 300) {
-                    event.preventDefault();
-                }
-                lastTouchEnd = now;
-            }, false);
+// Απενεργοποίηση double tap zoom
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+const now = (new Date()).getTime();
+if (now - lastTouchEnd <= 300) {
+event.preventDefault();
+}
+lastTouchEnd = now;
+}, false);
 
-            // Καταγραφή εγκατάστασης PWA
-            window.addEventListener('beforeinstallprompt', (e) => {
-                console.log('PWA can be installed');
-            });
+// ΠΡΟΣΘΗΚΗ: Αποφυγή πτώσης σε iOS Safari
+document.addEventListener('touchstart', function(e) {
+if (e.touches.length > 1) {
+e.preventDefault();
+}
+}, { passive: false });
 
-            // Ενημέρωση για λειτουργία standalone
-            if (window.matchMedia('(display-mode: standalone)').matches) {
-                console.log('Running in standalone mode');
-            }
+function updateDisplay() {
+displayEl.textContent = expression || "0";
+    
+// Αυτόματη προσαρμογή μεγέθους γραμματοσειράς για μεγάλους αριθμούς
+const displayWidth = displayEl.clientWidth;
+const textWidth = displayEl.scrollWidth;
+    
+if (textWidth > displayWidth - 20) {
+// Υπολογισμός νέου μεγέθους γραμματοσειράς βάσει αναλογίας
+const scaleFactor = (displayWidth - 40) / textWidth;
+const newFontSize = Math.floor(60 * scaleFactor);
+displayEl.style.fontSize = Math.max(25, newFontSize) + 'px';
+} else {
+displayEl.style.fontSize = '60px';
+}
+    
+// Προσθήκη κλάσης result όταν εμφανίζεται αποτέλεσμα
+if (isResultDisplayed) {
+displayEl.classList.add('result');
+} else {
+displayEl.classList.remove('result');
+}
+}
 
-            function updateDisplay() {
-                displayEl.textContent = expression || "0";
-                
-                // Αυτόματη προσαρμογή μεγέθους γραμματοσειράς για μεγάλους αριθμούς
-                const displayWidth = displayEl.clientWidth;
-                const textWidth = displayEl.scrollWidth;
-                
-                if (textWidth > displayWidth - 20) {
-                    // Υπολογισμός νέου μεγέθους γραμματοσειράς βάσει αναλογίας
-                    const scaleFactor = (displayWidth - 40) / textWidth;
-                    const newFontSize = Math.floor(60 * scaleFactor);
-                    displayEl.style.fontSize = Math.max(25, newFontSize) + 'px';
-                } else {
-                    displayEl.style.fontSize = '';
-                }
-                
-                // Προσθήκη κλάσης result όταν εμφανίζεται αποτέλεσμα
-                if (isResultDisplayed) {
-                    displayEl.classList.add('result');
-                } else {
-                    displayEl.classList.remove('result');
-                }
-            }
+function toEvalExpr(expr) {
+return expr.replace(/,/g, ".").replace(/÷/g, "/").replace(/×/g, "*").replace(/−/g, "-").replace(/%/g, "/100");
+}
 
-            function toEvalExpr(expr) {
-                return expr.replace(/,/g, ".").replace(/÷/g, "/").replace(/×/g, "*").replace(/−/g, "-").replace(/%/g, "/100");
-            }
+function inputDigit(d) {
+if (expression === "Error") {
+clearAll();
+}
+if (isResultDisplayed) {
+expression = "";
+isResultDisplayed = false;
+}
+if (expression === "0" && d === "0") return;
+if (expression === "0" && d !== "0") {
+expression = d;
+} else {
+expression += d;
+}
+updateDisplay();
+}
 
-            function inputDigit(d) {
-                if (expression === "Error") {
-                    clearAll();
-                }
-                if (isResultDisplayed) {
-                    expression = "";
-                    isResultDisplayed = false;
-                }
-                if (expression === "0" && d === "0") return;
-                if (expression === "0" && d !== "0") {
-                    expression = d;
-                } else {
-                    expression += d;
-                }
-                updateDisplay();
-            }
+function inputDot() {
+if (expression === "Error") {
+clearAll();
+}
+if (isResultDisplayed) {
+expression = "0.";
+isResultDisplayed = false;
+} else if (expression === "") {
+expression = "0.";
+} else {
+const parts = expression.split(/([+\-×÷])/);
+const lastPart = parts[parts.length - 1];
+if (!lastPart.includes('.')) {
+expression += '.';
+}
+}
+updateDisplay();
+}
 
-            function inputDot() {
-                if (expression === "Error") {
-                    clearAll();
-                }
-                if (isResultDisplayed) {
-                    expression = "0.";
-                    isResultDisplayed = false;
-                } else if (expression === "") {
-                    expression = "0.";
-                } else {
-                    const parts = expression.split(/([+\-×÷])/);
-                    const lastPart = parts[parts.length - 1];
-                    if (!lastPart.includes('.')) {
-                        expression += '.';
-                    }
-                }
-                updateDisplay();
-            }
+function clearAll() {
+expression = "";
+lastResult = null;
+isResultDisplayed = false;
+updateDisplay();
+}
 
-            function clearAll() {
-                expression = "";
-                lastResult = null;
-                isResultDisplayed = false;
-                updateDisplay();
-            }
+function toggleSign() {
+if (expression === "" || expression === "0" || expression === "Error") return;
+const parts = expression.split(/([+\-×÷])/);
+let lastPart = parts.pop().trim();
+if (lastPart === "") return;
+let newValue;
+if (lastPart.startsWith('−')) {
+newValue = lastPart.substring(1);
+} else {
+newValue = '−' + lastPart;
+}
+parts.push(newValue);
+expression = parts.join('');
+updateDisplay();
+}
 
-            function toggleSign() {
-                if (expression === "" || expression === "0" || expression === "Error") return;
-                const parts = expression.split(/([+\-×÷])/);
-                let lastPart = parts.pop().trim();
-                if (lastPart === "") return;
-                let newValue;
-                if (lastPart.startsWith('−')) {
-                    newValue = lastPart.substring(1);
-                } else {
-                    newValue = '−' + lastPart;
-                }
-                parts.push(newValue);
-                expression = parts.join('');
-                updateDisplay();
-            }
+function percent() {
+if (expression === "" || expression === "0" || expression === "Error") return;
+const parts = expression.split(/([+\-×÷])/);
+const lastNumberStr = parts.pop().replace(',', '.');
+const lastNumber = parseFloat(lastNumberStr);
+if (isNaN(lastNumber)) return;
+let newValue = (lastNumber / 100).toString().replace('.', '.');
+parts.push(newValue);
+expression = parts.join('');
+updateDisplay();
+}
 
-            function percent() {
-                if (expression === "" || expression === "0" || expression === "Error") return;
-                const parts = expression.split(/([+\-×÷])/);
-                const lastNumberStr = parts.pop().replace(',', '.');
-                const lastNumber = parseFloat(lastNumberStr);
-                if (isNaN(lastNumber)) return;
-                let newValue = (lastNumber / 100).toString().replace('.', '.');
-                parts.push(newValue);
-                expression = parts.join('');
-                updateDisplay();
-            }
+function inputOperator(op) {
+if (expression === "") return;
+if (expression === "Error") {
+expression = String(lastResult).replace('.', '.');
+}
+isResultDisplayed = false;
+const lastChar = expression.slice(-1);
+if ("+−×÷".includes(lastChar)) {
+expression = expression.slice(0, -1);
+}
+expression += (op === "*" ? "×" : op === "/" ? "÷" : op === "-" ? "−" : "+") + " ";
+updateDisplay();
+}
 
-            function inputOperator(op) {
-                if (expression === "") return;
-                if (expression === "Error") {
-                    expression = String(lastResult).replace('.', '.');
-                }
-                isResultDisplayed = false;
-                const lastChar = expression.slice(-1);
-                if ("+−×÷".includes(lastChar)) {
-                    expression = expression.slice(0, -1);
-                }
-                expression += (op === "*" ? "×" : op === "/" ? "÷" : op === "-" ? "−" : "+") + " ";
-                updateDisplay();
-            }
+function calculateEquals() {
+if (expression === "" || expression === "Error") return;
+try {
+let evalExpr = toEvalExpr(expression);
+let result = eval(evalExpr);
+if (result % 1 !== 0) {
+result = parseFloat(result.toFixed(10));
+}
+expression = String(result).replace('.', '.');
+lastResult = result;
+isResultDisplayed = true;
+updateDisplay();
+} catch (e) {
+expression = "Error";
+isResultDisplayed = false;
+updateDisplay();
+}
+}
 
-            function calculateEquals() {
-                if (expression === "" || expression === "Error") return;
-                try {
-                    let evalExpr = toEvalExpr(expression);
-                    let result = eval(evalExpr);
-                    if (result % 1 !== 0) {
-                        result = parseFloat(result.toFixed(10));
-                    }
-                    expression = String(result).replace('.', '.');
-                    lastResult = result;
-                    isResultDisplayed = true;
-                    updateDisplay();
-                } catch (e) {
-                    expression = "Error";
-                    isResultDisplayed = false;
-                    updateDisplay();
-                }
-            }
+btns.forEach(b => {
+b.addEventListener('click', () => {
+if (b.dataset.num) inputDigit(b.dataset.num);
+else if (b.id === 'dot') inputDot();
+else if (b.id === 'ac') clearAll();
+else if (b.id === 'plusminus') toggleSign();
+else if (b.id === 'percent') percent();
+else if (b.id === 'equals') calculateEquals();
+else if (b.dataset.op) inputOperator(b.dataset.op);
+});
+});
 
-            btns.forEach(b => {
-                b.addEventListener('click', () => {
-                    if (b.dataset.num) inputDigit(b.dataset.num);
-                    else if (b.id === 'dot') inputDot();
-                    else if (b.id === 'ac') clearAll();
-                    else if (b.id === 'plusminus') toggleSign();
-                    else if (b.id === 'percent') percent();
-                    else if (b.id === 'equals') calculateEquals();
-                    else if (b.dataset.op) inputOperator(b.dataset.op);
-                });
-            });
-
-            updateDisplay();
-        })();
-    </script>
+updateDisplay();
+})();
+</script>
 </body>
 </html>
