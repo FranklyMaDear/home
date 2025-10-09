@@ -6,6 +6,11 @@
     <title>Sudoku</title>
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="sudoku-1player.png">
+    <!-- Προσθήκη favicon για αρχική οθόνη κινητού -->
+    <link rel="apple-touch-icon" href="sudoku-1player.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sudoku">
     <style>
         * {
             box-sizing: border-box;
@@ -13,17 +18,29 @@
             padding: 0;
         }
         
-        /* Μπάνερ υποστήριξης - ΣΤΟ ΠΑΝΩ ΜΕΡΟΣ */
+        /* Pop-up Μπάνερ υποστήριξης */
         .support-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             background: linear-gradient(135deg, #ff9800, #f57c00);
             color: white;
-            padding: 12px 15px;
+            padding: 15px 20px;
             text-align: center;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            animation: pulse 2s infinite;
-            position: relative;
             z-index: 1000;
-            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid #e65100;
+            transform: translateY(-100%);
+            animation: slideDown 0.5s forwards 1s;
+        }
+        
+        @keyframes slideDown {
+            to {
+                transform: translateY(0);
+            }
         }
         
         .banner-content {
@@ -31,30 +48,30 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            flex-wrap: wrap;
         }
         
         .banner-text {
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 16px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            letter-spacing: 0.5px;
         }
         
-        .banner-btn {
-            background: white;
-            color: #ff9800;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 13px;
+        .banner-arrow {
+            font-size: 18px;
+            animation: bounce 2s infinite;
         }
         
-        .banner-btn:hover {
-            background: #fff3e0;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-5px);
+            }
+            60% {
+                transform: translateY(-3px);
+            }
         }
         
         body {
@@ -73,8 +90,8 @@
         
         .container {
             width: 100%;
-            max-width: 450px;
-            margin-top: 20px; /* Απόσταση από το banner */
+            max-width: 500px;
+            margin-top: 20px;
         }
         
         .app-card {
@@ -167,6 +184,8 @@
             display: grid;
             border: 2px solid #3e2723;
             background: white;
+            max-width: 100%;
+            aspect-ratio: 1 / 1;
         }
         
         .cell {
@@ -178,6 +197,10 @@
             position: relative;
             border: 1px solid #888;
             font-size: 18px;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
         
         .prefilled {
@@ -466,21 +489,65 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
+        /* Βελτιωμένο responsive design για κινητά */
         @media (max-width: 500px) {
+            body {
+                padding: 10px;
+                justify-content: flex-start;
+            }
+            
             .container {
-                max-width: 380px;
+                max-width: 100%;
+                margin-top: 10px;
             }
             
             .app-card {
-                padding: 12px;
+                padding: 10px;
+                border-radius: 10px;
             }
             
             h1 {
-                font-size: 20px;
+                font-size: 18px;
             }
             
             #timer {
                 font-size: 14px;
+            }
+            
+            .stats {
+                margin: 8px 0;
+                padding: 6px 0;
+            }
+            
+            .stat-item {
+                font-size: 12px;
+            }
+            
+            .stat-value {
+                font-size: 14px;
+            }
+            
+            .controls {
+                gap: 6px;
+                margin-bottom: 10px;
+            }
+            
+            select {
+                padding: 6px 10px;
+                font-size: 13px;
+            }
+            
+            .board-wrap {
+                margin: 8px 0 12px;
+            }
+            
+            .cell {
+                font-size: 16px;
+            }
+            
+            .buttons {
+                gap: 6px;
+                margin-top: 12px;
             }
             
             .app-btn {
@@ -488,32 +555,62 @@
                 font-size: 13px;
             }
             
+            .number-pad {
+                gap: 6px;
+                margin-top: 12px;
+            }
+            
             .number-btn {
                 padding: 8px 0;
                 font-size: 15px;
             }
             
-            .banner-content {
-                flex-direction: column;
-                gap: 8px;
+            .support-banner {
+                padding: 12px 15px;
+            }
+            
+            .banner-text {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 350px) {
+            .cell {
+                font-size: 14px;
+            }
+            
+            .number-btn {
+                font-size: 14px;
             }
             
             .banner-text {
                 font-size: 13px;
             }
+        }
 
-            .support-banner {
-                padding: 10px 12px;
+        /* Βελτιστοποίηση για ταμπλέτες */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .container {
+                max-width: 600px;
+            }
+            
+            .cell {
+                font-size: 20px;
+            }
+            
+            .number-btn {
+                font-size: 18px;
+                padding: 12px 0;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Μπάνερ υποστήριξης - ΣΤΟ ΠΑΝΩ ΜΕΡΟΣ -->
+    <!-- Pop-up Μπάνερ υποστήριξης -->
     <div class="support-banner" id="support-banner">
         <div class="banner-content">
             <span class="banner-text">👉 Πάτησε κλικ και βοήθησέ μας να συνεχίσουμε!</span>
-            <button class="banner-btn" id="support-btn">Υποστήριξη</button>
+            <span class="banner-arrow">⬆️</span>
         </div>
     </div>
 
@@ -711,7 +808,7 @@
                 newGameBtn: "Neues Spiel",
                 selectEmpty: "Bitte wähle zuerst eine leere Zelle aus!",
                 notComplete: "Das Brett ist nicht vollständig. Fülle zuerst alle leeren Zellen!",
-                incorrect: "Einige Zellen sind falsch. Mach weiter!",
+                incorrect: "Einige Zellen sont falsch. Mach weiter!",
                 level: "Level",
                 success: "Erfolg!",
                 nextLevel: "Weiter zum nächsten Level!",
@@ -777,7 +874,7 @@
                 newGameBtn: "Yeni Oyun",
                 selectEmpty: "Lütfen önce boş bir hücre seçin!",
                 notComplete: "Tahta tamamlanmadı. Önce tüm boş hücreleri doldurun!",
-                incorrect: "Bazı hücreler yanlış. Devam edin!",
+                incorrect: "Bazı hücreler yanlıш. Devam edin!",
                 level: "Seviye",
                 success: "Başarı!",
                 nextLevel: "Sonraki seviyeye geçiliyor!",
@@ -1059,8 +1156,11 @@
         function renderBoard() {
             sudokuBoard.innerHTML = '';
             sudokuBoard.style.gridTemplateColumns = `repeat(${game.size}, 1fr)`;
+            sudokuBoard.style.gridTemplateRows = `repeat(${game.size}, 1fr)`;
             
-            const cellSize = Math.min(50, 400 / game.size);
+            // Προσαρμογή μεγέθους κελιών για κινητά
+            const boardWidth = Math.min(350, window.innerWidth - 40);
+            const cellSize = boardWidth / game.size;
             
             for (let row = 0; row < game.size; row++) {
                 for (let col = 0; col < game.size; col++) {
@@ -1546,19 +1646,22 @@
             document.querySelector(`.theme-btn[data-theme="${theme}"]`).classList.add('active');
         }
 
-        // Χειρισμός μπάνερ υποστήριξης
-        document.getElementById('support-btn').addEventListener('click', function() {
-            // Εκτέλεση του script για υποστήριξη
-            (function(s){
-                s.dataset.zone='9981373',
-                s.src='https://groleegni.net/vignette.min.js'
-            })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
+        // Χειρισμός pop-up banner
+        document.getElementById('support-banner').addEventListener('click', function() {
+            // Προσομοίωση κλικ σε διαφήμιση
+            alert('Ευχαριστούμε για την υποστήριξή σας! Αυτό το παιχνίδι είναι δωρεάν χάρη σε διαφημίσεις όπως αυτή.');
+            document.getElementById('click-sound').play();
             
-            // Απόκρυψη του μπάνερ μετά το πάτημα
-            document.getElementById('support-banner').style.display = 'none';
+            // Προσθήκη εφέ στο banner
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 200);
             
-            // Εμφάνιση μηνύματος ευχαριστιών
-            alert('Σας ευχαριστούμε για την υποστήριξή σας! 🎉');
+            // Απόκρυψη του banner μετά το πάτημα
+            setTimeout(() => {
+                this.style.display = 'none';
+            }, 500);
         });
 
         // Event Listeners
@@ -1586,6 +1689,11 @@
             } else if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
                 undo();
             }
+        });
+
+        // Προσαρμογή μεγέθους πίνακα όταν αλλάζει το μέγεθος παραθύρου
+        window.addEventListener('resize', () => {
+            renderBoard();
         });
 
         // Αρχικοποίηση
