@@ -304,4 +304,162 @@ class Connect4Game {
 
     findDoubleThreatMove() {
         // Look for moves that create multiple winning opportunities
-        for (let col =
+        for (let col = 0; col < this.cols; col++) {
+            const row = this.findAvailableRow(col);
+            if (row !== -1) {
+                this.gameBoard[col][row] = 2;
+                
+                // Count how many winning moves this creates
+                let threatCount = 0;
+                for (let nextCol = 0; nextCol < this.cols; nextCol++) {
+                    const nextRow = this.findAvailableRow(nextCol);
+                    if (nextRow !== -1) {
+                        this.gameBoard[nextCol][nextRow] = 2;
+                        if (this.checkWin(nextCol, nextRow)) {
+                            threatCount++;
+                        }
+                        this.gameBoard[nextCol][nextRow] = 0;
+                    }
+                }
+                
+                this.gameBoard[col][row] = 0;
+                
+                if (threatCount >= 2) {
+                    return col;
+                }
+            }
+        }
+        return -1;
+    }
+
+    findStrategicMove() {
+        // Prefer center columns for better positioning
+        const centerCols = [3, 2, 4, 1, 5, 0, 6];
+        for (let col of centerCols) {
+            if (this.findAvailableRow(col) !== -1) {
+                return col;
+            }
+        }
+        return -1;
+    }
+
+    getRandomMove() {
+        const availableCols = [];
+        for (let col = 0; col < this.cols; col++) {
+            if (this.findAvailableRow(col) !== -1) {
+                availableCols.push(col);
+            }
+        }
+        return availableCols.length > 0 ? 
+            availableCols[Math.floor(Math.random() * availableCols.length)] : -1;
+    }
+
+    resetGame() {
+        this.initializeBoard();
+        this.currentPlayer = 1;
+        this.gameActive = true;
+        this.movesHistory = [];
+        this.lastMoveTime = 0;
+        this.winningCells = [];
+        this.createBoard();
+        this.updateStatus();
+        this.updatePlayerIndicators();
+    }
+
+    restartGame() {
+        this.scores = { player1: 0, player2: 0 };
+        this.saveScores();
+        this.updateScoresDisplay();
+        this.resetGame();
+    }
+
+    undoMove() {
+        if (this.movesHistory.length === 0 || !this.gameActive) return;
+        
+        const lastMove = this.movesHistory.pop();
+        this.gameBoard[lastMove.col][lastMove.row] = 0;
+        
+        const disc = document.getElementById(`disc-${lastMove.col}-${lastMove.row}`);
+        if (disc) {
+            disc.className = 'disc';
+        }
+        
+        this.currentPlayer = lastMove.player;
+        this.updateStatus();
+        this.updatePlayerIndicators();
+    }
+
+    updateStatus() {
+        const status = document.getElementById('status');
+        if (status) {
+            status.textContent = `Σειρά του Παίκτη ${this.currentPlayer}`;
+        }
+    }
+
+    updateScoresDisplay() {
+        const scoresElement = document.getElementById('scores');
+        if (scoresElement) {
+            scoresElement.innerHTML = `
+                <div class="score">${this.scores.player1} - ${this.scores.player2}</div>
+            `;
+        }
+    }
+
+    setupEventListeners() {
+        document.addEventListener('keydown', (e) => {
+            if (!this.gameActive) return;
+            
+            if (e.key >= '1' && e.key <= '7') {
+                const col = parseInt(e.key) - 1;
+                this.makeMove(col);
+            } else if (e.key === 'r' || e.key === 'R') {
+                this.resetGame();
+            } else if (e.key === 'z' && e.ctrlKey) {
+                e.preventDefault();
+                this.undoMove();
+            }
+        });
+    }
+
+    showConfetti() {
+        const confettiCount = 100;
+        const colors = ['#e74c3c', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
+        
+        for (let i = 0; i < confettiCount; i++) {
+            setTimeout(() => {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.cssText = `
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    left: ${Math.random() * 100}vw;
+                    animation-duration: ${2 + Math.random() * 2}s;
+                `;
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 4000);
+            }, i * 20);
+        }
+    }
+
+    saveScores() {
+        localStorage.setItem('connect4_scores', JSON.stringify(this.scores));
+    }
+
+    loadScores() {
+        const saved = localStorage.getItem('connect4_scores');
+        if (saved) {
+            this.scores = JSON.parse(saved);
+        }
+        this.updateScoresDisplay();
+    }
+
+    setGameMode(mode) {
+        this.gameMode = mode;
+        this.resetGame();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.connect4Game = new Connect4Game();
+});
