@@ -11,6 +11,86 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Buy Me a Coffee Stream Alert CSS -->
+    <style>
+        .bmc-alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .bmc-alert {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        .bmc-alert.show {
+            display: block;
+        }
+        
+        .bmc-alert-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .bmc-alert-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .bmc-alert-text {
+            flex: 1;
+            color: white;
+        }
+        
+        .bmc-alert-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .bmc-alert-message {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Roll-up Banner -->
@@ -34,6 +114,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Buy Me a Coffee Stream Alert Container -->
+    <div class="bmc-alert-container" id="bmcAlertContainer"></div>
 
     <!-- Header -->
     <header class="header" id="mainHeader">
@@ -338,6 +421,98 @@
             }
         });
 
+        // Buy Me a Coffee Stream Alert functionality
+        const bmcAlertContainer = document.getElementById('bmcAlertContainer');
+        const userKey = 'f15432a5-0af0-4f6d-a60b-5e1abd43eecc';
+        
+        // Function to create and show alert
+        function showBMCAlert(supporterName, message, amount) {
+            const alertId = 'bmc-alert-' + Date.now();
+            const alertHTML = `
+                <div class="bmc-alert" id="${alertId}">
+                    <div class="bmc-alert-content">
+                        <div class="bmc-alert-avatar">${supporterName.charAt(0).toUpperCase()}</div>
+                        <div class="bmc-alert-text">
+                            <div class="bmc-alert-name">${supporterName}</div>
+                            <div class="bmc-alert-message">${message || `Υποστήριξε με ${amount}`}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            bmcAlertContainer.insertAdjacentHTML('beforeend', alertHTML);
+            
+            const alertElement = document.getElementById(alertId);
+            setTimeout(() => {
+                alertElement.classList.add('show');
+            }, 100);
+            
+            // Remove alert after 8 seconds
+            setTimeout(() => {
+                alertElement.style.animation = 'slideOutRight 0.5s ease-out';
+                setTimeout(() => {
+                    alertElement.remove();
+                }, 500);
+            }, 8000);
+        }
+        
+        // Simulate stream alerts for demo (remove this in production)
+        function simulateAlerts() {
+            const supporters = [
+                { name: 'Μαρία', amount: '€5', message: 'Σας ευχαριστώ για τα υπέροχα παιχνίδια!' },
+                { name: 'Γιάννης', amount: '€3', message: 'Συνέχεια την ίδια δουλειά!' },
+                { name: 'Ανδρέας', amount: '€10', message: null },
+                { name: 'Ελένη', amount: '€2', message: 'Το Sudoku είναι το αγαπημένο μου!' }
+            ];
+            
+            // Show first alert after 10 seconds
+            setTimeout(() => {
+                const supporter = supporters[Math.floor(Math.random() * supporters.length)];
+                showBMCAlert(supporter.name, supporter.message, supporter.amount);
+            }, 10000);
+            
+            // Show random alerts every 30-60 seconds
+            setInterval(() => {
+                const supporter = supporters[Math.floor(Math.random() * supporters.length)];
+                showBMCAlert(supporter.name, supporter.message, supporter.amount);
+            }, 30000 + Math.random() * 30000);
+        }
+        
+        // Start simulating alerts (remove this in production)
+        simulateAlerts();
+        
+        // For production, you would use WebSocket connection to the Buy Me a Coffee API
+        // Example WebSocket implementation (uncomment and configure for production):
+        /*
+        function connectToBMCStream() {
+            const socket = new WebSocket(`wss://stream-alert.buymeacoffee.com/${userKey}`);
+            
+            socket.onopen = function(event) {
+                console.log('Connected to Buy Me a Coffee stream');
+            };
+            
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.type === 'donation') {
+                    showBMCAlert(data.supporter_name, data.message, data.amount);
+                }
+            };
+            
+            socket.onclose = function(event) {
+                console.log('Disconnected from Buy Me a Coffee stream');
+                // Attempt to reconnect after 5 seconds
+                setTimeout(connectToBMCStream, 5000);
+            };
+            
+            socket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+        }
+        
+        // Connect to BMC stream
+        connectToBMCStream();
+        */
+
         // Language translations
         const translations = {
             el: {
@@ -565,7 +740,7 @@
                 responsive: "Адаптивный",
                 responsiveDesc: "Работают на всех устройствах",
                 fast: "Быстро",
-                fastDesc: "Загружаются сразу без установки",
+                fastDesc: "Загружаются мгновенно без установки",
                 variety: "Разнообразие",
                 varietyDesc: "Постоянно добавляются новые игры",
                 footerDesc: "Лучшая платформа для бесплатных HTML5 игр онлайн.",
@@ -585,8 +760,8 @@
                 sudoku1Desc: "एक खिलाड़ी के लिए क्लासिक पज़ल गेम",
                 sudoku2Desc: "दो खिलाड़ियों के लिए क्लासिक पज़ल गेम",
                 connect4Desc: "दो खिलाड़ियों के लिए क्लासिक कनेक्ट 4 गेम",
-                calculatorDesc: "आपकी सभी ज़रूरतों के लिए स्मार्ट कैलकुलेटर",
-                animalsDesc: "मज़ेदार तरीके से जानवरों के बारे में जानें!",
+                calculatorDesc: "आपकी सभी जरूरतों के लिए स्मार्ट कैलकुलेटर",
+                animalsDesc: "मजेदार तरीके से जानवरों के बारे में जानें!",
                 difficultyEasy: "🎯 आसान",
                 difficultyMedium: "🎯 मध्यम",
                 difficultyHard: "🎯 कठिन",
@@ -597,7 +772,7 @@
                 freeDesc: "सभी गेम्स 100% मुफ्त हैं",
                 responsive: "रिस्पॉन्सिव",
                 responsiveDesc: "सभी डिवाइस पर काम करते हैं",
-                fast: "तेज़",
+                fast: "तेज",
                 fastDesc: "बिना इंस्टॉलेशन के तुरंत लोड होते हैं",
                 variety: "विविधता",
                 varietyDesc: "नए गेम्स लगातार जोड़े जाते हैं",
@@ -608,24 +783,29 @@
 
         // Language selector functionality
         const languageSelect = document.getElementById('language-select');
-        
-        languageSelect.addEventListener('change', (e) => {
-            const selectedLang = e.target.value;
-            updateLanguage(selectedLang);
-        });
 
-        function updateLanguage(lang) {
+        function updateLanguage() {
+            const selectedLang = languageSelect.value;
             const elements = document.querySelectorAll('[data-key]');
+            
             elements.forEach(element => {
                 const key = element.getAttribute('data-key');
-                if (translations[lang] && translations[lang][key]) {
-                    element.textContent = translations[lang][key];
+                if (translations[selectedLang] && translations[selectedLang][key]) {
+                    element.textContent = translations[selectedLang][key];
                 }
             });
         }
 
-        // Initialize with Greek language
-        updateLanguage('el');
+        languageSelect.addEventListener('change', updateLanguage);
+
+        // Set initial language based on browser preference or default to Greek
+        const browserLang = navigator.language.split('-')[0];
+        if (translations[browserLang]) {
+            languageSelect.value = browserLang;
+        } else {
+            languageSelect.value = 'el';
+        }
+        updateLanguage();
     </script>
 </body>
 </html>
