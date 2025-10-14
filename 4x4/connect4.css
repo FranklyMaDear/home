@@ -23,7 +23,7 @@ body {
     padding: 25px 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     margin: 10px;
     border: 4px solid #2c3e50;
 }
@@ -55,14 +55,6 @@ h1 {
     align-items: center;
     gap: 8px;
     flex: 1;
-}
-
-.player:first-child {
-    align-items: flex-start;
-}
-
-.player:last-child {
-    align-items: flex-end;
 }
 
 .player-indicator {
@@ -99,17 +91,10 @@ h1 {
     font-weight: 800;
 }
 
-.player.active .player-disc {
-    transform: scale(1.15);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-    border: 3px solid #fff;
-}
-
 .scores {
     flex: 1;
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 
 .scores .score {
@@ -157,24 +142,6 @@ h1 {
     min-width: 120px;
 }
 
-.control-btn {
-    background: linear-gradient(145deg, #3498db, #2980b9);
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.control-btn:hover {
-    background: linear-gradient(145deg, #2980b9, #2471a3);
-    transform: scale(1.05);
-}
-
 /* Board Container - Fixed Layout */
 .board-container {
     background: linear-gradient(135deg, #3498db, #2980b9);
@@ -205,6 +172,7 @@ h1 {
 
 /* Perfectly aligned slots */
 .slot {
+    background: #1a5276;
     background: linear-gradient(145deg, #1a5276, #154360);
     border-radius: 50%;
     cursor: pointer;
@@ -335,7 +303,7 @@ h1 {
 .game-buttons {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 15px;
     margin-top: 15px;
     padding: 0 10px;
 }
@@ -344,7 +312,7 @@ h1 {
     background: linear-gradient(145deg, #3498db, #2980b9);
     color: white;
     border: none;
-    padding: 15px 25px;
+    padding: 15px 20px;
     font-size: 1rem;
     border-radius: 12px;
     cursor: pointer;
@@ -353,7 +321,7 @@ h1 {
     font-family: inherit;
     font-weight: 700;
     flex: 1;
-    max-width: 160px;
+    max-width: 150px;
     border: 2px solid #2980b9;
 }
 
@@ -404,9 +372,9 @@ h1 {
     }
     
     .game-btn {
-        padding: 12px 20px;
+        padding: 12px 15px;
         font-size: 0.9rem;
-        max-width: 140px;
+        max-width: 120px;
     }
     
     .status {
@@ -418,11 +386,11 @@ h1 {
 /* Confetti animation */
 @keyframes confettiFall {
     0% { 
-        transform: translateY(-10px) rotate(0deg);
+        transform: translateY(-10px) rotate(0deg); 
         opacity: 1;
     }
     100% { 
-        transform: translateY(100vh) rotate(720deg);
+        transform: translateY(100vh) rotate(720deg); 
         opacity: 0;
     }
 }
@@ -452,4 +420,24 @@ h1 {
 
 .confetti:nth-child(5n) {
     background: #9b59b6;
+}
+
+/* Enhanced active player */
+.player.active .player-disc {
+    transform: scale(1.15);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    border: 3px solid #fff;
+}
+
+/* Perfect alignment for player sections */
+.player:first-child {
+    align-items: flex-start;
+}
+
+.player:last-child {
+    align-items: flex-end;
+}
+
+.scores {
+    align-items: center;
 }
