@@ -6,59 +6,52 @@
 }
 
 body {
-    font-family: 'Orbitron', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 10px;
     touch-action: manipulation;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: #1e3c72;
 }
 
 .game-container {
     text-align: center;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
+    background: white;
+    border-radius: 15px;
     padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     width: 100%;
-    max-width: 400px;
+    max-width: 380px;
     margin: 10px;
 }
 
 h1 {
     color: #2c3e50;
-    margin-bottom: 15px;
-    font-size: 2.2rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    letter-spacing: 2px;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
 .game-header {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .players-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    margin-bottom: 15px;
 }
 
 .player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
     flex: 1;
-    padding: 8px 12px;
-    border-radius: 15px;
-    background: #f8f9fa;
-    transition: all 0.3s ease;
-    border: 3px solid transparent;
-}
-
-.player.active {
-    background: #e3f2fd;
-    border-color: #2196f3;
-    transform: scale(1.05);
 }
 
 .player-indicator {
@@ -69,10 +62,10 @@ h1 {
 }
 
 .player-disc {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    border: 2px solid #fff;
+    border: 3px solid #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
@@ -85,27 +78,37 @@ h1 {
 }
 
 .player span {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: bold;
     color: #2c3e50;
 }
 
+.player.active span {
+    color: #3498db;
+}
+
+.scores {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
 .scores .score {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: bold;
     color: #2c3e50;
     background: #f8f9fa;
-    padding: 8px 15px;
+    padding: 8px 16px;
     border-radius: 20px;
-    min-width: 70px;
+    min-width: 80px;
 }
 
 .game-controls {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 15px;
-    gap: 10px;
+    margin-bottom: 20px;
+    gap: 15px;
 }
 
 .control-group {
@@ -115,23 +118,24 @@ h1 {
 }
 
 .control-group label {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: #2c3e50;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .control-group select {
-    padding: 6px 10px;
+    padding: 6px 12px;
     border-radius: 8px;
     border: 2px solid #bdc3c7;
     background: white;
     color: #2c3e50;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.8rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .control-btn {
-    background: linear-gradient(45deg, #3498db, #2980b9);
+    background: #3498db;
     color: white;
     border: none;
     padding: 8px 12px;
@@ -143,15 +147,15 @@ h1 {
 }
 
 .control-btn:hover {
+    background: #2980b9;
     transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 .board-container {
-    background: linear-gradient(to bottom, #3498db, #2980b9);
+    background: #3498db;
     padding: 15px;
-    border-radius: 15px;
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+    border-radius: 12px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
     margin: 15px 0;
     position: relative;
     width: 100%;
@@ -162,7 +166,7 @@ h1 {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(6, 1fr);
-    gap: 6px;
+    gap: 5px;
     position: relative;
     z-index: 1;
     height: 100%;
@@ -175,7 +179,7 @@ h1 {
     cursor: pointer;
     position: relative;
     transition: all 0.2s ease;
-    box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -183,7 +187,6 @@ h1 {
 
 .slot:hover, .slot:active {
     background: #154360;
-    transform: scale(1.05);
 }
 
 .slot::before {
@@ -193,7 +196,7 @@ h1 {
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 50%;
     z-index: -1;
     opacity: 0;
@@ -205,31 +208,31 @@ h1 {
 }
 
 .disc {
-    width: 85%;
-    height: 85%;
+    width: 90%;
+    height: 90%;
     border-radius: 50%;
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     transform: translateY(-100vh);
     opacity: 0;
-    box-shadow: inset 0 -3px 6px rgba(0,0,0,0.3);
+    box-shadow: inset 0 -4px 8px rgba(0,0,0,0.4);
 }
 
 .disc.red {
     background: #e74c3c;
     transform: translateY(0);
     opacity: 1;
-    animation: discDrop 0.6s ease-out;
+    animation: discDrop 0.5s ease-out;
 }
 
 .disc.yellow {
     background: #f1c40f;
     transform: translateY(0);
     opacity: 1;
-    animation: discDrop 0.6s ease-out;
+    animation: discDrop 0.5s ease-out;
 }
 
 .disc.winner {
-    animation: pulse 1s infinite, discDrop 0.6s ease-out;
+    animation: pulse 1s infinite, discDrop 0.5s ease-out;
 }
 
 @keyframes discDrop {
@@ -238,7 +241,7 @@ h1 {
         opacity: 0;
     }
     70% {
-        transform: translateY(10px);
+        transform: translateY(5px);
         opacity: 1;
     }
     100% {
@@ -261,50 +264,52 @@ h1 {
     bottom: 0;
     pointer-events: none;
     background: 
-        radial-gradient(circle at center, transparent 44%, rgba(0, 0, 0, 0.6) 45%);
+        radial-gradient(circle at center, transparent 46%, rgba(0, 0, 0, 0.7) 47%);
     background-size: calc(100% / 7) calc(100% / 6);
     background-position: center;
-    border-radius: 12px;
+    border-radius: 10px;
     z-index: 2;
 }
 
 .status {
-    margin: 15px 0;
+    margin: 20px 0;
     font-size: 1.1rem;
-    font-weight: bold;
+    font-weight: 600;
     color: #2c3e50;
     min-height: 25px;
-    padding: 8px;
+    padding: 10px;
     background: #f8f9fa;
-    border-radius: 10px;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
 }
 
 .game-buttons {
     display: flex;
     justify-content: center;
-    gap: 12px;
+    gap: 15px;
     margin-top: 10px;
 }
 
 .game-btn {
-    background: linear-gradient(45deg, #3498db, #2980b9);
+    background: #3498db;
     color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 0.9rem;
-    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-    font-family: 'Orbitron', sans-serif;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    font-family: inherit;
+    font-weight: 600;
     flex: 1;
-    max-width: 140px;
+    max-width: 150px;
 }
 
 .game-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 12px rgba(0,0,0,0.3);
-    background: linear-gradient(45deg, #2980b9, #2471a3);
+    background: #2980b9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 /* Mobile optimizations */
@@ -313,71 +318,71 @@ h1 {
         padding: 15px;
         margin: 5px;
         max-width: 95vw;
+        border-radius: 12px;
     }
     
     h1 {
-        font-size: 1.8rem;
-        margin-bottom: 12px;
+        font-size: 1.7rem;
+        margin-bottom: 15px;
     }
     
     .board-container {
         padding: 12px;
-        margin: 12px 0;
+        margin: 15px 0;
+        border-radius: 10px;
     }
     
     .board {
-        gap: 5px;
+        gap: 4px;
     }
     
     .slot {
-        min-width: 35px;
-        min-height: 35px;
+        min-width: 32px;
+        min-height: 32px;
     }
     
     .players-info {
-        gap: 5px;
-    }
-    
-    .player {
-        padding: 6px 8px;
-    }
-    
-    .player-disc {
-        width: 20px;
-        height: 20px;
-    }
-    
-    .player span {
-        font-size: 0.7rem;
-    }
-    
-    .scores .score {
-        font-size: 1.1rem;
-        padding: 6px 12px;
-        min-width: 60px;
-    }
-    
-    .game-controls {
         margin-bottom: 12px;
     }
     
+    .player-disc {
+        width: 26px;
+        height: 26px;
+    }
+    
+    .player span {
+        font-size: 0.8rem;
+    }
+    
+    .scores .score {
+        font-size: 1.2rem;
+        padding: 6px 12px;
+        min-width: 70px;
+    }
+    
+    .game-controls {
+        margin-bottom: 15px;
+    }
+    
     .control-group label {
-        font-size: 0.75rem;
+        font-size: 0.85rem;
     }
     
     .control-group select {
-        padding: 5px 8px;
-        font-size: 0.75rem;
+        padding: 5px 10px;
+        font-size: 0.85rem;
     }
     
     .game-btn {
-        padding: 8px 16px;
-        font-size: 0.85rem;
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        max-width: 140px;
     }
     
     .status {
         font-size: 1rem;
-        margin: 12px 0;
+        margin: 15px 0;
+        padding: 8px;
     }
 }
 
@@ -388,7 +393,7 @@ h1 {
     }
     
     h1 {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
     }
     
     .board-container {
@@ -396,21 +401,23 @@ h1 {
     }
     
     .slot {
-        min-width: 30px;
-        min-height: 30px;
-    }
-    
-    .player {
-        padding: 4px 6px;
+        min-width: 28px;
+        min-height: 28px;
     }
     
     .player-disc {
-        width: 18px;
-        height: 18px;
+        width: 24px;
+        height: 24px;
     }
     
     .player span {
-        font-size: 0.65rem;
+        font-size: 0.75rem;
+    }
+    
+    .game-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        max-width: 130px;
     }
 }
 
@@ -422,21 +429,21 @@ h1 {
     }
     
     h1 {
-        font-size: 1.5rem;
-        margin-bottom: 8px;
+        font-size: 1.4rem;
+        margin-bottom: 10px;
     }
     
     .board-container {
-        margin: 8px 0;
+        margin: 10px 0;
         padding: 8px;
     }
     
     .game-header {
-        margin-bottom: 8px;
+        margin-bottom: 10px;
     }
     
     .status {
-        margin: 8px 0;
+        margin: 10px 0;
         font-size: 0.9rem;
     }
 }
@@ -477,4 +484,24 @@ h1 {
 
 .confetti:nth-child(5n) {
     background: #9b59b6;
+}
+
+/* Remove active player border since we're using color change */
+.player.active {
+    border: none;
+    background: transparent;
+    transform: none;
+}
+
+/* Ensure proper spacing for the layout */
+.player:first-child {
+    align-items: flex-start;
+}
+
+.player:last-child {
+    align-items: flex-end;
+}
+
+.scores {
+    align-items: center;
 }
