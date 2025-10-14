@@ -272,26 +272,8 @@ h1 {
     100% { transform: scale(1); }
 }
 
-/* Improved board overlay with precise hole alignment */
-.board-overlay {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    right: 15px;
-    bottom: 15px;
-    pointer-events: none;
-    background: 
-        radial-gradient(
-            circle at center, 
-            transparent 46%, 
-            rgba(26, 82, 118, 0.9) 48%
-        );
-    background-size: calc(100% / 7) calc(100% / 6);
-    background-position: center center;
-    border-radius: 10px;
-    z-index: 3;
-    border: 1px solid rgba(0,0,0,0.2);
-}
+/* ΑΦΑΙΡΕΣΑ ΤΕΛΕΙΩΣ ΤΟ ΜΑΥΡΟ BOARD-OVERLAY */
+/* Δεν υπάρχει πλέον board-overlay */
 
 .status {
     margin: 20px 0;
