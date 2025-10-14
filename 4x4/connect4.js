@@ -1,436 +1,413 @@
-class Connect4Game {
+class ConnectFour {
     constructor() {
         this.rows = 6;
         this.cols = 7;
+        this.board = this.createEmptyBoard();
         this.currentPlayer = 1;
-        this.gameBoard = [];
-        this.gameActive = true;
-        this.movesHistory = [];
-        this.scores = { player1: 0, player2: 0 };
-        this.gameMode = 'multiplayer';
-        this.lastMoveTime = 0;
-        this.winningCells = [];
+        this.gameOver = false;
+        this.scores = {1: 0, 2: 0};
+        this.gameMode = 'ai';
+        this.difficulty = 'easy';
         
-        this.init();
+        this.initializeBoard();
+        this.setupEventListeners();
+        this.updateGameMode();
+        this.updateStatus();
     }
 
-    init() {
-        this.initializeBoard();
-        this.createBoard();
-        this.loadScores();
-        this.setupEventListeners();
-        this.updateStatus();
-        this.updatePlayerIndicators();
+    createEmptyBoard() {
+        return Array(this.rows).fill().map(() => Array(this.cols).fill(0));
     }
 
     initializeBoard() {
-        this.gameBoard = Array(this.cols).fill().map(() => Array(this.rows).fill(0));
-    }
-
-    createBoard() {
-        const board = document.getElementById('gameBoard');
-        if (!board) return;
-        
+        const board = document.getElementById('board');
         board.innerHTML = '';
-        board.style.gridTemplateColumns = `repeat(${this.cols}, 1fr)`;
-        board.style.gridTemplateRows = `repeat(${this.rows}, 1fr)`;
         
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.cols; col++) {
-                const slot = this.createSlot(col, row);
+                const slot = document.createElement('div');
+                slot.className = 'slot';
+                slot.dataset.row = row;
+                slot.dataset.col = col;
+                slot.addEventListener('click', () => this.handleMove(col));
                 board.appendChild(slot);
             }
         }
     }
 
-    createSlot(col, row) {
-        const slot = document.createElement('div');
-        slot.className = 'slot';
-        slot.dataset.col = col;
-        slot.dataset.row = row;
-        
-        const disc = document.createElement('div');
-        disc.className = 'disc';
-        disc.id = `disc-${col}-${row}`;
-        
-        slot.appendChild(disc);
-        
-        slot.addEventListener('click', () => {
-            this.handleColumnClick(col);
+    setupEventListeners() {
+        document.getElementById('restartBtn').addEventListener('click', () => this.restartGame());
+        document.getElementById('newGameBtn').addEventListener('click', () => this.newGame());
+        document.getElementById('gameMode').addEventListener('change', (e) => {
+            this.gameMode = e.target.value;
+            this.updateGameMode();
+            this.restartGame();
         });
-        
-        slot.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            this.handleColumnClick(col);
+        document.getElementById('difficulty').addEventListener('change', (e) => {
+            this.difficulty = e.target.value;
         });
-
-        return slot;
     }
 
-    handleColumnClick(col) {
-        if (!this.gameActive) return;
+    updateGameMode() {
+        const player2Name = document.getElementById('player2Name');
+        const difficultySelect = document.getElementById('difficulty');
+        const difficultyLabel = document.querySelector('label[for="difficulty"]');
         
-        const now = Date.now();
-        if (now - this.lastMoveTime < 300) return;
-        this.lastMoveTime = now;
-        
-        this.makeMove(col);
-    }
-
-    makeMove(col) {
-        if (!this.gameActive) return;
-        
-        const row = this.findAvailableRow(col);
-        if (row === -1) return;
-
-        this.gameBoard[col][row] = this.currentPlayer;
-        this.movesHistory.push({ col, row, player: this.currentPlayer });
-        
-        this.animateDiscDrop(col, row);
-        
-        setTimeout(() => {
-            if (this.checkWin(col, row)) {
-                this.handleWin();
-                return;
-            }
-            
-            if (this.checkDraw()) {
-                this.handleDraw();
-                return;
-            }
-            
-            this.switchPlayer();
-            
-            if (this.gameMode === 'computer' && this.currentPlayer === 2) {
-                setTimeout(() => this.makeAIMove(), 600);
-            }
-        }, 600);
-    }
-
-    animateDiscDrop(col, row) {
-        const disc = document.getElementById(`disc-${col}-${row}`);
-        if (disc) {
-            disc.classList.add(this.currentPlayer === 1 ? 'red' : 'yellow');
-            disc.style.animation = 'discDrop 0.6s ease-out forwards';
+        if (this.gameMode === 'player') {
+            player2Name.textContent = 'Παίκτης 2';
+            difficultySelect.style.display = 'none';
+            difficultyLabel.style.display = 'none';
+        } else {
+            player2Name.textContent = 'AI';
+            difficultySelect.style.display = 'block';
+            difficultyLabel.style.display = 'block';
         }
     }
 
-    findAvailableRow(col) {
+    handleMove(col) {
+        if (this.gameOver) return;
+        
+        // Αν είναι AI's σειρά και παίζουμε vs AI, μην επιτρέψεις κίνηση
+        if (this.gameMode === 'ai' && this.currentPlayer === 2) return;
+
+        const row = this.getAvailableRow(col);
+        if (row === -1) return;
+
+        this.makeMove(row, col, this.currentPlayer);
+        
+        if (this.checkWinner(row, col)) {
+            this.handleWin();
+            return;
+        }
+
+        if (this.isBoardFull()) {
+            this.handleDraw();
+            return;
+        }
+
+        this.switchPlayer();
+        this.updateStatus();
+
+        // AI move after a short delay
+        if (this.gameMode === 'ai' && this.currentPlayer === 2 && !this.gameOver) {
+            setTimeout(() => this.aiMove(), 500);
+        }
+    }
+
+    aiMove() {
+        const col = this.getAIMove();
+        const row = this.getAvailableRow(col);
+        
+        if (row !== -1) {
+            this.makeMove(row, col, 2);
+            
+            if (this.checkWinner(row, col)) {
+                this.handleWin();
+                return;
+            }
+
+            if (this.isBoardFull()) {
+                this.handleDraw();
+                return;
+            }
+
+            this.switchPlayer();
+            this.updateStatus();
+        }
+    }
+
+    getAIMove() {
+        if (this.difficulty === 'easy') {
+            return this.getEasyAIMove();
+        } else {
+            return this.getHardAIMove();
+        }
+    }
+
+    getEasyAIMove() {
+        // Random moves with some basic logic
+        const availableCols = this.getAvailableColumns();
+        
+        // 30% πιθανότητα να μπλοκάρει τον παίχτη
+        if (Math.random() < 0.3) {
+            for (let col of availableCols) {
+                const row = this.getAvailableRow(col);
+                if (row !== -1) {
+                    this.board[row][col] = 1;
+                    if (this.checkWinner(row, col)) {
+                        this.board[row][col] = 0;
+                        return col;
+                    }
+                    this.board[row][col] = 0;
+                }
+            }
+        }
+
+        return availableCols[Math.floor(Math.random() * availableCols.length)];
+    }
+
+    getHardAIMove() {
+        const availableCols = this.getAvailableColumns();
+        
+        // 1. Check for winning move
+        for (let col of availableCols) {
+            const row = this.getAvailableRow(col);
+            if (row !== -1) {
+                this.board[row][col] = 2;
+                if (this.checkWinner(row, col)) {
+                    this.board[row][col] = 0;
+                    return col;
+                }
+                this.board[row][col] = 0;
+            }
+        }
+
+        // 2. Block player's winning moves
+        for (let col of availableCols) {
+            const row = this.getAvailableRow(col);
+            if (row !== -1) {
+                this.board[row][col] = 1;
+                if (this.checkWinner(row, col)) {
+                    this.board[row][col] = 0;
+                    return col;
+                }
+                this.board[row][col] = 0;
+            }
+        }
+
+        // 3. Create multiple threats
+        for (let col of availableCols) {
+            const row = this.getAvailableRow(col);
+            if (row !== -1) {
+                this.board[row][col] = 2;
+                let threatCount = 0;
+                
+                // Check how many winning opportunities this creates
+                for (let nextCol of this.getAvailableColumns()) {
+                    const nextRow = this.getAvailableRow(nextCol);
+                    if (nextRow !== -1) {
+                        this.board[nextRow][nextCol] = 2;
+                        if (this.checkWinner(nextRow, nextCol)) {
+                            threatCount++;
+                        }
+                        this.board[nextRow][nextCol] = 0;
+                    }
+                }
+                
+                this.board[row][col] = 0;
+                
+                if (threatCount >= 2) {
+                    return col;
+                }
+            }
+        }
+
+        // 4. Strategic center preference
+        const strategicCols = [3, 2, 4, 1, 5, 0, 6];
+        for (let col of strategicCols) {
+            if (availableCols.includes(col)) {
+                return col;
+            }
+        }
+
+        return availableCols[Math.floor(Math.random() * availableCols.length)];
+    }
+
+    getAvailableColumns() {
+        const available = [];
+        for (let col = 0; col < this.cols; col++) {
+            if (this.getAvailableRow(col) !== -1) {
+                available.push(col);
+            }
+        }
+        return available;
+    }
+
+    getAvailableRow(col) {
         for (let row = this.rows - 1; row >= 0; row--) {
-            if (this.gameBoard[col][row] === 0) {
+            if (this.board[row][col] === 0) {
                 return row;
             }
         }
         return -1;
     }
 
-    switchPlayer() {
-        this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
-        this.updateStatus();
+    makeMove(row, col, player) {
+        this.board[row][col] = player;
+        this.animateDisc(row, col, player);
         this.updatePlayerIndicators();
+    }
+
+    animateDisc(row, col, player) {
+        const slots = document.querySelectorAll('.slot');
+        const slot = Array.from(slots).find(s => 
+            parseInt(s.dataset.row) === row && parseInt(s.dataset.col) === col
+        );
+
+        const disc = document.createElement('div');
+        disc.className = `disc ${player === 1 ? 'red' : 'yellow'}`;
+        disc.style.animation = `discDrop 0.6s ease-out forwards`;
+        
+        slot.appendChild(disc);
     }
 
     updatePlayerIndicators() {
         const player1 = document.getElementById('player1');
         const player2 = document.getElementById('player2');
         
-        if (player1 && player2) {
-            player1.classList.toggle('active', this.currentPlayer === 1);
-            player2.classList.toggle('active', this.currentPlayer === 2);
+        if (this.currentPlayer === 1) {
+            player1.classList.add('active');
+            player2.classList.remove('active');
+        } else {
+            player2.classList.add('active');
+            player1.classList.remove('active');
         }
     }
 
-    checkWin(col, row) {
-        const player = this.gameBoard[col][row];
+    checkWinner(row, col) {
+        const player = this.board[row][col];
         const directions = [
-            [0, 1],   // vertical
-            [1, 0],   // horizontal
-            [1, 1],   // diagonal ↘
-            [1, -1]   // diagonal ↗
+            [0, 1], [1, 0], [1, 1], [1, -1]
         ];
-        
-        for (const [dx, dy] of directions) {
+
+        for (let [dx, dy] of directions) {
             let count = 1;
-            
+
             for (let i = 1; i < 4; i++) {
-                const newCol = col + dx * i;
-                const newRow = row + dy * i;
-                if (this.isValidPosition(newCol, newRow) && 
-                    this.gameBoard[newCol][newRow] === player) {
+                const newRow = row + i * dx;
+                const newCol = col + i * dy;
+                if (this.isValidPosition(newRow, newCol) && this.board[newRow][newCol] === player) {
                     count++;
                 } else {
                     break;
                 }
             }
-            
+
             for (let i = 1; i < 4; i++) {
-                const newCol = col - dx * i;
-                const newRow = row - dy * i;
-                if (this.isValidPosition(newCol, newRow) && 
-                    this.gameBoard[newCol][newRow] === player) {
+                const newRow = row - i * dx;
+                const newCol = col - i * dy;
+                if (this.isValidPosition(newRow, newCol) && this.board[newRow][newCol] === player) {
                     count++;
                 } else {
                     break;
                 }
             }
-            
+
             if (count >= 4) {
-                this.winningCells = this.getWinningCells(col, row, dx, dy);
+                this.highlightWinningCells(row, col, dx, dy);
                 return true;
             }
         }
-        
+
         return false;
     }
 
-    isValidPosition(col, row) {
-        return col >= 0 && col < this.cols && row >= 0 && row < this.rows;
-    }
+    highlightWinningCells(row, col, dx, dy) {
+        const player = this.board[row][col];
+        const winningCells = [];
 
-    getWinningCells(col, row, dx, dy) {
-        const player = this.gameBoard[col][row];
-        const winningCells = [{ col, row }];
-        
-        for (let i = 1; i < 4; i++) {
-            const newCol = col + dx * i;
-            const newRow = row + dy * i;
-            if (this.isValidPosition(newCol, newRow) && 
-                this.gameBoard[newCol][newRow] === player) {
-                winningCells.push({ col: newCol, row: newRow });
-            } else {
-                break;
+        for (let i = -3; i <= 3; i++) {
+            const newRow = row + i * dx;
+            const newCol = col + i * dy;
+            if (this.isValidPosition(newRow, newCol) && this.board[newRow][newCol] === player) {
+                winningCells.push({row: newRow, col: newCol});
             }
         }
-        
-        for (let i = 1; i < 4; i++) {
-            const newCol = col - dx * i;
-            const newRow = row - dy * i;
-            if (this.isValidPosition(newCol, newRow) && 
-                this.gameBoard[newCol][newRow] === player) {
-                winningCells.push({ col: newCol, row: newRow });
-            } else {
-                break;
-            }
-        }
-        
-        return winningCells;
-    }
 
-    handleWin() {
-        this.gameActive = false;
-        
-        if (this.currentPlayer === 1) {
-            this.scores.player1++;
-        } else {
-            this.scores.player2++;
-        }
-        
-        this.saveScores();
-        this.updateScoresDisplay();
-        this.highlightWinningCells();
-        
-        const status = document.getElementById('status');
-        if (status) {
-            status.innerHTML = `🎉 Παίκτης ${this.currentPlayer} κέρδισε! 🎉`;
-        }
-            
-        this.showConfetti();
-    }
-
-    handleDraw() {
-        this.gameActive = false;
-        const status = document.getElementById('status');
-        if (status) {
-            status.textContent = 'Ισοπαλία! 🤝';
-        }
-    }
-
-    highlightWinningCells() {
-        this.winningCells.forEach(({ col, row }) => {
-            const disc = document.getElementById(`disc-${col}-${row}`);
+        winningCells.forEach(cell => {
+            const slots = document.querySelectorAll('.slot');
+            const slot = Array.from(slots).find(s => 
+                parseInt(s.dataset.row) === cell.row && parseInt(s.dataset.col) === cell.col
+            );
+            const disc = slot.querySelector('.disc');
             if (disc) {
                 disc.classList.add('winner');
             }
         });
     }
 
-    checkDraw() {
-        for (let col = 0; col < this.cols; col++) {
-            if (this.gameBoard[col][0] === 0) {
-                return false;
-            }
-        }
-        return true;
+    isValidPosition(row, col) {
+        return row >= 0 && row < this.rows && col >= 0 && col < this.cols;
     }
 
-    makeAIMove() {
-        if (!this.gameActive) return;
+    isBoardFull() {
+        return this.board[0].every(cell => cell !== 0);
+    }
+
+    handleWin() {
+        this.gameOver = true;
+        this.scores[this.currentPlayer]++;
+        this.updateScores();
         
-        // Check for winning move
-        let moveCol = this.findWinningMove(2);
-        if (moveCol === -1) {
-            // Block opponent's winning move
-            moveCol = this.findWinningMove(1);
-        }
-        if (moveCol === -1) {
-            // Strategic center preference
-            moveCol = this.findStrategicMove();
-        }
-        if (moveCol === -1) {
-            // Random move as last resort
-            moveCol = this.getRandomMove();
+        let winner = '';
+        if (this.gameMode === 'player') {
+            winner = this.currentPlayer === 1 ? 'Παίκτης 1' : 'Παίκτης 2';
+        } else {
+            winner = this.currentPlayer === 1 ? 'Παίκτης 1' : 'AI';
         }
         
-        if (moveCol !== -1) {
-            this.makeMove(moveCol);
-        }
+        document.getElementById('status').textContent = `${winner} κέρδισε!`;
+        this.createConfetti();
     }
 
-    findWinningMove(player) {
-        for (let col = 0; col < this.cols; col++) {
-            const row = this.findAvailableRow(col);
-            if (row !== -1) {
-                this.gameBoard[col][row] = player;
-                const isWinning = this.checkWin(col, row);
-                this.gameBoard[col][row] = 0;
-                
-                if (isWinning) {
-                    return col;
-                }
-            }
-        }
-        return -1;
+    handleDraw() {
+        this.gameOver = true;
+        document.getElementById('status').textContent = 'Ισοπαλία!';
     }
 
-    findStrategicMove() {
-        // Prefer center columns for better positioning
-        const centerCols = [3, 2, 4, 1, 5, 0, 6];
-        for (let col of centerCols) {
-            if (this.findAvailableRow(col) !== -1) {
-                return col;
-            }
-        }
-        return -1;
-    }
-
-    getRandomMove() {
-        const availableCols = [];
-        for (let col = 0; col < this.cols; col++) {
-            if (this.findAvailableRow(col) !== -1) {
-                availableCols.push(col);
-            }
-        }
-        return availableCols.length > 0 ? 
-            availableCols[Math.floor(Math.random() * availableCols.length)] : -1;
-    }
-
-    resetGame() {
-        this.initializeBoard();
-        this.currentPlayer = 1;
-        this.gameActive = true;
-        this.movesHistory = [];
-        this.lastMoveTime = 0;
-        this.winningCells = [];
-        this.createBoard();
-        this.updateStatus();
-        this.updatePlayerIndicators();
-    }
-
-    restartGame() {
-        this.scores = { player1: 0, player2: 0 };
-        this.saveScores();
-        this.updateScoresDisplay();
-        this.resetGame();
-    }
-
-    undoMove() {
-        if (this.movesHistory.length === 0 || !this.gameActive) return;
-        
-        const lastMove = this.movesHistory.pop();
-        this.gameBoard[lastMove.col][lastMove.row] = 0;
-        
-        const disc = document.getElementById(`disc-${lastMove.col}-${lastMove.row}`);
-        if (disc) {
-            disc.className = 'disc';
-            disc.style.animation = 'none';
-        }
-        
-        this.currentPlayer = lastMove.player;
-        this.updateStatus();
-        this.updatePlayerIndicators();
+    switchPlayer() {
+        this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
     }
 
     updateStatus() {
         const status = document.getElementById('status');
-        if (status) {
-            status.textContent = `Σειρά του Παίκτη ${this.currentPlayer}`;
-        }
-    }
-
-    updateScoresDisplay() {
-        const scoresElement = document.getElementById('scores');
-        if (scoresElement) {
-            scoresElement.innerHTML = `
-                <div class="score">${this.scores.player1} - ${this.scores.player2}</div>
-            `;
-        }
-    }
-
-    setupEventListeners() {
-        document.addEventListener('keydown', (e) => {
-            if (!this.gameActive) return;
-            
-            if (e.key >= '1' && e.key <= '7') {
-                const col = parseInt(e.key) - 1;
-                this.makeMove(col);
-            } else if (e.key === 'r' || e.key === 'R') {
-                this.resetGame();
-            } else if (e.key === 'z' && e.ctrlKey) {
-                e.preventDefault();
-                this.undoMove();
+        if (this.gameMode === 'player') {
+            status.textContent = `Παίζει ο Παίκτης ${this.currentPlayer}`;
+        } else {
+            if (this.currentPlayer === 1) {
+                status.textContent = 'Παίζει ο Παίκτης 1';
+            } else {
+                status.textContent = 'Σκέφτεται η AI...';
             }
-        });
+        }
     }
 
-    showConfetti() {
-        const confettiCount = 100;
+    updateScores() {
+        const scoreElement = document.getElementById('scoreDisplay');
+        scoreElement.textContent = `${this.scores[1]} - ${this.scores[2]}`;
+    }
+
+    restartGame() {
+        this.board = this.createEmptyBoard();
+        this.currentPlayer = 1;
+        this.gameOver = false;
+        this.initializeBoard();
+        this.updatePlayerIndicators();
+        this.updateStatus();
+    }
+
+    newGame() {
+        this.scores = {1: 0, 2: 0};
+        this.restartGame();
+        this.updateScores();
+    }
+
+    createConfetti() {
         const colors = ['#e74c3c', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
-        
-        for (let i = 0; i < confettiCount; i++) {
-            setTimeout(() => {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.cssText = `
-                    background: ${colors[Math.floor(Math.random() * colors.length)]};
-                    left: ${Math.random() * 100}vw;
-                    animation-duration: ${2 + Math.random() * 2}s;
-                `;
-                
-                document.body.appendChild(confetti);
-                
-                setTimeout(() => confetti.remove(), 4000);
-            }, i * 20);
+        for (let i = 0; i < 100; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => confetti.remove(), 5000);
         }
-    }
-
-    saveScores() {
-        localStorage.setItem('connect4_scores', JSON.stringify(this.scores));
-    }
-
-    loadScores() {
-        const saved = localStorage.getItem('connect4_scores');
-        if (saved) {
-            this.scores = JSON.parse(saved);
-        }
-        this.updateScoresDisplay();
-    }
-
-    setGameMode(mode) {
-        this.gameMode = mode;
-        this.resetGame();
     }
 }
 
+// Initialize the game when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    window.connect4Game = new Connect4Game();
+    new ConnectFour();
 });
