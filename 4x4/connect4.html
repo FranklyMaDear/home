@@ -3,16 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect 4 - 6x6 Grid</title>
+    <title>Connect 4 - Cosmic Edition</title>
     <link rel="stylesheet" href="connect4.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="game-container">
-        <h1>Connect 4 - 6x6</h1>
+        <h1>Connect 4 - Cosmic Edition</h1>
         
         <div class="instructions">
-            <strong>Πώς παίζεται:</strong> Οι δύο παίκτες εναλλάσσονται τοποθετώντας δίσκους. 
-            Ο πρώτος που θα ενώσει 4 δίσκους σε σειρά (οριζόντια, κάθετα ή διαγώνια) κερδίζει!
+            <strong>Πώς παίζεται:</strong> Εναλλάξ τοποθετήστε δίσκους-πλανήτες! 
+            Ο πρώτος που θα συνδέσει 4 σε σειρά (οριζόντια, κάθετα ή διαγώνια) κερδίζει το διαστημικό ταξίδι!
+        </div>
+        
+        <div class="game-controls">
+            <div class="mode-selector">
+                <label for="gameMode">Λειτουργία:</label>
+                <select id="gameMode" onchange="connect4Game.setGameMode(this.value)">
+                    <option value="multiplayer">Δύο Παίκτες</option>
+                    <option value="computer">Εναντίον Υπολογιστή</option>
+                </select>
+            </div>
+            <div class="theme-selector">
+                <label for="theme">Θέμα:</label>
+                <select id="theme" onchange="connect4Game.setTheme(this.value)">
+                    <option value="space">Διάστημα</option>
+                    <option value="ocean">Ωκεανός</option>
+                    <option value="retro">Ρετρό</option>
+                </select>
+            </div>
+            <button onclick="connect4Game.toggleSound()">
+                <span id="soundToggle">🔊</span> Ήχος
+            </button>
         </div>
         
         <div class="players">
@@ -26,171 +48,30 @@
             </div>
         </div>
         
+        <div class="scores" id="scores">
+            <div>Παίκτης 1: 0</div>
+            <div>Παίκτης 2: 0</div>
+        </div>
+        
         <div class="board-container">
-            <div class="board" id="gameBoard">
-                <!-- JavaScript will generate the 6x6 board -->
-            </div>
+            <div class="board" id="gameBoard" role="grid" aria-label="Connect 4 Πίνακας"></div>
             <div class="board-overlay"></div>
         </div>
         
-        <div class="status" id="status">Σειρά του Παίκτη 1 (Κόκκινο)</div>
+        <div class="status" id="status" role="status">Σειρά του Παίκτη 1 (Κόκκινο)</div>
         
         <div class="controls">
-            <button onclick="resetGame()">Νέο Παιχνίδι</button>
+            <button onclick="connect4Game.resetGame()">Νέο Παιχνίδι</button>
+            <button onclick="connect4Game.undoMove()">Αναίρεση</button>
         </div>
     </div>
 
-    <script>
-        let currentPlayer = 1;
-        let gameBoard = Array(6).fill().map(() => Array(6).fill(0));
-        let gameActive = true;
+    <audio id="dropSound" src="sounds/drop.mp3"></audio>
+    <audio id="winSound" src="sounds/win.mp3"></audio>
+    <audio id="drawSound" src="sounds/draw.mp3"></audio>
+    <audio id="invalidSound" src="sounds/invalid.mp3"></audio>
+    <audio id="undoSound" src="sounds/undo.mp3"></audio>
 
-        function createBoard() {
-            const board = document.getElementById('gameBoard');
-            board.innerHTML = '';
-            
-            // Calculate slot size based on container
-            const containerWidth = board.clientWidth;
-            const slotSize = Math.min((containerWidth - 40) / 6, 70); // Max 70px
-            
-            // Apply slot size
-            board.style.gap = `${slotSize * 0.1}px`;
-            
-            for (let row = 0; row < 6; row++) {
-                for (let col = 0; col < 6; col++) {
-                    const slot = document.createElement('div');
-                    slot.className = 'slot';
-                    slot.dataset.col = col;
-                    slot.dataset.row = row;
-                    
-                    const disc = document.createElement('div');
-                    disc.className = 'disc';
-                    disc.id = `disc-${col}-${row}`;
-                    
-                    slot.appendChild(disc);
-                    
-                    // Add both click and touch events for better mobile support
-                    slot.addEventListener('click', () => makeMove(col));
-                    slot.addEventListener('touchend', (e) => {
-                        e.preventDefault();
-                        makeMove(col);
-                    });
-                    
-                    board.appendChild(slot);
-                }
-            }
-        }
-
-        function makeMove(col) {
-            if (!gameActive) return;
-            
-            for (let row = 5; row >= 0; row--) {
-                if (gameBoard[col][row] === 0) {
-                    gameBoard[col][row] = currentPlayer;
-                    
-                    const disc = document.getElementById(`disc-${col}-${row}`);
-                    disc.classList.add(currentPlayer === 1 ? 'red' : 'yellow');
-                    
-                    if (checkWin(col, row)) {
-                        document.getElementById('status').textContent = 
-                            `Ο Παίκτης ${currentPlayer} κέρδισε! 🎉`;
-                        gameActive = false;
-                        highlightWinningCells(col, row);
-                        return;
-                    }
-                    
-                    if (checkDraw()) {
-                        document.getElementById('status').textContent = 'Ισοπαλία!';
-                        gameActive = false;
-                        return;
-                    }
-                    
-                    currentPlayer = currentPlayer === 1 ? 2 : 1;
-                    document.getElementById('status').textContent = 
-                        `Σειρά του Παίκτη ${currentPlayer} (${currentPlayer === 1 ? 'Κόκκινο' : 'Κίτρινο'})`;
-                    return;
-                }
-            }
-        }
-
-        function checkWin(col, row) {
-            const player = gameBoard[col][row];
-            const directions = [
-                [0, 1],  // vertical
-                [1, 0],  // horizontal
-                [1, 1],  // diagonal down-right
-                [1, -1]  // diagonal up-right
-            ];
-            
-            for (const [dx, dy] of directions) {
-                let count = 1;
-                
-                // Check in positive direction
-                for (let i = 1; i < 4; i++) {
-                    const newCol = col + dx * i;
-                    const newRow = row + dy * i;
-                    if (newCol >= 0 && newCol < 6 && newRow >= 0 && newRow < 6 && 
-                        gameBoard[newCol][newRow] === player) {
-                        count++;
-                    } else {
-                        break;
-                    }
-                }
-                
-                // Check in negative direction
-                for (let i = 1; i < 4; i++) {
-                    const newCol = col - dx * i;
-                    const newRow = row - dy * i;
-                    if (newCol >= 0 && newCol < 6 && newRow >= 0 && newRow < 6 && 
-                        gameBoard[newCol][newRow] === player) {
-                        count++;
-                    } else {
-                        break;
-                    }
-                }
-                
-                if (count >= 4) return true;
-            }
-            
-            return false;
-        }
-
-        function highlightWinningCells(col, row) {
-            // Simple implementation - in a real game you would find and highlight the exact winning line
-            setTimeout(() => {
-                const slots = document.querySelectorAll('.slot');
-                slots.forEach(slot => {
-                    slot.style.transition = 'all 0.5s ease';
-                    slot.style.transform = 'scale(1.02)';
-                });
-            }, 500);
-        }
-
-        function checkDraw() {
-            return gameBoard.every(column => column.every(cell => cell !== 0));
-        }
-
-        function resetGame() {
-            gameBoard = Array(6).fill().map(() => Array(6).fill(0));
-            currentPlayer = 1;
-            gameActive = true;
-            document.getElementById('status').textContent = 'Σειρά του Παίκτη 1 (Κόκκινο)';
-            createBoard();
-        }
-
-        // Initialize the game and handle resize
-        window.addEventListener('DOMContentLoaded', createBoard);
-        window.addEventListener('resize', createBoard);
-        
-        // Prevent zoom on double tap for mobile devices
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function (event) {
-            const now = (new Date()).getTime();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
-    </script>
+    <script src="connect4.js"></script>
 </body>
 </html>
