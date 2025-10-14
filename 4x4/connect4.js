@@ -1,13 +1,13 @@
 class Connect4Game {
     constructor() {
         this.currentPlayer = 1;
-        this.gameBoard = Array(6).fill().map(() => Array(6).fill(0));
+        this.gameBoard = Array(6).fill().map(() => Array(7).fill(0));
         this.gameActive = true;
         this.movesHistory = [];
         this.scores = { player1: 0, player2: 0 };
         this.soundEnabled = true;
         this.gameMode = 'multiplayer';
-        this.theme = 'space';
+        this.theme = 'classic';
         this.lastMoveTime = 0;
         this.winningCells = [];
         
@@ -20,6 +20,7 @@ class Connect4Game {
         this.setupEventListeners();
         this.updateStatus();
         this.setTheme(this.theme);
+        this.updatePlayerIndicators();
     }
 
     createBoard() {
@@ -27,11 +28,11 @@ class Connect4Game {
         board.innerHTML = '';
         
         const containerWidth = board.clientWidth;
-        const slotSize = Math.min((containerWidth - 40) / 6, 70);
+        const slotSize = Math.min((containerWidth - 40) / 7, 70);
         board.style.gap = `${slotSize * 0.1}px`;
         
         for (let row = 0; row < 6; row++) {
-            for (let col = 0; col < 6; col++) {
+            for (let col = 0; col < 7; col++) {
                 const slot = this.createSlot(col, row);
                 board.appendChild(slot);
             }
@@ -113,6 +114,20 @@ class Connect4Game {
     switchPlayer() {
         this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
         this.updateStatus();
+        this.updatePlayerIndicators();
+    }
+
+    updatePlayerIndicators() {
+        const player1 = document.getElementById('player1');
+        const player2 = document.getElementById('player2');
+        
+        if (this.currentPlayer === 1) {
+            player1.classList.add('active');
+            player2.classList.remove('active');
+        } else {
+            player2.classList.add('active');
+            player1.classList.remove('active');
+        }
     }
 
     checkWin(col, row) {
@@ -161,7 +176,7 @@ class Connect4Game {
     }
 
     isValidPosition(col, row) {
-        return col >= 0 && col < 6 && row >= 0 && row < 6;
+        return col >= 0 && col < 7 && row >= 0 && row < 6;
     }
 
     getWinningCells(col, row, dx, dy) {
@@ -210,7 +225,7 @@ class Connect4Game {
         this.highlightWinningCells();
         
         document.getElementById('status').innerHTML = 
-            `🌟 Ο Παίκτης ${this.currentPlayer} κέρδισε! 🌟`;
+            `🎉 Ο Παίκτης ${this.currentPlayer} κέρδισε! 🎉`;
             
         this.showConfetti();
     }
@@ -218,7 +233,7 @@ class Connect4Game {
     handleDraw() {
         this.gameActive = false;
         this.playSound('draw');
-        document.getElementById('status').textContent = 'Ισοπαλία! 🌌';
+        document.getElementById('status').textContent = 'Ισοπαλία! 🤝';
     }
 
     highlightWinningCells() {
@@ -253,7 +268,7 @@ class Connect4Game {
     }
 
     findWinningMove(player) {
-        for (let col = 0; col < 6; col++) {
+        for (let col = 0; col < 7; col++) {
             const row = this.findAvailableRow(col);
             if (row !== -1) {
                 this.gameBoard[col][row] = player;
@@ -268,7 +283,7 @@ class Connect4Game {
     }
 
     findStrategicMove() {
-        const centerCols = [2, 3, 1, 4, 0, 5];
+        const centerCols = [3, 2, 4, 1, 5, 0, 6];
         for (let col of centerCols) {
             if (this.findAvailableRow(col) !== -1) {
                 return col;
@@ -279,7 +294,7 @@ class Connect4Game {
 
     getRandomMove() {
         const availableCols = [];
-        for (let col = 0; col < 6; col++) {
+        for (let col = 0; col < 7; col++) {
             if (this.findAvailableRow(col) !== -1) {
                 availableCols.push(col);
             }
@@ -289,7 +304,7 @@ class Connect4Game {
     }
 
     resetGame() {
-        this.gameBoard = Array(6).fill().map(() => Array(6).fill(0));
+        this.gameBoard = Array(6).fill().map(() => Array(7).fill(0));
         this.currentPlayer = 1;
         this.gameActive = true;
         this.movesHistory = [];
@@ -297,6 +312,7 @@ class Connect4Game {
         this.winningCells = [];
         this.createBoard();
         this.updateStatus();
+        this.updatePlayerIndicators();
     }
 
     undoMove() {
@@ -310,22 +326,21 @@ class Connect4Game {
         
         this.currentPlayer = lastMove.player;
         this.updateStatus();
+        this.updatePlayerIndicators();
         this.playSound('undo');
         this.lastMoveTime = 0;
     }
 
     updateStatus() {
         const status = document.getElementById('status');
-        const playerText = this.currentPlayer === 1 ? 'Κόκκινο' : 'Κίτρινο';
-        status.textContent = `Σειρά του Παίκτη ${this.currentPlayer} (${playerText})`;
+        status.textContent = `Σειρά του Παίκτη ${this.currentPlayer}`;
     }
 
     updateScoresDisplay() {
         const scoresElement = document.getElementById('scores');
         if (scoresElement) {
             scoresElement.innerHTML = `
-                <div>Παίκτης 1: ${this.scores.player1}</div>
-                <div>Παίκτης 2: ${this.scores.player2}</div>
+                <div class="score">${this.scores.player1} - ${this.scores.player2}</div>
             `;
         }
     }
@@ -334,7 +349,7 @@ class Connect4Game {
         document.addEventListener('keydown', (e) => {
             if (!this.gameActive) return;
             
-            if (e.key >= '1' && e.key <= '6') {
+            if (e.key >= '1' && e.key <= '7') {
                 const col = parseInt(e.key) - 1;
                 this.handleInteraction(col, e);
             } else if (e.key === 'r' || e.key === 'R') {
@@ -405,7 +420,7 @@ class Connect4Game {
                     left: ${Math.random() * 100}vw;
                     animation: confettiFall ${2 + Math.random() * 2}s linear forwards;
                     z-index: 999;
-                    border-radius: ${this.theme === 'space' ? '50%' : '2px'};
+                    border-radius: 2px;
                 `;
                 
                 document.body.appendChild(confetti);
