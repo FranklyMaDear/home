@@ -1,7 +1,7 @@
 class Connect4Game {
     constructor() {
         this.currentPlayer = 1;
-        this.gameBoard = Array(6).fill().map(() => Array(7).fill(0));
+        this.gameBoard = [];
         this.gameActive = true;
         this.movesHistory = [];
         this.scores = { player1: 0, player2: 0 };
@@ -15,6 +15,7 @@ class Connect4Game {
     }
 
     init() {
+        this.initializeBoard();
         this.createBoard();
         this.loadScores();
         this.setupEventListeners();
@@ -23,13 +24,21 @@ class Connect4Game {
         this.updatePlayerIndicators();
     }
 
+    initializeBoard() {
+        // Create 7 columns x 6 rows board
+        this.gameBoard = Array(7).fill().map(() => Array(6).fill(0));
+    }
+
     createBoard() {
         const board = document.getElementById('gameBoard');
-        board.innerHTML = '';
+        if (!board) {
+            console.error('Board element not found!');
+            return;
+        }
         
-        const containerWidth = board.clientWidth;
-        const slotSize = Math.min((containerWidth - 40) / 7, 70);
-        board.style.gap = `${slotSize * 0.1}px`;
+        board.innerHTML = '';
+        board.style.gridTemplateColumns = 'repeat(7, 1fr)';
+        board.style.gridTemplateRows = 'repeat(6, 1fr)';
         
         for (let row = 0; row < 6; row++) {
             for (let col = 0; col < 7; col++) {
@@ -44,8 +53,6 @@ class Connect4Game {
         slot.className = 'slot';
         slot.dataset.col = col;
         slot.dataset.row = row;
-        slot.setAttribute('role', 'gridcell');
-        slot.setAttribute('aria-label', `Στήλη ${col + 1}, Σειρά ${row + 1}`);
         
         const disc = document.createElement('div');
         disc.className = `disc ${this.theme}-theme`;
@@ -53,35 +60,57 @@ class Connect4Game {
         
         slot.appendChild(disc);
         
-        slot.addEventListener('click', (e) => this.handleInteraction(col, e));
-        slot.addEventListener('touchend', (e) => this.handleInteraction(col, e));
+        // Add click event to the slot (not the disc)
+        slot.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.handleColumnClick(col);
+        });
+        
+        slot.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.handleColumnClick(col);
+        });
 
         return slot;
     }
 
-    handleInteraction(col, e) {
-        e.preventDefault();
+    handleColumnClick(col) {
         const now = Date.now();
         if (now - this.lastMoveTime < 300) return;
         this.lastMoveTime = now;
+        
+        console.log(`Column ${col} clicked`);
         this.makeMove(col);
     }
 
     makeMove(col) {
-        if (!this.gameActive) return;
+        if (!this.gameActive) {
+            console.log('Game not active');
+            return;
+        }
         
+        console.log(`Making move in column ${col}`);
         const row = this.findAvailableRow(col);
+        
         if (row === -1) {
+            console.log('Column full');
             this.playSound('invalid');
             this.showMessage('Η στήλη είναι γεμάτη!', 'error');
             return;
         }
 
+        console.log(`Placing disc at ${col}, ${row}`);
         this.gameBoard[col][row] = this.currentPlayer;
         this.movesHistory.push({ col, row, player: this.currentPlayer });
         
         const disc = document.getElementById(`disc-${col}-${row}`);
-        disc.classList.add(this.currentPlayer === 1 ? 'red' : 'yellow');
+        if (disc) {
+            disc.classList.add(this.currentPlayer === 1 ? 'red' : 'yellow');
+            disc.style.transform = 'translateY(0)';
+            disc.style.opacity = '1';
+        }
         
         this.playSound('drop');
         
@@ -103,6 +132,7 @@ class Connect4Game {
     }
 
     findAvailableRow(col) {
+        // Find the first available row from bottom (row 5) to top (row 0)
         for (let row = 5; row >= 0; row--) {
             if (this.gameBoard[col][row] === 0) {
                 return row;
@@ -121,22 +151,24 @@ class Connect4Game {
         const player1 = document.getElementById('player1');
         const player2 = document.getElementById('player2');
         
-        if (this.currentPlayer === 1) {
-            player1.classList.add('active');
-            player2.classList.remove('active');
-        } else {
-            player2.classList.add('active');
-            player1.classList.remove('active');
+        if (player1 && player2) {
+            if (this.currentPlayer === 1) {
+                player1.classList.add('active');
+                player2.classList.remove('active');
+            } else {
+                player2.classList.add('active');
+                player1.classList.remove('active');
+            }
         }
     }
 
     checkWin(col, row) {
         const player = this.gameBoard[col][row];
         const directions = [
-            [0, 1],   // κάθετα
-            [1, 0],   // οριζόντια
-            [1, 1],   // διαγώνια ↘
-            [1, -1]   // διαγώνια ↗
+            [0, 1],   // vertical
+            [1, 0],   // horizontal
+            [1, 1],   // diagonal ↘
+            [1, -1]   // diagonal ↗
         ];
         
         for (const [dx, dy] of directions) {
@@ -224,8 +256,10 @@ class Connect4Game {
         this.updateScoresDisplay();
         this.highlightWinningCells();
         
-        document.getElementById('status').innerHTML = 
-            `🎉 Ο Παίκτης ${this.currentPlayer} κέρδισε! 🎉`;
+        const status = document.getElementById('status');
+        if (status) {
+            status.innerHTML = `🎉 Ο Παίκτης ${this.currentPlayer} κέρδισε! 🎉`;
+        }
             
         this.showConfetti();
     }
@@ -233,36 +267,48 @@ class Connect4Game {
     handleDraw() {
         this.gameActive = false;
         this.playSound('draw');
-        document.getElementById('status').textContent = 'Ισοπαλία! 🤝';
+        const status = document.getElementById('status');
+        if (status) {
+            status.textContent = 'Ισοπαλία! 🤝';
+        }
     }
 
     highlightWinningCells() {
         this.winningCells.forEach(({ col, row }) => {
             const disc = document.getElementById(`disc-${col}-${row}`);
-            disc.style.animation = 'pulse 1s infinite';
-            disc.classList.add('winner');
+            if (disc) {
+                disc.style.animation = 'pulse 1s infinite';
+                disc.classList.add('winner');
+            }
         });
     }
 
     checkDraw() {
-        return this.gameBoard.every(column => column.every(cell => cell !== 0));
+        // Check if all columns are full
+        for (let col = 0; col < 7; col++) {
+            if (this.gameBoard[col][0] === 0) {
+                return false; // Found an empty spot
+            }
+        }
+        return true; // All spots are filled
     }
 
     makeAIMove() {
         if (!this.gameActive) return;
         
-        let moveCol = this.findWinningMove(2);
+        let moveCol = this.findWinningMove(2); // Check if AI can win
         if (moveCol === -1) {
-            moveCol = this.findWinningMove(1);
+            moveCol = this.findWinningMove(1); // Block player
         }
         if (moveCol === -1) {
-            moveCol = this.findStrategicMove();
+            moveCol = this.findStrategicMove(); // Strategic move
         }
         if (moveCol === -1) {
-            moveCol = this.getRandomMove();
+            moveCol = this.getRandomMove(); // Random move
         }
         
         if (moveCol !== -1 && this.gameActive) {
+            console.log(`AI moving in column ${moveCol}`);
             this.makeMove(moveCol);
         }
     }
@@ -271,19 +317,22 @@ class Connect4Game {
         for (let col = 0; col < 7; col++) {
             const row = this.findAvailableRow(col);
             if (row !== -1) {
+                // Simulate move
                 this.gameBoard[col][row] = player;
-                if (this.checkWin(col, row)) {
-                    this.gameBoard[col][row] = 0;
+                const isWinning = this.checkWin(col, row);
+                // Undo simulation
+                this.gameBoard[col][row] = 0;
+                
+                if (isWinning) {
                     return col;
                 }
-                this.gameBoard[col][row] = 0;
             }
         }
         return -1;
     }
 
     findStrategicMove() {
-        const centerCols = [3, 2, 4, 1, 5, 0, 6];
+        const centerCols = [3, 2, 4, 1, 5, 0, 6]; // Prefer center columns
         for (let col of centerCols) {
             if (this.findAvailableRow(col) !== -1) {
                 return col;
@@ -304,7 +353,7 @@ class Connect4Game {
     }
 
     resetGame() {
-        this.gameBoard = Array(6).fill().map(() => Array(7).fill(0));
+        this.initializeBoard();
         this.currentPlayer = 1;
         this.gameActive = true;
         this.movesHistory = [];
@@ -322,7 +371,11 @@ class Connect4Game {
         this.gameBoard[lastMove.col][lastMove.row] = 0;
         
         const disc = document.getElementById(`disc-${lastMove.col}-${lastMove.row}`);
-        disc.className = `disc ${this.theme}-theme`;
+        if (disc) {
+            disc.className = `disc ${this.theme}-theme`;
+            disc.style.transform = 'translateY(-600px)';
+            disc.style.opacity = '0';
+        }
         
         this.currentPlayer = lastMove.player;
         this.updateStatus();
@@ -333,7 +386,9 @@ class Connect4Game {
 
     updateStatus() {
         const status = document.getElementById('status');
-        status.textContent = `Σειρά του Παίκτη ${this.currentPlayer}`;
+        if (status) {
+            status.textContent = `Σειρά του Παίκτη ${this.currentPlayer}`;
+        }
     }
 
     updateScoresDisplay() {
@@ -346,12 +401,13 @@ class Connect4Game {
     }
 
     setupEventListeners() {
+        // Keyboard controls
         document.addEventListener('keydown', (e) => {
             if (!this.gameActive) return;
             
             if (e.key >= '1' && e.key <= '7') {
                 const col = parseInt(e.key) - 1;
-                this.handleInteraction(col, e);
+                this.makeMove(col);
             } else if (e.key === 'r' || e.key === 'R') {
                 this.resetGame();
             } else if (e.key === 'z' && e.ctrlKey) {
@@ -450,23 +506,36 @@ class Connect4Game {
     setTheme(theme) {
         this.theme = theme;
         document.body.className = `theme-${theme}`;
-        this.createBoard();
+        
+        // Update all discs with new theme
         const discs = document.querySelectorAll('.disc');
         discs.forEach(disc => {
             disc.className = `disc ${theme}-theme`;
-            if (disc.classList.contains('red') || disc.classList.contains('yellow')) {
-                disc.classList.add(disc.classList.contains('red') ? 'red' : 'yellow');
+            // Re-apply color if disc was placed
+            const col = disc.parentElement.dataset.col;
+            const row = disc.parentElement.dataset.row;
+            if (col !== undefined && row !== undefined) {
+                const player = this.gameBoard[col][row];
+                if (player !== 0) {
+                    disc.classList.add(player === 1 ? 'red' : 'yellow');
+                    disc.style.transform = 'translateY(0)';
+                    disc.style.opacity = '1';
+                }
             }
         });
     }
 
     toggleSound() {
         this.soundEnabled = !this.soundEnabled;
-        document.getElementById('soundToggle').textContent = this.soundEnabled ? '🔊' : '🔇';
+        const soundToggle = document.getElementById('soundToggle');
+        if (soundToggle) {
+            soundToggle.textContent = this.soundEnabled ? '🔊' : '🔇';
+        }
         return this.soundEnabled;
     }
 }
 
+// Initialize game when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.connect4Game = new Connect4Game();
 });
@@ -503,6 +572,9 @@ const additionalCSS = `
 }
 `;
 
-const style = document.createElement('style');
-style.textContent = additionalCSS;
-document.head.appendChild(style);
+// Inject CSS
+if (document.head) {
+    const style = document.createElement('style');
+    style.textContent = additionalCSS;
+    document.head.appendChild(style);
+}
