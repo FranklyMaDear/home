@@ -145,7 +145,7 @@ h1 {
     min-width: 120px;
 }
 
-/* Board Container - Fixed Layout */
+/* Board Container - Clean Blue Only */
 .board-container {
     background: #3498db;
     background: linear-gradient(135deg, #3498db, #2980b9);
@@ -174,26 +174,21 @@ h1 {
     padding: 1px;
 }
 
-/* Perfectly aligned slots */
+/* Clean slots - Only blue background visible */
 .slot {
-    background: #1a5276;
-    background: linear-gradient(145deg, #1a5276, #154360);
+    background: transparent;
     border-radius: 50%;
     cursor: pointer;
     position: relative;
     transition: all 0.2s ease;
-    box-shadow: 
-        inset 0 -2px 4px rgba(0,0,0,0.6),
-        inset 0 2px 4px rgba(255,255,255,0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 40px;
-    border: 1px solid rgba(0,0,0,0.3);
 }
 
 .slot:hover, .slot:active {
-    background: linear-gradient(145deg, #154360, #11334d);
+    background: rgba(255, 255, 255, 0.1);
     transform: scale(1.05);
 }
 
@@ -271,9 +266,6 @@ h1 {
     50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
-
-/* ΑΦΑΙΡΕΣΑ ΤΕΛΕΙΩΣ ΤΟ ΜΑΥΡΟ BOARD-OVERLAY */
-/* Δεν υπάρχει πλέον board-overlay */
 
 .status {
     margin: 20px 0;
