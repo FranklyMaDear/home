@@ -11,100 +11,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="stylesheet" href="style.css">
-    
-    <!-- Buy Me a Coffee Stream Alert CSS -->
-    <style>
-        .bmc-alert-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            max-width: 300px;
-        }
-        
-        .bmc-alert {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            display: none;
-            animation: slideInRight 0.5s ease-out;
-            border-left: 4px solid #FFDD00;
-        }
-        
-        .bmc-alert.show {
-            display: block;
-        }
-        
-        .bmc-alert-content {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .bmc-alert-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #667eea;
-            font-size: 18px;
-        }
-        
-        .bmc-alert-text {
-            flex: 1;
-            color: white;
-        }
-        
-        .bmc-alert-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-        
-        .bmc-alert-message {
-            font-size: 12px;
-            opacity: 0.9;
-        }
-        
-        .bmc-alert-amount {
-            background: #FFDD00;
-            color: #000;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: bold;
-            margin-top: 4px;
-            display: inline-block;
-        }
-        
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-    </style>
 </head>
 <body>
     <!-- Roll-up Banner -->
@@ -128,9 +34,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Buy Me a Coffee Stream Alert Container -->
-    <div class="bmc-alert-container" id="bmcAlertContainer"></div>
 
     <!-- Header -->
     <header class="header" id="mainHeader">
@@ -375,6 +278,9 @@
         </div>
     </footer>
 
+    <!-- Buy Me a Coffee Button -->
+    <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="franklymadear" data-color="#FFDD00" data-emoji="" data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff"></script>
+
     <script>
         // Banner and Pop-up functionality
         const rollUpBanner = document.getElementById('rollUpBanner');
@@ -434,111 +340,6 @@
                 popupModal.style.display = 'none';
             }
         });
-
-        // Buy Me a Coffee Stream Alert functionality
-        const bmcAlertContainer = document.getElementById('bmcAlertContainer');
-        
-        // Function to create and show alert
-        function showBMCAlert(supporterName, message, amount) {
-            const alertId = 'bmc-alert-' + Date.now();
-            const alertHTML = `
-                <div class="bmc-alert" id="${alertId}">
-                    <div class="bmc-alert-content">
-                        <div class="bmc-alert-avatar">${supporterName.charAt(0).toUpperCase()}</div>
-                        <div class="bmc-alert-text">
-                            <div class="bmc-alert-name">${supporterName}</div>
-                            <div class="bmc-alert-message">${message || 'Σας ευχαριστώ για την υποστήριξη!'}</div>
-                            ${amount ? `<div class="bmc-alert-amount">${amount}</div>` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            bmcAlertContainer.insertAdjacentHTML('beforeend', alertHTML);
-            
-            const alertElement = document.getElementById(alertId);
-            setTimeout(() => {
-                alertElement.classList.add('show');
-            }, 100);
-            
-            // Remove alert after 8 seconds
-            setTimeout(() => {
-                alertElement.style.animation = 'slideOutRight 0.5s ease-out';
-                setTimeout(() => {
-                    if (alertElement.parentNode) {
-                        alertElement.remove();
-                    }
-                }, 500);
-            }, 8000);
-        }
-
-        // TEST FUNCTION - Αφαιρέστε αυτή τη function σε production
-        function testBMCAlert() {
-            const testSupporters = [
-                { name: 'Μαρία', amount: '€5', message: 'Σας ευχαριστώ για τα υπέροχα παιχνίδια!' },
-                { name: 'Γιάννης', amount: '€3', message: 'Συνέχεια την ίδια δουλειά!' },
-                { name: 'Ανδρέας', amount: '€10', message: null },
-                { name: 'Ελένη', amount: '€2', message: 'Το Sudoku είναι το αγαπημένο μου!' }
-            ];
-            
-            const supporter = testSupporters[Math.floor(Math.random() * testSupporters.length)];
-            showBMCAlert(supporter.name, supporter.message, supporter.amount);
-            
-            // Δοκιμή: εμφάνιση alert κάθε 30 δευτερόλεπτα
-            setTimeout(testBMCAlert, 30000);
-        }
-
-        // Εκκίνηση δοκιμαστικού alert μετά από 3 δευτερόλεπτα
-        setTimeout(testBMCAlert, 3000);
-
-        // ΠΡΟΣΟΧΗ: Σε production, αφαιρέστε την testBMCAlert function και χρησιμοποιήστε τον παρακάτω κώδικα:
-
-        /*
-        // Buy Me a Coffee WebSocket Connection
-        const userKey = 'f15432a5-0af0-4f6d-a60b-5e1abd43eecc';
-        
-        function connectToBMCStream() {
-            try {
-                const socket = new WebSocket(`wss://stream.buymeacoffee.com/stream/${userKey}`);
-                
-                socket.onopen = function(event) {
-                    console.log('✅ Connected to Buy Me a Coffee stream');
-                };
-                
-                socket.onmessage = function(event) {
-                    try {
-                        const data = JSON.parse(event.data);
-                        console.log('BMC Data received:', data);
-                        
-                        if (data.type === 'donation') {
-                            showBMCAlert(
-                                data.supporter_name || 'Anonymous',
-                                data.message,
-                                data.amount ? `€${data.amount}` : null
-                            );
-                        }
-                    } catch (e) {
-                        console.error('Error parsing BMC data:', e);
-                    }
-                };
-                
-                socket.onclose = function(event) {
-                    console.log('❌ Disconnected from BMC stream. Reconnecting...');
-                    setTimeout(connectToBMCStream, 5000);
-                };
-                
-                socket.onerror = function(error) {
-                    console.error('WebSocket error:', error);
-                };
-            } catch (error) {
-                console.error('Error connecting to BMC:', error);
-                setTimeout(connectToBMCStream, 10000);
-            }
-        }
-        
-        // Connect to BMC stream when page loads
-        connectToBMCStream();
-        */
 
         // Language translations
         const translations = {
@@ -607,8 +408,205 @@
                 varietyDesc: "New games are constantly added",
                 footerDesc: "The best platform for free HTML5 games online.",
                 contact: "Contact"
+            },
+            de: {
+                home: "Startseite",
+                games: "Spiele",
+                features: "Funktionen",
+                blog: "Blog",
+                welcome: "Willkommen bei FranklyMaDear",
+                subtitle: "Entdecken Sie die besten kostenlosen HTML5-Spiele online!",
+                playSudoku: "Sudoku spielen",
+                viewAllGames: "Alle Spiele ansehen",
+                popularGames: "Beliebte Spiele",
+                chooseGames: "Wählen Sie aus unserer Sammlung der besten Spiele",
+                sudoku1Desc: "Klassisches Puzzlespiel für einen Spieler",
+                sudoku2Desc: "Klassisches Puzzlespiel für zwei Spieler",
+                connect4Desc: "Klassisches Vier gewinnt-Spiel für zwei Spieler",
+                calculatorDesc: "Intelligenter Taschenrechner für alle Ihre Bedürfnisse",
+                animalsDesc: "Lernen Sie Tiere auf unterhaltsame Weise kennen!",
+                difficultyEasy: "🎯 Einfach",
+                difficultyMedium: "🎯 Mittel",
+                difficultyHard: "🎯 Schwer",
+                playNow: "Jetzt spielen",
+                whyPlay: "Warum mit uns spielen?",
+                advantages: "Alle Vorteile unserer Spiele",
+                free: "Kostenlos",
+                freeDesc: "Alle Spiele sind 100% kostenlos",
+                responsive: "Responsive",
+                responsiveDesc: "Funktionieren auf allen Geräten",
+                fast: "Schnell",
+                fastDesc: "Laden sofort ohne Installation",
+                variety: "Vielfalt",
+                varietyDesc: "Ständig werden neue Spiele hinzugefügt",
+                footerDesc: "Die beste Plattform für kostenlose HTML5-Spiele online.",
+                contact: "Kontakt"
+            },
+            es: {
+                home: "Inicio",
+                games: "Juegos",
+                features: "Características",
+                blog: "Blog",
+                welcome: "Bienvenido a FranklyMaDear",
+                subtitle: "¡Descubre los mejores juegos HTML5 gratuitos en línea!",
+                playSudoku: "Jugar Sudoku",
+                viewAllGames: "Ver Todos los Juegos",
+                popularGames: "Juegos Populares",
+                chooseGames: "Elige de nuestra colección de los mejores juegos",
+                sudoku1Desc: "Juego de rompecabezas clásico para un jugador",
+                sudoku2Desc: "Juego de rompecabezas clásico para dos jugadores",
+                connect4Desc: "Juego clásico Conecta 4 para dos jugadores",
+                calculatorDesc: "Calculadora inteligente para todas sus necesidades",
+                animalsDesc: "¡Aprende sobre animales de forma divertida!",
+                difficultyEasy: "🎯 Fácil",
+                difficultyMedium: "🎯 Medio",
+                difficultyHard: "🎯 Difícil",
+                playNow: "Jugar Ahora",
+                whyPlay: "¿Por qué jugar con nosotros?",
+                advantages: "Todas las ventajas de nuestros juegos",
+                free: "Gratis",
+                freeDesc: "Todos los juegos son 100% gratuitos",
+                responsive: "Responsive",
+                responsiveDesc: "Funcionan en todos los dispositivos",
+                fast: "Rápido",
+                fastDesc: "Se cargan inmediatamente sin instalación",
+                variety: "Variedad",
+                varietyDesc: "Constantemente se añaden nuevos juegos",
+                footerDesc: "La mejor plataforma para juegos HTML5 gratuitos en línea.",
+                contact: "Contacto"
+            },
+            it: {
+                home: "Home",
+                games: "Giochi",
+                features: "Caratteristiche",
+                blog: "Blog",
+                welcome: "Benvenuto su FranklyMaDear",
+                subtitle: "Scopri i migliori giochi HTML5 gratuiti online!",
+                playSudoku: "Gioca a Sudoku",
+                viewAllGames: "Vedi Tutti i Giochi",
+                popularGames: "Giochi Popolari",
+                chooseGames: "Scegli dalla nostra collezione dei migliori giochi",
+                sudoku1Desc: "Gioco di puzzle classico per un giocatore",
+                sudoku2Desc: "Gioco di puzzle classico per due giocatori",
+                connect4Desc: "Gioco classico Forza 4 per due giocatori",
+                calculatorDesc: "Calcolatrice intelligente per tutte le tue esigenze",
+                animalsDesc: "Impara gli animali in modo divertente!",
+                difficultyEasy: "🎯 Facile",
+                difficultyMedium: "🎯 Medio",
+                difficultyHard: "🎯 Difficile",
+                playNow: "Gioca Ora",
+                whyPlay: "Perché giocare con noi?",
+                advantages: "Tutti i vantaggi dei nostri giochi",
+                free: "Gratuito",
+                freeDesc: "Tutti i giochi sono 100% gratuiti",
+                responsive: "Responsive",
+                responsiveDesc: "Funzionano su tutti i dispositivi",
+                fast: "Veloce",
+                fastDesc: "Si caricano immediatamente senza installazione",
+                variety: "Varietà",
+                varietyDesc: "Nuovi giochi vengono costantemente aggiunti",
+                footerDesc: "La migliore piattaforma per giochi HTML5 gratuiti online.",
+                contact: "Contatto"
+            },
+            ar: {
+                home: "الرئيسية",
+                games: "الألعاب",
+                features: "الميزات",
+                blog: "مدونة",
+                welcome: "مرحبًا بك في FranklyMaDear",
+                subtitle: "اكتشف أفضل ألعاب HTML5 المجانية عبر الإنترنت!",
+                playSudoku: "العب سودوكو",
+                viewAllGames: "عرض جميع الألعاب",
+                popularGames: "الألعاب الشعبية",
+                chooseGames: "اختر من مجموعتنا لأفضل الألعاب",
+                sudoku1Desc: "لعبة ألغاز كلاسيكية لشخص واحد",
+                sudoku2Desc: "لعبة ألغاز كلاسيكية لشخصين",
+                connect4Desc: "لعبة كونكت 4 الكلاسيكية لشخصين",
+                calculatorDesc: "آلة حاسبة ذكية لجميع احتياجاتك",
+                animalsDesc: "تعرف على الحيوانات بطريقة ممتعة!",
+                difficultyEasy: "🎯 سهل",
+                difficultyMedium: "🎯 متوسط",
+                difficultyHard: "🎯 صعب",
+                playNow: "العب الآن",
+                whyPlay: "لماذا تلعب معنا؟",
+                advantages: "جميع مزايا ألعابنا",
+                free: "مجاني",
+                freeDesc: "جميع الألعاب مجانية 100%",
+                responsive: "متجاوب",
+                responsiveDesc: "تعمل على جميع الأجهزة",
+                fast: "سريع",
+                fastDesc: "تحمّل فورًا بدون تثبيت",
+                variety: "تنوع",
+                varietyDesc: "يتم إضافة ألعاب جديدة باستمرار",
+                footerDesc: "أفضل منصة لألعاب HTML5 المجانية عبر الإنترنت.",
+                contact: "اتصال"
+            },
+            ru: {
+                home: "Главная",
+                games: "Игры",
+                features: "Особенности",
+                blog: "Блог",
+                welcome: "Добро пожаловать в FranklyMaDear",
+                subtitle: "Откройте для себя лучшие бесплатные HTML5 игры онлайн!",
+                playSudoku: "Играть в Судоку",
+                viewAllGames: "Посмотреть Все Игры",
+                popularGames: "Популярные Игры",
+                chooseGames: "Выбирайте из нашей коллекции лучших игр",
+                sudoku1Desc: "Классическая головоломка для одного игрока",
+                sudoku2Desc: "Классическая головоломка для двух игроков",
+                connect4Desc: "Классическая игра Четыре в ряд для двух игроков",
+                calculatorDesc: "Умный калькулятор для всех ваших нужд",
+                animalsDesc: "Изучайте животных веселым способом!",
+                difficultyEasy: "🎯 Легко",
+                difficultyMedium: "🎯 Средне",
+                difficultyHard: "🎯 Сложно",
+                playNow: "Играть Сейчас",
+                whyPlay: "Почему стоит играть с нами?",
+                advantages: "Все преимущества наших игр",
+                free: "Бесплатно",
+                freeDesc: "Все игры на 100% бесплатны",
+                responsive: "Адаптивный",
+                responsiveDesc: "Работают на всех устройствах",
+                fast: "Быстро",
+                fastDesc: "Загружаются мгновенно без установки",
+                variety: "Разнообразие",
+                varietyDesc: "Постоянно добавляются новые игры",
+                footerDesc: "Лучшая платформа для бесплатных HTML5 игр онлайн.",
+                contact: "Контакт"
+            },
+            hi: {
+                home: "होम",
+                games: "गेम्स",
+                features: "फीचर्स",
+                blog: "ब्लॉग",
+                welcome: "FranklyMaDear में आपका स्वागत है",
+                subtitle: "ऑनलाइन सर्वश्रेष्ठ मुफ्त HTML5 गेम्स खोजें!",
+                playSudoku: "सुडोकू खेलें",
+                viewAllGames: "सभी गेम्स देखें",
+                popularGames: "लोकप्रिय गेम्स",
+                chooseGames: "हमारे सर्वश्रेष्ठ गेम्स के संग्रह से चुनें",
+                sudoku1Desc: "एक खिलाड़ी के लिए क्लासिक पज़ल गेम",
+                sudoku2Desc: "दो खिलाड़ियों के लिए क्लासिक पज़ल गेम",
+                connect4Desc: "दो खिलाड़ियों के लिए क्लासिक कनेक्ट 4 गेम",
+                calculatorDesc: "आपकी सभी ज़रूरतों के लिए स्मार्ट कैलकुलेटर",
+                animalsDesc: "मज़ेदार तरीके से जानवरों के बारे में जानें!",
+                difficultyEasy: "🎯 आसान",
+                difficultyMedium: "🎯 मध्यम",
+                difficultyHard: "🎯 कठिन",
+                playNow: "अभी खेलें",
+                whyPlay: "हमारे साथ क्यों खेलें?",
+                advantages: "हमारे गेम्स के सभी फायदे",
+                free: "मुफ्त",
+                freeDesc: "सभी गेम्स 100% मुफ्त हैं",
+                responsive: "रिस्पॉन्सिव",
+                responsiveDesc: "सभी डिवाइस पर काम करते हैं",
+                fast: "तेज़",
+                fastDesc: "बिना इंस्टॉलेशन के तुरंत लोड होते हैं",
+                variety: "विविधता",
+                varietyDesc: "नए गेम्स लगातार जोड़े जाते हैं",
+                footerDesc: "मुफ्त HTML5 गेम्स के लिए सर्वश्रेष्ठ प्लेटफॉर्म।",
+                contact: "संपर्क"
             }
-            // ... keep the rest of your translations
         };
 
         // Language selector functionality
