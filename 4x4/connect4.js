@@ -295,8 +295,12 @@ class Connect4Game {
                 this.gameBoard[col][row] = 0;
                 
                 if (isWinning) {
+                    // Reset winning cells state after simulation
+                    this.winningCells = []; 
                     return col;
                 }
+                // Reset winning cells state after simulation
+                this.winningCells = []; 
             }
         }
         return -1;
