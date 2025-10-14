@@ -1,4 +1,3 @@
-// Connect 4 Game Logic
 class Connect4Game {
     constructor() {
         this.currentPlayer = 1;
@@ -7,6 +6,9 @@ class Connect4Game {
         this.movesHistory = [];
         this.scores = { player1: 0, player2: 0 };
         this.soundEnabled = true;
+        this.gameMode = 'multiplayer';
+        this.theme = 'space';
+        this.lastMoveTime = 0; // Add timestamp to prevent duplicate moves
         
         this.init();
     }
@@ -16,6 +18,7 @@ class Connect4Game {
         this.loadScores();
         this.setupEventListeners();
         this.updateStatus();
+        this.setTheme(this.theme);
     }
 
     createBoard() {
@@ -39,21 +42,29 @@ class Connect4Game {
         slot.className = 'slot';
         slot.dataset.col = col;
         slot.dataset.row = row;
+        slot.setAttribute('role', 'gridcell');
+        slot.setAttribute('aria-label', `Στήλη ${col + 1}, Σειρά ${row + 1}`);
         
         const disc = document.createElement('div');
-        disc.className = 'disc';
+        disc.className = `disc ${this.theme}-theme`;
         disc.id = `disc-${col}-${row}`;
         
         slot.appendChild(disc);
         
-        // Event listeners
-        slot.addEventListener('click', () => this.makeMove(col));
-        slot.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            this.makeMove(col);
-        });
+        // Unified event handler for both click and touch
+        slot.addEventListener('click', (e) => this.handleInteraction(col, e));
+        slot.addEventListener('touchend', (e) => this.handleInteraction(col, e));
 
         return slot;
+    }
+
+    handleInteraction(col, e) {
+        e.preventDefault(); // Prevent default to avoid unwanted behavior
+        const now = Date.now();
+        // Debounce: ignore if less than 300ms since last move
+        if (now - this.lastMoveTime < 300) return;
+        this.lastMoveTime = now;
+        this.makeMove(col);
     }
 
     makeMove(col) {
@@ -86,7 +97,6 @@ class Connect4Game {
         
         this.switchPlayer();
         
-        // AI move if against computer
         if (this.gameMode === 'computer' && this.currentPlayer === 2) {
             setTimeout(() => this.makeAIMove(), 800);
         }
@@ -115,7 +125,6 @@ class Connect4Game {
         for (const [dx, dy] of directions) {
             let count = 1;
             
-            // Check positive direction
             for (let i = 1; i < 4; i++) {
                 const newCol = col + dx * i;
                 const newRow = row + dy * i;
@@ -127,7 +136,6 @@ class Connect4Game {
                 }
             }
             
-            // Check negative direction
             for (let i = 1; i < 4; i++) {
                 const newCol = col - dx * i;
                 const newRow = row - dy * i;
@@ -156,7 +164,6 @@ class Connect4Game {
         const player = this.gameBoard[col][row];
         const winningCells = [{ col, row }];
         
-        // Check positive direction
         for (let i = 1; i < 4; i++) {
             const newCol = col + dx * i;
             const newRow = row + dy * i;
@@ -168,7 +175,6 @@ class Connect4Game {
             }
         }
         
-        // Check negative direction
         for (let i = 1; i < 4; i++) {
             const newCol = col - dx * i;
             const newRow = row - dy * i;
@@ -187,7 +193,6 @@ class Connect4Game {
         this.gameActive = false;
         this.playSound('win');
         
-        // Update scores
         if (this.currentPlayer === 1) {
             this.scores.player1++;
         } else {
@@ -199,7 +204,7 @@ class Connect4Game {
         this.highlightWinningCells();
         
         document.getElementById('status').innerHTML = 
-            `🎉 Ο Παίκτης ${this.currentPlayer} κέρδισε! 🎉`;
+            `🌟 Ο Παίκτης ${this.currentPlayer} κέρδισε! 🌟`;
             
         this.showConfetti();
     }
@@ -207,13 +212,14 @@ class Connect4Game {
     handleDraw() {
         this.gameActive = false;
         this.playSound('draw');
-        document.getElementById('status').textContent = 'Ισοπαλία!';
+        document.getElementById('status').textContent = 'Ισοπαλία! 🌌';
     }
 
     highlightWinningCells() {
         this.winningCells.forEach(({ col, row }) => {
             const disc = document.getElementById(`disc-${col}-${row}`);
             disc.style.animation = 'pulse 1s infinite';
+            disc.classList.add('winner');
         });
     }
 
@@ -224,17 +230,13 @@ class Connect4Game {
     makeAIMove() {
         if (!this.gameActive) return;
         
-        // Simple AI - prioritize winning, then blocking, then random
-        let moveCol = this.findWinningMove(2); // AI is player 2
-        
+        let moveCol = this.findWinningMove(2);
         if (moveCol === -1) {
-            moveCol = this.findWinningMove(1); // Block player 1
+            moveCol = this.findWinningMove(1);
         }
-        
         if (moveCol === -1) {
             moveCol = this.findStrategicMove();
         }
-        
         if (moveCol === -1) {
             moveCol = this.getRandomMove();
         }
@@ -260,7 +262,6 @@ class Connect4Game {
     }
 
     findStrategicMove() {
-        // Prefer center columns
         const centerCols = [2, 3, 1, 4, 0, 5];
         for (let col of centerCols) {
             if (this.findAvailableRow(col) !== -1) {
@@ -286,6 +287,7 @@ class Connect4Game {
         this.currentPlayer = 1;
         this.gameActive = true;
         this.movesHistory = [];
+        this.lastMoveTime = 0; // Reset move timestamp
         this.createBoard();
         this.updateStatus();
     }
@@ -297,11 +299,12 @@ class Connect4Game {
         this.gameBoard[lastMove.col][lastMove.row] = 0;
         
         const disc = document.getElementById(`disc-${lastMove.col}-${lastMove.row}`);
-        disc.className = 'disc';
+        disc.className = `disc ${this.theme}-theme`;
         
         this.currentPlayer = lastMove.player;
         this.updateStatus();
         this.playSound('undo');
+        this.lastMoveTime = 0; // Reset move timestamp
     }
 
     updateStatus() {
@@ -321,13 +324,12 @@ class Connect4Game {
     }
 
     setupEventListeners() {
-        // Keyboard controls
         document.addEventListener('keydown', (e) => {
             if (!this.gameActive) return;
             
             if (e.key >= '1' && e.key <= '6') {
                 const col = parseInt(e.key) - 1;
-                this.makeMove(col);
+                this.handleInteraction(col, e);
             } else if (e.key === 'r' || e.key === 'R') {
                 this.resetGame();
             } else if (e.key === 'z' && e.ctrlKey) {
@@ -335,58 +337,24 @@ class Connect4Game {
                 this.undoMove();
             }
         });
-
-        // Prevent zoom on double tap
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', (e) => {
-            const now = Date.now();
-            if (now - lastTouchEnd <= 300) {
-                e.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, { passive: false });
     }
 
     playSound(type) {
         if (!this.soundEnabled) return;
         
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
+        const soundMap = {
+            drop: 'dropSound',
+            win: 'winSound',
+            draw: 'drawSound',
+            invalid: 'invalidSound',
+            undo: 'undoSound'
+        };
         
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        switch(type) {
-            case 'drop':
-                oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                break;
-            case 'win':
-                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-                gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
-                break;
-            case 'draw':
-                oscillator.frequency.setValueAtTime(392, audioContext.currentTime); // G4
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                break;
-            case 'invalid':
-                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                break;
-            case 'undo':
-                oscillator.frequency.setValueAtTime(250, audioContext.currentTime);
-                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                break;
+        const audio = document.getElementById(soundMap[type]);
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play().catch(err => console.log('Audio play failed:', err));
         }
-        
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + (type === 'win' ? 1 : 0.3));
     }
 
     showMessage(message, type = 'info') {
@@ -414,7 +382,7 @@ class Connect4Game {
     }
 
     showConfetti() {
-        const confettiCount = 100;
+        const confettiCount = 150;
         const colors = ['#e74c3c', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
         
         for (let i = 0; i < confettiCount; i++) {
@@ -423,19 +391,20 @@ class Connect4Game {
                 confetti.className = 'confetti';
                 confetti.style.cssText = `
                     position: fixed;
-                    width: 10px;
-                    height: 10px;
+                    width: 8px;
+                    height: 8px;
                     background: ${colors[Math.floor(Math.random() * colors.length)]};
                     top: -10px;
                     left: ${Math.random() * 100}vw;
-                    animation: confettiFall ${2 + Math.random() * 3}s linear forwards;
+                    animation: confettiFall ${2 + Math.random() * 2}s linear forwards;
                     z-index: 999;
+                    border-radius: ${this.theme === 'space' ? '50%' : '2px'};
                 `;
                 
                 document.body.appendChild(confetti);
                 
-                setTimeout(() => confetti.remove(), 5000);
-            }, i * 20);
+                setTimeout(() => confetti.remove(), 4000);
+            }, i * 15);
         }
     }
 
@@ -456,22 +425,34 @@ class Connect4Game {
         this.resetGame();
     }
 
+    setTheme(theme) {
+        this.theme = theme;
+        document.body.className = `theme-${theme}`;
+        this.createBoard();
+        const discs = document.querySelectorAll('.disc');
+        discs.forEach(disc => {
+            disc.className = `disc ${theme}-theme`;
+            if (disc.classList.contains('red') || disc.classList.contains('yellow')) {
+                disc.classList.add(disc.classList.contains('red') ? 'red' : 'yellow');
+            }
+        });
+    }
+
     toggleSound() {
         this.soundEnabled = !this.soundEnabled;
+        document.getElementById('soundToggle').textContent = this.soundEnabled ? '🔊' : '🔇';
         return this.soundEnabled;
     }
 }
 
-// Initialize game when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.connect4Game = new Connect4Game();
 });
 
-// CSS Animations (add to your CSS file)
 const additionalCSS = `
 @keyframes pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+    50% { transform: scale(1.15); }
     100% { transform: scale(1); }
 }
 
@@ -482,7 +463,7 @@ const additionalCSS = `
 
 @keyframes confettiFall {
     0% { transform: translateY(0) rotate(0deg); }
-    100% { transform: translateY(100vh) rotate(360deg); }
+    100% { transform: translateY(100vh) rotate(720deg); }
 }
 
 .confetti {
@@ -493,9 +474,12 @@ const additionalCSS = `
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     font-weight: bold;
 }
+
+.winner {
+    box-shadow: 0 0 15px #ffd700, 0 0 30px #ffd700;
+}
 `;
 
-// Add the additional CSS to the document
 const style = document.createElement('style');
 style.textContent = additionalCSS;
 document.head.appendChild(style);
