@@ -145,7 +145,7 @@ h1 {
     min-width: 120px;
 }
 
-/* Board Container - Clean Blue Only */
+/* Board Container with Grid Lines */
 .board-container {
     background: #3498db;
     background: linear-gradient(135deg, #3498db, #2980b9);
@@ -166,12 +166,18 @@ h1 {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(6, 1fr);
-    gap: 6px;
+    gap: 0;
     position: relative;
     z-index: 1;
     height: 100%;
     width: 100%;
-    padding: 1px;
+    /* Grid lines background */
+    background-image: 
+        linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: calc(100% / 7) calc(100% / 6);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
 }
 
 /* Clean slots - Only blue background visible */
@@ -185,6 +191,19 @@ h1 {
     align-items: center;
     justify-content: center;
     min-height: 40px;
+    /* Individual cell borders */
+    border-right: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Remove right border from last column */
+.slot:nth-child(7n) {
+    border-right: none;
+}
+
+/* Remove bottom border from last row */
+.slot:nth-child(n+36) {
+    border-bottom: none;
 }
 
 .slot:hover, .slot:active {
@@ -194,8 +213,8 @@ h1 {
 
 /* Perfectly fitting discs */
 .disc {
-    width: 90%;
-    height: 90%;
+    width: 85%;
+    height: 85%;
     border-radius: 50%;
     transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     box-shadow: 
@@ -333,7 +352,7 @@ h1 {
     }
     
     .board {
-        gap: 5px;
+        gap: 0;
     }
     
     .slot {
