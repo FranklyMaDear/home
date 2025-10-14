@@ -2,12 +2,12 @@ class Connect4Game {
     constructor() {
         this.rows = 6;
         this.cols = 7;
-        this.currentPlayer = 1;
+        this.currentPlayer = 1; // 1 = human, 2 = AI
         this.gameBoard = [];
         this.gameActive = true;
         this.movesHistory = [];
-        this.scores = { player1: 0, player2: 0 };
-        this.gameMode = 'multiplayer';
+        this.scores = { human: 0, ai: 0 };
+        this.difficulty = 'medium';
         this.lastMoveTime = 0;
         this.winningCells = [];
         
@@ -56,19 +56,23 @@ class Connect4Game {
         slot.appendChild(disc);
         
         slot.addEventListener('click', () => {
-            this.handleColumnClick(col);
+            if (this.currentPlayer === 1 && this.gameActive) {
+                this.handleColumnClick(col);
+            }
         });
         
         slot.addEventListener('touchend', (e) => {
             e.preventDefault();
-            this.handleColumnClick(col);
+            if (this.currentPlayer === 1 && this.gameActive) {
+                this.handleColumnClick(col);
+            }
         });
 
         return slot;
     }
 
     handleColumnClick(col) {
-        if (!this.gameActive) return;
+        if (!this.gameActive || this.currentPlayer !== 1) return;
         
         const now = Date.now();
         if (now - this.lastMoveTime < 300) return;
@@ -101,8 +105,9 @@ class Connect4Game {
             
             this.switchPlayer();
             
-            if (this.gameMode === 'computer' && this.currentPlayer === 2) {
-                setTimeout(() => this.makeAIMove(), 600);
+            // AI's turn
+            if (this.currentPlayer === 2 && this.gameActive) {
+                setTimeout(() => this.makeAIMove(), 800);
             }
         }, 600);
     }
@@ -131,12 +136,19 @@ class Connect4Game {
     }
 
     updatePlayerIndicators() {
-        const player1 = document.getElementById('player1');
-        const player2 = document.getElementById('player2');
+        const humanPlayer = document.querySelector('.human-player');
+        const aiPlayer = document.querySelector('.ai-player');
         
-        if (player1 && player2) {
-            player1.classList.toggle('active', this.currentPlayer === 1);
-            player2.classList.toggle('active', this.currentPlayer === 2);
+        if (humanPlayer && aiPlayer) {
+            humanPlayer.classList.toggle('active', this.currentPlayer === 1);
+            aiPlayer.classList.toggle('active', this.currentPlayer === 2);
+            
+            // Show thinking indicator for AI
+            if (this.currentPlayer === 2 && this.gameActive) {
+                aiPlayer.classList.add('ai-thinking');
+            } else {
+                aiPlayer.classList.remove('ai-thinking');
+            }
         }
     }
 
@@ -220,9 +232,9 @@ class Connect4Game {
         this.gameActive = false;
         
         if (this.currentPlayer === 1) {
-            this.scores.player1++;
+            this.scores.human++;
         } else {
-            this.scores.player2++;
+            this.scores.ai++;
         }
         
         this.saveScores();
@@ -231,7 +243,11 @@ class Connect4Game {
         
         const status = document.getElementById('status');
         if (status) {
-            status.innerHTML = `🎉 Παίκτης ${this.currentPlayer} κέρδισε! 🎉`;
+            if (this.currentPlayer === 1) {
+                status.innerHTML = '🎉 Κέρδισες! Μπράβο! 🎉';
+            } else {
+                status.innerHTML = '🤖 Ο AI κέρδισε! Δοκίμασε ξανά!';
+            }
         }
             
         this.showConfetti();
@@ -241,7 +257,7 @@ class Connect4Game {
         this.gameActive = false;
         const status = document.getElementById('status');
         if (status) {
-            status.textContent = 'Ισοπαλία! 🤝';
+            status.textContent = 'Ισοπαλία! 🤝 Καλό παιχνίδι!';
         }
     }
 
@@ -264,26 +280,78 @@ class Connect4Game {
     }
 
     makeAIMove() {
-        if (!this.gameActive) return;
+        if (!this.gameActive || this.currentPlayer !== 2) return;
         
-        // Check for winning move
-        let moveCol = this.findWinningMove(2);
-        if (moveCol === -1) {
-            // Block opponent's winning move
-            moveCol = this.findWinningMove(1);
-        }
-        if (moveCol === -1) {
-            // Strategic center preference
-            moveCol = this.findStrategicMove();
-        }
-        if (moveCol === -1) {
-            // Random move as last resort
-            moveCol = this.getRandomMove();
+        let moveCol;
+        
+        switch (this.difficulty) {
+            case 'easy':
+                moveCol = this.getEasyAIMove();
+                break;
+            case 'medium':
+                moveCol = this.getMediumAIMove();
+                break;
+            case 'hard':
+                moveCol = this.getHardAIMove();
+                break;
+            default:
+                moveCol = this.getMediumAIMove();
         }
         
         if (moveCol !== -1) {
             this.makeMove(moveCol);
         }
+    }
+
+    getEasyAIMove() {
+        // Random moves with some basic logic
+        if (Math.random() < 0.7) {
+            const winningMove = this.findWinningMove(2);
+            if (winningMove !== -1) return winningMove;
+        }
+        
+        if (Math.random() < 0.5) {
+            const blockingMove = this.findWinningMove(1);
+            if (blockingMove !== -1) return blockingMove;
+        }
+        
+        return this.getRandomMove();
+    }
+
+    getMediumAIMove() {
+        // Look for winning move
+        const winningMove = this.findWinningMove(2);
+        if (winningMove !== -1) return winningMove;
+        
+        // Block opponent's winning move
+        const blockingMove = this.findWinningMove(1);
+        if (blockingMove !== -1) return blockingMove;
+        
+        // Create opportunities
+        const strategicMove = this.findStrategicMove();
+        if (strategicMove !== -1) return strategicMove;
+        
+        return this.getRandomMove();
+    }
+
+    getHardAIMove() {
+        // Winning move
+        const winningMove = this.findWinningMove(2);
+        if (winningMove !== -1) return winningMove;
+        
+        // Block opponent
+        const blockingMove = this.findWinningMove(1);
+        if (blockingMove !== -1) return blockingMove;
+        
+        // Create double threats
+        const doubleThreat = this.findDoubleThreatMove();
+        if (doubleThreat !== -1) return doubleThreat;
+        
+        // Strategic center preference
+        const strategicMove = this.findStrategicMove();
+        if (strategicMove !== -1) return strategicMove;
+        
+        return this.getRandomMove();
     }
 
     findWinningMove(player) {
@@ -302,8 +370,35 @@ class Connect4Game {
         return -1;
     }
 
+    findDoubleThreatMove() {
+        for (let col = 0; col < this.cols; col++) {
+            const row = this.findAvailableRow(col);
+            if (row !== -1) {
+                this.gameBoard[col][row] = 2;
+                
+                let threatCount = 0;
+                for (let nextCol = 0; nextCol < this.cols; nextCol++) {
+                    const nextRow = this.findAvailableRow(nextCol);
+                    if (nextRow !== -1) {
+                        this.gameBoard[nextCol][nextRow] = 2;
+                        if (this.checkWin(nextCol, nextRow)) {
+                            threatCount++;
+                        }
+                        this.gameBoard[nextCol][nextRow] = 0;
+                    }
+                }
+                
+                this.gameBoard[col][row] = 0;
+                
+                if (threatCount >= 2) {
+                    return col;
+                }
+            }
+        }
+        return -1;
+    }
+
     findStrategicMove() {
-        // Prefer center columns for better positioning
         const centerCols = [3, 2, 4, 1, 5, 0, 6];
         for (let col of centerCols) {
             if (this.findAvailableRow(col) !== -1) {
@@ -337,33 +432,20 @@ class Connect4Game {
     }
 
     restartGame() {
-        this.scores = { player1: 0, player2: 0 };
+        this.scores = { human: 0, ai: 0 };
         this.saveScores();
         this.updateScoresDisplay();
         this.resetGame();
     }
 
-    undoMove() {
-        if (this.movesHistory.length === 0 || !this.gameActive) return;
-        
-        const lastMove = this.movesHistory.pop();
-        this.gameBoard[lastMove.col][lastMove.row] = 0;
-        
-        const disc = document.getElementById(`disc-${lastMove.col}-${lastMove.row}`);
-        if (disc) {
-            disc.className = 'disc';
-            disc.style.animation = 'none';
-        }
-        
-        this.currentPlayer = lastMove.player;
-        this.updateStatus();
-        this.updatePlayerIndicators();
-    }
-
     updateStatus() {
         const status = document.getElementById('status');
         if (status) {
-            status.textContent = `Σειρά του Παίκτη ${this.currentPlayer}`;
+            if (this.currentPlayer === 1) {
+                status.textContent = 'Σειρά σου! Παίξε σε οποιαδήποτε στήλη';
+            } else {
+                status.textContent = 'Σειρά του AI... Σκέφτεται...';
+            }
         }
     }
 
@@ -371,23 +453,20 @@ class Connect4Game {
         const scoresElement = document.getElementById('scores');
         if (scoresElement) {
             scoresElement.innerHTML = `
-                <div class="score">${this.scores.player1} - ${this.scores.player2}</div>
+                <div class="score">${this.scores.human} - ${this.scores.ai}</div>
             `;
         }
     }
 
     setupEventListeners() {
         document.addEventListener('keydown', (e) => {
-            if (!this.gameActive) return;
+            if (!this.gameActive || this.currentPlayer !== 1) return;
             
             if (e.key >= '1' && e.key <= '7') {
                 const col = parseInt(e.key) - 1;
                 this.makeMove(col);
             } else if (e.key === 'r' || e.key === 'R') {
                 this.resetGame();
-            } else if (e.key === 'z' && e.ctrlKey) {
-                e.preventDefault();
-                this.undoMove();
             }
         });
     }
@@ -425,8 +504,8 @@ class Connect4Game {
         this.updateScoresDisplay();
     }
 
-    setGameMode(mode) {
-        this.gameMode = mode;
+    setDifficulty(level) {
+        this.difficulty = level;
         this.resetGame();
     }
 }
