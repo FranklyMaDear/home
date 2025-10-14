@@ -11,8 +11,28 @@ class ConnectFour {
         
         this.initializeBoard();
         this.setupEventListeners();
+        this.setupBanner();
         this.updateGameMode();
         this.updateStatus();
+    }
+
+    setupBanner() {
+        const banner = document.getElementById('banner');
+        const closeBtn = document.getElementById('bannerClose');
+        
+        setTimeout(() => {
+            banner.classList.add('show');
+        }, 2000);
+        
+        closeBtn.addEventListener('click', () => {
+            banner.classList.remove('show');
+        });
+        
+        setTimeout(() => {
+            if (banner.classList.contains('show')) {
+                banner.classList.remove('show');
+            }
+        }, 10000);
     }
 
     createEmptyBoard() {
@@ -67,7 +87,6 @@ class ConnectFour {
     handleMove(col) {
         if (this.gameOver) return;
         
-        // Αν είναι AI's σειρά και παίζουμε vs AI, μην επιτρέψεις κίνηση
         if (this.gameMode === 'ai' && this.currentPlayer === 2) return;
 
         const row = this.getAvailableRow(col);
@@ -88,7 +107,6 @@ class ConnectFour {
         this.switchPlayer();
         this.updateStatus();
 
-        // AI move after a short delay
         if (this.gameMode === 'ai' && this.currentPlayer === 2 && !this.gameOver) {
             setTimeout(() => this.aiMove(), 500);
         }
@@ -125,10 +143,8 @@ class ConnectFour {
     }
 
     getEasyAIMove() {
-        // Random moves with some basic logic
         const availableCols = this.getAvailableColumns();
         
-        // 30% πιθανότητα να μπλοκάρει τον παίχτη
         if (Math.random() < 0.3) {
             for (let col of availableCols) {
                 const row = this.getAvailableRow(col);
@@ -149,7 +165,6 @@ class ConnectFour {
     getHardAIMove() {
         const availableCols = this.getAvailableColumns();
         
-        // 1. Check for winning move
         for (let col of availableCols) {
             const row = this.getAvailableRow(col);
             if (row !== -1) {
@@ -162,7 +177,6 @@ class ConnectFour {
             }
         }
 
-        // 2. Block player's winning moves
         for (let col of availableCols) {
             const row = this.getAvailableRow(col);
             if (row !== -1) {
@@ -175,14 +189,12 @@ class ConnectFour {
             }
         }
 
-        // 3. Create multiple threats
         for (let col of availableCols) {
             const row = this.getAvailableRow(col);
             if (row !== -1) {
                 this.board[row][col] = 2;
                 let threatCount = 0;
                 
-                // Check how many winning opportunities this creates
                 for (let nextCol of this.getAvailableColumns()) {
                     const nextRow = this.getAvailableRow(nextCol);
                     if (nextRow !== -1) {
@@ -202,7 +214,6 @@ class ConnectFour {
             }
         }
 
-        // 4. Strategic center preference
         const strategicCols = [3, 2, 4, 1, 5, 0, 6];
         for (let col of strategicCols) {
             if (availableCols.includes(col)) {
@@ -407,7 +418,6 @@ class ConnectFour {
     }
 }
 
-// Initialize the game when page loads
 document.addEventListener('DOMContentLoaded', () => {
     new ConnectFour();
 });
