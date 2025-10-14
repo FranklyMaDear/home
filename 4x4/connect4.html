@@ -66,11 +66,31 @@
         </div>
     </div>
 
-    <audio id="dropSound" src="sounds/drop.mp3"></audio>
-    <audio id="winSound" src="sounds/win.mp3"></audio>
-    <audio id="drawSound" src="sounds/draw.mp3"></audio>
-    <audio id="invalidSound" src="sounds/invalid.mp3"></audio>
-    <audio id="undoSound" src="sounds/undo.mp3"></audio>
+    <!-- Audio elements with fallback -->
+    <audio id="dropSound" preload="auto">
+        <source src="sounds/drop.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="winSound" preload="auto">
+        <source src="sounds/win.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="drawSound" preload="auto">
+        <source src="sounds/draw.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="invalidSound" preload="auto">
+        <source src="sounds/invalid.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="undoSound" preload="auto">
+        <source src="sounds/undo.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Preload fallback images -->
+    <img src="images/red-planet.png" style="display:none" alt="">
+    <img src="images/yellow-planet.png" style="display:none" alt="">
 
     <script src="connect4.js"></script>
 </body>
