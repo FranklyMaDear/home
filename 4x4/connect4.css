@@ -6,25 +6,27 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 10px;
     touch-action: manipulation;
+    background: #1e3c72;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
 }
 
 .game-container {
     text-align: center;
     background: white;
     border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    padding: 25px 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     width: 100%;
     max-width: 500px;
-    border: 3px solid #2c3e50;
+    margin: 10px;
+    border: 4px solid #2c3e50;
 }
 
 h1 {
@@ -32,18 +34,19 @@ h1 {
     margin-bottom: 20px;
     font-size: 2.2rem;
     font-weight: bold;
+    letter-spacing: 2px;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
-.game-info {
+.game-header {
     margin-bottom: 20px;
 }
 
-.player-info {
+.players-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     padding: 0 10px;
 }
 
@@ -53,54 +56,46 @@ h1 {
     align-items: center;
     gap: 8px;
     flex: 1;
-    padding: 10px;
-    border-radius: 10px;
-    transition: all 0.3s ease;
 }
 
-.player.active {
-    background: rgba(52, 152, 219, 0.1);
-    border: 2px solid #3498db;
-}
-
-.human-player {
-    align-items: flex-start;
-}
-
-.ai-player {
-    align-items: flex-end;
+.player-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
 }
 
 .player-disc {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: 3px solid #fff;
     box-shadow: 0 3px 8px rgba(0,0,0,0.3);
 }
 
 .player-disc.red {
-    background: radial-gradient(circle at 30% 30%, #ff6b6b, #e74c3c);
+    background: #e74c3c;
+    background: radial-gradient(circle at 30% 30%, #ff6b6b, #c0392b);
 }
 
 .player-disc.yellow {
-    background: radial-gradient(circle at 30% 30%, #ffd93d, #f1c40f);
+    background: #f1c40f;
+    background: radial-gradient(circle at 30% 30%, #ffd93d, #f39c12);
 }
 
 .player span {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: bold;
     color: #2c3e50;
 }
 
-.score-divider {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #7f8c8d;
-    margin: 0 10px;
+.player.active span {
+    color: #e74c3c;
+    font-weight: 800;
 }
 
 .scores {
+    flex: 1;
     display: flex;
     justify-content: center;
 }
@@ -110,43 +105,55 @@ h1 {
     font-weight: bold;
     color: #2c3e50;
     background: #f8f9fa;
-    padding: 12px 30px;
+    padding: 12px 24px;
     border-radius: 25px;
+    min-width: 100px;
     border: 3px solid #e9ecef;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.difficulty-controls {
-    margin-bottom: 20px;
+.game-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 15px;
     padding: 0 10px;
 }
 
-.difficulty-controls label {
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.control-group label {
     font-size: 1rem;
     color: #2c3e50;
     font-weight: 600;
-    margin-right: 10px;
 }
 
-.difficulty-controls select {
-    padding: 8px 15px;
-    border-radius: 8px;
+.control-group select {
+    padding: 10px 15px;
+    border-radius: 10px;
     border: 2px solid #bdc3c7;
     background: white;
     color: #2c3e50;
     font-family: inherit;
     font-size: 1rem;
     font-weight: 500;
+    min-width: 120px;
 }
 
-/* Board Container */
+/* Board Container - Fixed Layout */
 .board-container {
+    background: #3498db;
     background: linear-gradient(135deg, #3498db, #2980b9);
     padding: 20px;
     border-radius: 15px;
     box-shadow: 
         inset 0 0 25px rgba(0,0,0,0.6),
-        0 8px 20px rgba(0,0,0,0.3);
+        0 5px 15px rgba(0,0,0,0.3);
     margin: 20px 0;
     position: relative;
     width: 100%;
@@ -167,7 +174,7 @@ h1 {
     padding: 2px;
 }
 
-/* Slots */
+/* Perfectly aligned slots */
 .slot {
     background: #1a5276;
     background: linear-gradient(145deg, #1a5276, #154360);
@@ -181,18 +188,20 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 40px;
 }
 
-.slot:hover {
+.slot:hover, .slot:active {
     background: linear-gradient(145deg, #154360, #11334d);
     transform: scale(1.05);
 }
 
-/* Discs */
+/* Perfectly fitting discs */
 .disc {
     width: 85%;
     height: 85%;
     border-radius: 50%;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     box-shadow: 
         inset 0 -5px 10px rgba(0,0,0,0.5),
         0 3px 6px rgba(0,0,0,0.3);
@@ -201,7 +210,6 @@ h1 {
     z-index: 2;
     opacity: 0;
     transform: translateY(-500px);
-    transition: none;
 }
 
 .disc::after {
@@ -217,11 +225,13 @@ h1 {
 }
 
 .disc.red {
-    background: radial-gradient(circle at 30% 30%, #ff6b6b, #e74c3c);
+    background: #e74c3c;
+    background: radial-gradient(circle at 30% 30%, #ff6b6b, #c0392b);
 }
 
 .disc.yellow {
-    background: radial-gradient(circle at 30% 30%, #ffd93d, #f1c40f);
+    background: #f1c40f;
+    background: radial-gradient(circle at 30% 30%, #ffd93d, #f39c12);
 }
 
 .disc.red, .disc.yellow {
@@ -261,7 +271,7 @@ h1 {
     100% { transform: scale(1); }
 }
 
-/* Board Overlay */
+/* Perfect board overlay with exact hole alignment */
 .board-overlay {
     position: absolute;
     top: 20px;
@@ -283,40 +293,40 @@ h1 {
 
 .status {
     margin: 20px 0;
-    font-size: 1.2rem;
-    font-weight: 600;
+    font-size: 1.3rem;
+    font-weight: 700;
     color: #2c3e50;
-    min-height: 40px;
+    min-height: 30px;
     padding: 15px;
     background: linear-gradient(145deg, #f8f9fa, #e9ecef);
     border-radius: 12px;
-    border: 2px solid #e9ecef;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 3px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .game-buttons {
     display: flex;
     justify-content: center;
     gap: 15px;
-    margin: 20px 0;
+    margin-top: 15px;
+    padding: 0 10px;
 }
 
 .game-btn {
     background: linear-gradient(145deg, #3498db, #2980b9);
     color: white;
     border: none;
-    padding: 12px 20px;
+    padding: 15px 20px;
     font-size: 1rem;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     font-family: inherit;
-    font-weight: 600;
+    font-weight: 700;
     flex: 1;
     max-width: 150px;
+    border: 2px solid #2980b9;
 }
 
 .game-btn:hover {
@@ -325,44 +335,14 @@ h1 {
     box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
 
-.game-instructions {
-    margin-top: 15px;
-    padding: 10px;
-    background: rgba(52, 152, 219, 0.1);
-    border-radius: 8px;
-}
-
-.game-instructions p {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-    margin: 0;
-}
-
-/* Thinking animation for AI */
-.ai-thinking {
-    position: relative;
-}
-
-.ai-thinking::after {
-    content: 'Σκέφτεται...';
-    position: absolute;
-    top: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.8rem;
-    white-space: nowrap;
-}
-
 /* Mobile optimizations */
 @media (max-width: 480px) {
     .game-container {
-        padding: 15px;
+        padding: 20px 15px;
         margin: 5px;
         max-width: 95vw;
+        border-radius: 15px;
+        border-width: 3px;
     }
     
     h1 {
@@ -372,35 +352,37 @@ h1 {
     
     .board-container {
         padding: 15px;
+        margin: 15px 0;
+        border-radius: 12px;
     }
     
-    .player-info {
-        flex-direction: column;
-        gap: 10px;
+    .board {
+        gap: 6px;
     }
     
-    .player {
-        flex-direction: row;
-        width: 100%;
-        justify-content: center;
+    .slot {
+        min-height: 35px;
     }
     
-    .human-player, .ai-player {
-        align-items: center;
+    .player-disc {
+        width: 35px;
+        height: 35px;
     }
     
-    .score-divider {
-        margin: 5px 0;
+    .scores .score {
+        font-size: 1.5rem;
+        padding: 10px 20px;
+        min-width: 90px;
     }
     
     .game-btn {
-        padding: 10px 15px;
+        padding: 12px 15px;
         font-size: 0.9rem;
-        max-width: 130px;
+        max-width: 120px;
     }
     
     .status {
-        font-size: 1rem;
+        font-size: 1.1rem;
         padding: 12px;
     }
 }
@@ -442,4 +424,24 @@ h1 {
 
 .confetti:nth-child(5n) {
     background: #9b59b6;
+}
+
+/* Enhanced active player */
+.player.active .player-disc {
+    transform: scale(1.15);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    border: 3px solid #fff;
+}
+
+/* Perfect alignment for player sections */
+.player:first-child {
+    align-items: flex-start;
+}
+
+.player:last-child {
+    align-items: flex-end;
+}
+
+.scores {
+    align-items: center;
 }
