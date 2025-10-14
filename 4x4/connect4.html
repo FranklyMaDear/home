@@ -3,90 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect 4 - Cosmic Edition</title>
+    <title>Connect 4</title>
     <link rel="stylesheet" href="connect4.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="theme-classic">
     <div class="game-container">
-        <h1>Connect 4 - Cosmic Edition</h1>
+        <h1>CONNECT 4</h1>
         
-        <div class="game-info">
-            <div class="players">
+        <div class="game-header">
+            <div class="players-info">
                 <div class="player active" id="player1">
-                    <div class="player-disc red"></div>
-                    <span>Παίκτης 1</span>
+                    <div class="player-indicator">
+                        <div class="player-disc red"></div>
+                        <span>Παίκτης 1</span>
+                    </div>
                 </div>
+                
+                <div class="scores" id="scores">
+                    <div class="score">0 - 0</div>
+                </div>
+                
                 <div class="player" id="player2">
-                    <div class="player-disc yellow"></div>
-                    <span>Παίκτης 2</span>
+                    <div class="player-indicator">
+                        <div class="player-disc yellow"></div>
+                        <span>Παίκτης 2</span>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="scores" id="scores">
-                <div class="score">0 - 0</div>
             </div>
         </div>
-        
+
         <div class="game-controls">
-            <div class="mode-selector">
+            <div class="control-group">
                 <label for="gameMode">Λειτουργία:</label>
                 <select id="gameMode" onchange="connect4Game.setGameMode(this.value)">
-                    <option value="multiplayer">Δύο Παίκτες</option>
-                    <option value="computer">Εναντίον Υπολογιστή</option>
+                    <option value="multiplayer">2 Παίκτες</option>
+                    <option value="computer">Εναντίον AI</option>
                 </select>
             </div>
-            <div class="theme-selector">
-                <label for="theme">Θέμα:</label>
-                <select id="theme" onchange="connect4Game.setTheme(this.value)">
-                    <option value="classic">Κλασικό</option>
-                    <option value="space">Διάστημα</option>
-                    <option value="ocean">Ωκεανός</option>
-                </select>
-            </div>
-            <button onclick="connect4Game.toggleSound()">
-                <span id="soundToggle">🔊</span> Ήχος
+            <button class="control-btn" onclick="connect4Game.toggleSound()">
+                <span id="soundToggle">🔊</span>
             </button>
         </div>
         
         <div class="board-container">
-            <div class="board" id="gameBoard" role="grid" aria-label="Connect 4 Πίνακας"></div>
+            <div class="board" id="gameBoard"></div>
             <div class="board-overlay"></div>
         </div>
         
-        <div class="status" id="status" role="status">Σειρά του Παίκτη 1</div>
+        <div class="status" id="status">Σειρά του Παίκτη 1</div>
         
-        <div class="controls">
-            <button onclick="connect4Game.resetGame()">Νέο Παιχνίδι</button>
-            <button onclick="connect4Game.undoMove()">Αναίρεση</button>
+        <div class="game-buttons">
+            <button class="game-btn" onclick="connect4Game.resetGame()">Νέο Παιχνίδι</button>
+            <button class="game-btn" onclick="connect4Game.undoMove()">Αναίρεση</button>
         </div>
     </div>
 
-    <!-- Audio elements with fallback -->
+    <!-- Audio elements -->
     <audio id="dropSound" preload="auto">
         <source src="sounds/drop.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
     <audio id="winSound" preload="auto">
         <source src="sounds/win.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
     <audio id="drawSound" preload="auto">
         <source src="sounds/draw.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
     <audio id="invalidSound" preload="auto">
         <source src="sounds/invalid.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
     <audio id="undoSound" preload="auto">
         <source src="sounds/undo.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
-
-    <!-- Preload fallback images -->
-    <img src="images/red-planet.png" style="display:none" alt="">
-    <img src="images/yellow-planet.png" style="display:none" alt="">
 
     <script src="connect4.js"></script>
 </body>
