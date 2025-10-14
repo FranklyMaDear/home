@@ -11,9 +11,21 @@
     <div class="game-container">
         <h1>Connect 4 - Cosmic Edition</h1>
         
-        <div class="instructions">
-            <strong>Πώς παίζεται:</strong> Εναλλάξ τοποθετήστε δίσκους-πλανήτες! 
-            Ο πρώτος που θα συνδέσει 4 σε σειρά (οριζόντια, κάθετα ή διαγώνια) κερδίζει το διαστημικό ταξίδι!
+        <div class="game-info">
+            <div class="players">
+                <div class="player active" id="player1">
+                    <div class="player-disc red"></div>
+                    <span>Παίκτης 1</span>
+                </div>
+                <div class="player" id="player2">
+                    <div class="player-disc yellow"></div>
+                    <span>Παίκτης 2</span>
+                </div>
+            </div>
+            
+            <div class="scores" id="scores">
+                <div class="score">0 - 0</div>
+            </div>
         </div>
         
         <div class="game-controls">
@@ -27,9 +39,9 @@
             <div class="theme-selector">
                 <label for="theme">Θέμα:</label>
                 <select id="theme" onchange="connect4Game.setTheme(this.value)">
+                    <option value="classic">Κλασικό</option>
                     <option value="space">Διάστημα</option>
                     <option value="ocean">Ωκεανός</option>
-                    <option value="retro">Ρετρό</option>
                 </select>
             </div>
             <button onclick="connect4Game.toggleSound()">
@@ -37,28 +49,12 @@
             </button>
         </div>
         
-        <div class="players">
-            <div class="player">
-                <div class="player-1-color"></div>
-                <span>Παίκτης 1 (Κόκκινο)</span>
-            </div>
-            <div class="player">
-                <div class="player-2-color"></div>
-                <span>Παίκτης 2 (Κίτρινο)</span>
-            </div>
-        </div>
-        
-        <div class="scores" id="scores">
-            <div>Παίκτης 1: 0</div>
-            <div>Παίκτης 2: 0</div>
-        </div>
-        
         <div class="board-container">
             <div class="board" id="gameBoard" role="grid" aria-label="Connect 4 Πίνακας"></div>
             <div class="board-overlay"></div>
         </div>
         
-        <div class="status" id="status" role="status">Σειρά του Παίκτη 1 (Κόκκινο)</div>
+        <div class="status" id="status" role="status">Σειρά του Παίκτη 1</div>
         
         <div class="controls">
             <button onclick="connect4Game.resetGame()">Νέο Παιχνίδι</button>
