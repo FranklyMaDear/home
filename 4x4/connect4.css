@@ -145,20 +145,20 @@ h1 {
     min-width: 120px;
 }
 
-/* Board Container with Grid Lines */
+/* Real Connect Four Board Style */
 .board-container {
-    background: #3498db;
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    padding: 15px;
-    border-radius: 15px;
+    background: #1e88e5;
+    background: linear-gradient(145deg, #1976d2, #1565c0);
+    padding: 20px;
+    border-radius: 20px;
     box-shadow: 
-        inset 0 0 15px rgba(0,0,0,0.4),
-        0 5px 15px rgba(0,0,0,0.3);
+        inset 0 0 25px rgba(0,0,0,0.3),
+        0 8px 20px rgba(0,0,0,0.4);
     margin: 20px 0;
     position: relative;
     width: 100%;
     aspect-ratio: 7/6;
-    border: 2px solid #1a5276;
+    border: 4px solid #0d47a1;
     overflow: hidden;
 }
 
@@ -166,87 +166,96 @@ h1 {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(6, 1fr);
-    gap: 0;
+    gap: 8px;
     position: relative;
     z-index: 1;
     height: 100%;
     width: 100%;
-    /* Grid lines background */
-    background-image: 
-        linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px);
-    background-size: calc(100% / 7) calc(100% / 6);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 8px;
+    padding: 3px;
+    background: transparent;
 }
 
-/* Clean slots - Only blue background visible */
+/* Realistic slots with proper 3D effect */
 .slot {
-    background: transparent;
+    background: #1565c0;
+    background: linear-gradient(145deg, #1976d2, #0d47a1);
     border-radius: 50%;
     cursor: pointer;
     position: relative;
     transition: all 0.2s ease;
+    box-shadow: 
+        inset 0 -4px 8px rgba(0,0,0,0.6),
+        inset 0 4px 8px rgba(255,255,255,0.1),
+        0 2px 4px rgba(0,0,0,0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 40px;
-    /* Individual cell borders */
-    border-right: 1px solid rgba(255,255,255,0.1);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-/* Remove right border from last column */
-.slot:nth-child(7n) {
-    border-right: none;
-}
-
-/* Remove bottom border from last row */
-.slot:nth-child(n+36) {
-    border-bottom: none;
+    border: 2px solid #0d47a1;
 }
 
 .slot:hover, .slot:active {
-    background: rgba(255, 255, 255, 0.1);
+    background: linear-gradient(145deg, #1565c0, #0a3d91);
     transform: scale(1.05);
+    box-shadow: 
+        inset 0 -4px 8px rgba(0,0,0,0.7),
+        inset 0 4px 8px rgba(255,255,255,0.15),
+        0 3px 6px rgba(0,0,0,0.4);
 }
 
-/* Perfectly fitting discs */
+/* Realistic discs - exactly like real Connect Four */
 .disc {
-    width: 85%;
-    height: 85%;
+    width: 88%;
+    height: 88%;
     border-radius: 50%;
     transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     box-shadow: 
-        inset 0 -4px 8px rgba(0,0,0,0.4),
-        0 2px 4px rgba(0,0,0,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
+        inset 0 -6px 12px rgba(0,0,0,0.5),
+        inset 0 2px 4px rgba(255,255,255,0.3),
+        0 4px 8px rgba(0,0,0,0.4);
+    border: 2px solid rgba(255,255,255,0.4);
     position: relative;
     z-index: 2;
     opacity: 0;
     transform: translateY(-500px);
 }
 
+.disc::before {
+    content: '';
+    position: absolute;
+    top: 15%;
+    left: 15%;
+    right: 15%;
+    bottom: 15%;
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+    filter: blur(2px);
+    z-index: 3;
+}
+
 .disc::after {
     content: '';
     position: absolute;
-    top: 20%;
-    left: 20%;
-    right: 20%;
-    bottom: 20%;
-    background: rgba(255,255,255,0.2);
+    top: 25%;
+    left: 25%;
+    right: 25%;
+    bottom: 25%;
+    background: rgba(255,255,255,0.15);
     border-radius: 50%;
     filter: blur(1px);
+    z-index: 4;
 }
 
 .disc.red {
-    background: #e74c3c;
-    background: radial-gradient(circle at 30% 30%, #ff6b6b, #c0392b);
+    background: #e53935;
+    background: radial-gradient(circle at 35% 35%, #ff5252, #c62828);
+    border: 2px solid rgba(255,255,255,0.3);
 }
 
 .disc.yellow {
-    background: #f1c40f;
-    background: radial-gradient(circle at 30% 30%, #ffd93d, #f39c12);
+    background: #fdd835;
+    background: radial-gradient(circle at 35% 35%, #ffeb3b, #f9a825);
+    border: 2px solid rgba(255,255,255,0.3);
 }
 
 .disc.red, .disc.yellow {
@@ -256,9 +265,10 @@ h1 {
 .disc.winner {
     animation: pulse 1s infinite;
     box-shadow: 
-        inset 0 -4px 8px rgba(0,0,0,0.4),
-        0 0 15px gold,
-        0 0 30px gold;
+        inset 0 -6px 12px rgba(0,0,0,0.5),
+        inset 0 2px 4px rgba(255,255,255,0.3),
+        0 0 20px gold,
+        0 0 40px rgba(255,215,0,0.5);
 }
 
 @keyframes discDrop {
@@ -271,7 +281,7 @@ h1 {
         opacity: 1;
     }
     80% {
-        transform: translateY(-5px);
+        transform: translateY(-8px);
         opacity: 1;
     }
     100% {
@@ -282,8 +292,24 @@ h1 {
 
 @keyframes pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+    50% { transform: scale(1.08); }
     100% { transform: scale(1); }
+}
+
+/* Realistic board frame */
+.board-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 5;
+    border-radius: 16px;
+    border: 3px solid #0d47a1;
+    box-shadow: 
+        inset 0 0 0 2px rgba(255,255,255,0.1),
+        0 0 0 2px rgba(0,0,0,0.2);
 }
 
 .status {
@@ -346,13 +372,13 @@ h1 {
     }
     
     .board-container {
-        padding: 12px;
+        padding: 15px;
         margin: 15px 0;
-        border-radius: 12px;
+        border-radius: 15px;
     }
     
     .board {
-        gap: 0;
+        gap: 6px;
     }
     
     .slot {
