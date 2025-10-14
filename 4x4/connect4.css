@@ -17,83 +17,6 @@ body {
     background: linear-gradient(135deg, #1e3c72, #2a5298);
 }
 
-/* Roll Up Banner Styles */
-.banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    color: white;
-    padding: 12px 20px;
-    z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    transform: translateY(-100%);
-    transition: transform 0.4s ease-in-out;
-}
-
-.banner.show {
-    transform: translateY(0);
-}
-
-.banner-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    max-width: 1200px;
-    margin: 0 auto;
-    position: relative;
-}
-
-.banner-text {
-    font-size: 1.1rem;
-    font-weight: 600;
-    text-align: center;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-}
-
-.banner-btn {
-    background: rgba(255,255,255,0.2);
-    color: white;
-    text-decoration: none;
-    padding: 8px 20px;
-    border-radius: 25px;
-    font-weight: 600;
-    border: 2px solid rgba(255,255,255,0.3);
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-}
-
-.banner-btn:hover {
-    background: rgba(255,255,255,0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.banner-close {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    position: absolute;
-    right: 0;
-}
-
-.banner-close:hover {
-    background: rgba(255,255,255,0.2);
-    transform: scale(1.1);
-}
-
 .game-container {
     text-align: center;
     background: white;
@@ -104,7 +27,6 @@ body {
     max-width: 500px;
     margin: 10px;
     border: 4px solid #2c3e50;
-    margin-top: 60px;
 }
 
 h1 {
@@ -227,6 +149,7 @@ h1 {
     cursor: pointer;
 }
 
+/* Real Connect Four Board Style */
 .board-container {
     background: #1e88e5;
     background: linear-gradient(145deg, #1976d2, #1565c0);
@@ -259,6 +182,7 @@ h1 {
     background: transparent;
 }
 
+/* Realistic slots with proper 3D effect */
 .slot {
     background: #1565c0;
     background: linear-gradient(145deg, #1976d2, #0d47a1);
@@ -285,6 +209,7 @@ h1 {
         0 3px 6px rgba(0,0,0,0.4);
 }
 
+/* Realistic discs - exactly like real Connect Four */
 .disc {
     width: 85%;
     height: 85%;
@@ -445,35 +370,14 @@ h1 {
     background: linear-gradient(145deg, #229954, #1e8449);
 }
 
+/* Mobile optimizations */
 @media (max-width: 480px) {
-    .banner-content {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-    }
-    
-    .banner-text {
-        font-size: 1rem;
-    }
-    
-    .banner-btn {
-        padding: 6px 16px;
-        font-size: 0.9rem;
-    }
-    
-    .banner-close {
-        position: static;
-        align-self: flex-end;
-        margin-top: -5px;
-    }
-
     .game-container {
         padding: 20px 15px;
         margin: 5px;
         max-width: 95vw;
         border-radius: 15px;
         border-width: 3px;
-        margin-top: 80px;
     }
     
     h1 {
@@ -526,6 +430,7 @@ h1 {
     }
 }
 
+/* Confetti animation */
 @keyframes confettiFall {
     0% { 
         transform: translateY(-10px) rotate(0deg); 
@@ -564,12 +469,14 @@ h1 {
     background: #9b59b6;
 }
 
+/* Enhanced active player */
 .player.active .player-disc {
     transform: scale(1.15);
     box-shadow: 0 5px 15px rgba(0,0,0,0.4);
     border: 3px solid #fff;
 }
 
+/* Perfect alignment for player sections */
 .player:first-child {
     align-items: flex-start;
 }
