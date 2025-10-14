@@ -57,6 +57,14 @@ h1 {
     flex: 1;
 }
 
+.player:first-child {
+    align-items: flex-start;
+}
+
+.player:last-child {
+    align-items: flex-end;
+}
+
 .player-indicator {
     display: flex;
     flex-direction: column;
@@ -91,10 +99,17 @@ h1 {
     font-weight: 800;
 }
 
+.player.active .player-disc {
+    transform: scale(1.15);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    border: 3px solid #fff;
+}
+
 .scores {
     flex: 1;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .scores .score {
@@ -190,7 +205,6 @@ h1 {
 
 /* Perfectly aligned slots */
 .slot {
-    background: #1a5276;
     background: linear-gradient(145deg, #1a5276, #154360);
     border-radius: 50%;
     cursor: pointer;
@@ -404,11 +418,11 @@ h1 {
 /* Confetti animation */
 @keyframes confettiFall {
     0% { 
-        transform: translateY(-10px) rotate(0deg); 
+        transform: translateY(-10px) rotate(0deg);
         opacity: 1;
     }
     100% { 
-        transform: translateY(100vh) rotate(720deg); 
+        transform: translateY(100vh) rotate(720deg);
         opacity: 0;
     }
 }
@@ -438,24 +452,4 @@ h1 {
 
 .confetti:nth-child(5n) {
     background: #9b59b6;
-}
-
-/* Enhanced active player */
-.player.active .player-disc {
-    transform: scale(1.15);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-    border: 3px solid #fff;
-}
-
-/* Perfect alignment for player sections */
-.player:first-child {
-    align-items: flex-start;
-}
-
-.player:last-child {
-    align-items: flex-end;
-}
-
-.scores {
-    align-items: center;
 }
