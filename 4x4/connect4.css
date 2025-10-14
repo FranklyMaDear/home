@@ -120,6 +120,7 @@ h1 {
     margin-bottom: 25px;
     gap: 15px;
     padding: 0 10px;
+    flex-wrap: wrap;
 }
 
 .control-group {
@@ -145,6 +146,7 @@ h1 {
     font-weight: 500;
     min-width: 140px;
     text-align: center;
+    cursor: pointer;
 }
 
 /* Real Connect Four Board Style */
@@ -327,7 +329,7 @@ h1 {
     background: linear-gradient(145deg, #3498db, #2980b9);
     color: white;
     border: none;
-    padding: 15px 20px;
+    padding: 15px 25px;
     font-size: 1rem;
     border-radius: 12px;
     cursor: pointer;
@@ -336,7 +338,7 @@ h1 {
     font-family: inherit;
     font-weight: 700;
     flex: 1;
-    max-width: 150px;
+    max-width: 160px;
     border: 2px solid #2980b9;
 }
 
@@ -344,6 +346,28 @@ h1 {
     background: linear-gradient(145deg, #2980b9, #2471a3);
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.game-btn:active {
+    transform: translateY(0);
+}
+
+.game-btn.reset {
+    background: linear-gradient(145deg, #e74c3c, #c0392b);
+    border: 2px solid #c0392b;
+}
+
+.game-btn.reset:hover {
+    background: linear-gradient(145deg, #c0392b, #a93226);
+}
+
+.game-btn.new-game {
+    background: linear-gradient(145deg, #27ae60, #229954);
+    border: 2px solid #229954;
+}
+
+.game-btn.new-game:hover {
+    background: linear-gradient(145deg, #229954, #1e8449);
 }
 
 /* Mobile optimizations */
@@ -387,7 +411,7 @@ h1 {
     .game-btn {
         padding: 12px 15px;
         font-size: 0.9rem;
-        max-width: 120px;
+        max-width: 140px;
     }
     
     .status {
@@ -398,6 +422,11 @@ h1 {
     .control-group select {
         min-width: 120px;
         padding: 8px 12px;
+    }
+
+    .game-controls {
+        flex-direction: column;
+        gap: 10px;
     }
 }
 
@@ -453,4 +482,5 @@ h1 {
 }
 
 .player:last-child {
-    align-items: flex-enthere 
+    align-items: flex-end;
+}
