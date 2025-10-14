@@ -8,7 +8,8 @@ class Connect4Game {
         this.soundEnabled = true;
         this.gameMode = 'multiplayer';
         this.theme = 'space';
-        this.lastMoveTime = 0; // Add timestamp to prevent duplicate moves
+        this.lastMoveTime = 0;
+        this.winningCells = [];
         
         this.init();
     }
@@ -51,7 +52,6 @@ class Connect4Game {
         
         slot.appendChild(disc);
         
-        // Unified event handler for both click and touch
         slot.addEventListener('click', (e) => this.handleInteraction(col, e));
         slot.addEventListener('touchend', (e) => this.handleInteraction(col, e));
 
@@ -59,9 +59,8 @@ class Connect4Game {
     }
 
     handleInteraction(col, e) {
-        e.preventDefault(); // Prevent default to avoid unwanted behavior
+        e.preventDefault();
         const now = Date.now();
-        // Debounce: ignore if less than 300ms since last move
         if (now - this.lastMoveTime < 300) return;
         this.lastMoveTime = now;
         this.makeMove(col);
@@ -119,12 +118,16 @@ class Connect4Game {
     checkWin(col, row) {
         const player = this.gameBoard[col][row];
         const directions = [
-            [0, 1], [1, 0], [1, 1], [1, -1]
+            [0, 1],   // κάθετα
+            [1, 0],   // οριζόντια
+            [1, 1],   // διαγώνια ↘
+            [1, -1]   // διαγώνια ↗
         ];
         
         for (const [dx, dy] of directions) {
             let count = 1;
             
+            // Check positive direction
             for (let i = 1; i < 4; i++) {
                 const newCol = col + dx * i;
                 const newRow = row + dy * i;
@@ -136,6 +139,7 @@ class Connect4Game {
                 }
             }
             
+            // Check negative direction
             for (let i = 1; i < 4; i++) {
                 const newCol = col - dx * i;
                 const newRow = row - dy * i;
@@ -164,6 +168,7 @@ class Connect4Game {
         const player = this.gameBoard[col][row];
         const winningCells = [{ col, row }];
         
+        // Check positive direction
         for (let i = 1; i < 4; i++) {
             const newCol = col + dx * i;
             const newRow = row + dy * i;
@@ -175,6 +180,7 @@ class Connect4Game {
             }
         }
         
+        // Check negative direction  
         for (let i = 1; i < 4; i++) {
             const newCol = col - dx * i;
             const newRow = row - dy * i;
@@ -241,7 +247,7 @@ class Connect4Game {
             moveCol = this.getRandomMove();
         }
         
-        if (moveCol !== -1) {
+        if (moveCol !== -1 && this.gameActive) {
             this.makeMove(moveCol);
         }
     }
@@ -287,7 +293,8 @@ class Connect4Game {
         this.currentPlayer = 1;
         this.gameActive = true;
         this.movesHistory = [];
-        this.lastMoveTime = 0; // Reset move timestamp
+        this.lastMoveTime = 0;
+        this.winningCells = [];
         this.createBoard();
         this.updateStatus();
     }
@@ -304,7 +311,7 @@ class Connect4Game {
         this.currentPlayer = lastMove.player;
         this.updateStatus();
         this.playSound('undo');
-        this.lastMoveTime = 0; // Reset move timestamp
+        this.lastMoveTime = 0;
     }
 
     updateStatus() {
@@ -449,6 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.connect4Game = new Connect4Game();
 });
 
+// Add CSS animations
 const additionalCSS = `
 @keyframes pulse {
     0% { transform: scale(1); }
