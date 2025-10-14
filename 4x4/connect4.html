@@ -3,38 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect 4 vs AI</title>
+    <title>Connect 4</title>
     <link rel="stylesheet" href="connect4.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="theme-classic">
     <div class="game-container">
-        <h1>CONNECT 4 vs AI</h1>
+        <h1>CONNECT 4</h1>
         
-        <div class="game-info">
-            <div class="player-info">
-                <div class="player human-player active">
-                    <div class="player-disc red"></div>
-                    <span>Εσύ (Κόκκινο)</span>
+        <div class="game-header">
+            <div class="players-info">
+                <div class="player active" id="player1">
+                    <div class="player-indicator">
+                        <div class="player-disc red"></div>
+                        <span>Παίκτης 1</span>
+                    </div>
                 </div>
-                <div class="score-divider">VS</div>
-                <div class="player ai-player">
-                    <div class="player-disc yellow"></div>
-                    <span>AI (Κίτρινο)</span>
+                
+                <div class="scores" id="scores">
+                    <div class="score">0 - 0</div>
                 </div>
-            </div>
-            
-            <div class="scores" id="scores">
-                <div class="score">0 - 0</div>
+                
+                <div class="player" id="player2">
+                    <div class="player-indicator">
+                        <div class="player-disc yellow"></div>
+                        <span>Παίκτης 2</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="difficulty-controls">
-            <label for="difficulty">Δυσκολία AI:</label>
-            <select id="difficulty" onchange="connect4Game.setDifficulty(this.value)">
-                <option value="easy">Εύκολη</option>
-                <option value="medium" selected>Μεσαία</option>
-                <option value="hard">Δύσκολη</option>
-            </select>
+        <div class="game-controls">
+            <div class="control-group">
+                <label for="gameMode">Λειτουργία:</label>
+                <select id="gameMode" onchange="connect4Game.setGameMode(this.value)">
+                    <option value="multiplayer">2 Παίκτες</option>
+                    <option value="computer">Εναντίον AI</option>
+                </select>
+            </div>
         </div>
         
         <div class="board-container">
@@ -42,15 +48,12 @@
             <div class="board-overlay"></div>
         </div>
         
-        <div class="status" id="status">Σειρά σου! Παίξε σε οποιαδήποτε στήλη</div>
+        <div class="status" id="status">Σειρά του Παίκτη 1</div>
         
         <div class="game-buttons">
             <button class="game-btn" onclick="connect4Game.resetGame()">Νέο Παιχνίδι</button>
             <button class="game-btn" onclick="connect4Game.restartGame()">Επανεκκίνηση</button>
-        </div>
-
-        <div class="game-instructions">
-            <p>Πατήσε σε μια στήλη για να ρίξεις το δίσκο σου</p>
+            <button class="game-btn" onclick="connect4Game.undoMove()">Αναίρεση</button>
         </div>
     </div>
 
