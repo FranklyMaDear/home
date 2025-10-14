@@ -55,15 +55,12 @@ class Connect4Game {
         
         slot.appendChild(disc);
         
-        slot.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+        slot.addEventListener('click', () => {
             this.handleColumnClick(col);
         });
         
         slot.addEventListener('touchend', (e) => {
             e.preventDefault();
-            e.stopPropagation();
             this.handleColumnClick(col);
         });
 
@@ -89,25 +86,32 @@ class Connect4Game {
         this.gameBoard[col][row] = this.currentPlayer;
         this.movesHistory.push({ col, row, player: this.currentPlayer });
         
+        this.animateDiscDrop(col, row);
+        
+        setTimeout(() => {
+            if (this.checkWin(col, row)) {
+                this.handleWin();
+                return;
+            }
+            
+            if (this.checkDraw()) {
+                this.handleDraw();
+                return;
+            }
+            
+            this.switchPlayer();
+            
+            if (this.gameMode === 'computer' && this.currentPlayer === 2) {
+                setTimeout(() => this.makeAIMove(), 600);
+            }
+        }, 600);
+    }
+
+    animateDiscDrop(col, row) {
         const disc = document.getElementById(`disc-${col}-${row}`);
         if (disc) {
             disc.classList.add(this.currentPlayer === 1 ? 'red' : 'yellow');
-        }
-        
-        if (this.checkWin(col, row)) {
-            this.handleWin();
-            return;
-        }
-        
-        if (this.checkDraw()) {
-            this.handleDraw();
-            return;
-        }
-        
-        this.switchPlayer();
-        
-        if (this.gameMode === 'computer' && this.currentPlayer === 2) {
-            setTimeout(() => this.makeAIMove(), 600);
+            disc.style.animation = 'discDrop 0.6s ease-out forwards';
         }
     }
 
@@ -269,10 +273,6 @@ class Connect4Game {
             moveCol = this.findWinningMove(1);
         }
         if (moveCol === -1) {
-            // Try to create a double threat
-            moveCol = this.findDoubleThreatMove();
-        }
-        if (moveCol === -1) {
             // Strategic center preference
             moveCol = this.findStrategicMove();
         }
@@ -295,36 +295,6 @@ class Connect4Game {
                 this.gameBoard[col][row] = 0;
                 
                 if (isWinning) {
-                    return col;
-                }
-            }
-        }
-        return -1;
-    }
-
-    findDoubleThreatMove() {
-        // Look for moves that create multiple winning opportunities
-        for (let col = 0; col < this.cols; col++) {
-            const row = this.findAvailableRow(col);
-            if (row !== -1) {
-                this.gameBoard[col][row] = 2;
-                
-                // Count how many winning moves this creates
-                let threatCount = 0;
-                for (let nextCol = 0; nextCol < this.cols; nextCol++) {
-                    const nextRow = this.findAvailableRow(nextCol);
-                    if (nextRow !== -1) {
-                        this.gameBoard[nextCol][nextRow] = 2;
-                        if (this.checkWin(nextCol, nextRow)) {
-                            threatCount++;
-                        }
-                        this.gameBoard[nextCol][nextRow] = 0;
-                    }
-                }
-                
-                this.gameBoard[col][row] = 0;
-                
-                if (threatCount >= 2) {
                     return col;
                 }
             }
@@ -382,6 +352,7 @@ class Connect4Game {
         const disc = document.getElementById(`disc-${lastMove.col}-${lastMove.row}`);
         if (disc) {
             disc.className = 'disc';
+            disc.style.animation = 'none';
         }
         
         this.currentPlayer = lastMove.player;
