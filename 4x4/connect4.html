@@ -7,7 +7,12 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <!-- Favicon για iOS -->
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <style>
         * {
             box-sizing: border-box;
@@ -34,7 +39,7 @@
             position: fixed;
             top: 20px;
             left: 50%;
-            transform: translateX(-50%) translateY(-100px);
+            transform: translateX(-50%) translateY(-150px);
             background: linear-gradient(135deg, #6A11CB 0%, #2575FC 100%);
             color: white;
             padding: 16px 24px;
@@ -44,15 +49,18 @@
             display: flex;
             align-items: center;
             gap: 16px;
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: transform 0.8s ease-out, opacity 0.8s ease-out;
             border: 2px solid rgba(255,255,255,0.2);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             opacity: 0;
+            visibility: hidden;
         }
 
         .floating-banner.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
+            visibility: visible;
         }
 
         .banner-text {
@@ -75,6 +83,7 @@
             box-shadow: 0 4px 15px rgba(255,107,107,0.4);
             position: relative;
             overflow: hidden;
+            display: inline-block;
         }
 
         .support-link::before {
@@ -112,6 +121,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            -webkit-appearance: none;
         }
 
         .close-banner:hover {
@@ -129,11 +139,6 @@
             max-width: 500px;
             margin: 10px;
             border: 4px solid #2c3e50;
-            transition: transform 0.5s ease;
-        }
-
-        .game-container.banner-shown {
-            transform: translateY(0);
         }
 
         h1 {
@@ -254,6 +259,9 @@
             min-width: 140px;
             text-align: center;
             cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
 
         /* Real Connect Four Board Style */
@@ -447,6 +455,7 @@
             flex: 1;
             max-width: 160px;
             border: 2px solid #2980b9;
+            -webkit-appearance: none;
         }
 
         .game-btn:hover {
@@ -483,7 +492,7 @@
                 top: 10px;
                 left: 10px;
                 right: 10px;
-                transform: translateX(0) translateY(-100px);
+                transform: translateX(0) translateY(-150px);
                 border-radius: 25px;
                 padding: 12px 16px;
             }
@@ -781,6 +790,11 @@
                         localStorage.setItem('connectFourBannerClosed', 'false');
                     }, 60000);
                 });
+
+                // Force reflow for Chrome compatibility
+                setTimeout(() => {
+                    floatingBanner.style.willChange = 'transform, opacity';
+                }, 100);
             }
 
             updateGameMode() {
