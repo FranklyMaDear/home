@@ -4,560 +4,297 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sudoku</title>
-    <link rel="icon" type="image/png" href="sudoku-1player.png">
-    <link rel="apple-touch-icon" href="sudoku-1player.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Sudoku">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-        }
-        
-        /* Pop-up Μπάνερ υποστήριξης */
-        .support-banner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: linear-gradient(135deg, #ff9800, #f57c00);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 1000;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid #e65100;
-            transform: translateY(-100%);
-            animation: slideDown 0.5s forwards 1s;
-        }
-        
-        @keyframes slideDown {
-            to {
-                transform: translateY(0);
-            }
-        }
-        
-        .banner-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .banner-text {
-            font-weight: 800;
-            font-size: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            letter-spacing: 0.8px;
-        }
-        
-        .banner-arrow {
-            font-size: 24px;
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-6px);
-            }
-            60% {
-                transform: translateY(-4px);
-            }
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-            line-height: 1.6;
-            padding: 25px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #6a89cc, #4a69bd);
-            transition: background 0.5s ease;
+        }
+        
+        .support-banner {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 400px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
         .container {
             width: 100%;
-            max-width: 800px;
-            margin-top: 90px;
+            max-width: 400px;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         
-        .app-card {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 25px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            padding: 30px;
-            position: relative;
-        }
-        
-        .header-row {
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #eee;
+            margin-bottom: 15px;
         }
         
-        h1 {
-            color: #3e2723;
-            font-size: 36px;
-            font-weight: 800;
+        .game-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3436;
         }
         
-        #timer {
-            font-weight: bold;
-            color: #4e342e;
-            font-size: 28px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 12px 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border: 2px solid #ddd;
-        }
-        
-        .language-selector {
-            margin-bottom: 20px;
-        }
-        
-        #language {
-            width: 100%;
-            padding: 15px 20px;
-            border-radius: 15px;
-            border: 3px solid #ddd;
-            background: white;
+        .timer {
             font-size: 18px;
             font-weight: 600;
+            color: #636e72;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 10px;
         }
         
         .stats {
             display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            padding: 15px 0;
-            border-top: 3px solid #eee;
-            border-bottom: 3px solid #eee;
+            justify-content: space-around;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
         }
         
         .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 18px;
-            font-weight: 600;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #636e72;
+            margin-bottom: 4px;
         }
         
         .stat-value {
-            font-weight: bold;
-            font-size: 28px;
-            margin-top: 8px;
-            color: #4a69bd;
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3436;
         }
         
         .controls {
             display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 25px;
-            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
         }
         
-        select {
-            padding: 15px 20px;
-            border-radius: 15px;
-            border: 3px solid #ddd;
+        .controls select {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
             background: white;
-            font-size: 18px;
-            font-weight: 600;
-            flex-grow: 1;
         }
         
-        .board-wrap {
-            display: flex;
-            justify-content: center;
-            margin: 25px 0 30px;
-        }
-        
-        #sudoku-board {
+        .sudoku-board {
             display: grid;
-            border: 4px solid #3e2723;
-            background: white;
-            max-width: 100%;
-            aspect-ratio: 1 / 1;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 2px;
+            background: #2d3436;
+            border: 3px solid #2d3436;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            aspect-ratio: 1;
         }
         
         .cell {
+            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            background: white;
-            position: relative;
-            border: 2px solid #888;
-            font-size: 28px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
             user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            transition: all 0.2s;
         }
         
-        .prefilled {
-            background-color: #f7f6f3;
-            color: #3e2723;
-            font-weight: 800;
+        .cell.prefilled {
+            background: #f8f9fa;
+            color: #2d3436;
         }
         
-        .user-filled {
-            color: #4a69bd;
-            font-weight: 700;
+        .cell.user-filled {
+            color: #0984e3;
         }
         
-        .selected {
-            background-color: rgba(255, 235, 59, 0.7);
-            transform: scale(1.08);
-            z-index: 1;
-            box-shadow: 0 0 15px rgba(255, 235, 59, 0.5);
+        .cell.selected {
+            background: #ffeaa7;
         }
         
-        .related {
-            background-color: rgba(200, 230, 255, 0.5);
+        .cell.related {
+            background: #dfe6e9;
         }
         
-        .error {
-            background-color: rgba(255, 205, 210, 0.9);
-            color: #c62828;
-            animation: shake 0.5s ease-in-out;
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        
-        .buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 25px;
-        }
-        
-        .app-btn {
-            padding: 18px 25px;
-            border: none;
-            border-radius: 15px;
-            background: #8d6e63;
+        .cell.error {
+            background: #ff7675;
             color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            flex-grow: 1;
-            font-size: 18px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
         
-        .app-btn:hover {
-            background: #6d4c41;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        /* Borders for 2x3 boxes */
+        .cell:nth-child(3n) {
+            border-right: 2px solid #2d3436;
+        }
+        
+        .cell:nth-child(n+13):nth-child(-n+18) {
+            border-bottom: 2px solid #2d3436;
         }
         
         .number-pad {
             display: grid;
-            gap: 15px;
-            margin-top: 25px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
         }
         
         .number-btn {
-            padding: 18px 0;
+            padding: 16px;
             border: none;
-            border-radius: 15px;
-            background: #8d6e63;
+            border-radius: 12px;
+            background: #0984e3;
             color: white;
-            font-weight: bold;
+            font-size: 18px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 24px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s;
         }
         
-        .number-btn:hover {
-            background: #6d4c41;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        .number-btn:active {
+            transform: scale(0.95);
+            background: #0767b3;
         }
         
-        .clear-btn {
-            background: #bf360c;
+        .number-btn.clear {
+            background: #d63031;
         }
         
-        .clear-btn:hover {
-            background: #8d0000;
+        .number-btn.clear:active {
+            background: #b02a2a;
         }
         
-        .theme-selector {
+        .action-buttons {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 25px;
+            gap: 10px;
         }
         
-        .theme-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: 3px solid transparent;
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s;
         }
         
-        .theme-btn.active {
-            border-color: #3e2723;
-            transform: scale(1.2);
+        .action-btn.new {
+            background: #00b894;
+            color: white;
         }
         
-        .theme-classic {
-            background: linear-gradient(45deg, #8d6e63, #4a69bd);
+        .action-btn.check {
+            background: #fdcb6e;
+            color: #2d3436;
         }
         
-        .theme-dark {
-            background: linear-gradient(45deg, #2c3e50, #34495e);
+        .action-btn.undo {
+            background: #636e72;
+            color: white;
         }
         
-        .theme-nature {
-            background: linear-gradient(45deg, #27ae60, #2ecc71);
-        }
-        
-        .theme-sunset {
-            background: linear-gradient(45deg, #e74c3c, #f39c12);
+        .action-btn:active {
+            transform: scale(0.98);
         }
 
-        /* Βελτιωμένο responsive design */
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-                justify-content: flex-start;
-            }
-            
-            .container {
-                max-width: 100%;
-                margin-top: 80px;
-            }
-            
-            .app-card {
-                padding: 20px;
-                border-radius: 20px;
-            }
-            
-            h1 {
-                font-size: 28px;
-            }
-            
-            #timer {
-                font-size: 22px;
-                padding: 10px 15px;
-            }
-            
-            .stats {
-                margin: 15px 0;
-                padding: 12px 0;
-            }
-            
-            .stat-item {
-                font-size: 16px;
-            }
-            
-            .stat-value {
-                font-size: 22px;
-            }
-            
-            .controls {
-                gap: 10px;
-                margin-bottom: 20px;
-            }
-            
-            select {
-                padding: 12px 15px;
-                font-size: 16px;
-            }
-            
-            .board-wrap {
-                margin: 20px 0 25px;
-            }
-            
-            .cell {
-                font-size: 22px;
-            }
-            
-            .buttons {
-                gap: 10px;
-                margin-top: 20px;
-            }
-            
-            .app-btn {
-                padding: 15px 20px;
-                font-size: 16px;
-            }
-            
-            .number-pad {
-                gap: 10px;
-                margin-top: 20px;
-            }
-            
-            .number-btn {
-                padding: 15px 0;
-                font-size: 20px;
-            }
-            
-            .support-banner {
-                padding: 15px;
-            }
-            
-            .banner-text {
-                font-size: 16px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .cell {
-                font-size: 18px;
-            }
-            
-            .number-btn {
-                font-size: 18px;
-            }
-            
-            .banner-text {
-                font-size: 14px;
-            }
-            
-            .container {
-                margin-top: 70px;
-            }
-            
-            h1 {
-                font-size: 24px;
-            }
-            
-            #timer {
-                font-size: 18px;
-            }
+        /* Buy me a coffee widget adjustment */
+        .bmc-btn-container {
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
-    <!-- Pop-up Μπάνερ υποστήριξης -->
-    <div class="support-banner" id="support-banner">
-        <div class="banner-content">
-            <span class="banner-text">🎮 Υποστηρίξτε την ανάπτυξη του παιχνιδιού! 🎮</span>
-            <span class="banner-arrow">⬆️</span>
-        </div>
+    <div class="support-banner">
+        🎮 Υποστηρίξτε την ανάπτυξη του παιχνιδιού!
     </div>
 
     <div class="container">
-        <div class="app-card">
-            <div class="header-row">
-                <h1 id="game-title">My Sudoku</h1>
-                <div id="timer">00:00</div>
+        <div class="header">
+            <div class="game-title">Sudoku</div>
+            <div class="timer" id="timer">00:00</div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">Σφάλματα</div>
+                <div class="stat-value" id="error-count">0</div>
             </div>
-            
-            <div class="language-selector">
-                <select id="language">
-                    <option value="en">English</option>
-                    <option value="el" selected>Ελληνικά</option>
-                    <option value="es">Español</option>
-                    <option value="de">Deutsch</option>
-                    <option value="zh">中文</option>
-                    <option value="ru">Русский</option>
-                    <option value="tr">Türkçe</option>
-                    <option value="ar">العربية</option>
-                    <option value="af">Afrikaans</option>
-                </select>
+            <div class="stat-item">
+                <div class="stat-label">Undo</div>
+                <div class="stat-value" id="undo-count">0</div>
             </div>
-            
-            <div class="stats">
-                <div class="stat-item">
-                    <span id="errors-label">Σφάλματα</span>
-                    <div class="stat-value" id="error-count">0</div>
-                </div>
-                <div class="stat-item">
-                    <span id="undo-label">Undo</span>
-                    <div class="stat-value" id="undo-count">0</div>
-                </div>
-                <div class="stat-item">
-                    <span id="level-label">Επίπεδο</span>
-                    <div class="stat-value" id="current-level">1</div>
-                </div>
-            </div>
-            
-            <div class="controls">
-                <select id="size">
-                    <option value="4">4x4</option>
-                    <option value="6" selected>6x6</option>
-                    <option value="8">8x8</option>
-                    <option value="9">9x9</option>
-                </select>
-                
-                <select id="level">
-                    <option value="easy" id="easy-label" selected>Εύκολο</option>
-                    <option value="medium" id="medium-label">Μεσαίο</option>
-                    <option value="hard" id="hard-label">Δύσκολο</option>
-                </select>
-            </div>
-            
-            <div class="board-wrap">
-                <div id="sudoku-board"></div>
-            </div>
-            
-            <div class="number-pad" id="number-pad">
-                <!-- Numbers will be generated dynamically -->
-            </div>
-            
-            <div class="buttons">
-                <button class="app-btn" id="new-game">Νέο</button>
-                <button class="app-btn" id="check-solution">Έλεγχος</button>
-                <button class="app-btn" id="undo-btn">Undo</button>
-            </div>
-            
-            <div class="theme-selector">
-                <div class="theme-btn theme-classic active" data-theme="classic"></div>
-                <div class="theme-btn theme-dark" data-theme="dark"></div>
-                <div class="theme-btn theme-nature" data-theme="nature"></div>
-                <div class="theme-btn theme-sunset" data-theme="sunset"></div>
+            <div class="stat-item">
+                <div class="stat-label">Επίπεδο</div>
+                <div class="stat-value" id="current-level">1</div>
             </div>
         </div>
+        
+        <div class="controls">
+            <select id="size">
+                <option value="6">6x6</option>
+                <option value="9">9x9</option>
+            </select>
+            <select id="level">
+                <option value="easy">Εύκολο</option>
+                <option value="medium">Μεσαίο</option>
+                <option value="hard">Δύσκολο</option>
+            </select>
+        </div>
+        
+        <div class="sudoku-board" id="sudoku-board">
+            <!-- Cells will be generated here -->
+        </div>
+        
+        <div class="number-pad" id="number-pad">
+            <!-- Number buttons will be generated here -->
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-btn new" id="new-game">Νέο</button>
+            <button class="action-btn check" id="check-solution">Έλεγχος</button>
+            <button class="action-btn undo" id="undo-btn">Undo</button>
+        </div>
     </div>
-
-    <!-- Ηχητικά εφέ -->
-    <audio id="complete-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
-    <audio id="click-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" preload="auto"></audio>
-    <audio id="error-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3" preload="auto"></audio>
-    <audio id="level-up-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" preload="auto"></audio>
 
     <!-- Buy Me a Coffee Widget -->
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="franklymadear" data-description="Support me on Buy me a coffee!" data-message="" data-color="#FF813F" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 
     <script>
-        // Βασικός κώδικας του παιχνιδιού Sudoku
         class SudokuGame {
-            constructor(size, level) {
-                this.size = size;
+            constructor(size = 6, level = 'easy') {
+                this.size = parseInt(size);
                 this.level = level;
                 this.board = [];
                 this.solution = [];
@@ -566,26 +303,15 @@
                 this.timerInterval = null;
                 this.errors = 0;
                 this.moveHistory = [];
-                this.currentLanguage = 'el';
                 this.currentLevel = 1;
                 
-                this.initializeGame();
-            }
-            
-            initializeGame() {
                 this.generateSudoku();
                 this.startTimer();
             }
             
             generateSudoku() {
-                // Προσαρμοσμένα πρότυπα λύσεων
+                // Προσαρμοσμένα πρότυπα για 6x6 και 9x9
                 const solutionTemplates = {
-                    4: [
-                        [1, 2, 3, 4],
-                        [3, 4, 1, 2],
-                        [2, 1, 4, 3],
-                        [4, 3, 2, 1]
-                    ],
                     6: [
                         [1, 2, 3, 4, 5, 6],
                         [4, 5, 6, 1, 2, 3],
@@ -610,7 +336,7 @@
                 this.solution = JSON.parse(JSON.stringify(solutionTemplates[this.size]));
                 
                 // Προσδιορισμός αριθμού κελιών που θα εμφανίζονται
-                let cellsToShow = Math.floor(this.size * this.size * 0.5);
+                let cellsToShow = Math.floor(this.size * this.size * 0.5); // Easy
                 if (this.level === 'medium') cellsToShow = Math.floor(this.size * this.size * 0.4);
                 if (this.level === 'hard') cellsToShow = Math.floor(this.size * this.size * 0.3);
                 
@@ -631,7 +357,12 @@
             }
             
             selectCell(row, col) {
-                this.selectedCell = { row, col };
+                // Μόνο κενά κελιά μπορούν να επιλεγούν
+                if (this.board[row][col] === '') {
+                    this.selectedCell = { row, col };
+                    return true;
+                }
+                return false;
             }
             
             placeNumber(num) {
@@ -704,43 +435,35 @@
             }
         }
 
-        // Αρχικοποίηση του παιχνιδιού
-        let game = new SudokuGame(6, 'easy');
+        // Αρχικοποίηση παιχνιδιού
+        let game = new SudokuGame();
 
-        // Συναρτήσεις για το UI
+        // Συναρτήσεις UI
         function renderBoard() {
             const boardElement = document.getElementById('sudoku-board');
             boardElement.innerHTML = '';
             boardElement.style.gridTemplateColumns = `repeat(${game.size}, 1fr)`;
             boardElement.style.gridTemplateRows = `repeat(${game.size}, 1fr)`;
             
-            // Προσαρμογή μεγέθους για responsiveness
-            const boardWidth = Math.min(500, window.innerWidth - 60);
-            const cellSize = boardWidth / game.size;
-            
             for (let row = 0; row < game.size; row++) {
                 for (let col = 0; col < game.size; col++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    cell.style.width = `${cellSize}px`;
-                    cell.style.height = `${cellSize}px`;
                     
                     if (game.board[row][col] !== '') {
                         cell.textContent = game.board[row][col];
                         cell.classList.add('prefilled');
                     }
                     
-                    // Προσθήκη χοντρών ορίων για υπο-τετράγωνα
-                    const subSize = Math.sqrt(game.size);
-                    if (row % subSize === 0) cell.style.borderTopWidth = '3px';
-                    if (col % subSize === 0) cell.style.borderLeftWidth = '3px';
-                    if (row === game.size - 1) cell.style.borderBottomWidth = '3px';
-                    if (col === game.size - 1) cell.style.borderRightWidth = '3px';
+                    // Έλεγχος για λάθος τιμή
+                    if (game.board[row][col] !== '' && game.board[row][col] !== game.solution[row][col]) {
+                        cell.classList.add('error');
+                    }
                     
                     cell.addEventListener('click', () => {
-                        game.selectCell(row, col);
-                        highlightSelectedCell();
-                        playSound('click');
+                        if (game.selectCell(row, col)) {
+                            highlightSelectedCell();
+                        }
                     });
                     
                     boardElement.appendChild(cell);
@@ -752,9 +475,7 @@
 
         function highlightSelectedCell() {
             const cells = document.querySelectorAll('.cell');
-            cells.forEach(cell => {
-                cell.classList.remove('selected', 'related', 'error');
-            });
+            cells.forEach(cell => cell.classList.remove('selected', 'related'));
             
             if (!game.selectedCell) return;
             
@@ -764,37 +485,18 @@
             // Επισήμανση επιλεγμένου κελιού
             cells[selectedIndex].classList.add('selected');
             
-            // Επισήμανση σχετικών κελιών
+            // Επισήμανση σχετικών κελιών (ίδια γραμμή και στήλη)
             for (let i = 0; i < game.size; i++) {
-                // Ίδια γραμμή
-                if (i !== col) {
-                    cells[row * game.size + i].classList.add('related');
-                }
-                // Ίδια στήλη
-                if (i !== row) {
-                    cells[i * game.size + col].classList.add('related');
-                }
-            }
-            
-            // Επισήμανση υπο-τετραγώνου
-            const subSize = Math.sqrt(game.size);
-            const startRow = Math.floor(row / subSize) * subSize;
-            const startCol = Math.floor(col / subSize) * subSize;
-            
-            for (let i = startRow; i < startRow + subSize; i++) {
-                for (let j = startCol; j < startCol + subSize; j++) {
-                    if (i !== row || j !== col) {
-                        cells[i * game.size + j].classList.add('related');
-                    }
-                }
+                if (i !== col) cells[row * game.size + i].classList.add('related');
+                if (i !== row) cells[i * game.size + col].classList.add('related');
             }
         }
 
         function renderNumberPad() {
             const numberPad = document.getElementById('number-pad');
             numberPad.innerHTML = '';
-            numberPad.style.gridTemplateColumns = `repeat(${Math.min(game.size, 6)}, 1fr)`;
             
+            // Δημιουργία κουμπιών αριθμών
             for (let i = 1; i <= game.size; i++) {
                 const button = document.createElement('button');
                 button.className = 'number-btn';
@@ -805,14 +507,12 @@
                         renderBoard();
                         updateStats();
                         
-                        if (success) {
-                            playSound('click');
-                            if (game.isComplete()) {
-                                playSound('complete');
-                                alert('Συγχαρητήρια! Ολοκληρώσατε το Sudoku!');
-                            }
-                        } else {
-                            playSound('error');
+                        if (success && game.isComplete()) {
+                            setTimeout(() => {
+                                alert('🎉 Συγχαρητήρια! Ολοκληρώσατε το Sudoku!');
+                                game.currentLevel++;
+                                updateStats();
+                            }, 100);
                         }
                     }
                 });
@@ -821,14 +521,13 @@
             
             // Κουμπί εκκαθάρισης
             const clearButton = document.createElement('button');
-            clearButton.className = 'number-btn clear-btn';
+            clearButton.className = 'number-btn clear';
             clearButton.textContent = 'X';
             clearButton.addEventListener('click', () => {
                 if (game.selectedCell) {
                     game.clearCell();
                     renderBoard();
                     updateStats();
-                    playSound('click');
                 }
             });
             numberPad.appendChild(clearButton);
@@ -840,22 +539,12 @@
             document.getElementById('current-level').textContent = game.currentLevel;
         }
 
-        function playSound(type) {
-            try {
-                const sound = document.getElementById(`${type}-sound`);
-                if (sound) {
-                    sound.currentTime = 0;
-                    sound.play();
-                }
-            } catch (e) {
-                console.log('Αδυναμία αναπαραγωγής ήχου:', e);
-            }
-        }
-
         // Event Listeners
         document.getElementById('new-game').addEventListener('click', () => {
-            game = new SudokuGame(parseInt(document.getElementById('size').value), 
-                                document.getElementById('level').value);
+            game = new SudokuGame(
+                document.getElementById('size').value,
+                document.getElementById('level').value
+            );
             renderBoard();
             renderNumberPad();
             updateStats();
@@ -863,23 +552,21 @@
 
         document.getElementById('check-solution').addEventListener('click', () => {
             if (game.isComplete()) {
-                alert('Συγχαρητήρια! Η λύση είναι σωστή!');
+                alert('✅ Σωστή λύση! Συγχαρητήρια!');
             } else {
-                alert('Η λύση δεν είναι ακόμα σωστή. Συνεχίστε!');
+                alert('❌ Η λύση δεν είναι ακόμα σωστή. Συνεχίστε!');
             }
-            playSound('click');
         });
 
         document.getElementById('undo-btn').addEventListener('click', () => {
             if (game.undo()) {
                 renderBoard();
                 updateStats();
-                playSound('click');
             }
         });
 
         document.getElementById('size').addEventListener('change', function() {
-            game = new SudokuGame(parseInt(this.value), game.level);
+            game = new SudokuGame(this.value, game.level);
             renderBoard();
             renderNumberPad();
             updateStats();
@@ -893,18 +580,14 @@
         });
 
         // Banner event
-        document.getElementById('support-banner').addEventListener('click', function() {
+        document.querySelector('.support-banner').addEventListener('click', () => {
             window.open('https://otieu.com/4/10000601', '_blank');
-            playSound('click');
         });
 
         // Αρχικοποίηση
         renderBoard();
         renderNumberPad();
         updateStats();
-
-        // Προσαρμογή μεγέθους όταν αλλάζει το μέγεθος παραθύρου
-        window.addEventListener('resize', renderBoard);
     </script>
 </body>
 </html>
