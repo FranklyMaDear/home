@@ -29,127 +29,89 @@
             position: relative;
         }
 
-        /* Popup Support Banner */
-        .popup-overlay {
+        /* Top Slide-in Banner */
+        .top-banner {
             position: fixed;
-            top: 0;
+            top: -100px;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .popup-banner {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            position: relative;
-            animation: slideUp 0.4s ease;
-        }
-
-        .popup-title {
+            background: linear-gradient(135deg, #FFD93D, #FF9A3D);
             color: #2c3e50;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-
-        .popup-text {
-            color: #555;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .support-links {
+            padding: 15px 20px;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            align-items: center;
+            transition: top 0.6s ease-out;
+            border-bottom: 3px solid #FF6B6B;
+        }
+
+        .top-banner.show {
+            top: 0;
+        }
+
+        .banner-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            gap: 15px;
+        }
+
+        .coffee-icon {
+            font-size: 24px;
+            animation: bounce 2s infinite;
+        }
+
+        .banner-text {
+            font-size: 16px;
+            font-weight: 600;
         }
 
         .support-link {
-            background: linear-gradient(135deg, #3498db, #2980b9);
+            background: #FF6B6B;
             color: white;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 8px 16px;
+            border-radius: 20px;
             text-decoration: none;
             font-weight: bold;
+            font-size: 14px;
             transition: all 0.3s ease;
-            border: 2px solid #2980b9;
+            border: 2px solid #FF6B6B;
+            white-space: nowrap;
         }
 
         .support-link:hover {
             background: transparent;
-            color: #2980b9;
-            transform: translateY(-2px);
+            color: #FF6B6B;
         }
 
-        .support-link.monetag {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            border-color: #ee5a24;
-        }
-
-        .support-link.monetag:hover {
-            background: transparent;
-            color: #ee5a24;
-        }
-
-        .popup-actions {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .popup-btn {
-            flex: 1;
-            padding: 10px 15px;
+        .close-banner {
+            background: none;
             border: none;
-            border-radius: 20px;
-            font-weight: bold;
+            color: #2c3e50;
+            font-size: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            padding: 5px;
+            margin-left: 15px;
+            transition: color 0.3s ease;
         }
 
-        .popup-btn.close {
-            background: #95a5a6;
-            color: white;
+        .close-banner:hover {
+            color: #FF6B6B;
         }
 
-        .popup-btn.close:hover {
-            background: #7f8c8d;
-        }
-
-        .popup-btn.remind {
-            background: #3498db;
-            color: white;
-        }
-
-        .popup-btn.remind:hover {
-            background: #2980b9;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to { 
-                opacity: 1;
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
                 transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-5px);
+            }
+            60% {
+                transform: translateY(-3px);
             }
         }
 
@@ -163,6 +125,11 @@
             max-width: 500px;
             margin: 10px;
             border: 4px solid #2c3e50;
+            transition: margin-top 0.6s ease-out;
+        }
+
+        .game-container.banner-shown {
+            margin-top: 80px;
         }
 
         h1 {
@@ -508,16 +475,27 @@
 
         /* Mobile optimizations */
         @media (max-width: 480px) {
-            .popup-banner {
-                padding: 20px;
+            .top-banner {
+                padding: 12px 15px;
             }
             
-            .popup-title {
-                font-size: 1.3rem;
-            }
-            
-            .popup-actions {
+            .banner-content {
                 flex-direction: column;
+                gap: 8px;
+            }
+            
+            .banner-text {
+                font-size: 14px;
+                text-align: center;
+            }
+            
+            .support-link {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            
+            .game-container.banner-shown {
+                margin-top: 120px;
             }
             
             .game-container {
@@ -640,25 +618,17 @@
     </style>
 </head>
 <body>
-    <!-- Popup Support Banner -->
-    <div class="popup-overlay" id="popupOverlay">
-        <div class="popup-banner">
-            <h2 class="popup-title">Υποστηρίξτε το Connect Four!</h2>
-            <p class="popup-text">Αν σας αρέσει το παιχνίδι, μπορείτε να μας υποστηρίξετε για να συνεχίσουμε να αναπτύσσουμε και να βελτιώνουμε το παιχνίδι.</p>
-            
-            <div class="support-links">
-                <a href="https://otieu.com/4/10000601" target="_blank" class="support-link monetag">Υποστήριξη μέσω Monetag</a>
-                <a href="#" class="support-link" id="buyMeCoffeeLink">Buy Me a Coffee</a>
-            </div>
-            
-            <div class="popup-actions">
-                <button class="popup-btn close" id="closePopup">Κλείσιμο</button>
-                <button class="popup-btn remind" id="remindLater">Υπενθύμιση αργότερα</button>
-            </div>
+    <!-- Top Slide-in Banner -->
+    <div class="top-banner" id="topBanner">
+        <div class="banner-content">
+            <div class="coffee-icon">☕</div>
+            <div class="banner-text">Υποστηρίξτε την ανάπτυξη του παιχνιδιού!</div>
+            <a href="https://otieu.com/4/10000601" target="_blank" class="support-link">Υποστήριξη</a>
         </div>
+        <button class="close-banner" id="closeBanner">×</button>
     </div>
 
-    <div class="game-container">
+    <div class="game-container" id="gameContainer">
         <h1>CONNECT FOUR</h1>
         
         <div class="game-header">
@@ -731,7 +701,7 @@
                 
                 this.initializeBoard();
                 this.setupEventListeners();
-                this.setupPopupBanner();
+                this.setupBanner();
                 this.updateGameMode();
                 this.updateStatus();
             }
@@ -769,43 +739,26 @@
                 });
             }
 
-            setupPopupBanner() {
-                const popupOverlay = document.getElementById('popupOverlay');
-                const closePopup = document.getElementById('closePopup');
-                const remindLater = document.getElementById('remindLater');
-                const buyMeCoffeeLink = document.getElementById('buyMeCoffeeLink');
+            setupBanner() {
+                const topBanner = document.getElementById('topBanner');
+                const closeBanner = document.getElementById('closeBanner');
+                const gameContainer = document.getElementById('gameContainer');
                 
-                // Check if user has already closed the popup
-                const popupClosed = localStorage.getItem('connectFourPopupClosed');
-                const popupRemindTime = localStorage.getItem('connectFourPopupRemind');
+                // Check if user has already closed the banner
+                const bannerClosed = localStorage.getItem('connectFourBannerClosed');
                 
-                if (popupClosed === 'true') {
-                    popupOverlay.style.display = 'none';
-                } else if (popupRemindTime) {
-                    const remindTime = parseInt(popupRemindTime);
-                    const currentTime = new Date().getTime();
-                    // Show popup again after 24 hours
-                    if (currentTime - remindTime < 24 * 60 * 60 * 1000) {
-                        popupOverlay.style.display = 'none';
-                    }
+                if (bannerClosed !== 'true') {
+                    // Show banner after a short delay when game starts
+                    setTimeout(() => {
+                        topBanner.classList.add('show');
+                        gameContainer.classList.add('banner-shown');
+                    }, 1000);
                 }
                 
-                closePopup.addEventListener('click', () => {
-                    popupOverlay.style.display = 'none';
-                    localStorage.setItem('connectFourPopupClosed', 'true');
-                });
-                
-                remindLater.addEventListener('click', () => {
-                    popupOverlay.style.display = 'none';
-                    localStorage.setItem('connectFourPopupRemind', new Date().getTime().toString());
-                });
-                
-                buyMeCoffeeLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    // Trigger Buy Me A Coffee widget
-                    if (window.BMC && window.BMC.openWidget) {
-                        window.BMC.openWidget();
-                    }
+                closeBanner.addEventListener('click', () => {
+                    topBanner.classList.remove('show');
+                    gameContainer.classList.remove('banner-shown');
+                    localStorage.setItem('connectFourBannerClosed', 'true');
                 });
             }
 
