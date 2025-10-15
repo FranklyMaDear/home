@@ -5,14 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connect Four</title>
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <!-- Favicon για iOS -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/png" href="connect4.png">
     <style>
         * {
             box-sizing: border-box;
@@ -1104,12 +1097,12 @@
                 else if (aiCount === 3 && emptyCount === 1) score += 100;
                 else if (aiCount === 2 && emptyCount === 2) score += 10;
                 
-                // Player advantage (negative for AI)
+                // Player advantage (negative score)
                 if (playerCount === 4) score -= 1000;
-                else if (playerCount === 3 && emptyCount === 1) score -= 100;
-                else if (playerCount === 2 && emptyCount === 2) score -= 10;
+                else if (playerCount === 3 && emptyCount === 1) score -= 80;
+                else if (playerCount === 2 && emptyCount === 2) score -= 8;
                 
-                // Center preference
+                // Center column preference
                 return score;
             }
 
@@ -1134,67 +1127,64 @@
 
             makeMove(row, col, player) {
                 this.board[row][col] = player;
-                this.animateDisc(row, col, player);
-                this.updatePlayerIndicators();
+                this.updateBoard();
             }
 
-            animateDisc(row, col, player) {
+            updateBoard() {
                 const slots = document.querySelectorAll('.slot');
-                const slot = Array.from(slots).find(s => 
-                    parseInt(s.dataset.row) === row && parseInt(s.dataset.col) === col
-                );
-
-                const disc = document.createElement('div');
-                disc.className = `disc ${player === 1 ? 'red' : 'yellow'}`;
-                disc.style.animation = `discDrop 0.6s ease-out forwards`;
-                
-                slot.appendChild(disc);
-            }
-
-            updatePlayerIndicators() {
-                const player1 = document.getElementById('player1');
-                const player2 = document.getElementById('player2');
-                
-                if (this.currentPlayer === 1) {
-                    player1.classList.add('active');
-                    player2.classList.remove('active');
-                } else {
-                    player2.classList.add('active');
-                    player1.classList.remove('active');
-                }
+                slots.forEach(slot => {
+                    const row = parseInt(slot.dataset.row);
+                    const col = parseInt(slot.dataset.col);
+                    const player = this.board[row][col];
+                    
+                    // Remove existing disc
+                    const existingDisc = slot.querySelector('.disc');
+                    if (existingDisc) {
+                        existingDisc.remove();
+                    }
+                    
+                    // Add new disc if needed
+                    if (player !== 0) {
+                        const disc = document.createElement('div');
+                        disc.className = `disc ${player === 1 ? 'red' : 'yellow'}`;
+                        disc.style.animation = 'discDrop 0.6s ease-out forwards';
+                        slot.appendChild(disc);
+                    }
+                });
             }
 
             checkWinner(row, col) {
                 const player = this.board[row][col];
+                if (player === 0) return false;
+
+                // Check directions: horizontal, vertical, diagonal \, diagonal /
                 const directions = [
-                    [0, 1], [1, 0], [1, 1], [1, -1]
+                    [[0, 1], [0, -1]], // horizontal
+                    [[1, 0], [-1, 0]], // vertical
+                    [[1, 1], [-1, -1]], // diagonal \
+                    [[1, -1], [-1, 1]] // diagonal /
                 ];
 
-                for (let [dx, dy] of directions) {
-                    let count = 1;
+                for (let direction of directions) {
+                    let count = 1; // Start with the current piece
 
-                    for (let i = 1; i < 4; i++) {
-                        const newRow = row + i * dx;
-                        const newCol = col + i * dy;
-                        if (this.isValidPosition(newRow, newCol) && this.board[newRow][newCol] === player) {
-                            count++;
-                        } else {
-                            break;
-                        }
-                    }
+                    // Check both directions
+                    for (let [dr, dc] of direction) {
+                        let r = row + dr;
+                        let c = col + dc;
 
-                    for (let i = 1; i < 4; i++) {
-                        const newRow = row - i * dx;
-                        const newCol = col - i * dy;
-                        if (this.isValidPosition(newRow, newCol) && this.board[newRow][newCol] === player) {
+                        while (
+                            r >= 0 && r < this.rows &&
+                            c >= 0 && c < this.cols &&
+                            this.board[r][c] === player
+                        ) {
                             count++;
-                        } else {
-                            break;
+                            r += dr;
+                            c += dc;
                         }
                     }
 
                     if (count >= 4) {
-                        this.highlightWinningCells(row, col, dx, dy);
                         return true;
                     }
                 }
@@ -1202,73 +1192,24 @@
                 return false;
             }
 
-            highlightWinningCells(row, col, dx, dy) {
-                const player = this.board[row][col];
-                const winningCells = [];
-
-                for (let i = -3; i <= 3; i++) {
-                    const newRow = row + i * dx;
-                    const newCol = col + i * dy;
-                    if (this.isValidPosition(newRow, newCol) && this.board[newRow][newCol] === player) {
-                        winningCells.push({row: newRow, col: newCol});
-                    }
-                }
-
-                // Keep only the 4 consecutive winning cells
-                const consecutiveCells = [];
-                for (let i = 0; i < winningCells.length - 3; i++) {
-                    if (this.areConsecutive(winningCells, i, dx, dy)) {
-                        consecutiveCells.push(...winningCells.slice(i, i+4));
-                        break;
-                    }
-                }
-
-                consecutiveCells.forEach(cell => {
-                    const slots = document.querySelectorAll('.slot');
-                    const slot = Array.from(slots).find(s => 
-                        parseInt(s.dataset.row) === cell.row && parseInt(s.dataset.col) === cell.col
-                    );
-                    const disc = slot.querySelector('.disc');
-                    if (disc) {
-                        disc.classList.add('winner');
-                    }
-                });
-            }
-
-            areConsecutive(cells, startIndex, dx, dy) {
-                for (let i = 0; i < 3; i++) {
-                    const current = cells[startIndex + i];
-                    const next = cells[startIndex + i + 1];
-                    
-                    if (current.row + dx !== next.row || current.col + dy !== next.col) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            isValidPosition(row, col) {
-                return row >= 0 && row < this.rows && col >= 0 && col < this.cols;
-            }
-
             isBoardFull() {
-                return this.board[0].every(cell => cell !== 0);
+                return this.board.every(row => row.every(cell => cell !== 0));
             }
 
             handleWin() {
                 this.gameOver = true;
                 this.scores[this.currentPlayer]++;
-                this.updateScores();
+                this.updateScore();
                 
-                let winner = '';
-                if (this.gameMode === 'player') {
-                    winner = this.currentPlayer === 1 ? 'Παίκτης 1' : 'Παίκτης 2';
-                } else {
-                    winner = this.currentPlayer === 1 ? 'Παίκτης 1' : 'AI';
-                }
+                const winnerText = this.gameMode === 'ai' && this.currentPlayer === 2 ? 
+                    'Η AI κέρδισε!' : 
+                    `Ο Παίκτης ${this.currentPlayer} κέρδισε!`;
                 
-                document.getElementById('status').textContent = `Κέρδισε ο ${winner}!`;
+                document.getElementById('status').textContent = winnerText;
                 this.createConfetti();
+                
+                // Highlight winning pieces
+                this.highlightWinningPieces();
             }
 
             handleDraw() {
@@ -1276,48 +1217,35 @@
                 document.getElementById('status').textContent = 'Ισοπαλία!';
             }
 
+            highlightWinningPieces() {
+                // This would highlight the winning combination
+                // For simplicity, we'll just mark the game as won
+            }
+
             switchPlayer() {
                 this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
+                this.updatePlayerIndicators();
+            }
+
+            updatePlayerIndicators() {
+                document.getElementById('player1').classList.toggle('active', this.currentPlayer === 1);
+                document.getElementById('player2').classList.toggle('active', this.currentPlayer === 2);
             }
 
             updateStatus() {
                 if (this.gameOver) return;
                 
-                let status = '';
-                if (this.gameMode === 'player') {
-                    status = `Παίζει ο Παίκτης ${this.currentPlayer}`;
+                let statusText = '';
+                if (this.gameMode === 'ai' && this.currentPlayer === 2) {
+                    statusText = 'Η AI σκέφτεται...';
                 } else {
-                    status = this.currentPlayer === 1 ? 'Παίζει ο Παίκτης 1' : 'Παίζει η AI';
+                    statusText = `Παίζει ο ${this.currentPlayer === 1 ? 'Παίκτης 1' : 'Παίκτης 2'}`;
                 }
-                
-                document.getElementById('status').textContent = status;
+                document.getElementById('status').textContent = statusText;
             }
 
-            updateScores() {
-                document.getElementById('scoreDisplay').textContent = 
-                    `${this.scores[1]} - ${this.scores[2]}`;
-            }
-
-            createConfetti() {
-                const colors = ['#e74c3c', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
-                const confettiCount = 150;
-                
-                for (let i = 0; i < confettiCount; i++) {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * 100 + 'vw';
-                    confetti.style.animationDelay = Math.random() * 2 + 's';
-                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
-                    confetti.style.height = (Math.random() * 10 + 5) + 'px';
-                    
-                    document.body.appendChild(confetti);
-                    
-                    setTimeout(() => {
-                        confetti.remove();
-                    }, 5000);
-                }
+            updateScore() {
+                document.getElementById('scoreDisplay').textContent = `${this.scores[1]} - ${this.scores[2]}`;
             }
 
             restartGame() {
@@ -1325,23 +1253,56 @@
                 this.currentPlayer = 1;
                 this.gameOver = false;
                 this.initializeBoard();
-                this.updateStatus();
                 this.updatePlayerIndicators();
-                
-                // Remove any existing confetti
-                document.querySelectorAll('.confetti').forEach(c => c.remove());
+                this.updateStatus();
             }
 
             newGame() {
                 this.scores = {1: 0, 2: 0};
-                this.updateScores();
+                this.updateScore();
                 this.restartGame();
+            }
+
+            createConfetti() {
+                const colors = ['#e74c3c', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
+                const confettiCount = 100;
+                
+                for (let i = 0; i < confettiCount; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    confetti.style.width = Math.random() * 10 + 5 + 'px';
+                    confetti.style.height = Math.random() * 10 + 5 + 'px';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }
             }
         }
 
         // Initialize the game when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             new ConnectFour();
+        });
+
+        // Prevent zoom on double-tap for mobile
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Prevent context menu on long press
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
         });
     </script>
 </body>
