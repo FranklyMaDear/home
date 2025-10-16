@@ -20,6 +20,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            overflow-x: hidden;
         }
         
         .support-banner {
@@ -34,6 +36,16 @@
             font-weight: 600;
             font-size: 14px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        
+        .support-banner.hidden {
+            transform: translateX(-50%) translateY(-100px);
         }
         
         .container {
@@ -43,6 +55,7 @@
             border-radius: 20px;
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-top: 70px; /* Χώρος για το banner */
         }
         
         .header {
@@ -233,10 +246,82 @@
         .bmc-btn-container {
             margin-top: 15px;
         }
+
+        /* Βελτιώσεις για κινητά */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+                margin-top: 65px;
+            }
+            
+            .game-title {
+                font-size: 20px;
+            }
+            
+            .timer {
+                font-size: 16px;
+                padding: 6px 10px;
+            }
+            
+            .cell {
+                font-size: 14px;
+            }
+            
+            .number-btn {
+                padding: 14px;
+                font-size: 16px;
+            }
+            
+            .action-btn {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .container {
+                padding: 12px;
+            }
+            
+            .game-title {
+                font-size: 18px;
+            }
+            
+            .timer {
+                font-size: 14px;
+            }
+            
+            .stats {
+                padding: 10px;
+            }
+            
+            .stat-value {
+                font-size: 16px;
+            }
+            
+            .controls select {
+                padding: 10px;
+                font-size: 13px;
+            }
+            
+            .cell {
+                font-size: 13px;
+            }
+            
+            .number-btn {
+                padding: 12px;
+                font-size: 15px;
+            }
+            
+            .action-btn {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="support-banner">
+    <div class="support-banner" id="support-banner">
         🎮 Υποστηρίξτε την ανάπτυξη του παιχνιδιού!
     </div>
 
@@ -580,8 +665,39 @@
         });
 
         // Banner event
-        document.querySelector('.support-banner').addEventListener('click', () => {
+        const banner = document.getElementById('support-banner');
+        let bannerHidden = false;
+        
+        banner.addEventListener('click', () => {
             window.open('https://otieu.com/4/10000601', '_blank');
+        });
+        
+        // Αυτόματη απόκρυψη banner μετά από 5 δευτερόλεπτα
+        setTimeout(() => {
+            banner.classList.add('hidden');
+            bannerHidden = true;
+        }, 5000);
+        
+        // Εμφάνιση/απόκρυψη banner με κλικ στο παιχνίδι
+        document.querySelector('.container').addEventListener('click', (e) => {
+            // Μην εμφανίζεται το banner αν κάνουμε κλικ σε κουμπί ή κελί
+            if (e.target.classList.contains('cell') || 
+                e.target.classList.contains('number-btn') || 
+                e.target.classList.contains('action-btn') ||
+                e.target.tagName === 'SELECT') {
+                return;
+            }
+            
+            if (bannerHidden) {
+                banner.classList.remove('hidden');
+                bannerHidden = false;
+                
+                // Απόκρυψη ξανά μετά από 3 δευτερόλεπτα
+                setTimeout(() => {
+                    banner.classList.add('hidden');
+                    bannerHidden = true;
+                }, 3000);
+            }
         });
 
         // Αρχικοποίηση
