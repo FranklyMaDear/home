@@ -6,14 +6,13 @@
     <title>Σκάκι vs AI</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* ΕΝΣΩΜΑΤΩΜΕΝΟ CSS για σιγουριά */
         .board-container {
-            width: 500px;
-            height: 500px;
+            width: 480px;
+            height: 480px;
             margin: 20px auto;
-            border: 15px solid #8B4513;
-            border-radius: 5px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 12px solid #8B4513;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
             background: #f0d9b5;
         }
         
@@ -29,9 +28,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 40px;
+            font-size: 36px;
             cursor: pointer;
             position: relative;
+            transition: background-color 0.2s;
         }
         
         .white {
@@ -46,38 +46,56 @@
             background: #aec6cf !important;
         }
         
-        .possible-move {
+        .possible-move::after {
+            content: '';
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background: rgba(0, 255, 0, 0.3);
+            width: 16px;
+            height: 16px;
+            background: rgba(0, 255, 0, 0.4);
             border-radius: 50%;
             z-index: 1;
+        }
+        
+        .check {
+            background: #ff6b6b !important;
+        }
+        
+        .coordinates {
+            position: absolute;
+            font-size: 12px;
+            color: rgba(0,0,0,0.6);
+        }
+        
+        .coord-file {
+            bottom: 2px;
+            right: 4px;
+        }
+        
+        .coord-rank {
+            top: 2px;
+            left: 4px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>♟️ Σκάκι vs AI</h1>
+        <h1>♚ Σκάκι vs AI ♔</h1>
         
         <div class="game-info">
-            <div class="player-time">
+            <div class="player-info">
                 <div class="player">👤 Εσύ (Λευκά)</div>
-                <div class="timer" id="whiteTimer">10:00</div>
             </div>
             
             <div class="game-status">
                 <div id="status">Είσαι Λευκό - Εσύ παίζεις πρώτος</div>
-                <div id="eval">Αξιολόγηση: 0.0</div>
+                <div id="eval"></div>
             </div>
             
-            <div class="player-time">
+            <div class="player-info">
                 <div class="player">🤖 AI (Μαύρα)</div>
-                <div class="timer" id="blackTimer">10:00</div>
             </div>
         </div>
         
-        <!-- ΑΠΛΗ ΣΚΑΚΙΕΡΑ ΧΕΡΙΣ -->
         <div class="board-container">
             <div id="chessBoard" class="chess-board"></div>
         </div>
@@ -85,16 +103,11 @@
         <div class="controls">
             <button id="newGame">🔄 Νέο Παιχνίδι</button>
             <button id="undoMove">↶ Αναίρεση</button>
-            <button id="flipBoard">🔄 Περιστροφή</button>
             <select id="difficulty">
                 <option value="1">Εύκολο</option>
                 <option value="2" selected>Μέτριο</option>
                 <option value="3">Δύσκολο</option>
-            </select>
-            <select id="timeControl">
-                <option value="60">1 λεπτό</option>
-                <option value="300">5 λεπτά</option>
-                <option value="600" selected>10 λεπτά</option>
+                <option value="4">Expert</option>
             </select>
         </div>
         
@@ -102,10 +115,23 @@
             <h3>Ιστορία Κινήσεων:</h3>
             <div id="movesList"></div>
         </div>
+        
+        <!-- Modal για προαγωγή πιονιού -->
+        <div id="promotionModal" class="modal">
+            <div class="modal-content">
+                <h3>Προαγωγή Πιονιού</h3>
+                <p>Διάλεξε κομμάτι για προαγωγή:</p>
+                <div class="promotion-options">
+                    <div class="promotion-piece" data-piece="q">♕ Βασίλισσα</div>
+                    <div class="promotion-piece" data-piece="r">♖ Πύργος</div>
+                    <div class="promotion-piece" data-piece="b">♗ Αξιωματικός</div>
+                    <div class="promotion-piece" data-piece="n">♘ Ίππος</div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- LOCAL αρχεία -->
-    <script src="chess.js"></script>
+    <script src="chess-engine.js"></script>
     <script src="game.js"></script>
 </body>
 </html>
