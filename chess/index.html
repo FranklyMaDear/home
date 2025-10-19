@@ -2,131 +2,78 @@
 <html lang="el">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Σκάκι vs AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Σκάκι</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0c2461, #1e3799);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
             margin: 0;
-            padding: 10px;
-            min-height: 100vh;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .container {
-            max-width: 100%;
-            background: linear-gradient(145deg, #ffffff, #f8f9fa);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            border: 1px solid #e0e0e0;
-        }
-
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 2.2em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-        }
-
-        .game-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 18px;
-            background: linear-gradient(135deg, #74b9ff, #0984e3);
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(116, 185, 255, 0.3);
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
             color: white;
         }
 
-        .player-info {
-            text-align: center;
-            flex: 1;
-            padding: 8px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
-            margin: 0 5px;
+        .mobile-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #0c2461, #1e3799);
         }
 
-        .player {
-            font-size: 1.1em;
-            font-weight: bold;
+        .header {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.4em;
             color: white;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-weight: 600;
         }
 
         .game-status {
             text-align: center;
-            flex: 2;
-            padding: 0 15px;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            margin: 5px 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
         }
 
-        #status {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #fff;
-            margin-bottom: 5px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+        .board-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
         }
 
-        #eval {
-            font-size: 1em;
-            color: #dfe6e9;
-            font-style: italic;
-        }
-
-        .board-container {
-            width: 100%;
-            max-width: min(95vw, 500px);
-            margin: 20px auto;
-            border: 15px solid #5d4037;
-            border-radius: 12px;
-            box-shadow: 
-                0 15px 35px rgba(0,0,0,0.4),
-                inset 0 0 20px rgba(0,0,0,0.2);
-            background: #8d6e63;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .board-container::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #ffd700, #ff6b6b, #48dbfb, #1dd1a1);
-            z-index: -1;
-            border-radius: 14px;
-            animation: borderGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes borderGlow {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
+        .chess-board-container {
+            width: 100vmin;
+            height: 100vmin;
+            max-width: 95vh;
+            max-height: 95vw;
+            border: 12px solid #5D4037;
+            border-radius: 8px;
+            background: #5D4037;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .chess-board {
             width: 100%;
-            aspect-ratio: 1;
+            height: 100%;
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(8, 1fr);
@@ -137,424 +84,251 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: clamp(28px, 6vw, 42px);
-            cursor: pointer;
+            font-size: 8vmin;
             position: relative;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            user-select: none;
-            border: 1px solid rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
         }
 
-        .square:hover {
-            transform: scale(1.05);
-            z-index: 2;
-            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        .light {
+            background: #F0D9B5;
         }
 
-        .white {
-            background: linear-gradient(145deg, #f0d9b5, #e8d1a4);
-        }
-
-        .black {
-            background: linear-gradient(145deg, #b58863, #a6785d);
+        .dark {
+            background: #B58863;
         }
 
         .selected {
-            background: linear-gradient(145deg, #aec6cf, #9bb9c5) !important;
-            box-shadow: inset 0 0 20px rgba(74, 144, 226, 0.5);
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
+            background: #81C784 !important;
         }
 
         .possible-move::after {
             content: '';
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background: radial-gradient(circle, #00b894, #00a085);
+            width: 4vmin;
+            height: 4vmin;
+            background: rgba(76, 175, 80, 0.6);
             border-radius: 50%;
             z-index: 1;
-            box-shadow: 0 0 10px rgba(0, 184, 148, 0.6);
-            animation: bounce 0.6s ease-in-out infinite alternate;
-        }
-
-        @keyframes bounce {
-            from { transform: scale(0.8); }
-            to { transform: scale(1.1); }
         }
 
         .check {
-            background: linear-gradient(145deg, #ff7675, #ff5252) !important;
-            animation: dangerPulse 0.8s ease-in-out infinite;
+            background: #FF5252 !important;
+            animation: pulse-check 1s infinite;
         }
 
-        @keyframes dangerPulse {
-            0%, 100% { box-shadow: inset 0 0 30px rgba(255, 82, 82, 0.6); }
-            50% { box-shadow: inset 0 0 50px rgba(255, 82, 82, 0.8); }
+        @keyframes pulse-check {
+            0%, 100% { background-color: #FF5252; }
+            50% { background-color: #FF8A80; }
         }
 
         .coordinates {
             position: absolute;
-            font-size: clamp(10px, 2vw, 12px);
+            font-size: 2vmin;
             color: rgba(0,0,0,0.7);
-            pointer-events: none;
             font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+            pointer-events: none;
         }
 
-        .coord-file {
-            bottom: 2px;
-            right: 4px;
+        .file-coord {
+            bottom: 1px;
+            right: 3px;
         }
 
-        .coord-rank {
-            top: 2px;
-            left: 4px;
+        .rank-coord {
+            top: 1px;
+            left: 3px;
         }
 
         .controls {
-            text-align: center;
-            margin: 25px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.1);
             display: flex;
-            justify-content: center;
             gap: 10px;
-            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        button, select {
+        .control-btn {
             padding: 12px 20px;
             border: none;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
+            font-size: 0.9em;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 6px 15px rgba(108, 92, 231, 0.3);
-            min-width: 100px;
-            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            min-width: 80px;
         }
 
-        button:hover, select:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.5);
-            border-color: rgba(255,255,255,0.5);
-        }
-
-        button:active {
-            transform: translateY(-1px);
+        .control-btn:active {
+            transform: scale(0.95);
         }
 
         #newGame {
-            background: linear-gradient(135deg, #00b894, #00a085);
-            box-shadow: 0 6px 15px rgba(0, 184, 148, 0.3);
-        }
-
-        #newGame:hover {
-            box-shadow: 0 10px 25px rgba(0, 184, 148, 0.5);
+            background: linear-gradient(135deg, #4CAF50, #45a049);
         }
 
         #undoMove {
-            background: linear-gradient(135deg, #fd79a8, #e84393);
-            box-shadow: 0 6px 15px rgba(253, 121, 168, 0.3);
-        }
-
-        #undoMove:hover {
-            box-shadow: 0 10px 25px rgba(253, 121, 168, 0.5);
-        }
-
-        select {
-            background: linear-gradient(135deg, #fdcb6e, #e17055);
-            box-shadow: 0 6px 15px rgba(253, 203, 110, 0.3);
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 16px;
-            padding-right: 45px;
-        }
-
-        .move-history {
-            margin-top: 20px;
-            padding: 20px;
-            background: linear-gradient(135deg, #dfe6e9, #b2bec3);
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-
-        .move-history h3 {
-            color: #2d3436;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 1.3em;
-            font-weight: bold;
-        }
-
-        #movesList {
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            max-height: 120px;
-            overflow-y: auto;
-            padding: 12px;
-            background: rgba(255,255,255,0.9);
-            border-radius: 10px;
-            border: 2px solid #b2bec3;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .move-pair {
-            padding: 5px 10px;
-            margin: 2px 0;
-            border-radius: 6px;
-            transition: background 0.3s;
-        }
-
-        .move-pair:hover {
-            background: rgba(116, 185, 255, 0.2);
+            background: linear-gradient(135deg, #FF9800, #F57C00);
         }
 
         /* Promotion Modal */
-        .modal {
+        .promotion-modal {
             display: none;
             position: fixed;
-            z-index: 1000;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: linear-gradient(145deg, #ffffff, #f8f9fa);
-            margin: 50% auto;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 350px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            border: 3px solid #74b9ff;
-            transform: translateY(-50%);
-            animation: modalAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes modalAppear {
-            from {
-                opacity: 0;
-                transform: translateY(-50%) scale(0.7);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(-50%) scale(1);
-            }
-        }
-
-        .modal-content h3 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 1.4em;
-        }
-
-        .modal-content p {
-            color: #7f8c8d;
-            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
 
         .promotion-options {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 15px;
+            gap: 15px;
+            min-width: 250px;
         }
 
         .promotion-piece {
-            padding: 15px;
-            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            font-size: 3em;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 6px 15px rgba(116, 185, 255, 0.3);
-            border: 2px solid transparent;
+            transition: all 0.2s ease;
         }
 
-        .promotion-piece:hover {
-            background: linear-gradient(135deg, #0984e3, #074a8f);
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 10px 25px rgba(116, 185, 255, 0.5);
-            border-color: rgba(255,255,255,0.5);
+        .promotion-piece:active {
+            transform: scale(0.9);
         }
 
-        /* Piece animations */
-        .piece-move {
-            animation: pieceSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Piece symbols with better styling */
+        .piece {
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
         }
 
-        @keyframes pieceSlide {
-            from {
-                transform: scale(1.2);
-                opacity: 0.7;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+        .white-piece {
+            color: #FFFFFF;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         }
 
-        /* Responsive improvements */
+        .black-piece {
+            color: #000000;
+            text-shadow: 1px 1px 3px rgba(255,255,255,0.3);
+        }
+
+        /* Mobile optimizations */
         @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-                margin: 10px;
-            }
-            
-            h1 {
-                font-size: 1.8em;
-            }
-            
-            .game-info {
-                flex-direction: column;
-                gap: 12px;
-                padding: 15px;
-            }
-            
-            .player-info {
-                width: 100%;
-                margin: 5px 0;
-            }
-            
-            .board-container {
-                max-width: 95vw;
-                border-width: 12px;
-            }
-            
-            .square {
-                font-size: clamp(24px, 7vw, 36px);
-            }
-            
-            .controls {
-                flex-direction: column;
-                align-items: center;
-                gap: 8px;
-            }
-            
-            button, select {
-                width: 100%;
-                max-width: 250px;
-                padding: 14px 20px;
-                font-size: 15px;
-            }
-            
-            .modal-content {
-                margin: 60% auto;
-                padding: 25px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .board-container {
-                max-width: 100%;
+            .chess-board-container {
                 border-width: 8px;
             }
             
             .square {
-                font-size: clamp(20px, 8vw, 28px);
+                font-size: 7vmin;
             }
             
-            .coordinates {
-                font-size: 9px;
+            .controls {
+                padding: 10px;
             }
             
-            .game-info {
-                padding: 12px;
+            .control-btn {
+                padding: 10px 15px;
+                font-size: 0.8em;
+                min-width: 70px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.2em;
             }
             
-            #status {
-                font-size: 1.1em;
+            .game-status {
+                font-size: 0.8em;
+                margin: 5px 10px;
+            }
+            
+            .chess-board-container {
+                border-width: 6px;
+            }
+            
+            .square {
+                font-size: 6vmin;
             }
         }
 
-        /* Scrollbar styling */
-        #movesList::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        #movesList::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.1);
-            border-radius: 3px;
-        }
-
-        #movesList::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #74b9ff, #0984e3);
-            border-radius: 3px;
-        }
-
-        #movesList::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #0984e3, #074a8f);
+        /* Landscape orientation */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .mobile-container {
+                flex-direction: row;
+            }
+            
+            .header {
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                padding: 10px 5px;
+            }
+            
+            .board-section {
+                flex: 1;
+            }
+            
+            .controls {
+                flex-direction: column;
+                padding: 10px 5px;
+            }
+            
+            .chess-board-container {
+                width: 80vmin;
+                height: 80vmin;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>♚ Σκάκι vs AI ♔</h1>
-        
-        <div class="game-info">
-            <div class="player-info">
-                <div class="player">👤 Εσύ (Λευκά)</div>
-            </div>
-            
+    <div class="mobile-container">
+        <div class="header">
+            <h1>♚ Σκάκι vs AI ♔</h1>
             <div class="game-status">
                 <div id="status">Είσαι Λευκό - Εσύ παίζεις πρώτος</div>
-                <div id="eval"></div>
-            </div>
-            
-            <div class="player-info">
-                <div class="player">🤖 AI (Μαύρα)</div>
             </div>
         </div>
-        
-        <div class="board-container">
-            <div id="chessBoard" class="chess-board"></div>
+
+        <div class="board-section">
+            <div class="chess-board-container">
+                <div id="chessBoard" class="chess-board"></div>
+            </div>
         </div>
-        
+
         <div class="controls">
-            <button id="newGame">🔄 Νέο Παιχνίδι</button>
-            <button id="undoMove">↶ Αναίρεση</button>
-            <select id="difficulty">
+            <button class="control-btn" id="newGame">🔄 Νέο</button>
+            <button class="control-btn" id="undoMove">↶ Πίσω</button>
+            <select class="control-btn" id="difficulty" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);">
                 <option value="1">Εύκολο</option>
                 <option value="2" selected>Μέτριο</option>
                 <option value="3">Δύσκολο</option>
-                <option value="4">Expert</option>
             </select>
         </div>
-        
-        <div class="move-history">
-            <h3>Ιστορία Κινήσεων:</h3>
-            <div id="movesList"></div>
-        </div>
-        
-        <!-- Modal για προαγωγή πιονιού -->
-        <div id="promotionModal" class="modal">
-            <div class="modal-content">
-                <h3>Προαγωγή Πιονιού</h3>
-                <p>Διάλεξε κομμάτι για προαγωγή:</p>
-                <div class="promotion-options">
-                    <div class="promotion-piece" data-piece="q">♕ Βασίλισσα</div>
-                    <div class="promotion-piece" data-piece="r">♖ Πύργος</div>
-                    <div class="promotion-piece" data-piece="b">♗ Αξιωματικός</div>
-                    <div class="promotion-piece" data-piece="n">♘ Ίππος</div>
-                </div>
-            </div>
+    </div>
+
+    <div id="promotionModal" class="promotion-modal">
+        <div class="promotion-options">
+            <div class="promotion-piece" data-piece="q">♕</div>
+            <div class="promotion-piece" data-piece="r">♖</div>
+            <div class="promotion-piece" data-piece="b">♗</div>
+            <div class="promotion-piece" data-piece="n">♘</div>
         </div>
     </div>
 
@@ -909,7 +683,7 @@
             }
         }
 
-        class ChessGame {
+        class MobileChessGame {
             constructor() {
                 this.chess = new ChessEngine();
                 this.selectedPiece = null;
@@ -940,20 +714,22 @@
                 for (let y = 0; y < 8; y++) {
                     for (let x = 0; x < 8; x++) {
                         const square = document.createElement('div');
-                        square.className = `square ${(x + y) % 2 === 0 ? 'white' : 'black'}`;
+                        const isLight = (x + y) % 2 === 0;
+                        square.className = `square ${isLight ? 'light' : 'dark'}`;
                         square.dataset.x = x;
                         square.dataset.y = y;
                         
+                        // Add coordinates
                         if (y === 7) {
                             const fileCoord = document.createElement('div');
-                            fileCoord.className = 'coordinates coord-file';
+                            fileCoord.className = 'coordinates file-coord';
                             fileCoord.textContent = this.files[x];
                             square.appendChild(fileCoord);
                         }
                         
                         if (x === 0) {
                             const rankCoord = document.createElement('div');
-                            rankCoord.className = 'coordinates coord-rank';
+                            rankCoord.className = 'coordinates rank-coord';
                             rankCoord.textContent = this.ranks[y];
                             square.appendChild(rankCoord);
                         }
@@ -961,7 +737,8 @@
                         const piece = this.chess.getPiece(x, y);
                         if (piece) {
                             square.textContent = this.pieceSymbols[piece];
-                            square.classList.add('piece-move');
+                            square.classList.add('piece');
+                            square.classList.add(piece[0] === 'w' ? 'white-piece' : 'black-piece');
                             
                             if (piece[1] === 'k' && this.chess.check && piece[0] === this.chess.turn) {
                                 square.classList.add('check');
@@ -979,6 +756,7 @@
                 
                 const piece = this.chess.getPiece(x, y);
                 
+                // Select piece
                 if (piece && piece[0] === 'w') {
                     this.selectedPiece = {x, y};
                     this.possibleMoves = this.chess.getValidMovesForPiece(x, y);
@@ -986,6 +764,7 @@
                     return;
                 }
                 
+                // Move piece
                 if (this.selectedPiece) {
                     const moveX = this.selectedPiece.x;
                     const moveY = this.selectedPiece.y;
@@ -1015,10 +794,9 @@
                 if (success) {
                     this.createBoard();
                     this.updateStatus();
-                    this.updateMoveHistory();
                     
                     if (!this.chess.gameOver && this.chess.turn === 'b') {
-                        setTimeout(() => this.makeAIMove(), 600);
+                        setTimeout(() => this.makeAIMove(), 500);
                     }
                 }
             }
@@ -1065,7 +843,7 @@
             }
 
             showPromotionModal() {
-                document.getElementById('promotionModal').style.display = 'block';
+                document.getElementById('promotionModal').style.display = 'flex';
             }
 
             hidePromotionModal() {
@@ -1096,42 +874,6 @@
                 document.getElementById('status').textContent = status;
             }
 
-            updateMoveHistory() {
-                const movesList = document.getElementById('movesList');
-                movesList.innerHTML = '';
-                
-                for (let i = 0; i < this.chess.moveHistory.length; i += 2) {
-                    const moveNumber = Math.floor(i / 2) + 1;
-                    const whiteMove = this.chess.moveHistory[i];
-                    const blackMove = this.chess.moveHistory[i + 1];
-                    
-                    const moveElement = document.createElement('div');
-                    moveElement.className = 'move-pair';
-                    
-                    let moveText = `${moveNumber}. ${this.moveToNotation(whiteMove)}`;
-                    if (blackMove) {
-                        moveText += ` ${this.moveToNotation(blackMove)}`;
-                    }
-                    
-                    moveElement.textContent = moveText;
-                    movesList.appendChild(moveElement);
-                }
-                
-                movesList.scrollTop = movesList.scrollHeight;
-            }
-
-            moveToNotation(move) {
-                const file = this.files[move.to.x];
-                const rank = this.ranks[move.to.y];
-                let notation = file + rank;
-                
-                if (move.captured) {
-                    notation = 'x' + notation;
-                }
-                
-                return notation;
-            }
-
             bindEvents() {
                 document.getElementById('newGame').addEventListener('click', () => {
                     this.chess.reset();
@@ -1140,7 +882,6 @@
                     this.pendingPromotion = null;
                     this.createBoard();
                     this.updateStatus();
-                    this.updateMoveHistory();
                 });
 
                 document.getElementById('undoMove').addEventListener('click', () => {
@@ -1149,7 +890,6 @@
                         this.possibleMoves = [];
                         this.createBoard();
                         this.updateStatus();
-                        this.updateMoveHistory();
                     }
                 });
 
@@ -1177,8 +917,19 @@
             }
         }
 
+        // Initialize game when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            new ChessGame();
+            new MobileChessGame();
+        });
+
+        // Prevent zoom on double tap
+        document.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+        });
+
+        // Prevent context menu
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
         });
     </script>
 </body>
