@@ -2,8 +2,8 @@
 <html lang="el">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Σκάκι</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Σκάκι - Μοντέρνο Στυλ</title>
     <style>
         * {
             margin: 0;
@@ -14,66 +14,63 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0c2461, #1e3799);
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
             margin: 0;
             padding: 0;
             height: 100vh;
             overflow: hidden;
             color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .mobile-container {
-            height: 100vh;
+        .game-container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
+            align-items: center;
         }
 
         .header {
-            padding: 20px 15px 10px;
             text-align: center;
-            position: relative;
+            margin-bottom: 20px;
+            width: 100%;
         }
 
         .header h1 {
-            font-size: 1.8em;
+            font-size: 2.2em;
             color: white;
             font-weight: 700;
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             letter-spacing: 1px;
         }
 
         .game-status {
             text-align: center;
-            padding: 12px;
-            background: rgba(255,255,255,0.15);
-            margin: 8px 15px;
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.1);
             border-radius: 15px;
-            font-size: 1em;
+            font-size: 1.1em;
             font-weight: 500;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
         }
 
-        .board-section {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-        }
-
-        .chess-board-container {
-            width: 95vmin;
-            height: 95vmin;
-            max-width: 95vh;
-            max-height: 95vw;
-            border: 15px solid #8B4513;
-            border-radius: 12px;
-            background: #8B4513;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        .board-container {
+            width: 90vmin;
+            height: 90vmin;
+            max-width: 500px;
+            max-height: 500px;
+            margin: 20px auto;
+            border: 12px solid #5D4037;
+            border-radius: 8px;
+            background: #5D4037;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             position: relative;
             overflow: hidden;
         }
@@ -95,62 +92,26 @@
             transition: all 0.3s ease;
         }
 
-        .piece {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
-            filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.7));
-            transition: transform 0.2s ease;
-            z-index: 2;
-        }
-
-        .piece:active {
-            transform: scale(0.95);
-        }
-
-        .major-piece {
-            font-size: 7.5vmin !important;
-        }
-
-        .pawn-piece {
-            font-size: 6vmin !important;
-        }
-
-        .white-piece {
-            color: #FFFFFF;
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-
-        .black-piece {
-            color: #000000;
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
-        }
-
         .light {
-            background: #F0D9B5;
+            background: #E8E8E8;
         }
 
         .dark {
-            background: #B58863;
+            background: #A0522D;
         }
 
         .selected {
-            background: linear-gradient(135deg, #81C784, #4CAF50) !important;
-            box-shadow: inset 0 0 15px rgba(255,255,255,0.5);
+            background: rgba(121, 85, 72, 0.7) !important;
         }
 
         .possible-move::after {
             content: '';
             position: absolute;
-            width: 4.5vmin;
-            height: 4.5vmin;
+            width: 25%;
+            height: 25%;
             background: rgba(76, 175, 80, 0.7);
             border-radius: 50%;
             z-index: 1;
-            box-shadow: 0 0 10px rgba(76, 175, 80, 0.8);
         }
 
         .possible-capture::after {
@@ -158,26 +119,25 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            border: 4px solid rgba(255, 87, 34, 0.7);
+            border: 3px solid rgba(255, 87, 34, 0.7);
             border-radius: 5px;
             z-index: 1;
-            box-shadow: 0 0 10px rgba(255, 87, 34, 0.8);
+            box-sizing: border-box;
         }
 
         .check {
-            background: linear-gradient(135deg, #FF5252, #D32F2F) !important;
+            background: rgba(244, 67, 54, 0.7) !important;
             animation: pulse-check 1.5s infinite;
-            box-shadow: inset 0 0 15px rgba(255,255,255,0.5);
         }
 
         @keyframes pulse-check {
-            0%, 100% { background: linear-gradient(135deg, #FF5252, #D32F2F); }
-            50% { background: linear-gradient(135deg, #FF8A80, #FF5252); }
+            0%, 100% { background-color: rgba(244, 67, 54, 0.7); }
+            50% { background-color: rgba(255, 121, 121, 0.7); }
         }
 
         .coordinates {
             position: absolute;
-            font-size: 2.2vmin;
+            font-size: 1.8vmin;
             color: rgba(0,0,0,0.7);
             font-weight: bold;
             pointer-events: none;
@@ -185,25 +145,75 @@
         }
 
         .file-coord {
-            bottom: 2px;
-            right: 4px;
+            bottom: 3px;
+            right: 5px;
         }
 
         .rank-coord {
-            top: 2px;
-            left: 4px;
+            top: 3px;
+            left: 5px;
+        }
+
+        .piece {
+            width: 85%;
+            height: 85%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.2s ease;
+        }
+
+        .piece:active {
+            transform: scale(0.95);
+        }
+
+        .white-piece {
+            background: linear-gradient(135deg, #FFFFFF, #E0E0E0);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3), 
+                        inset 0 1px 0 rgba(255,255,255,0.8),
+                        inset 0 -2px 5px rgba(0,0,0,0.2);
+            border: 1px solid #F5F5F5;
+        }
+
+        .black-piece {
+            background: linear-gradient(135deg, #424242, #212121);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5), 
+                        inset 0 1px 0 rgba(255,255,255,0.1),
+                        inset 0 -2px 5px rgba(0,0,0,0.5);
+            border: 1px solid #616161;
+        }
+
+        .piece-symbol {
+            font-size: 4.5vmin;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .white-piece .piece-symbol {
+            color: #424242;
+        }
+
+        .black-piece .piece-symbol {
+            color: #E0E0E0;
+        }
+
+        .pawn-piece .piece-symbol {
+            font-size: 3.8vmin;
         }
 
         .controls {
-            padding: 20px 15px;
             display: flex;
             gap: 15px;
+            margin-top: 20px;
+            width: 100%;
             justify-content: center;
-            align-items: center;
         }
 
         .control-btn {
-            padding: 14px 22px;
+            padding: 14px 25px;
             border: none;
             border-radius: 12px;
             background: linear-gradient(135deg, #667eea, #764ba2);
@@ -212,12 +222,12 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            min-width: 90px;
+            min-width: 100px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
         }
 
         .control-btn:active {
@@ -260,7 +270,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.85);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -280,15 +290,18 @@
         }
 
         .promotion-option {
-            font-size: 3.5em;
-            text-align: center;
-            padding: 20px;
-            border-radius: 15px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-size: 2em;
         }
 
         .promotion-option:active {
@@ -297,26 +310,31 @@
 
         /* Mobile optimizations */
         @media (max-width: 768px) {
-            .chess-board-container {
+            .game-container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .game-status {
+                font-size: 1em;
+                padding: 10px 15px;
+            }
+            
+            .board-container {
                 border-width: 10px;
             }
             
-            .major-piece {
-                font-size: 7vmin !important;
-            }
-            
-            .pawn-piece {
-                font-size: 5.5vmin !important;
-            }
-            
             .controls {
-                padding: 15px 10px;
+                gap: 10px;
             }
             
             .control-btn {
-                padding: 12px 18px;
+                padding: 12px 20px;
                 font-size: 0.9em;
-                min-width: 80px;
+                min-width: 90px;
             }
         }
 
@@ -327,81 +345,27 @@
             
             .game-status {
                 font-size: 0.9em;
-                margin: 8px 10px;
-                padding: 10px;
+                padding: 8px 12px;
             }
             
-            .chess-board-container {
+            .board-container {
                 border-width: 8px;
             }
             
-            .major-piece {
-                font-size: 6.5vmin !important;
-            }
-            
-            .pawn-piece {
-                font-size: 5vmin !important;
-            }
-            
             .controls {
-                gap: 10px;
+                flex-wrap: wrap;
             }
             
             .control-btn {
                 padding: 10px 15px;
                 font-size: 0.85em;
-                min-width: 70px;
+                min-width: 80px;
             }
-        }
-
-        /* Landscape orientation */
-        @media (max-height: 500px) and (orientation: landscape) {
-            .mobile-container {
-                flex-direction: row;
-            }
-            
-            .header {
-                writing-mode: vertical-rl;
-                text-orientation: mixed;
-                padding: 10px 8px;
-            }
-            
-            .board-section {
-                flex: 1;
-            }
-            
-            .controls {
-                flex-direction: column;
-                padding: 10px 8px;
-            }
-            
-            .chess-board-container {
-                width: 80vmin;
-                height: 80vmin;
-            }
-            
-            .major-piece {
-                font-size: 6vmin !important;
-            }
-            
-            .pawn-piece {
-                font-size: 4.5vmin !important;
-            }
-        }
-
-        /* Animation for new game */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .chess-board-container {
-            animation: fadeIn 0.5s ease-out;
         }
     </style>
 </head>
 <body>
-    <div class="mobile-container">
+    <div class="game-container">
         <div class="header">
             <h1>♚ Σκάκι vs AI ♔</h1>
             <div class="game-status">
@@ -409,10 +373,8 @@
             </div>
         </div>
 
-        <div class="board-section">
-            <div class="chess-board-container">
-                <div id="chessBoard" class="chess-board"></div>
-            </div>
+        <div class="board-container">
+            <div id="chessBoard" class="chess-board"></div>
         </div>
 
         <div class="controls">
@@ -436,7 +398,6 @@
     </div>
 
     <script>
-        // Ο κώδικας JavaScript παραμένει αμετάβλητος
         class ChessEngine {
             constructor() {
                 this.reset();
@@ -787,7 +748,7 @@
             }
         }
 
-        class MobileChessGame {
+        class ChessGame {
             constructor() {
                 this.chess = new ChessEngine();
                 this.selectedPiece = null;
@@ -810,10 +771,6 @@
                     'bq': '♛', // Βασίλισσα
                     'bk': '♚'  // Βασιλιάς
                 };
-
-                // Καθορισμός ποια κομμάτια είναι major (μεγάλα) και ποια pawns (στρατιωτάκια)
-                this.majorPieces = ['r', 'n', 'b', 'q', 'k']; // Πύργοι, άλογα, αξιωματικοί, βασίλισσες, βασιλιάδες
-                this.pawnPieces = ['p']; // Στρατιωτάκια
 
                 this.files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
                 this.ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
@@ -859,15 +816,16 @@
                             const pieceElement = document.createElement('div');
                             pieceElement.className = `piece ${piece[0] === 'w' ? 'white-piece' : 'black-piece'}`;
                             
-                            // Προσθήκη κλάσης ανάλογα με το είδος του κομματιού
-                            const pieceType = piece[1];
-                            if (this.majorPieces.includes(pieceType)) {
-                                pieceElement.classList.add('major-piece');
-                            } else if (this.pawnPieces.includes(pieceType)) {
+                            // Προσθήκη κλάσης για pawns
+                            if (piece[1] === 'p') {
                                 pieceElement.classList.add('pawn-piece');
                             }
                             
-                            pieceElement.textContent = this.pieceSymbols[piece];
+                            const symbol = document.createElement('div');
+                            symbol.className = 'piece-symbol';
+                            symbol.textContent = this.pieceSymbols[piece];
+                            pieceElement.appendChild(symbol);
+                            
                             square.appendChild(pieceElement);
                             
                             if (piece[1] === 'k' && this.chess.check && piece[0] === this.chess.turn) {
@@ -1055,7 +1013,7 @@
 
         // Αρχικοποίηση του παιχνιδιού
         document.addEventListener('DOMContentLoaded', () => {
-            new MobileChessGame();
+            new ChessGame();
         });
     </script>
 </body>
