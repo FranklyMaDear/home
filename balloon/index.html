@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Balloon Games  </title>
+    <title>Balloon Games</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='40' r='30' fill='%23FF5252'/><polygon points='50,70 45,90 55,90' fill='%23FF5252'/><circle cx='40' cy='30' r='5' fill='white'/><circle cx='60' cy='30' r='5' fill='white'/><path d='M 35 45 Q 50 55 65 45' stroke='white' stroke-width='2' fill='none'/></svg>">
     <style>
         * {
@@ -209,8 +209,8 @@
         }
         
         button {
-            padding: 10px 20px;
-            font-size: 1rem;
+            padding: 10px 15px;
+            font-size: 0.95rem;
             border: none;
             border-radius: 25px;
             cursor: pointer;
@@ -221,6 +221,12 @@
             transition: all 0.3s;
             flex: 1;
             max-width: 140px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: keep-all;
+            white-space: nowrap;
         }
         
         button:hover {
@@ -361,6 +367,41 @@
             box-shadow: 0 3px 6px rgba(0,0,0,0.2);
         }
         
+        .ad-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .ad-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 90%;
+            width: 300px;
+            text-align: center;
+            color: #333;
+        }
+        
+        .close-ad {
+            margin-top: 15px;
+            padding: 8px 20px;
+            background: #ff5252;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
         footer {
             margin-top: 20px;
             text-align: center;
@@ -389,12 +430,18 @@
             .target-text {
                 font-size: 1.1rem;
             }
+            
+            button {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+                max-width: 120px;
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1> Balloon Games</h1>
+        <h1>Balloon Games</h1>
         <p>Χτύπα τα μπαλόνια του στόχου για να κερδίσεις πόντους!</p>
     </header>
     
@@ -437,6 +484,14 @@
         </div>
     </div>
     
+    <div class="ad-container" id="adContainer">
+        <div class="ad-content">
+            <h3>Διαφήμιση</h3>
+            <p>Το παιχνίδι τελείωσε! Δοκιμάστε το νέο μας παιχνίδι!</p>
+            <button class="close-ad" id="closeAd">Συνέχεια</button>
+        </div>
+    </div>
+    
     <div class="instructions">
         <h2>Οδηγίες Παιχνιδιού</h2>
         <ul>
@@ -467,6 +522,8 @@
             const targetTextElement = document.getElementById('targetText');
             const targetColorElement = document.getElementById('targetColor');
             const adBanner = document.getElementById('adBanner');
+            const adContainer = document.getElementById('adContainer');
+            const closeAdButton = document.getElementById('closeAd');
             
             // Μεταβλητές παιχνιδιού
             let score = 0;
@@ -498,6 +555,45 @@
                 'purple': '#9C27B0'
             };
             
+            // Δημιουργία ήχων
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            function playSuccessSound() {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                oscillator.frequency.exponentialRampToValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                oscillator.frequency.exponentialRampToValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            }
+            
+            function playErrorSound() {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(392.00, audioContext.currentTime); // G4
+                oscillator.frequency.exponentialRampToValueAtTime(311.13, audioContext.currentTime + 0.2); // D#4
+                oscillator.frequency.exponentialRampToValueAtTime(261.63, audioContext.currentTime + 0.4); // C4
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.6);
+            }
+            
             // Έναρξη παιχνιδιού
             function startGame() {
                 if (gameActive) return;
@@ -511,6 +607,7 @@
                 timerElement.textContent = timeLeft;
                 specialTimerElement.textContent = specialTimer;
                 gameOverScreen.style.display = 'none';
+                adContainer.style.display = 'none';
                 balloons = [];
                 
                 // Ορισμός αρχικού στόχου
@@ -834,6 +931,7 @@
                     // Τα χρυσά μπαλόνια είναι πάντα σωστά
                     pointsToAdd = 50;
                     isCorrect = true;
+                    playSuccessSound();
                 } else {
                     // Έλεγχος αν το χρώμα ταιριάζει με τον στόχο
                     const targetMap = {
@@ -848,6 +946,9 @@
                     
                     if (!isCorrect) {
                         pointsToAdd = -5; // Αφαίρεση πόντων για λάθος μπαλόνι
+                        playErrorSound();
+                    } else {
+                        playSuccessSound();
                     }
                 }
                 
@@ -946,6 +1047,11 @@
                 }, 20000);
             }
             
+            // Εμφάνιση διαφήμισης στο τέλος του παιχνιδιού
+            function showEndGameAd() {
+                adContainer.style.display = 'flex';
+            }
+            
             // Καθαρισμός μπαλονιών
             function clearBalloons() {
                 const balloons = document.querySelectorAll('.balloon');
@@ -976,6 +1082,9 @@
                 finalScoreElement.textContent = score;
                 gameOverScreen.style.display = 'flex';
                 
+                // Εμφάνιση διαφήμισης μετά από 2 δευτερόλεπτα
+                setTimeout(showEndGameAd, 2000);
+                
                 // Καθαρισμός μπαλονιών
                 clearBalloons();
             }
@@ -984,6 +1093,9 @@
             startButton.addEventListener('click', startGame);
             pauseButton.addEventListener('click', pauseGame);
             restartButton.addEventListener('click', startGame);
+            closeAdButton.addEventListener('click', function() {
+                adContainer.style.display = 'none';
+            });
         });
     </script>
 </body>
