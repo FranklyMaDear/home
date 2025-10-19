@@ -1,170 +1,281 @@
-// Απλή υλοποίηση chess rules
-class SimpleChess {
+class ChessGame {
     constructor() {
-        this.reset();
-    }
-
-    reset() {
-        this.board = this.createInitialBoard();
-        this.turn = 'w';
-        this.moveHistory = [];
-        this.gameOver = false;
-    }
-
-    createInitialBoard() {
-        return [
-            ['br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br'],
-            ['bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp'],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
-            ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr']
-        ];
-    }
-
-    getPiece(x, y) {
-        return this.board[y][x];
-    }
-
-    move(fromX, fromY, toX, toY) {
-        const piece = this.getPiece(fromX, fromY);
-        if (!piece) return false;
+        this.chess = new ChessEngine();
+        this.selectedPiece = null;
+        this.possibleMoves = [];
+        this.pendingPromotion = null;
         
-        // Έλεγχος αν είναι σειρά του παίκτη
-        if ((this.turn === 'w' && piece[0] !== 'w') || 
-            (this.turn === 'b' && piece[0] !== 'b')) {
-            return false;
-        }
+        this.pieceSymbols = {
+            'wp': '♙', 'wr': '♖', 'wn': '♘', 'wb': '♗', 'wq': '♕', 'wk': '♔',
+            'bp': '♟', 'br': '♜', 'bn': '♞', 'bb': '♝', 'bq': '♛', 'bk': '♚'
+        };
 
-        // Απλός έλεγχος κινήσεων
-        if (!this.isValidMove(fromX, fromY, toX, toY)) {
-            return false;
-        }
+        this.files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        this.ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
 
-        // Εκτέλεση κίνησης
-        const captured = this.getPiece(toX, toY);
-        this.board[toY][toX] = piece;
-        this.board[fromY][fromX] = '';
+        this.init();
+    }
+
+    init() {
+        this.createBoard();
+        this.bindEvents();
+        this.updateStatus();
+    }
+
+    createBoard() {
+        const board = document.getElementById('chessBoard');
+        board.innerHTML = '';
         
-        this.moveHistory.push({
-            from: {x: fromX, y: fromY},
-            to: {x: toX, y: toY},
-            piece: piece,
-            captured: captured
-        });
-
-        // Αλλαγή σειράς
-        this.turn = this.turn === 'w' ? 'b' : 'w';
-        return true;
-    }
-
-    isValidMove(fromX, fromY, toX, toY) {
-        const piece = this.getPiece(fromX, fromY);
-        if (!piece) return false;
-
-        const target = this.getPiece(toX, toY);
-        
-        // Μην πιάνεις δικά σου κομμάτια
-        if (target && target[0] === piece[0]) return false;
-
-        const type = piece[1];
-        const dx = toX - fromX;
-        const dy = toY - fromY;
-
-        switch (type) {
-            case 'p': // Πιόνι
-                return this.isValidPawnMove(fromX, fromY, toX, toY, piece[0]);
-            case 'r': // Πύργος
-                return this.isValidRookMove(fromX, fromY, toX, toY);
-            case 'n': // Ίππος
-                return this.isValidKnightMove(dx, dy);
-            case 'b': // Αξιωματικός
-                return this.isValidBishopMove(fromX, fromY, toX, toY);
-            case 'q': // Βασίλισσα
-                return this.isValidQueenMove(fromX, fromY, toX, toY);
-            case 'k': // Βασιλιάς
-                return this.isValidKingMove(dx, dy);
-            default:
-                return false;
-        }
-    }
-
-    isValidPawnMove(fromX, fromY, toX, toY, color) {
-        const direction = color === 'w' ? -1 : 1;
-        const startRow = color === 'w' ? 6 : 1;
-        const dx = toX - fromX;
-        const dy = toY - fromY;
-
-        // Ευθεία κίνηση
-        if (dx === 0) {
-            if (dy === direction && !this.getPiece(toX, toY)) return true;
-            if (fromY === startRow && dy === 2 * direction && 
-                !this.getPiece(toX, toY) && 
-                !this.getPiece(fromX, fromY + direction)) return true;
-        }
-        
-        // Πιάσιμο
-        if (Math.abs(dx) === 1 && dy === direction && this.getPiece(toX, toY)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    isValidKnightMove(dx, dy) {
-        return (Math.abs(dx) === 2 && Math.abs(dy) === 1) || 
-               (Math.abs(dx) === 1 && Math.abs(dy) === 2);
-    }
-
-    isValidRookMove(fromX, fromY, toX, toY) {
-        if (fromX !== toX && fromY !== toY) return false;
-        return this.isPathClear(fromX, fromY, toX, toY);
-    }
-
-    isValidBishopMove(fromX, fromY, toX, toY) {
-        if (Math.abs(toX - fromX) !== Math.abs(toY - fromY)) return false;
-        return this.isPathClear(fromX, fromY, toX, toY);
-    }
-
-    isValidQueenMove(fromX, fromY, toX, toY) {
-        return this.isValidRookMove(fromX, fromY, toX, toY) || 
-               this.isValidBishopMove(fromX, fromY, toX, toY);
-    }
-
-    isValidKingMove(dx, dy) {
-        return Math.abs(dx) <= 1 && Math.abs(dy) <= 1;
-    }
-
-    isPathClear(fromX, fromY, toX, toY) {
-        const dx = Math.sign(toX - fromX);
-        const dy = Math.sign(toY - fromY);
-        let x = fromX + dx;
-        let y = fromY + dy;
-
-        while (x !== toX || y !== toY) {
-            if (this.getPiece(x, y)) return false;
-            x += dx;
-            y += dy;
-        }
-        return true;
-    }
-
-    getMovesForPiece(x, y) {
-        const moves = [];
-        for (let toY = 0; toY < 8; toY++) {
-            for (let toX = 0; toX < 8; toX++) {
-                if (this.isValidMove(x, y, toX, toY)) {
-                    moves.push({x: toX, y: toY});
+        for (let y = 0; y < 8; y++) {
+            for (let x = 0; x < 8; x++) {
+                const square = document.createElement('div');
+                square.className = `square ${(x + y) % 2 === 0 ? 'white' : 'black'}`;
+                square.dataset.x = x;
+                square.dataset.y = y;
+                
+                // Προσθήκη coordinates
+                if (y === 7) {
+                    const fileCoord = document.createElement('div');
+                    fileCoord.className = 'coordinates coord-file';
+                    fileCoord.textContent = this.files[x];
+                    square.appendChild(fileCoord);
                 }
+                
+                if (x === 0) {
+                    const rankCoord = document.createElement('div');
+                    rankCoord.className = 'coordinates coord-rank';
+                    rankCoord.textContent = this.ranks[y];
+                    square.appendChild(rankCoord);
+                }
+
+                const piece = this.chess.getPiece(x, y);
+                if (piece) {
+                    square.textContent = this.pieceSymbols[piece];
+                    
+                    // Highlight βασιλιά σε σαχ
+                    if (piece[1] === 'k' && this.chess.check && piece[0] === this.chess.turn) {
+                        square.classList.add('check');
+                    }
+                }
+                
+                square.addEventListener('click', () => this.handleSquareClick(x, y));
+                board.appendChild(square);
             }
         }
-        return moves;
     }
 
-    isInCheck(color) {
-        // Απλοποιημένος έλεγχος σαχ
-        return false;
+    handleSquareClick(x, y) {
+        if (this.chess.gameOver || this.pendingPromotion) return;
+        
+        const piece = this.chess.getPiece(x, y);
+        
+        // Επιλογή κομματιού
+        if (piece && piece[0] === 'w') {
+            this.selectedPiece = {x, y};
+            this.possibleMoves = this.chess.getValidMovesForPiece(x, y);
+            this.highlightMoves();
+            return;
+        }
+        
+        // Κίνηση κομματιού
+        if (this.selectedPiece) {
+            const moveX = this.selectedPiece.x;
+            const moveY = this.selectedPiece.y;
+            
+            // Έλεγχος αν είναι έγκυρη κίνηση
+            const isValidMove = this.possibleMoves.some(move => 
+                move.x === x && move.y === y
+            );
+
+            if (isValidMove) {
+                // Έλεγχος για προαγωγή
+                if (this.chess.needsPromotion(moveX, moveY, x, y)) {
+                    this.pendingPromotion = {fromX: moveX, fromY: moveY, toX: x, toY: y};
+                    this.showPromotionModal();
+                    return;
+                }
+                
+                // Κανονική κίνηση
+                this.makeMove(moveX, moveY, x, y);
+            }
+            
+            this.clearHighlights();
+            this.selectedPiece = null;
+        }
+    }
+
+    makeMove(fromX, fromY, toX, toY, promotion = 'q') {
+        const success = this.chess.move(fromX, fromY, toX, toY, promotion);
+        
+        if (success) {
+            this.createBoard();
+            this.updateStatus();
+            this.updateMoveHistory();
+            
+            // AI κίνηση αν δεν τελείωσε το παιχνίδι
+            if (!this.chess.gameOver && this.chess.turn === 'b') {
+                setTimeout(() => this.makeAIMove(), 500);
+            }
+        }
+    }
+
+    makeAIMove() {
+        const difficulty = parseInt(document.getElementById('difficulty').value);
+        const aiMove = this.chess.getAIMove(difficulty);
+        
+        if (aiMove) {
+            this.makeMove(aiMove.from.x, aiMove.from.y, aiMove.to.x, aiMove.to.y);
+        }
+    }
+
+    highlightMoves() {
+        this.clearHighlights();
+        
+        this.possibleMoves.forEach(move => {
+            const square = this.getSquareElement(move.x, move.y);
+            if (square) {
+                square.classList.add('possible-move');
+            }
+        });
+        
+        if (this.selectedPiece) {
+            const selectedSquare = this.getSquareElement(this.selectedPiece.x, this.selectedPiece.y);
+            selectedSquare.classList.add('selected');
+        }
+    }
+
+    clearHighlights() {
+        document.querySelectorAll('.possible-move').forEach(el => 
+            el.classList.remove('possible-move')
+        );
+        document.querySelectorAll('.selected').forEach(el => 
+            el.classList.remove('selected')
+        );
+        document.querySelectorAll('.check').forEach(el => 
+            el.classList.remove('check')
+        );
+    }
+
+    getSquareElement(x, y) {
+        return document.querySelector(`.square[data-x="${x}"][data-y="${y}"]`);
+    }
+
+    showPromotionModal() {
+        document.getElementById('promotionModal').style.display = 'block';
+    }
+
+    hidePromotionModal() {
+        document.getElementById('promotionModal').style.display = 'none';
+        this.pendingPromotion = null;
+    }
+
+    updateStatus() {
+        let status = '';
+        
+        if (this.chess.gameOver) {
+            if (this.chess.winner === 'w') {
+                status = '🎉 Νίκησες! Ματ στους Μαύρους!';
+            } else if (this.chess.winner === 'b') {
+                status = '😞 Ηττήθηκες! Ματ στα Λευκά!';
+            } else {
+                status = '🤝 Ισοπαλία!';
+            }
+        } else {
+            status = this.chess.turn === 'w' ? 
+                '⚪ Σειρά σου - Λευκά' : '⚫ Σειρά AI - Μαύρα';
+            
+            if (this.chess.check) {
+                status += ' - ΣΑΧ! ⚡';
+            }
+        }
+        
+        document.getElementById('status').textContent = status;
+    }
+
+    updateMoveHistory() {
+        const movesList = document.getElementById('movesList');
+        movesList.innerHTML = '';
+        
+        for (let i = 0; i < this.chess.moveHistory.length; i += 2) {
+            const moveNumber = Math.floor(i / 2) + 1;
+            const whiteMove = this.chess.moveHistory[i];
+            const blackMove = this.chess.moveHistory[i + 1];
+            
+            const moveElement = document.createElement('div');
+            moveElement.className = 'move-pair';
+            
+            let moveText = `${moveNumber}. ${this.moveToNotation(whiteMove)}`;
+            if (blackMove) {
+                moveText += ` ${this.moveToNotation(blackMove)}`;
+            }
+            
+            moveElement.textContent = moveText;
+            movesList.appendChild(moveElement);
+        }
+        
+        movesList.scrollTop = movesList.scrollHeight;
+    }
+
+    moveToNotation(move) {
+        const file = this.files[move.to.x];
+        const rank = this.ranks[move.to.y];
+        let notation = file + rank;
+        
+        if (move.captured) {
+            notation = 'x' + notation;
+        }
+        
+        return notation;
+    }
+
+    bindEvents() {
+        document.getElementById('newGame').addEventListener('click', () => {
+            this.chess.reset();
+            this.selectedPiece = null;
+            this.possibleMoves = [];
+            this.pendingPromotion = null;
+            this.createBoard();
+            this.updateStatus();
+            this.updateMoveHistory();
+        });
+
+        document.getElementById('undoMove').addEventListener('click', () => {
+            if (this.chess.undoMove()) {
+                this.selectedPiece = null;
+                this.possibleMoves = [];
+                this.createBoard();
+                this.updateStatus();
+                this.updateMoveHistory();
+            }
+        });
+
+        // Promotion events
+        document.querySelectorAll('.promotion-piece').forEach(piece => {
+            piece.addEventListener('click', () => {
+                const promotionPiece = piece.dataset.piece;
+                if (this.pendingPromotion) {
+                    this.makeMove(
+                        this.pendingPromotion.fromX,
+                        this.pendingPromotion.fromY,
+                        this.pendingPromotion.toX,
+                        this.pendingPromotion.toY,
+                        promotionPiece
+                    );
+                    this.hidePromotionModal();
+                }
+            });
+        });
+
+        // Κλείσιμο modal
+        document.getElementById('promotionModal').addEventListener('click', (e) => {
+            if (e.target.id === 'promotionModal') {
+                this.hidePromotionModal();
+            }
+        });
     }
 }
+
+// Εκκίνηση παιχνιδιού
+document.addEventListener('DOMContentLoaded', () => {
+    new ChessGame();
+});
