@@ -258,6 +258,7 @@
             justify-content: center;
             width: 35px;
             height: 35px;
+            font-weight: bold;
         }
 
         .white-player .captured-label {
@@ -308,6 +309,7 @@
 
         .player-icon {
             font-size: 28px;
+            font-weight: bold;
         }
 
         .white-player .player-icon {
@@ -590,7 +592,10 @@
                         
                         const piece = initialSetup[row][col];
                         if (piece) {
-                            square.textContent = pieces[piece];
+                            const pieceElement = document.createElement('span');
+                            pieceElement.textContent = pieces[piece];
+                            pieceElement.style.fontWeight = 'bold';
+                            square.appendChild(pieceElement);
                             square.dataset.piece = piece;
                         }
                         
@@ -782,10 +787,14 @@
                 const fromSquare = document.querySelector(`.square[data-row="${fromRow}"][data-col="${fromCol}"]`);
                 const toSquare = document.querySelector(`.square[data-row="${toRow}"][data-col="${toCol}"]`);
                 
-                toSquare.textContent = fromSquare.textContent;
+                toSquare.innerHTML = '';
+                const pieceElement = document.createElement('span');
+                pieceElement.textContent = pieces[fromPiece];
+                pieceElement.style.fontWeight = 'bold';
+                toSquare.appendChild(pieceElement);
                 toSquare.dataset.piece = fromPiece;
                 
-                fromSquare.textContent = '';
+                fromSquare.innerHTML = '';
                 delete fromSquare.dataset.piece;
                 
                 // Εάν υπάρχει πιάσιμο, προσθήκη στα αιχμαλωτισμένα πιόνια
@@ -888,6 +897,7 @@
                     const span = document.createElement('span');
                     span.className = 'captured-piece';
                     span.textContent = pieces[piece];
+                    span.style.fontWeight = 'bold';
                     whiteCaptured.appendChild(span);
                 });
                 
@@ -895,6 +905,7 @@
                     const span = document.createElement('span');
                     span.className = 'captured-piece';
                     span.textContent = pieces[piece];
+                    span.style.fontWeight = 'bold';
                     blackCaptured.appendChild(span);
                 });
             }
@@ -953,30 +964,34 @@
             // Εκκίνηση νέου παιχνιδιού
             restartBtn.addEventListener('click', initializeBoard);
             
-            // Βοήθεια
+            // Βοήθεια (προσομοίωση)
             hintBtn.addEventListener('click', function() {
                 if (currentPlayer === 'white' && gameActive) {
-                    status.textContent = "Συμβουλή: Προσπαθήστε να ελέγξετε το κέντρο της σκακιέρας!";
-                    setTimeout(updateStatus, 3000);
+                    status.textContent = "Βοήθεια: Προσπαθήστε να ελέγξετε το κέντρο της σκακιέρας!";
+                    setTimeout(() => {
+                        if (currentPlayer === 'white') {
+                            updateStatus();
+                        }
+                    }, 3000);
                 }
             });
             
-            // Αλλαγή δυσκολίας
+            // Αλλαγή βαθμού δυσκολίας
             difficultyBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     difficultyBtns.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     difficulty = this.dataset.level;
                     
-                    let message = "Επίπεδο δυσκολίας αλλαγή σε: ";
+                    let difficultyText = '';
                     switch(difficulty) {
-                        case 'easy': message += "Εύκολο"; break;
-                        case 'medium': message += "Μέτριο"; break;
-                        case 'hard': message += "Δύσκολο"; break;
-                        case 'expert': message += "Ειδικός"; break;
+                        case 'easy': difficultyText = "Εύκολο"; break;
+                        case 'medium': difficultyText = "Μέτριο"; break;
+                        case 'hard': difficultyText = "Δύσκολο"; break;
+                        case 'expert': difficultyText = "Ειδικός"; break;
                     }
                     
-                    status.textContent = message;
+                    status.textContent = `Βαθμός δυσκολίας: ${difficultyText}`;
                     setTimeout(updateStatus, 2000);
                 });
             });
