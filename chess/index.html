@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Σκάκι</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0c2461, #1e3799);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            color: white;
+        }
+
+        .mobile-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            padding: 20px 15px 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            color: white;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .game-status {
+            text-align: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.15);
+            margin: 8px 15px;
+            border-radius: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .board-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .chess-board-container {
+            width: 95vmin;
+            height: 95vmin;
+            max-width: 95vh;
+            max-height: 95vw;
+            border: 15px solid #8B4513;
+            border-radius: 12px;
+            background: #8B4513;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chess-board {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            position: relative;
+        }
+
+        .square {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .piece {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+            filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.7));
+            transition: transform 0.2s ease;
+            z-index: 2;
+        }
+
+        .piece:active {
+            transform: scale(0.95);
+        }
+
+        .major-piece {
+            font-size: 7.5vmin !important;
+        }
+
+        .pawn-piece {
+            font-size: 6vmin !important;
+        }
+
+        .white-piece {
+            color: #FFFFFF;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .black-piece {
+            color: #000000;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+
+        .light {
+            background: #F0D9B5;
+        }
+
+        .dark {
+            background: #B58863;
+        }
+
+        .selected {
+            background: linear-gradient(135deg, #81C784, #4CAF50) !important;
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.5);
+        }
+
+        .possible-move::after {
+            content: '';
+            position: absolute;
+            width: 4.5vmin;
+            height: 4.5vmin;
+            background: rgba(76, 175, 80, 0.7);
+            border-radius: 50%;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.8);
+        }
+
+        .possible-capture::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid rgba(255, 87, 34, 0.7);
+            border-radius: 5px;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(255, 87, 34, 0.8);
+        }
+
+        .check {
+            background: linear-gradient(135deg, #FF5252, #D32F2F) !important;
+            animation: pulse-check 1.5s infinite;
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.5);
+        }
+
+        @keyframes pulse-check {
+            0%, 100% { background: linear-gradient(135deg, #FF5252, #D32F2F); }
+            50% { background: linear-gradient(135deg, #FF8A80, #FF5252); }
+        }
+
+        .coordinates {
+            position: absolute;
+            font-size: 2.2vmin;
+            color: rgba(0,0,0,0.7);
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .file-coord {
+            bottom: 2px;
+            right: 4px;
+        }
+
+        .rank-coord {
+            top: 2px;
+            left: 4px;
+        }
+
+        .controls {
+            padding: 20px 15px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .control-btn {
+            padding: 14px 22px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 90px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        #newGame {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+        }
+
+        #undoMove {
+            background: linear-gradient(135deg, #FF9800, #EF6C00);
+        }
+
+        #difficulty {
+            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+            appearance: none;
+            -webkit-appearance: none;
+            padding: 14px 20px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 1em;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        #difficulty option {
+            background: #7B1FA2;
+            color: white;
+        }
+
+        /* Promotion Modal */
+        .promotion-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .promotion-options {
+            background: rgba(40, 40, 40, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            min-width: 280px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .promotion-option {
+            font-size: 3.5em;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .promotion-option:active {
+            transform: scale(0.9);
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .chess-board-container {
+                border-width: 10px;
+            }
+            
+            .major-piece {
+                font-size: 7vmin !important;
+            }
+            
+            .pawn-piece {
+                font-size: 5.5vmin !important;
+            }
+            
+            .controls {
+                padding: 15px 10px;
+            }
+            
+            .control-btn {
+                padding: 12px 18px;
+                font-size: 0.9em;
+                min-width: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .game-status {
+                font-size: 0.9em;
+                margin: 8px 10px;
+                padding: 10px;
+            }
+            
+            .chess-board-container {
+                border-width: 8px;
+            }
+            
+            .major-piece {
+                font-size: 6.5vmin !important;
+            }
+            
+            .pawn-piece {
+                font-size: 5vmin !important;
+            }
+            
+            .controls {
+                gap: 10px;
+            }
+            
+            .control-btn {
+                padding: 10px 15px;
+                font-size: 0.85em;
+                min-width: 70px;
+            }
+        }
+
+        /* Landscape orientation */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .mobile-container {
+                flex-direction: row;
+            }
+            
+            .header {
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                padding: 10px 8px;
+            }
+            
+            .board-section {
+                flex: 1;
+            }
+            
+            .controls {
+                flex-direction: column;
+                padding: 10px 8px;
+            }
+            
+            .chess-board-container {
+                width: 80vmin;
+                height: 80vmin;
+            }
+            
+            .major-piece {
+                font-size: 6vmin !important;
+            }
+            
+            .pawn-piece {
+                font-size: 4.5vmin !important;
+            }
+        }
+
+        /* Animation for new game */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .chess-board-container {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="header">
+            <h1>♚ Σκάκι vs AI ♔</h1>
+            <div class="game-status">
+                <div id="status">Είσαι Λευκό - Εσύ παίζεις πρώτος</div>
+            </div>
+        </div>
+
+        <div class="board-section">
+            <div class="chess-board-container">
+                <div id="chessBoard" class="chess-board"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" id="newGame">🔄 Νέο</button>
+            <button class="control-btn" id="undoMove">↶ Πίσω</button>
+            <select class="control-btn" id="difficulty">
+                <option value="1">Εύκολο</option>
+                <option value="2" selected>Μέτριο</option>
+                <option value="3">Δύσκολο</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="promotionModal" class="promotion-modal">
+        <div class="promotion-options">
+            <div class="promotion-option" data-piece="q">♕</div>
+            <div class="promotion-option" data-piece="r">♖</div>
+            <div class="promotion-option" data-piece="b">♗</div>
+            <div class="promotion-option" data-piece="n">♘</div>
+        </div>
+    </div>
+
+    <script>
+        // Ο κώδικας JavaScript παραμένει αμετάβλητος
+        class ChessEngine {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.board = this.createInitialBoard();
+                this.turn = 'w';
+                this.moveHistory = [];
+                this.gameOver = false;
+                this.winner = null;
+                this.check = false;
+            }
+
+            createInitialBoard() {
+                return [
+                    ['br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br'],
+                    ['bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp'],
+                    ['', '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', ''],
+                    ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
+                    ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr']
+                ];
+            }
+
+            getPiece(x, y) {
+                if (x < 0 || x > 7 || y < 0 || y > 7) return null;
+                return this.board[y][x];
+            }
+
+            setPiece(x, y, piece) {
+                if (x >= 0 && x < 8 && y >= 0 && y < 8) {
+                    this.board[y][x] = piece;
+                }
+            }
+
+            move(fromX, fromY, toX, toY, promotion = 'q') {
+                if (this.gameOver) return false;
+
+                const piece = this.getPiece(fromX, fromY);
+                if (!piece) return false;
+                
+                if ((this.turn === 'w' && piece[0] !== 'w') || 
+                    (this.turn === 'b' && piece[0] !== 'b')) {
+                    return false;
+                }
+
+                if (!this.isValidMove(fromX, fromY, toX, toY)) {
+                    return false;
+                }
+
+                const captured = this.getPiece(toX, toY);
+                const originalFrom = this.getPiece(fromX, fromY);
+                
+                this.setPiece(toX, toY, originalFrom);
+                this.setPiece(fromX, fromY, '');
+
+                if (this.isKingInCheck(this.turn)) {
+                    this.setPiece(fromX, fromY, originalFrom);
+                    this.setPiece(toX, toY, captured);
+                    return false;
+                }
+
+                if (piece[1] === 'p' && (toY === 0 || toY === 7)) {
+                    this.setPiece(toX, toY, piece[0] + promotion);
+                }
+
+                this.moveHistory.push({
+                    from: {x: fromX, y: fromY},
+                    to: {x: toX, y: toY},
+                    piece: piece,
+                    captured: captured,
+                    promotion: promotion
+                });
+
+                this.turn = this.turn === 'w' ? 'b' : 'w';
+                this.check = this.isKingInCheck(this.turn);
+                
+                if (this.isCheckmate()) {
+                    this.gameOver = true;
+                    this.winner = this.turn === 'w' ? 'b' : 'w';
+                } else if (this.isStalemate()) {
+                    this.gameOver = true;
+                    this.winner = 'draw';
+                }
+
+                return true;
+            }
+
+            isValidMove(fromX, fromY, toX, toY) {
+                const piece = this.getPiece(fromX, fromY);
+                if (!piece) return false;
+
+                const target = this.getPiece(toX, toY);
+                if (target && target[0] === piece[0]) return false;
+
+                const type = piece[1];
+                const dx = toX - fromX;
+                const dy = toY - fromY;
+                const color = piece[0];
+
+                switch (type) {
+                    case 'p': return this.isValidPawnMove(fromX, fromY, toX, toY, color);
+                    case 'r': return this.isValidRookMove(fromX, fromY, toX, toY);
+                    case 'n': return this.isValidKnightMove(dx, dy);
+                    case 'b': return this.isValidBishopMove(fromX, fromY, toX, toY);
+                    case 'q': return this.isValidQueenMove(fromX, fromY, toX, toY);
+                    case 'k': return this.isValidKingMove(fromX, fromY, toX, toY, color);
+                    default: return false;
+                }
+            }
+
+            isValidPawnMove(fromX, fromY, toX, toY, color) {
+                const direction = color === 'w' ? -1 : 1;
+                const startRow = color === 'w' ? 6 : 1;
+                const dx = toX - fromX;
+                const dy = toY - fromY;
+                const target = this.getPiece(toX, toY);
+
+                if (dx === 0) {
+                    if (dy === direction && !target) return true;
+                    if (fromY === startRow && dy === 2 * direction && 
+                        !target && !this.getPiece(fromX, fromY + direction)) return true;
+                }
+                
+                if (Math.abs(dx) === 1 && dy === direction && target) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            isValidKnightMove(dx, dy) {
+                return (Math.abs(dx) === 2 && Math.abs(dy) === 1) || 
+                       (Math.abs(dx) === 1 && Math.abs(dy) === 2);
+            }
+
+            isValidRookMove(fromX, fromY, toX, toY) {
+                if (fromX !== toX && fromY !== toY) return false;
+                return this.isPathClear(fromX, fromY, toX, toY);
+            }
+
+            isValidBishopMove(fromX, fromY, toX, toY) {
+                if (Math.abs(toX - fromX) !== Math.abs(toY - fromY)) return false;
+                return this.isPathClear(fromX, fromY, toX, toY);
+            }
+
+            isValidQueenMove(fromX, fromY, toX, toY) {
+                return this.isValidRookMove(fromX, fromY, toX, toY) || 
+                       this.isValidBishopMove(fromX, fromY, toX, toY);
+            }
+
+            isValidKingMove(fromX, fromY, toX, toY, color) {
+                const dx = Math.abs(toX - fromX);
+                const dy = Math.abs(toY - fromY);
+                return dx <= 1 && dy <= 1;
+            }
+
+            isPathClear(fromX, fromY, toX, toY) {
+                const dx = Math.sign(toX - fromX);
+                const dy = Math.sign(toY - fromY);
+                let x = fromX + dx;
+                let y = fromY + dy;
+
+                while (x !== toX || y !== toY) {
+                    if (this.getPiece(x, y)) return false;
+                    x += dx;
+                    y += dy;
+                }
+                return true;
+            }
+
+            isKingInCheck(color) {
+                let kingX, kingY;
+                for (let y = 0; y < 8; y++) {
+                    for (let x = 0; x < 8; x++) {
+                        const piece = this.getPiece(x, y);
+                        if (piece === color + 'k') {
+                            kingX = x;
+                            kingY = y;
+                            break;
+                        }
+                    }
+                }
+
+                for (let y = 0; y < 8; y++) {
+                    for (let x = 0; x < 8; x++) {
+                        const piece = this.getPiece(x, y);
+                        if (piece && piece[0] !== color) {
+                            if (this.isValidMove(x, y, kingX, kingY)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
+            isCheckmate() {
+                if (!this.check) return false;
+                
+                for (let fromY = 0; fromY < 8; fromY++) {
+                    for (let fromX = 0; fromX < 8; fromX++) {
+                        const piece = this.getPiece(fromX, fromY);
+                        if (piece && piece[0] === this.turn) {
+                            const moves = this.getValidMovesForPiece(fromX, fromY);
+                            if (moves.length > 0) return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            isStalemate() {
+                if (this.check) return false;
+                
+                for (let fromY = 0; fromY < 8; fromY++) {
+                    for (let fromX = 0; fromX < 8; fromX++) {
+                        const piece = this.getPiece(fromX, fromY);
+                        if (piece && piece[0] === this.turn) {
+                            const moves = this.getValidMovesForPiece(fromX, fromY);
+                            if (moves.length > 0) return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            getValidMovesForPiece(x, y) {
+                const moves = [];
+                for (let toY = 0; toY < 8; toY++) {
+                    for (let toX = 0; toX < 8; toX++) {
+                        if (this.isValidMove(x, y, toX, toY)) {
+                            const captured = this.getPiece(toX, toY);
+                            const original = this.getPiece(x, y);
+                            
+                            this.setPiece(toX, toY, original);
+                            this.setPiece(x, y, '');
+                            
+                            const leavesInCheck = this.isKingInCheck(this.turn);
+                            
+                            this.setPiece(x, y, original);
+                            this.setPiece(toX, toY, captured);
+                            
+                            if (!leavesInCheck) {
+                                moves.push({x: toX, y: toY});
+                            }
+                        }
+                    }
+                }
+                return moves;
+            }
+
+            getAIMove(difficulty) {
+                const moves = [];
+                
+                for (let fromY = 0; fromY < 8; fromY++) {
+                    for (let fromX = 0; fromX < 8; fromX++) {
+                        const piece = this.getPiece(fromX, fromY);
+                        if (piece && piece[0] === this.turn) {
+                            const validMoves = this.getValidMovesForPiece(fromX, fromY);
+                            validMoves.forEach(move => {
+                                moves.push({
+                                    from: {x: fromX, y: fromY},
+                                    to: move,
+                                    piece: piece
+                                });
+                            });
+                        }
+                    }
+                }
+
+                if (moves.length === 0) return null;
+
+                const scoredMoves = moves.map(move => {
+                    let score = 0;
+                    
+                    const target = this.getPiece(move.to.x, move.to.y);
+                    if (target) {
+                        score += this.getPieceValue(target[1]) * 10;
+                    }
+                    
+                    if (move.piece[1] === 'p' && (move.to.y === 0 || move.to.y === 7)) {
+                        score += 8;
+                    }
+                    
+                    this.move(move.from.x, move.from.y, move.to.x, move.to.y);
+                    if (this.check) score += 5;
+                    if (this.gameOver) score += 1000;
+                    this.undoMove();
+                    
+                    score += this.evaluatePosition();
+                    
+                    return { move, score };
+                });
+
+                scoredMoves.sort((a, b) => b.score - a.score);
+                
+                if (difficulty === 1) {
+                    return moves[Math.floor(Math.random() * moves.length)];
+                } else if (difficulty === 2) {
+                    const topMoves = scoredMoves.slice(0, 3);
+                    return topMoves[Math.floor(Math.random() * topMoves.length)].move;
+                } else {
+                    return scoredMoves[0].move;
+                }
+            }
+
+            getPieceValue(type) {
+                const values = { 'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 100 };
+                return values[type] || 0;
+            }
+
+            evaluatePosition() {
+                let score = 0;
+                for (let y = 0; y < 8; y++) {
+                    for (let x = 0; x < 8; x++) {
+                        const piece = this.getPiece(x, y);
+                        if (piece) {
+                            const value = this.getPieceValue(piece[1]);
+                            score += piece[0] === 'w' ? value : -value;
+                        }
+                    }
+                }
+                return score;
+            }
+
+            undoMove() {
+                if (this.moveHistory.length === 0) return false;
+                
+                const lastMove = this.moveHistory.pop();
+                this.setPiece(lastMove.from.x, lastMove.from.y, lastMove.piece);
+                this.setPiece(lastMove.to.x, lastMove.to.y, lastMove.captured || '');
+                
+                this.turn = this.turn === 'w' ? 'b' : 'w';
+                this.gameOver = false;
+                this.winner = null;
+                this.check = this.isKingInCheck(this.turn);
+                
+                return true;
+            }
+
+            needsPromotion(fromX, fromY, toX, toY) {
+                const piece = this.getPiece(fromX, fromY);
+                return piece && piece[1] === 'p' && (toY === 0 || toY === 7);
+            }
+        }
+
+        class MobileChessGame {
+            constructor() {
+                this.chess = new ChessEngine();
+                this.selectedPiece = null;
+                this.possibleMoves = [];
+                this.pendingPromotion = null;
+                
+                this.pieceSymbols = {
+                    // Λευκά
+                    'wp': '♙', // Στρατιώτης
+                    'wr': '♖', // Πύργος
+                    'wn': '♘', // Άλογο
+                    'wb': '♗', // Αξιωματικός
+                    'wq': '♕', // Βασίλισσα
+                    'wk': '♔', // Βασιλιάς
+                    // Μαύρα
+                    'bp': '♟', // Στρατιώτης
+                    'br': '♜', // Πύργος
+                    'bn': '♞', // Άλογο
+                    'bb': '♝', // Αξιωματικός
+                    'bq': '♛', // Βασίλισσα
+                    'bk': '♚'  // Βασιλιάς
+                };
+
+                // Καθορισμός ποια κομμάτια είναι major (μεγάλα) και ποια pawns (στρατιωτάκια)
+                this.majorPieces = ['r', 'n', 'b', 'q', 'k']; // Πύργοι, άλογα, αξιωματικοί, βασίλισσες, βασιλιάδες
+                this.pawnPieces = ['p']; // Στρατιωτάκια
+
+                this.files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+                this.ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+
+                this.init();
+            }
+
+            init() {
+                this.createBoard();
+                this.bindEvents();
+                this.updateStatus();
+            }
+
+            createBoard() {
+                const board = document.getElementById('chessBoard');
+                board.innerHTML = '';
+                
+                for (let y = 0; y < 8; y++) {
+                    for (let x = 0; x < 8; x++) {
+                        const square = document.createElement('div');
+                        const isLight = (x + y) % 2 === 0;
+                        square.className = `square ${isLight ? 'light' : 'dark'}`;
+                        square.dataset.x = x;
+                        square.dataset.y = y;
+                        
+                        // Προσθήκη coordinates
+                        if (y === 7) {
+                            const fileCoord = document.createElement('div');
+                            fileCoord.className = 'coordinates file-coord';
+                            fileCoord.textContent = this.files[x];
+                            square.appendChild(fileCoord);
+                        }
+                        
+                        if (x === 0) {
+                            const rankCoord = document.createElement('div');
+                            rankCoord.className = 'coordinates rank-coord';
+                            rankCoord.textContent = this.ranks[y];
+                            square.appendChild(rankCoord);
+                        }
+
+                        const piece = this.chess.getPiece(x, y);
+                        if (piece) {
+                            const pieceElement = document.createElement('div');
+                            pieceElement.className = `piece ${piece[0] === 'w' ? 'white-piece' : 'black-piece'}`;
+                            
+                            // Προσθήκη κλάσης ανάλογα με το είδος του κομματιού
+                            const pieceType = piece[1];
+                            if (this.majorPieces.includes(pieceType)) {
+                                pieceElement.classList.add('major-piece');
+                            } else if (this.pawnPieces.includes(pieceType)) {
+                                pieceElement.classList.add('pawn-piece');
+                            }
+                            
+                            pieceElement.textContent = this.pieceSymbols[piece];
+                            square.appendChild(pieceElement);
+                            
+                            if (piece[1] === 'k' && this.chess.check && piece[0] === this.chess.turn) {
+                                square.classList.add('check');
+                            }
+                        }
+                        
+                        square.addEventListener('click', () => this.handleSquareClick(x, y));
+                        board.appendChild(square);
+                    }
+                }
+            }
+
+            handleSquareClick(x, y) {
+                if (this.chess.gameOver || this.pendingPromotion) return;
+                
+                const piece = this.chess.getPiece(x, y);
+                
+                // Επιλογή κομματιού
+                if (piece && piece[0] === 'w') {
+                    this.selectedPiece = {x, y};
+                    this.possibleMoves = this.chess.getValidMovesForPiece(x, y);
+                    this.highlightMoves();
+                    return;
+                }
+                
+                // Κίνηση κομματιού
+                if (this.selectedPiece) {
+                    const moveX = this.selectedPiece.x;
+                    const moveY = this.selectedPiece.y;
+                    
+                    const isValidMove = this.possibleMoves.some(move => 
+                        move.x === x && move.y === y
+                    );
+
+                    if (isValidMove) {
+                        if (this.chess.needsPromotion(moveX, moveY, x, y)) {
+                            this.pendingPromotion = {fromX: moveX, fromY: moveY, toX: x, toY: y};
+                            this.showPromotionModal();
+                            return;
+                        }
+                        
+                        this.makeMove(moveX, moveY, x, y);
+                    }
+                    
+                    this.clearHighlights();
+                    this.selectedPiece = null;
+                }
+            }
+
+            makeMove(fromX, fromY, toX, toY, promotion = 'q') {
+                const success = this.chess.move(fromX, fromY, toX, toY, promotion);
+                
+                if (success) {
+                    this.createBoard();
+                    this.updateStatus();
+                    
+                    if (!this.chess.gameOver && this.chess.turn === 'b') {
+                        setTimeout(() => this.makeAIMove(), 500);
+                    }
+                }
+            }
+
+            makeAIMove() {
+                const difficulty = parseInt(document.getElementById('difficulty').value);
+                const aiMove = this.chess.getAIMove(difficulty);
+                
+                if (aiMove) {
+                    this.makeMove(aiMove.from.x, aiMove.from.y, aiMove.to.x, aiMove.to.y);
+                }
+            }
+
+            highlightMoves() {
+                this.clearHighlights();
+                
+                this.possibleMoves.forEach(move => {
+                    const square = this.getSquareElement(move.x, move.y);
+                    if (square) {
+                        const targetPiece = this.chess.getPiece(move.x, move.y);
+                        if (targetPiece) {
+                            square.classList.add('possible-capture');
+                        } else {
+                            square.classList.add('possible-move');
+                        }
+                    }
+                });
+                
+                if (this.selectedPiece) {
+                    const selectedSquare = this.getSquareElement(this.selectedPiece.x, this.selectedPiece.y);
+                    selectedSquare.classList.add('selected');
+                }
+            }
+
+            clearHighlights() {
+                document.querySelectorAll('.possible-move').forEach(el => 
+                    el.classList.remove('possible-move')
+                );
+                document.querySelectorAll('.possible-capture').forEach(el => 
+                    el.classList.remove('possible-capture')
+                );
+                document.querySelectorAll('.selected').forEach(el => 
+                    el.classList.remove('selected')
+                );
+                document.querySelectorAll('.check').forEach(el => 
+                    el.classList.remove('check')
+                );
+            }
+
+            getSquareElement(x, y) {
+                return document.querySelector(`.square[data-x="${x}"][data-y="${y}"]`);
+            }
+
+            showPromotionModal() {
+                document.getElementById('promotionModal').style.display = 'flex';
+            }
+
+            hidePromotionModal() {
+                document.getElementById('promotionModal').style.display = 'none';
+                this.pendingPromotion = null;
+            }
+
+            updateStatus() {
+                let status = '';
+                
+                if (this.chess.gameOver) {
+                    if (this.chess.winner === 'w') {
+                        status = '🎉 Νίκησες! Ματ στους Μαύρους!';
+                    } else if (this.chess.winner === 'b') {
+                        status = '😞 Ηττήθηκες! Ματ στα Λευκά!';
+                    } else {
+                        status = '🤝 Ισοπαλία!';
+                    }
+                } else {
+                    status = this.chess.turn === 'w' ? 
+                        '⚪ Σειρά σου - Λευκά' : '⚫ Σειρά AI - Μαύρα';
+                    
+                    if (this.chess.check) {
+                        status += ' - ΣΑΧ! ⚡';
+                    }
+                }
+                
+                document.getElementById('status').textContent = status;
+            }
+
+            bindEvents() {
+                document.getElementById('newGame').addEventListener('click', () => {
+                    this.chess.reset();
+                    this.selectedPiece = null;
+                    this.possibleMoves = [];
+                    this.pendingPromotion = null;
+                    this.createBoard();
+                    this.updateStatus();
+                });
+
+                document.getElementById('undoMove').addEventListener('click', () => {
+                    if (this.chess.undoMove()) {
+                        this.selectedPiece = null;
+                        this.possibleMoves = [];
+                        this.createBoard();
+                        this.updateStatus();
+                    }
+                });
+
+                document.querySelectorAll('.promotion-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        if (this.pendingPromotion) {
+                            const piece = option.dataset.piece;
+                            this.makeMove(
+                                this.pendingPromotion.fromX, 
+                                this.pendingPromotion.fromY, 
+                                this.pendingPromotion.toX, 
+                                this.pendingPromotion.toY, 
+                                piece
+                            );
+                            this.hidePromotionModal();
+                        }
+                    });
+                });
+
+                document.getElementById('difficulty').addEventListener('change', () => {
+                    // Αλλαγή δυσκολίας
+                });
+            }
+        }
+
+        // Αρχικοποίηση του παιχνιδιού
+        document.addEventListener('DOMContentLoaded', () => {
+            new MobileChessGame();
+        });
+    </script>
+</body>
+</html>
