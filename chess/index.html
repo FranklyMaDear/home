@@ -84,9 +84,28 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 8vmin;
             position: relative;
             transition: all 0.2s ease;
+        }
+
+        .piece {
+            font-size: 6.5vmin;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.6));
+        }
+
+        .white-piece {
+            color: #FFFFFF;
+        }
+
+        .black-piece {
+            color: #000000;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.4);
         }
 
         .light {
@@ -198,7 +217,7 @@
             min-width: 250px;
         }
 
-        .promotion-piece {
+        .promotion-option {
             font-size: 3em;
             text-align: center;
             padding: 20px;
@@ -209,24 +228,8 @@
             transition: all 0.2s ease;
         }
 
-        .promotion-piece:active {
+        .promotion-option:active {
             transform: scale(0.9);
-        }
-
-        /* Piece symbols with better styling */
-        .piece {
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
-        }
-
-        .white-piece {
-            color: #FFFFFF;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-        }
-
-        .black-piece {
-            color: #000000;
-            text-shadow: 1px 1px 3px rgba(255,255,255,0.3);
         }
 
         /* Mobile optimizations */
@@ -235,8 +238,8 @@
                 border-width: 8px;
             }
             
-            .square {
-                font-size: 7vmin;
+            .piece {
+                font-size: 6vmin;
             }
             
             .controls {
@@ -264,8 +267,8 @@
                 border-width: 6px;
             }
             
-            .square {
-                font-size: 6vmin;
+            .piece {
+                font-size: 5.5vmin;
             }
         }
 
@@ -293,6 +296,10 @@
             .chess-board-container {
                 width: 80vmin;
                 height: 80vmin;
+            }
+            
+            .piece {
+                font-size: 5vmin;
             }
         }
     </style>
@@ -325,10 +332,10 @@
 
     <div id="promotionModal" class="promotion-modal">
         <div class="promotion-options">
-            <div class="promotion-piece" data-piece="q">♕</div>
-            <div class="promotion-piece" data-piece="r">♖</div>
-            <div class="promotion-piece" data-piece="b">♗</div>
-            <div class="promotion-piece" data-piece="n">♘</div>
+            <div class="promotion-option" data-piece="q">♕</div>
+            <div class="promotion-option" data-piece="r">♖</div>
+            <div class="promotion-option" data-piece="b">♗</div>
+            <div class="promotion-option" data-piece="n">♘</div>
         </div>
     </div>
 
@@ -690,9 +697,22 @@
                 this.possibleMoves = [];
                 this.pendingPromotion = null;
                 
+                // Καλύτερα Unicode symbols για σκάκι
                 this.pieceSymbols = {
-                    'wp': '♙', 'wr': '♖', 'wn': '♘', 'wb': '♗', 'wq': '♕', 'wk': '♔',
-                    'bp': '♟', 'br': '♜', 'bn': '♞', 'bb': '♝', 'bq': '♛', 'bk': '♚'
+                    // Λευκά
+                    'wp': '♙', // Στρατιώτης
+                    'wr': '♖', // Πύργος
+                    'wn': '♘', // Άλογο
+                    'wb': '♗', // Αξιωματικός
+                    'wq': '♕', // Βασίλισσα
+                    'wk': '♔', // Βασιλιάς
+                    // Μαύρα
+                    'bp': '♟', // Στρατιώτης
+                    'br': '♜', // Πύργος
+                    'bn': '♞', // Άλογο
+                    'bb': '♝', // Αξιωματικός
+                    'bq': '♛', // Βασίλισσα
+                    'bk': '♚'  // Βασιλιάς
                 };
 
                 this.files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -719,7 +739,7 @@
                         square.dataset.x = x;
                         square.dataset.y = y;
                         
-                        // Add coordinates
+                        // Προσθήκη coordinates
                         if (y === 7) {
                             const fileCoord = document.createElement('div');
                             fileCoord.className = 'coordinates file-coord';
@@ -736,9 +756,10 @@
 
                         const piece = this.chess.getPiece(x, y);
                         if (piece) {
-                            square.textContent = this.pieceSymbols[piece];
-                            square.classList.add('piece');
-                            square.classList.add(piece[0] === 'w' ? 'white-piece' : 'black-piece');
+                            const pieceElement = document.createElement('div');
+                            pieceElement.className = `piece ${piece[0] === 'w' ? 'white-piece' : 'black-piece'}`;
+                            pieceElement.textContent = this.pieceSymbols[piece];
+                            square.appendChild(pieceElement);
                             
                             if (piece[1] === 'k' && this.chess.check && piece[0] === this.chess.turn) {
                                 square.classList.add('check');
@@ -756,7 +777,7 @@
                 
                 const piece = this.chess.getPiece(x, y);
                 
-                // Select piece
+                // Επιλογή κομματιού
                 if (piece && piece[0] === 'w') {
                     this.selectedPiece = {x, y};
                     this.possibleMoves = this.chess.getValidMovesForPiece(x, y);
@@ -764,7 +785,7 @@
                     return;
                 }
                 
-                // Move piece
+                // Κίνηση κομματιού
                 if (this.selectedPiece) {
                     const moveX = this.selectedPiece.x;
                     const moveY = this.selectedPiece.y;
@@ -893,7 +914,7 @@
                     }
                 });
 
-                document.querySelectorAll('.promotion-piece').forEach(piece => {
+                document.querySelectorAll('.promotion-option').forEach(piece => {
                     piece.addEventListener('click', () => {
                         const promotionPiece = piece.dataset.piece;
                         if (this.pendingPromotion) {
