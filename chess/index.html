@@ -89,7 +89,6 @@
         }
 
         .piece {
-            font-size: 6.5vmin;
             width: 100%;
             height: 100%;
             display: flex;
@@ -97,6 +96,16 @@
             align-items: center;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
             filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.6));
+        }
+
+        /* ΜΕΓΑΛΑ κομμάτια για βασιλιάδες, βασίλισσες, πύργους, αξιωματικούς, άλογα */
+        .major-piece {
+            font-size: 7.5vmin !important;
+        }
+
+        /* Φυσιολογικά στρατιωτάκια */
+        .pawn-piece {
+            font-size: 6vmin !important;
         }
 
         .white-piece {
@@ -218,7 +227,7 @@
         }
 
         .promotion-option {
-            font-size: 3em;
+            font-size: 3.5em;
             text-align: center;
             padding: 20px;
             border-radius: 10px;
@@ -238,8 +247,12 @@
                 border-width: 8px;
             }
             
-            .piece {
-                font-size: 6vmin;
+            .major-piece {
+                font-size: 7vmin !important;
+            }
+            
+            .pawn-piece {
+                font-size: 5.5vmin !important;
             }
             
             .controls {
@@ -267,8 +280,12 @@
                 border-width: 6px;
             }
             
-            .piece {
-                font-size: 5.5vmin;
+            .major-piece {
+                font-size: 6.5vmin !important;
+            }
+            
+            .pawn-piece {
+                font-size: 5vmin !important;
             }
         }
 
@@ -298,8 +315,12 @@
                 height: 80vmin;
             }
             
-            .piece {
-                font-size: 5vmin;
+            .major-piece {
+                font-size: 6vmin !important;
+            }
+            
+            .pawn-piece {
+                font-size: 4.5vmin !important;
             }
         }
     </style>
@@ -697,7 +718,6 @@
                 this.possibleMoves = [];
                 this.pendingPromotion = null;
                 
-                // Καλύτερα Unicode symbols για σκάκι
                 this.pieceSymbols = {
                     // Λευκά
                     'wp': '♙', // Στρατιώτης
@@ -714,6 +734,10 @@
                     'bq': '♛', // Βασίλισσα
                     'bk': '♚'  // Βασιλιάς
                 };
+
+                // Καθορισμός ποια κομμάτια είναι major (μεγάλα) και ποια pawns (στρατιωτάκια)
+                this.majorPieces = ['r', 'n', 'b', 'q', 'k']; // Πύργοι, άλογα, αξιωματικοί, βασίλισσες, βασιλιάδες
+                this.pawnPieces = ['p']; // Στρατιωτάκια
 
                 this.files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
                 this.ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
@@ -758,6 +782,15 @@
                         if (piece) {
                             const pieceElement = document.createElement('div');
                             pieceElement.className = `piece ${piece[0] === 'w' ? 'white-piece' : 'black-piece'}`;
+                            
+                            // Προσθήκη κλάσης ανάλογα με το είδος του κομματιού
+                            const pieceType = piece[1];
+                            if (this.majorPieces.includes(pieceType)) {
+                                pieceElement.classList.add('major-piece');
+                            } else if (this.pawnPieces.includes(pieceType)) {
+                                pieceElement.classList.add('pawn-piece');
+                            }
+                            
                             pieceElement.textContent = this.pieceSymbols[piece];
                             square.appendChild(pieceElement);
                             
