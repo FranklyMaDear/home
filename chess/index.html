@@ -1,336 +1,661 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="el">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Responsive Σκάκι</title>
-<style>
-  :root{
-    --board-size: min(92vw, 720px); /* max width for tablets/desktops */
-    --light-color: #F3EAD6; /* ανοιχτό τετράγωνο */
-    --dark-color: #B7804A;  /* σκούρο τετράγωνο */
-    --accent: rgba(80,160,240,0.4);
-    --piece-size: 80%; /* relative to square */
-  }
-
-  /* Reset */
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
-  body{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#efe7dd;
-    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    padding:20px;
-  }
-
-  .wrap{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    align-items:center;
-  }
-
-  .board{
-    width:var(--board-size);
-    aspect-ratio:1 / 1; /* makes a square */
-    display:grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-    border: 10px solid #6b2f1b; /* wooden frame */
-    border-radius:10px;
-    overflow:hidden;
-    touch-action: manipulation;
-    position:relative;
-  }
-
-  .square{
-    width:100%;
-    height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    user-select:none;
-    -webkit-user-select:none;
-    font-size: calc(var(--piece-size) * (var(--board-size) / 8) );
-    /* will be overridden by zooming rules below */
-  }
-
-  /* color squares by coordinates (a1 bottom-left for white) */
-  .square.light{ background: var(--light-color); }
-  .square.dark { background: var(--dark-color); }
-
-  /* coordinates labels (small, out of board corners) */
-  .coords{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-  }
-  .coord-file, .coord-rank{
-    position:absolute;
-    font-size:clamp(10px, 1.6vw, 14px);
-    color: rgba(0,0,0,0.6);
-    font-weight:600;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.6);
-  }
-  /* bottom files */
-  .coord-file.bottom{ left:6%; bottom:2%; transform:translateX(-50%); }
-  /* right ranks */
-  .coord-rank.right{ right:2%; bottom:6%; transform:translateY(50%); }
-
-  /* piece styling: using unicode glyphs, centered */
-  .piece{
-    font-size: 2.6vmin; /* fallback; JS will adjust */
-    line-height:1;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    display:inline-block;
-    user-select:none;
-    transform: translateY(2%); /* optical centering for glyphs */
-  }
-
-  /* highlight selected / possible moves */
-  .square.selected{ outline: 4px solid rgba(255,215,120,0.9); outline-offset: -4px; }
-  .square.target{ box-shadow: inset 0 0 0 6px rgba(80,160,240,0.22); }
-  .square.touch-target::after{
-    content:"";
-    width:30%;
-    height:30%;
-    border-radius:50%;
-    background: rgba(10,10,10,0.14);
-    display:block;
-  }
-
-  /* simple toolbar */
-  .toolbar{
-    display:flex;
-    gap:8px;
-    align-items:center;
-  }
-  button{
-    padding:8px 12px;
-    border-radius:8px;
-    border:1px solid #9b6a42;
-    background: #fff8f2;
-    font-weight:600;
-    cursor:pointer;
-  }
-  button:active{ transform: translateY(1px); }
-
-  /* responsive piece scaling: compute font-size based on board size */
-  @media (max-width:700px){
-    /* mobile: larger relative glyphs */
-    .piece{ font-size: calc(var(--board-size) / 12); }
-  }
-  @media (min-width:701px){
-    .piece{ font-size: calc(var(--board-size) / 14); }
-  }
-
-  /* accessibility */
-  .sr-only{ position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ρεαλιστικό Σκάκι</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #ddd;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .board-container {
+            position: relative;
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            border: 5px solid #8B4513;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+            margin: 0 auto;
+        }
+        
+        .square {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .white {
+            background-color: #f0d9b5;
+        }
+        
+        .black {
+            background-color: #b58863;
+        }
+        
+        .selected {
+            background-color: #aec6cf !important;
+        }
+        
+        .possible-move {
+            position: relative;
+        }
+        
+        .possible-move::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(0, 128, 0, 0.5);
+            border-radius: 50%;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 250px;
+        }
+        
+        .difficulty {
+            background-color: rgba(50, 50, 50, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .difficulty h3 {
+            margin-top: 0;
+            color: #fdbb2d;
+        }
+        
+        .difficulty-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .difficulty-btn {
+            padding: 10px;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .difficulty-btn:hover {
+            background-color: #555;
+        }
+        
+        .difficulty-btn.active {
+            background-color: #2a6c1a;
+            font-weight: bold;
+        }
+        
+        .game-info {
+            background-color: rgba(50, 50, 50, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .game-info h3 {
+            margin-top: 0;
+            color: #fdbb2d;
+        }
+        
+        .status {
+            font-size: 1.1rem;
+            margin: 15px 0;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: #2a6c1a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background-color: #3a8c2a;
+            transform: translateY(-2px);
+        }
+        
+        .captured {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .captured-pieces {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            min-height: 30px;
+        }
+        
+        .notation {
+            position: absolute;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .file-notation {
+            bottom: -20px;
+        }
+        
+        .rank-notation {
+            left: -20px;
+        }
+        
+        @media (max-width: 768px) {
+            .game-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .board {
+                grid-template-columns: repeat(8, 40px);
+                grid-template-rows: repeat(8, 40px);
+            }
+            
+            .square {
+                width: 40px;
+                height: 40px;
+                font-size: 30px;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="wrap">
-  <div style="display:flex;gap:12px;align-items:center;">
-    <div class="toolbar" aria-hidden="false">
-      <button id="btnFlip" title="Αντιστροφή σκακιέρας">Flip</button>
-      <button id="btnReset" title="Επαναφορά στην αρχική θέση">Reset</button>
+    <div class="container">
+        <h1>Ρεαλιστικό Σκάκι</h1>
+        <p class="subtitle">Με επιλογές δυσκολίας και ρεαλιστικά πιόνια</p>
+        
+        <div class="game-container">
+            <div class="board-container">
+                <div class="board" id="chessboard">
+                    <!-- Το σκακιέρα θα δημιουργηθεί με JavaScript -->
+                </div>
+            </div>
+            
+            <div class="controls">
+                <div class="difficulty">
+                    <h3>Επίπεδο Δυσκολίας</h3>
+                    <div class="difficulty-options">
+                        <button class="difficulty-btn active" data-level="easy">Εύκολο</button>
+                        <button class="difficulty-btn" data-level="medium">Μέτριο</button>
+                        <button class="difficulty-btn" data-level="hard">Δύσκολο</button>
+                        <button class="difficulty-btn" data-level="expert">Ειδικός</button>
+                    </div>
+                </div>
+                
+                <div class="game-info">
+                    <h3>Πληροφορίες Παιχνιδιού</h3>
+                    <div class="status" id="status">
+                        Η σειρά σας να παίξετε. Επιλέξτε ένα πιόνι.
+                    </div>
+                    
+                    <div class="captured">
+                        <div>
+                            <strong>Λευκά:</strong>
+                            <div class="captured-pieces" id="white-captured"></div>
+                        </div>
+                        <div>
+                            <strong>Μαύρα:</strong>
+                            <div class="captured-pieces" id="black-captured"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button id="restart-btn">Νέο Παιχνίδι</button>
+                        <button id="hint-btn">Βοήθεια</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div id="board" class="board" role="grid" aria-label="Σκακιέρα">
-    <!-- squares injected by JS -->
-  </div>
-  <div style="font-size:13px;color:#3b2a20;opacity:0.9">
-    Πατήστε για να επιλέξετε κομμάτι. (απλό demo προβολής για κινητά / tablet)
-  </div>
-</div>
-
-<script>
-/*
-  Responsive chessboard (initial setup).
-  - Uses Unicode chess symbols for pieces.
-  - Coordinates: a1 bottom-left (white).
-  - Click/tap selects piece; second tap highlights target squares (UI-only).
-  - Buttons: Flip board, Reset to initial.
-*/
-
-const boardEl = document.getElementById('board');
-let flipped = false;
-let selectedSquare = null;
-
-// Unicode pieces (white / black)
-const PIECES = {
-  p: '\u265F', // black pawn
-  r: '\u265C',
-  n: '\u265E',
-  b: '\u265D',
-  q: '\u265B',
-  k: '\u265A',
-  P: '\u2659', // white pawn
-  R: '\u2656',
-  N: '\u2658',
-  B: '\u2657',
-  Q: '\u2655',
-  K: '\u2654'
-};
-
-// Starting FEN for initial position
-const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-
-// utility: generate squares in order a8..h1 (grid rows top->bottom)
-function algebraicFromIndex(index, flipped=false){
-  // index 0..63 where 0 is top-left (a8)
-  const row = Math.floor(index / 8); // 0..7
-  const col = index % 8; // 0..7
-  const file = String.fromCharCode('a'.charCodeAt(0) + col);
-  const rank = 8 - row;
-  if(!flipped) return file + rank;
-  // when flipped, top-left should be h1 etc; compute reversed mapping
-  const fcol = 7 - col;
-  const frow = 7 - row;
-  return String.fromCharCode('a'.charCodeAt(0) + fcol) + (8 - frow);
-}
-
-// create board squares
-function buildBoard(){
-  boardEl.innerHTML = '';
-  for(let i=0;i<64;i++){
-    const sq = document.createElement('div');
-    const row = Math.floor(i/8);
-    const col = i % 8;
-    // Determine color: if (row+col) even -> light (so a8 is light? adjust to match image)
-    // In standard chessboard, a1 is dark? We'll set a1 (bottom-left) dark to match many boards.
-    // But easier: define a1 (file a, rank1) -> coordinates index for bottom-left = 56
-    // We'll compute color via algebraic: if file index + rank index is even -> light
-    const fileIndex = col;
-    const rankIndex = 7 - row; // rank 1 -> row 7
-    const isLight = ((fileIndex + rankIndex) % 2 === 0);
-    sq.className = 'square ' + (isLight ? 'light' : 'dark');
-    sq.setAttribute('data-index', i);
-    const alg = algebraicFromIndex(i, flipped);
-    sq.setAttribute('data-alg', alg);
-    sq.setAttribute('role','gridcell');
-    sq.setAttribute('aria-label', 'τετράγωνο ' + alg);
-    // click handler
-    sq.addEventListener('click', onSquareClick);
-    boardEl.appendChild(sq);
-  }
-}
-
-// place pieces from FEN
-function placeFromFEN(fen){
-  // first clear all squares
-  document.querySelectorAll('.square').forEach(sq => sq.innerHTML = '');
-  const parts = fen.split(' ')[0];
-  const ranks = parts.split('/');
-  // ranks: 8 (top) to 1 (bottom)
-  let idx = 0; // index into squares top-left -> 0
-  for(const r of ranks){
-    for(const ch of r){
-      if(/\d/.test(ch)){
-        idx += parseInt(ch,10);
-      } else {
-        const sq = document.querySelector(`.square[data-index="${idx}"]`);
-        if(sq){
-          const span = document.createElement('span');
-          span.className = 'piece';
-          span.textContent = PIECES[ch] || '?';
-          span.setAttribute('data-piece', ch);
-          // accessibility
-          span.setAttribute('aria-hidden','false');
-          span.setAttribute('title', ch);
-          // tap on piece should act like tapping square (parent)
-          span.addEventListener('click', (ev) => {
-            ev.stopPropagation();
-            onSquareClick.call(sq, ev);
-          });
-          sq.appendChild(span);
-        }
-        idx++;
-      }
-    }
-  }
-}
-
-// handle square click/tap
-function onSquareClick(e){
-  const sq = this;
-  // clear previous highlights
-  document.querySelectorAll('.square').forEach(s => {
-    s.classList.remove('selected','target');
-  });
-  // if same clicked twice -> deselect
-  if(selectedSquare === sq){
-    selectedSquare = null;
-    return;
-  }
-  selectedSquare = sq;
-  sq.classList.add('selected');
-
-  // If there is a piece, mark some pseudo target squares (demo)
-  const pieceEl = sq.querySelector('.piece');
-  if(pieceEl){
-    // For demo only: mark up to 4 neighbor squares as example targets
-    const index = parseInt(sq.getAttribute('data-index'),10);
-    const deltas = [-8,8,-1,1]; // up, down, left, right
-    deltas.forEach(d => {
-      const t = index + d;
-      if(t>=0 && t<64){
-        const tsq = document.querySelector(`.square[data-index="${t}"]`);
-        // avoid crossing file boundaries for left/right
-        if(tsq) tsq.classList.add('target');
-      }
-    });
-  }
-}
-
-// flip board
-function flipBoard(){
-  flipped = !flipped;
-  // rebuild with flipped labeling
-  buildBoard();
-  placeFromFEN(START_FEN);
-}
-
-// reset
-function resetBoard(){
-  flipped = false;
-  buildBoard();
-  placeFromFEN(START_FEN);
-  selectedSquare = null;
-  document.querySelectorAll('.square').forEach(s => s.classList.remove('selected','target'));
-}
-
-document.getElementById('btnFlip').addEventListener('click', () => {
-  flipBoard();
-});
-document.getElementById('btnReset').addEventListener('click', () => {
-  resetBoard();
-});
-
-// initial build
-buildBoard();
-placeFromFEN(START_FEN);
-
-/* Optional: adjust font-size more precisely based on computed square size */
-function adjustFontSizes(){
-  const sq = document.querySelector('.square');
-  if(!sq) return;
-  const s = sq.getBoundingClientRect().width;
-  const pieces = document.querySelectorAll('.piece');
-  pieces.forEach(p => {
-    // piece font size ~ 0.8 * square size
-    p.style.fontSize = Math.max(12, Math.round(s * 0.8)) + 'px';
-  });
-}
-window.addEventListener('resize', adjustFontSizes);
-window.addEventListener('load', adjustFontSizes);
-setTimeout(adjustFontSizes, 100);
-
-/* Touch improvements: prevent double-tap zoom on iOS-land by touch-action CSS on board */
-</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chessboard = document.getElementById('chessboard');
+            const status = document.getElementById('status');
+            const whiteCaptured = document.getElementById('white-captured');
+            const blackCaptured = document.getElementById('black-captured');
+            const restartBtn = document.getElementById('restart-btn');
+            const hintBtn = document.getElementById('hint-btn');
+            const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+            
+            // Ρεαλιστικά Unicode σύμβολα για τα πιόνια
+            const pieces = {
+                'wp': '♙', // Λευκό πιόνι
+                'wr': '♖', // Λευκό πύργος
+                'wn': '♘', // Λευκό ίππος
+                'wb': '♗', // Λευκό αξιωματικός
+                'wq': '♕', // Λευκή βασίλισσα
+                'wk': '♔', // Λευκός βασιλιάς
+                'bp': '♟', // Μαύρο πιόνι
+                'br': '♜', // Μαύρος πύργος
+                'bn': '♞', // Μαύρος ίππος
+                'bb': '♝', // Μαύρος αξιωματικός
+                'bq': '♛', // Μαύρη βασίλισσα
+                'bk': '♚'  // Μαύρος βασιλιάς
+            };
+            
+            let boardState = [];
+            let selectedPiece = null;
+            let currentPlayer = 'white';
+            let gameActive = true;
+            let difficulty = 'easy';
+            let whiteCapturedPieces = [];
+            let blackCapturedPieces = [];
+            
+            // Αρχικοποίηση του σκακιέρα
+            function initializeBoard() {
+                chessboard.innerHTML = '';
+                boardState = [];
+                
+                // Δημιουργία αρχικής διάταξης
+                const initialSetup = [
+                    ['br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br'],
+                    ['bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp'],
+                    [null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null],
+                    [null, null, null, null, null, null, null, null],
+                    ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
+                    ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr']
+                ];
+                
+                // Δημιουργία τετραγώνων και τοποθέτηση πιονιών
+                for (let row = 0; row < 8; row++) {
+                    boardState[row] = [];
+                    for (let col = 0; col < 8; col++) {
+                        const square = document.createElement('div');
+                        square.className = `square ${(row + col) % 2 === 0 ? 'white' : 'black'}`;
+                        square.dataset.row = row;
+                        square.dataset.col = col;
+                        
+                        const piece = initialSetup[row][col];
+                        if (piece) {
+                            square.textContent = pieces[piece];
+                            square.dataset.piece = piece;
+                        }
+                        
+                        square.addEventListener('click', handleSquareClick);
+                        chessboard.appendChild(square);
+                        boardState[row][col] = piece;
+                    }
+                }
+                
+                // Ενημέρωση κατάστασης
+                currentPlayer = 'white';
+                gameActive = true;
+                whiteCapturedPieces = [];
+                blackCapturedPieces = [];
+                updateStatus();
+                updateCapturedPieces();
+            }
+            
+            // Χειρισμός κλικ σε τετράγωνο
+            function handleSquareClick(event) {
+                if (!gameActive) return;
+                
+                const square = event.currentTarget;
+                const row = parseInt(square.dataset.row);
+                const col = parseInt(square.dataset.col);
+                const piece = square.dataset.piece;
+                
+                // Αν δεν έχει επιλεγεί πιόνι και ο χρήστης κάνει κλικ σε πιόνι του
+                if (!selectedPiece && piece && piece[0] === (currentPlayer === 'white' ? 'w' : 'b')) {
+                    selectPiece(square, row, col, piece);
+                }
+                // Αν έχει επιλεγεί πιόνι και ο χρήστης κάνει κλικ σε έγκυρη κίνηση
+                else if (selectedPiece) {
+                    // Αν κάνει κλικ στο ίδιο πιόνι, απενεργοποίηση επιλογής
+                    if (selectedPiece.row === row && selectedPiece.col === col) {
+                        clearSelection();
+                    }
+                    // Αν κάνει κλικ σε έγκυρο τετράγωνο για κίνηση
+                    else if (square.classList.contains('possible-move')) {
+                        movePiece(selectedPiece.row, selectedPiece.col, row, col);
+                    }
+                    // Αν κάνει κλικ σε άλλο πιόνι του ίδιου χρώματος
+                    else if (piece && piece[0] === (currentPlayer === 'white' ? 'w' : 'b')) {
+                        clearSelection();
+                        selectPiece(square, row, col, piece);
+                    }
+                    // Αλλιώς, απλά απενεργοποίηση επιλογής
+                    else {
+                        clearSelection();
+                    }
+                }
+            }
+            
+            // Επιλογή πιονιού
+            function selectPiece(square, row, col, piece) {
+                clearSelection();
+                
+                selectedPiece = { row, col, piece };
+                square.classList.add('selected');
+                
+                // Προσομοίωση έγκυρων κινήσεων (απλοποιημένη)
+                const possibleMoves = calculatePossibleMoves(row, col, piece);
+                
+                // Εμφάνιση πιθανών κινήσεων
+                possibleMoves.forEach(move => {
+                    const targetSquare = document.querySelector(`.square[data-row="${move.row}"][data-col="${move.col}"]`);
+                    if (targetSquare) {
+                        targetSquare.classList.add('possible-move');
+                    }
+                });
+            }
+            
+            // Υπολογισμός πιθανών κινήσεων (απλοποιημένος)
+            function calculatePossibleMoves(row, col, piece) {
+                const moves = [];
+                const pieceType = piece[1];
+                const color = piece[0];
+                
+                // Βασικοί κανόνες κίνησης για κάθε τύπο πιονιού
+                switch (pieceType) {
+                    case 'p': // Πιόνι
+                        const direction = color === 'w' ? -1 : 1;
+                        const startRow = color === 'w' ? 6 : 1;
+                        
+                        // Κίνηση μπροστά
+                        if (isValidSquare(row + direction, col) && !boardState[row + direction][col]) {
+                            moves.push({ row: row + direction, col });
+                            
+                            // Διπλή κίνηση από αρχική θέση
+                            if (row === startRow && !boardState[row + 2 * direction][col]) {
+                                moves.push({ row: row + 2 * direction, col });
+                            }
+                        }
+                        
+                        // Κίνηση για πάρσιμο
+                        const captureDirections = [[direction, -1], [direction, 1]];
+                        captureDirections.forEach(([dr, dc]) => {
+                            const newRow = row + dr;
+                            const newCol = col + dc;
+                            if (isValidSquare(newRow, newCol) && boardState[newRow][newCol] && 
+                                boardState[newRow][newCol][0] !== color) {
+                                moves.push({ row: newRow, col: newCol });
+                            }
+                        });
+                        break;
+                        
+                    case 'r': // Πύργος
+                        addLinearMoves(moves, row, col, color, [[-1, 0], [1, 0], [0, -1], [0, 1]]);
+                        break;
+                        
+                    case 'n': // Ίππος
+                        const knightMoves = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]];
+                        knightMoves.forEach(([dr, dc]) => {
+                            const newRow = row + dr;
+                            const newCol = col + dc;
+                            if (isValidSquare(newRow, newCol) && 
+                                (!boardState[newRow][newCol] || boardState[newRow][newCol][0] !== color)) {
+                                moves.push({ row: newRow, col: newCol });
+                            }
+                        });
+                        break;
+                        
+                    case 'b': // Αξιωματικός
+                        addLinearMoves(moves, row, col, color, [[-1, -1], [-1, 1], [1, -1], [1, 1]]);
+                        break;
+                        
+                    case 'q': // Βασίλισσα
+                        addLinearMoves(moves, row, col, color, 
+                            [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]]);
+                        break;
+                        
+                    case 'k': // Βασιλιάς
+                        const kingMoves = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+                        kingMoves.forEach(([dr, dc]) => {
+                            const newRow = row + dr;
+                            const newCol = col + dc;
+                            if (isValidSquare(newRow, newCol) && 
+                                (!boardState[newRow][newCol] || boardState[newRow][newCol][0] !== color)) {
+                                moves.push({ row: newRow, col: newCol });
+                            }
+                        });
+                        break;
+                }
+                
+                return moves;
+            }
+            
+            // Βοηθητική συνάρτηση για γραμμικές κινήσεις (πύργος, αξιωματικός, βασίλισσα)
+            function addLinearMoves(moves, row, col, color, directions) {
+                directions.forEach(([dr, dc]) => {
+                    let newRow = row + dr;
+                    let newCol = col + dc;
+                    
+                    while (isValidSquare(newRow, newCol)) {
+                        if (!boardState[newRow][newCol]) {
+                            moves.push({ row: newRow, col: newCol });
+                        } else {
+                            if (boardState[newRow][newCol][0] !== color) {
+                                moves.push({ row: newRow, col: newCol });
+                            }
+                            break;
+                        }
+                        newRow += dr;
+                        newCol += dc;
+                    }
+                });
+            }
+            
+            // Έλεγχος εάν ένα τετράγωνο είναι εντός του σκακιέρα
+            function isValidSquare(row, col) {
+                return row >= 0 && row < 8 && col >= 0 && col < 8;
+            }
+            
+            // Κίνηση πιονιού
+            function movePiece(fromRow, fromCol, toRow, toCol) {
+                const fromPiece = boardState[fromRow][fromCol];
+                const toPiece = boardState[toRow][toCol];
+                
+                // Ενημέρωση κατάστασης πιάτου
+                boardState[toRow][toCol] = fromPiece;
+                boardState[fromRow][fromCol] = null;
+                
+                // Ενημέρωση οπτικού
+                const fromSquare = document.querySelector(`.square[data-row="${fromRow}"][data-col="${fromCol}"]`);
+                const toSquare = document.querySelector(`.square[data-row="${toRow}"][data-col="${toCol}"]`);
+                
+                toSquare.textContent = fromSquare.textContent;
+                toSquare.dataset.piece = fromPiece;
+                
+                fromSquare.textContent = '';
+                delete fromSquare.dataset.piece;
+                
+                // Εάν υπάρχει πιάσιμο, προσθήκη στα αιχμαλωτισμένα πιόνια
+                if (toPiece) {
+                    if (currentPlayer === 'white') {
+                        whiteCapturedPieces.push(toPiece);
+                    } else {
+                        blackCapturedPieces.push(toPiece);
+                    }
+                    updateCapturedPieces();
+                }
+                
+                // Αλλαγή παίκτη
+                currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+                
+                // Προσομοίωση κίνησης του υπολογιστή αν είναι η σειρά του
+                if (currentPlayer === 'black' && gameActive) {
+                    setTimeout(computerMove, 500);
+                }
+                
+                clearSelection();
+                updateStatus();
+            }
+            
+            // Κίνηση υπολογιστή (απλοποιημένη)
+            function computerMove() {
+                if (!gameActive) return;
+                
+                // Βρες όλα τα πιόνια του υπολογιστή
+                const computerPieces = [];
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const piece = boardState[row][col];
+                        if (piece && piece[0] === 'b') {
+                            computerPieces.push({ row, col, piece });
+                        }
+                    }
+                }
+                
+                if (computerPieces.length === 0) return;
+                
+                // Επιλογή τυχαίου πιονιού
+                const randomPiece = computerPieces[Math.floor(Math.random() * computerPieces.length)];
+                const possibleMoves = calculatePossibleMoves(randomPiece.row, randomPiece.col, randomPiece.piece);
+                
+                if (possibleMoves.length > 0) {
+                    // Επιλογή τυχαίας κίνησης (μπορεί να βελτιωθεί με βάση τη δυσκολία)
+                    const randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                    
+                    // Εκτέλεση κίνησης
+                    movePiece(randomPiece.row, randomPiece.col, randomMove.row, randomMove.col);
+                }
+            }
+            
+            // Καθαρισμός επιλογής
+            function clearSelection() {
+                document.querySelectorAll('.selected, .possible-move').forEach(el => {
+                    el.classList.remove('selected', 'possible-move');
+                });
+                selectedPiece = null;
+            }
+            
+            // Ενημέρωση κατάστασης παιχνιδιού
+            function updateStatus() {
+                if (!gameActive) {
+                    status.textContent = "Το παιχνίδι τελείωσε!";
+                    return;
+                }
+                
+                if (currentPlayer === 'white') {
+                    status.textContent = "Η σειρά σας να παίξετε. Επιλέξτε ένα πιόνι.";
+                } else {
+                    status.textContent = "Σκέφτεται ο υπολογιστής...";
+                }
+            }
+            
+            // Ενημέρωση λίστας αιχμαλωτισμένων πιονιών
+            function updateCapturedPieces() {
+                whiteCaptured.innerHTML = '';
+                blackCaptured.innerHTML = '';
+                
+                whiteCapturedPieces.forEach(piece => {
+                    const span = document.createElement('span');
+                    span.textContent = pieces[piece];
+                    span.style.fontSize = '20px';
+                    whiteCaptured.appendChild(span);
+                });
+                
+                blackCapturedPieces.forEach(piece => {
+                    const span = document.createElement('span');
+                    span.textContent = pieces[piece];
+                    span.style.fontSize = '20px';
+                    blackCaptured.appendChild(span);
+                });
+            }
+            
+            // Εκκίνηση νέου παιχνιδιού
+            restartBtn.addEventListener('click', initializeBoard);
+            
+            // Βοήθεια
+            hintBtn.addEventListener('click', function() {
+                if (currentPlayer === 'white' && gameActive) {
+                    status.textContent = "Συμβουλή: Προσπαθήστε να ελέγξετε το κέντρο της σκακιέρας!";
+                    setTimeout(updateStatus, 3000);
+                }
+            });
+            
+            // Αλλαγή δυσκολίας
+            difficultyBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    difficultyBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    difficulty = this.dataset.level;
+                    
+                    let message = "Επίπεδο δυσκολίας αλλαγή σε: ";
+                    switch(difficulty) {
+                        case 'easy': message += "Εύκολο"; break;
+                        case 'medium': message += "Μέτριο"; break;
+                        case 'hard': message += "Δύσκολο"; break;
+                        case 'expert': message += "Ειδικός"; break;
+                    }
+                    
+                    status.textContent = message;
+                    setTimeout(updateStatus, 2000);
+                });
+            });
+            
+            // Αρχικοποίηση παιχνιδιού
+            initializeBoard();
+        });
+    </script>
 </body>
 </html>
