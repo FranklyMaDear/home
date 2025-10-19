@@ -1,1007 +1,336 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="el">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Σκάκι - Ρεαλιστικά Πιόνια</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Responsive Σκάκι</title>
+<style>
+  :root{
+    --board-size: min(92vw, 720px); /* max width for tablets/desktops */
+    --light-color: #F3EAD6; /* ανοιχτό τετράγωνο */
+    --dark-color: #B7804A;  /* σκούρο τετράγωνο */
+    --accent: rgba(80,160,240,0.4);
+    --piece-size: 80%; /* relative to square */
+  }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  /* Reset */
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#efe7dd;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    padding:20px;
+  }
 
-        .game-container {
-            width: 100%;
-            max-width: 600px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+  .wrap{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    align-items:center;
+  }
 
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            width: 100%;
-        }
+  .board{
+    width:var(--board-size);
+    aspect-ratio:1 / 1; /* makes a square */
+    display:grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    border: 10px solid #6b2f1b; /* wooden frame */
+    border-radius:10px;
+    overflow:hidden;
+    touch-action: manipulation;
+    position:relative;
+  }
 
-        .header h1 {
-            font-size: 2.2em;
-            color: white;
-            font-weight: 700;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
+  .square{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    user-select:none;
+    -webkit-user-select:none;
+    font-size: calc(var(--piece-size) * (var(--board-size) / 8) );
+    /* will be overridden by zooming rules below */
+  }
 
-        .game-status {
-            text-align: center;
-            padding: 12px 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            font-size: 1.1em;
-            font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-        }
+  /* color squares by coordinates (a1 bottom-left for white) */
+  .square.light{ background: var(--light-color); }
+  .square.dark { background: var(--dark-color); }
 
-        .board-container {
-            width: 90vmin;
-            height: 90vmin;
-            max-width: 500px;
-            max-height: 500px;
-            margin: 20px auto;
-            border: 15px solid #8B4513;
-            border-radius: 8px;
-            background: url('https://example.com/wood-texture.jpg'); /* Αντικατέστησε με πραγματικό URL ξύλινης υφής */
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            position: relative;
-            overflow: hidden;
-        }
+  /* coordinates labels (small, out of board corners) */
+  .coords{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+  }
+  .coord-file, .coord-rank{
+    position:absolute;
+    font-size:clamp(10px, 1.6vw, 14px);
+    color: rgba(0,0,0,0.6);
+    font-weight:600;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+  }
+  /* bottom files */
+  .coord-file.bottom{ left:6%; bottom:2%; transform:translateX(-50%); }
+  /* right ranks */
+  .coord-rank.right{ right:2%; bottom:6%; transform:translateY(50%); }
 
-        .chess-board {
-            width: 100%;
-            height: 100%;
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(8, 1fr);
-            position: relative;
-        }
+  /* piece styling: using unicode glyphs, centered */
+  .piece{
+    font-size: 2.6vmin; /* fallback; JS will adjust */
+    line-height:1;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    display:inline-block;
+    user-select:none;
+    transform: translateY(2%); /* optical centering for glyphs */
+  }
 
-        .square {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            transition: all 0.3s ease;
-        }
+  /* highlight selected / possible moves */
+  .square.selected{ outline: 4px solid rgba(255,215,120,0.9); outline-offset: -4px; }
+  .square.target{ box-shadow: inset 0 0 0 6px rgba(80,160,240,0.22); }
+  .square.touch-target::after{
+    content:"";
+    width:30%;
+    height:30%;
+    border-radius:50%;
+    background: rgba(10,10,10,0.14);
+    display:block;
+  }
 
-        .light {
-            background: #F0D9B5;
-        }
+  /* simple toolbar */
+  .toolbar{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  button{
+    padding:8px 12px;
+    border-radius:8px;
+    border:1px solid #9b6a42;
+    background: #fff8f2;
+    font-weight:600;
+    cursor:pointer;
+  }
+  button:active{ transform: translateY(1px); }
 
-        .dark {
-            background: #B58863;
-        }
+  /* responsive piece scaling: compute font-size based on board size */
+  @media (max-width:700px){
+    /* mobile: larger relative glyphs */
+    .piece{ font-size: calc(var(--board-size) / 12); }
+  }
+  @media (min-width:701px){
+    .piece{ font-size: calc(var(--board-size) / 14); }
+  }
 
-        .selected {
-            background: rgba(121, 85, 72, 0.7) !important;
-        }
-
-        .possible-move::after {
-            content: '';
-            position: absolute;
-            width: 25%;
-            height: 25%;
-            background: rgba(76, 175, 80, 0.7);
-            border-radius: 50%;
-            z-index: 1;
-        }
-
-        .possible-capture::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 3px solid rgba(255, 87, 34, 0.7);
-            border-radius: 5px;
-            z-index: 1;
-            box-sizing: border-box;
-        }
-
-        .check {
-            background: rgba(244, 67, 54, 0.7) !important;
-            animation: pulse-check 1.5s infinite;
-        }
-
-        @keyframes pulse-check {
-            0%, 100% { background-color: rgba(244, 67, 54, 0.7); }
-            50% { background-color: rgba(255, 121, 121, 0.7); }
-        }
-
-        .piece {
-            width: 80%;
-            height: 80%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-            transition: transform 0.2s ease;
-            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
-        }
-
-        .piece:active {
-            transform: scale(0.95);
-        }
-
-        .piece-svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .pawn { width: 60%; height: 60%; }
-        .knight { width: 65%; height: 65%; }
-        .bishop { width: 70%; height: 70%; }
-        .rook { width: 75%; height: 75%; }
-        .queen { width: 80%; height: 80%; }
-        .king { width: 85%; height: 85%; }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .control-btn {
-            padding: 14px 25px;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 100px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .control-btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        #newGame {
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
-        }
-
-        #undoMove {
-            background: linear-gradient(135deg, #FF9800, #EF6C00);
-        }
-
-        #difficulty {
-            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
-            appearance: none;
-            -webkit-appearance: none;
-            padding: 14px 20px;
-            border-radius: 12px;
-            color: white;
-            font-weight: 600;
-            font-size: 1em;
-            border: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-
-        #difficulty option {
-            background: #7B1FA2;
-            color: white;
-        }
-
-        .promotion-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .promotion-options {
-            background: rgba(40, 40, 40, 0.95);
-            border-radius: 20px;
-            padding: 25px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            min-width: 280px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .promotion-option {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            font-size: 2em;
-        }
-
-        .promotion-option:active {
-            transform: scale(0.9);
-        }
-
-        @media (max-width: 768px) {
-            .game-container {
-                padding: 15px;
-            }
-            
-            .header h1 {
-                font-size: 1.8em;
-            }
-            
-            .game-status {
-                font-size: 1em;
-                padding: 10px 15px;
-            }
-            
-            .board-container {
-                border-width: 10px;
-            }
-            
-            .controls {
-                gap: 10px;
-            }
-            
-            .control-btn {
-                padding: 12px 20px;
-                font-size: 0.9em;
-                min-width: 90px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 1.5em;
-            }
-            
-            .game-status {
-                font-size: 0.9em;
-                padding: 8px 12px;
-            }
-            
-            .board-container {
-                border-width: 8px;
-            }
-            
-            .controls {
-                flex-wrap: wrap;
-            }
-            
-            .control-btn {
-                padding: 10px 15px;
-                font-size: 0.85em;
-                min-width: 80px;
-            }
-        }
-    </style>
+  /* accessibility */
+  .sr-only{ position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden; }
+</style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="header">
-            <h1>♚ Σκάκι vs AI ♔</h1>
-            <div class="game-status">
-                <div id="status">Είσαι Λευκό - Εσύ παίζεις πρώτος</div>
-            </div>
-        </div>
-
-        <div class="board-container">
-            <div id="chessBoard" class="chess-board"></div>
-        </div>
-
-        <div class="controls">
-            <button class="control-btn" id="newGame">🔄 Νέο</button>
-            <button class="control-btn" id="undoMove">↶ Πίσω</button>
-            <select class="control-btn" id="difficulty">
-                <option value="1">Εύκολο</option>
-                <option value="2" selected>Μέτριο</option>
-                <option value="3">Δύσκολο</option>
-            </select>
-        </div>
+<div class="wrap">
+  <div style="display:flex;gap:12px;align-items:center;">
+    <div class="toolbar" aria-hidden="false">
+      <button id="btnFlip" title="Αντιστροφή σκακιέρας">Flip</button>
+      <button id="btnReset" title="Επαναφορά στην αρχική θέση">Reset</button>
     </div>
+  </div>
 
-    <div id="promotionModal" class="promotion-modal">
-        <div class="promotion-options">
-            <div class="promotion-option" data-piece="q">♕</div>
-            <div class="promotion-option" data-piece="r">♖</div>
-            <div class="promotion-option" data-piece="b">♗</div>
-            <div class="promotion-option" data-piece="n">♘</div>
-        </div>
-    </div>
+  <div id="board" class="board" role="grid" aria-label="Σκακιέρα">
+    <!-- squares injected by JS -->
+  </div>
+  <div style="font-size:13px;color:#3b2a20;opacity:0.9">
+    Πατήστε για να επιλέξετε κομμάτι. (απλό demo προβολής για κινητά / tablet)
+  </div>
+</div>
 
-    <script>
-        // SVG για τα πιόνια
-        const pieceSVGs = {
-            // Λευκά πιόνια
-            'wk': `
-                <svg viewBox="0 0 100 100" class="piece-svg king">
-                    <path d="M40 20 H60 V40 H40 Z" fill="white" stroke="black" stroke-width="2"/>
-                    <circle cx="50" cy="60" r="10" fill="white" stroke="black" stroke-width="2"/>
-                </svg>
-            `,
-            'wq': `
-                <svg viewBox="0 0 100 100" class="piece-svg queen">
-                    <circle cx="50" cy="30" r="15" fill="white" stroke="black" stroke-width="2"/>
-                    <rect x="40" y="45" width="20" height="25" fill="white" stroke="black" stroke-width="2"/>
-                </svg>
-            `,
-            'wr': `
-                <svg viewBox="0 0 100 100" class="piece-svg rook">
-                    <rect x="30" y="30" width="40" height="40" fill="white" stroke="black" stroke-width="2"/>
-                    <rect x="35" y="25" width="30" height="5" fill="white" stroke="black" stroke-width="2"/>
-                </svg>
-            `,
-            'wb': `
-                <svg viewBox="0 0 100 100" class="piece-svg bishop">
-                    <circle cx="50" cy="30" r="12" fill="white" stroke="black" stroke-width="2"/>
-                    <rect x="40" y="45" width="20" height="25" fill="white" stroke="black" stroke-width="2"/>
-                </svg>
-            `,
-            'wn': `
-                <svg viewBox="0 0 100 100" class="piece-svg knight">
-                    <path d="M40 30 Q50 20 60 30 T70 40 L60 50 Z" fill="white" stroke="black" stroke-width="2"/>
-                </svg>
-            `,
-            'wp': `
-                <svg viewBox="0 0 100 100" class="piece-svg pawn">
-                    <circle cx="50" cy="50" r="20" fill="white" stroke="black" stroke-width="2"/>
-                </svg>
-            `,
-            
-            // Μαύρα πιόνια
-            'bk': `
-                <svg viewBox="0 0 100 100" class="piece-svg king">
-                    <path d="M40 20 H60 V40 H40 Z" fill="black" stroke="#666" stroke-width="2"/>
-                    <circle cx="50" cy="60" r="10" fill="black" stroke="#666" stroke-width="2"/>
-                </svg>
-            `,
-            'bq': `
-                <svg viewBox="0 0 100 100" class="piece-svg queen">
-                    <circle cx="50" cy="30" r="15" fill="black" stroke="#666" stroke-width="2"/>
-                    <rect x="40" y="45" width="20" height="25" fill="black" stroke="#666" stroke-width="2"/>
-                </svg>
-            `,
-            'br': `
-                <svg viewBox="0 0 100 100" class="piece-svg rook">
-                    <rect x="30" y="30" width="40" height="40" fill="black" stroke="#666" stroke-width="2"/>
-                    <rect x="35" y="25" width="30" height="5" fill="black" stroke="#666" stroke-width="2"/>
-                </svg>
-            `,
-            'bb': `
-                <svg viewBox="0 0 100 100" class="piece-svg bishop">
-                    <circle cx="50" cy="30" r="12" fill="black" stroke="#666" stroke-width="2"/>
-                    <rect x="40" y="45" width="20" height="25" fill="black" stroke="#666" stroke-width="2"/>
-                </svg>
-            `,
-            'bn': `
-                <svg viewBox="0 0 100 100" class="piece-svg knight">
-                    <path d="M40 30 Q50 20 60 30 T70 40 L60 50 Z" fill="black" stroke="#666" stroke-width="2"/>
-                </svg>
-            `,
-            'bp': `
-                <svg viewBox="0 0 100 100" class="piece-svg pawn">
-                    <circle cx="50" cy="50" r="20" fill="black" stroke="#666" stroke-width="2"/>
-                </svg>
-            `
-        };
+<script>
+/*
+  Responsive chessboard (initial setup).
+  - Uses Unicode chess symbols for pieces.
+  - Coordinates: a1 bottom-left (white).
+  - Click/tap selects piece; second tap highlights target squares (UI-only).
+  - Buttons: Flip board, Reset to initial.
+*/
 
-        class ChessEngine {
-            constructor() {
-                this.reset();
-            }
+const boardEl = document.getElementById('board');
+let flipped = false;
+let selectedSquare = null;
 
-            reset() {
-                this.board = this.createInitialBoard();
-                this.turn = 'w';
-                this.moveHistory = [];
-                this.gameOver = false;
-                this.winner = null;
-                this.check = false;
-            }
+// Unicode pieces (white / black)
+const PIECES = {
+  p: '\u265F', // black pawn
+  r: '\u265C',
+  n: '\u265E',
+  b: '\u265D',
+  q: '\u265B',
+  k: '\u265A',
+  P: '\u2659', // white pawn
+  R: '\u2656',
+  N: '\u2658',
+  B: '\u2657',
+  Q: '\u2655',
+  K: '\u2654'
+};
 
-            createInitialBoard() {
-                return [
-                    ['br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br'],
-                    ['bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp'],
-                    ['', '', '', '', '', '', '', ''],
-                    ['', '', '', '', '', '', '', ''],
-                    ['', '', '', '', '', '', '', ''],
-                    ['', '', '', '', '', '', '', ''],
-                    ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
-                    ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr']
-                ];
-            }
+// Starting FEN for initial position
+const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 
-            getPiece(x, y) {
-                if (x < 0 || x > 7 || y < 0 || y > 7) return null;
-                return this.board[y][x];
-            }
+// utility: generate squares in order a8..h1 (grid rows top->bottom)
+function algebraicFromIndex(index, flipped=false){
+  // index 0..63 where 0 is top-left (a8)
+  const row = Math.floor(index / 8); // 0..7
+  const col = index % 8; // 0..7
+  const file = String.fromCharCode('a'.charCodeAt(0) + col);
+  const rank = 8 - row;
+  if(!flipped) return file + rank;
+  // when flipped, top-left should be h1 etc; compute reversed mapping
+  const fcol = 7 - col;
+  const frow = 7 - row;
+  return String.fromCharCode('a'.charCodeAt(0) + fcol) + (8 - frow);
+}
 
-            setPiece(x, y, piece) {
-                if (x >= 0 && x < 8 && y >= 0 && y < 8) {
-                    this.board[y][x] = piece;
-                }
-            }
+// create board squares
+function buildBoard(){
+  boardEl.innerHTML = '';
+  for(let i=0;i<64;i++){
+    const sq = document.createElement('div');
+    const row = Math.floor(i/8);
+    const col = i % 8;
+    // Determine color: if (row+col) even -> light (so a8 is light? adjust to match image)
+    // In standard chessboard, a1 is dark? We'll set a1 (bottom-left) dark to match many boards.
+    // But easier: define a1 (file a, rank1) -> coordinates index for bottom-left = 56
+    // We'll compute color via algebraic: if file index + rank index is even -> light
+    const fileIndex = col;
+    const rankIndex = 7 - row; // rank 1 -> row 7
+    const isLight = ((fileIndex + rankIndex) % 2 === 0);
+    sq.className = 'square ' + (isLight ? 'light' : 'dark');
+    sq.setAttribute('data-index', i);
+    const alg = algebraicFromIndex(i, flipped);
+    sq.setAttribute('data-alg', alg);
+    sq.setAttribute('role','gridcell');
+    sq.setAttribute('aria-label', 'τετράγωνο ' + alg);
+    // click handler
+    sq.addEventListener('click', onSquareClick);
+    boardEl.appendChild(sq);
+  }
+}
 
-            move(fromX, fromY, toX, toY, promotion = 'q') {
-                if (this.gameOver) return false;
-
-                const piece = this.getPiece(fromX, fromY);
-                if (!piece) return false;
-                
-                if ((this.turn === 'w' && piece[0] !== 'w') || 
-                    (this.turn === 'b' && piece[0] !== 'b')) {
-                    return false;
-                }
-
-                if (!this.isValidMove(fromX, fromY, toX, toY)) {
-                    return false;
-                }
-
-                const captured = this.getPiece(toX, toY);
-                const originalFrom = this.getPiece(fromX, fromY);
-                
-                this.setPiece(toX, toY, originalFrom);
-                this.setPiece(fromX, fromY, '');
-
-                if (this.isKingInCheck(this.turn)) {
-                    this.setPiece(fromX, fromY, originalFrom);
-                    this.setPiece(toX, toY, captured);
-                    return false;
-                }
-
-                if (piece[1] === 'p' && (toY === 0 || toY === 7)) {
-                    this.setPiece(toX, toY, piece[0] + promotion);
-                }
-
-                this.moveHistory.push({
-                    from: {x: fromX, y: fromY},
-                    to: {x: toX, y: toY},
-                    piece: piece,
-                    captured: captured,
-                    promotion: promotion
-                });
-
-                this.turn = this.turn === 'w' ? 'b' : 'w';
-                this.check = this.isKingInCheck(this.turn);
-                
-                if (this.isCheckmate()) {
-                    this.gameOver = true;
-                    this.winner = this.turn === 'w' ? 'b' : 'w';
-                } else if (this.isStalemate()) {
-                    this.gameOver = true;
-                    this.winner = 'draw';
-                }
-
-                return true;
-            }
-
-            isValidMove(fromX, fromY, toX, toY) {
-                const piece = this.getPiece(fromX, fromY);
-                if (!piece) return false;
-
-                const target = this.getPiece(toX, toY);
-                if (target && target[0] === piece[0]) return false;
-
-                const type = piece[1];
-                const dx = toX - fromX;
-                const dy = toY - fromY;
-                const color = piece[0];
-
-                switch (type) {
-                    case 'p': return this.isValidPawnMove(fromX, fromY, toX, toY, color);
-                    case 'r': return this.isValidRookMove(fromX, fromY, toX, toY);
-                    case 'n': return this.isValidKnightMove(dx, dy);
-                    case 'b': return this.isValidBishopMove(fromX, fromY, toX, toY);
-                    case 'q': return this.isValidQueenMove(fromX, fromY, toX, toY);
-                    case 'k': return this.isValidKingMove(fromX, fromY, toX, toY, color);
-                    default: return false;
-                }
-            }
-
-            isValidPawnMove(fromX, fromY, toX, toY, color) {
-                const direction = color === 'w' ? -1 : 1;
-                const startRow = color === 'w' ? 6 : 1;
-                const dx = toX - fromX;
-                const dy = toY - fromY;
-                const target = this.getPiece(toX, toY);
-
-                if (dx === 0) {
-                    if (dy === direction && !target) return true;
-                    if (fromY === startRow && dy === 2 * direction && 
-                        !target && !this.getPiece(fromX, fromY + direction)) return true;
-                }
-                
-                if (Math.abs(dx) === 1 && dy === direction && target) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            isValidKnightMove(dx, dy) {
-                return (Math.abs(dx) === 2 && Math.abs(dy) === 1) || 
-                       (Math.abs(dx) === 1 && Math.abs(dy) === 2);
-            }
-
-            isValidRookMove(fromX, fromY, toX, toY) {
-                if (fromX !== toX && fromY !== toY) return false;
-                return this.isPathClear(fromX, fromY, toX, toY);
-            }
-
-            isValidBishopMove(fromX, fromY, toX, toY) {
-                if (Math.abs(toX - fromX) !== Math.abs(toY - fromY)) return false;
-                return this.isPathClear(fromX, fromY, toX, toY);
-            }
-
-            isValidQueenMove(fromX, fromY, toX, toY) {
-                return this.isValidRookMove(fromX, fromY, toX, toY) || 
-                       this.isValidBishopMove(fromX, fromY, toX, toY);
-            }
-
-            isValidKingMove(fromX, fromY, toX, toY, color) {
-                const dx = Math.abs(toX - fromX);
-                const dy = Math.abs(toY - fromY);
-                return dx <= 1 && dy <= 1;
-            }
-
-            isPathClear(fromX, fromY, toX, toY) {
-                const dx = Math.sign(toX - fromX);
-                const dy = Math.sign(toY - fromY);
-                let x = fromX + dx;
-                let y = fromY + dy;
-
-                while (x !== toX || y !== toY) {
-                    if (this.getPiece(x, y)) return false;
-                    x += dx;
-                    y += dy;
-                }
-                return true;
-            }
-
-            isKingInCheck(color) {
-                let kingX, kingY;
-                for (let y = 0; y < 8; y++) {
-                    for (let x = 0; x < 8; x++) {
-                        const piece = this.getPiece(x, y);
-                        if (piece === color + 'k') {
-                            kingX = x;
-                            kingY = y;
-                            break;
-                        }
-                    }
-                }
-
-                for (let y = 0; y < 8; y++) {
-                    for (let x = 0; x < 8; x++) {
-                        const piece = this.getPiece(x, y);
-                        if (piece && piece[0] !== color) {
-                            if (this.isValidMove(x, y, kingX, kingY)) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-                return false;
-            }
-
-            isCheckmate() {
-                if (!this.check) return false;
-                
-                for (let fromY = 0; fromY < 8; fromY++) {
-                    for (let fromX = 0; fromX < 8; fromX++) {
-                        const piece = this.getPiece(fromX, fromY);
-                        if (piece && piece[0] === this.turn) {
-                            const moves = this.getValidMovesForPiece(fromX, fromY);
-                            if (moves.length > 0) return false;
-                        }
-                    }
-                }
-                return true;
-            }
-
-            isStalemate() {
-                if (this.check) return false;
-                
-                for (let fromY = 0; fromY < 8; fromY++) {
-                    for (let fromX = 0; fromX < 8; fromX++) {
-                        const piece = this.getPiece(fromX, fromY);
-                        if (piece && piece[0] === this.turn) {
-                            const moves = this.getValidMovesForPiece(fromX, fromY);
-                            if (moves.length > 0) return false;
-                        }
-                    }
-                }
-                return true;
-            }
-
-            getValidMovesForPiece(x, y) {
-                const moves = [];
-                for (let toY = 0; toY < 8; toY++) {
-                    for (let toX = 0; toX < 8; toX++) {
-                        if (this.isValidMove(x, y, toX, toY)) {
-                            const captured = this.getPiece(toX, toY);
-                            const original = this.getPiece(x, y);
-                            
-                            this.setPiece(toX, toY, original);
-                            this.setPiece(x, y, '');
-                            
-                            const leavesInCheck = this.isKingInCheck(this.turn);
-                            
-                            this.setPiece(x, y, original);
-                            this.setPiece(toX, toY, captured);
-                            
-                            if (!leavesInCheck) {
-                                moves.push({x: toX, y: toY});
-                            }
-                        }
-                    }
-                }
-                return moves;
-            }
-
-            getAIMove(difficulty) {
-                const moves = [];
-                
-                for (let fromY = 0; fromY < 8; fromY++) {
-                    for (let fromX = 0; fromX < 8; fromX++) {
-                        const piece = this.getPiece(fromX, fromY);
-                        if (piece && piece[0] === this.turn) {
-                            const validMoves = this.getValidMovesForPiece(fromX, fromY);
-                            validMoves.forEach(move => {
-                                moves.push({
-                                    from: {x: fromX, y: fromY},
-                                    to: move,
-                                    piece: piece
-                                });
-                            });
-                        }
-                    }
-                }
-
-                if (moves.length === 0) return null;
-
-                const scoredMoves = moves.map(move => {
-                    let score = 0;
-                    
-                    const target = this.getPiece(move.to.x, move.to.y);
-                    if (target) {
-                        score += this.getPieceValue(target[1]) * 10;
-                    }
-                    
-                    if (move.piece[1] === 'p' && (move.to.y === 0 || move.to.y === 7)) {
-                        score += 8;
-                    }
-                    
-                    this.move(move.from.x, move.from.y, move.to.x, move.to.y);
-                    if (this.check) score += 5;
-                    if (this.gameOver) score += 1000;
-                    this.undoMove();
-                    
-                    score += this.evaluatePosition();
-                    
-                    return { move, score };
-                });
-
-                scoredMoves.sort((a, b) => b.score - a.score);
-                
-                if (difficulty === 1) {
-                    return moves[Math.floor(Math.random() * moves.length)];
-                } else if (difficulty === 2) {
-                    const topMoves = scoredMoves.slice(0, 3);
-                    return topMoves[Math.floor(Math.random() * topMoves.length)].move;
-                } else {
-                    return scoredMoves[0].move;
-                }
-            }
-
-            getPieceValue(type) {
-                const values = { 'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 100 };
-                return values[type] || 0;
-            }
-
-            evaluatePosition() {
-                let score = 0;
-                for (let y = 0; y < 8; y++) {
-                    for (let x = 0; x < 8; x++) {
-                        const piece = this.getPiece(x, y);
-                        if (piece) {
-                            const value = this.getPieceValue(piece[1]);
-                            score += piece[0] === 'w' ? value : -value;
-                        }
-                    }
-                }
-                return score;
-            }
-
-            undoMove() {
-                if (this.moveHistory.length === 0) return false;
-                
-                const lastMove = this.moveHistory.pop();
-                this.setPiece(lastMove.from.x, lastMove.from.y, lastMove.piece);
-                this.setPiece(lastMove.to.x, lastMove.to.y, lastMove.captured || '');
-                
-                this.turn = this.turn === 'w' ? 'b' : 'w';
-                this.gameOver = false;
-                this.winner = null;
-                this.check = this.isKingInCheck(this.turn);
-                
-                return true;
-            }
-
-            needsPromotion(fromX, fromY, toX, toY) {
-                const piece = this.getPiece(fromX, fromY);
-                return piece && piece[1] === 'p' && (toY === 0 || toY === 7);
-            }
+// place pieces from FEN
+function placeFromFEN(fen){
+  // first clear all squares
+  document.querySelectorAll('.square').forEach(sq => sq.innerHTML = '');
+  const parts = fen.split(' ')[0];
+  const ranks = parts.split('/');
+  // ranks: 8 (top) to 1 (bottom)
+  let idx = 0; // index into squares top-left -> 0
+  for(const r of ranks){
+    for(const ch of r){
+      if(/\d/.test(ch)){
+        idx += parseInt(ch,10);
+      } else {
+        const sq = document.querySelector(`.square[data-index="${idx}"]`);
+        if(sq){
+          const span = document.createElement('span');
+          span.className = 'piece';
+          span.textContent = PIECES[ch] || '?';
+          span.setAttribute('data-piece', ch);
+          // accessibility
+          span.setAttribute('aria-hidden','false');
+          span.setAttribute('title', ch);
+          // tap on piece should act like tapping square (parent)
+          span.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            onSquareClick.call(sq, ev);
+          });
+          sq.appendChild(span);
         }
+        idx++;
+      }
+    }
+  }
+}
 
-        class ChessGame {
-            constructor() {
-                this.chess = new ChessEngine();
-                this.selectedPiece = null;
-                this.possibleMoves = [];
-                this.pendingPromotion = null;
-                
-                this.init();
-            }
+// handle square click/tap
+function onSquareClick(e){
+  const sq = this;
+  // clear previous highlights
+  document.querySelectorAll('.square').forEach(s => {
+    s.classList.remove('selected','target');
+  });
+  // if same clicked twice -> deselect
+  if(selectedSquare === sq){
+    selectedSquare = null;
+    return;
+  }
+  selectedSquare = sq;
+  sq.classList.add('selected');
 
-            init() {
-                this.createBoard();
-                this.bindEvents();
-                this.updateStatus();
-            }
+  // If there is a piece, mark some pseudo target squares (demo)
+  const pieceEl = sq.querySelector('.piece');
+  if(pieceEl){
+    // For demo only: mark up to 4 neighbor squares as example targets
+    const index = parseInt(sq.getAttribute('data-index'),10);
+    const deltas = [-8,8,-1,1]; // up, down, left, right
+    deltas.forEach(d => {
+      const t = index + d;
+      if(t>=0 && t<64){
+        const tsq = document.querySelector(`.square[data-index="${t}"]`);
+        // avoid crossing file boundaries for left/right
+        if(tsq) tsq.classList.add('target');
+      }
+    });
+  }
+}
 
-            createBoard() {
-                const board = document.getElementById('chessBoard');
-                board.innerHTML = '';
-                
-                for (let y = 0; y < 8; y++) {
-                    for (let x = 0; x < 8; x++) {
-                        const square = document.createElement('div');
-                        const isLight = (x + y) % 2 === 0;
-                        square.className = `square ${isLight ? 'light' : 'dark'}`;
-                        square.dataset.x = x;
-                        square.dataset.y = y;
+// flip board
+function flipBoard(){
+  flipped = !flipped;
+  // rebuild with flipped labeling
+  buildBoard();
+  placeFromFEN(START_FEN);
+}
 
-                        const piece = this.chess.getPiece(x, y);
-                        if (piece) {
-                            const pieceElement = document.createElement('div');
-                            pieceElement.className = 'piece';
-                            pieceElement.innerHTML = pieceSVGs[piece];
-                            square.appendChild(pieceElement);
-                            
-                            if (piece[1] === 'k' && this.chess.check && piece[0] === this.chess.turn) {
-                                square.classList.add('check');
-                            }
-                        }
-                        
-                        square.addEventListener('click', () => this.handleSquareClick(x, y));
-                        board.appendChild(square);
-                    }
-                }
-            }
+// reset
+function resetBoard(){
+  flipped = false;
+  buildBoard();
+  placeFromFEN(START_FEN);
+  selectedSquare = null;
+  document.querySelectorAll('.square').forEach(s => s.classList.remove('selected','target'));
+}
 
-            handleSquareClick(x, y) {
-                if (this.chess.gameOver || this.pendingPromotion) return;
-                
-                const piece = this.chess.getPiece(x, y);
-                
-                // Επιλογή κομματιού
-                if (piece && piece[0] === 'w') {
-                    this.selectedPiece = {x, y};
-                    this.possibleMoves = this.chess.getValidMovesForPiece(x, y);
-                    this.highlightMoves();
-                    return;
-                }
-                
-                // Κίνηση κομματιού
-                if (this.selectedPiece) {
-                    const moveX = this.selectedPiece.x;
-                    const moveY = this.selectedPiece.y;
-                    
-                    const isValidMove = this.possibleMoves.some(move => 
-                        move.x === x && move.y === y
-                    );
+document.getElementById('btnFlip').addEventListener('click', () => {
+  flipBoard();
+});
+document.getElementById('btnReset').addEventListener('click', () => {
+  resetBoard();
+});
 
-                    if (isValidMove) {
-                        if (this.chess.needsPromotion(moveX, moveY, x, y)) {
-                            this.pendingPromotion = {fromX: moveX, fromY: moveY, toX: x, toY: y};
-                            this.showPromotionModal();
-                            return;
-                        }
-                        
-                        this.makeMove(moveX, moveY, x, y);
-                    }
-                    
-                    this.clearHighlights();
-                    this.selectedPiece = null;
-                }
-            }
+// initial build
+buildBoard();
+placeFromFEN(START_FEN);
 
-            makeMove(fromX, fromY, toX, toY, promotion = 'q') {
-                const success = this.chess.move(fromX, fromY, toX, toY, promotion);
-                
-                if (success) {
-                    this.createBoard();
-                    this.updateStatus();
-                    
-                    if (!this.chess.gameOver && this.chess.turn === 'b') {
-                        setTimeout(() => this.makeAIMove(), 500);
-                    }
-                }
-            }
+/* Optional: adjust font-size more precisely based on computed square size */
+function adjustFontSizes(){
+  const sq = document.querySelector('.square');
+  if(!sq) return;
+  const s = sq.getBoundingClientRect().width;
+  const pieces = document.querySelectorAll('.piece');
+  pieces.forEach(p => {
+    // piece font size ~ 0.8 * square size
+    p.style.fontSize = Math.max(12, Math.round(s * 0.8)) + 'px';
+  });
+}
+window.addEventListener('resize', adjustFontSizes);
+window.addEventListener('load', adjustFontSizes);
+setTimeout(adjustFontSizes, 100);
 
-            makeAIMove() {
-                const difficulty = parseInt(document.getElementById('difficulty').value);
-                const aiMove = this.chess.getAIMove(difficulty);
-                
-                if (aiMove) {
-                    this.makeMove(aiMove.from.x, aiMove.from.y, aiMove.to.x, aiMove.to.y);
-                }
-            }
-
-            highlightMoves() {
-                this.clearHighlights();
-                
-                this.possibleMoves.forEach(move => {
-                    const square = this.getSquareElement(move.x, move.y);
-                    if (square) {
-                        const targetPiece = this.chess.getPiece(move.x, move.y);
-                        if (targetPiece) {
-                            square.classList.add('possible-capture');
-                        } else {
-                            square.classList.add('possible-move');
-                        }
-                    }
-                });
-                
-                if (this.selectedPiece) {
-                    const selectedSquare = this.getSquareElement(this.selectedPiece.x, this.selectedPiece.y);
-                    selectedSquare.classList.add('selected');
-                }
-            }
-
-            clearHighlights() {
-                document.querySelectorAll('.possible-move').forEach(el => 
-                    el.classList.remove('possible-move')
-                );
-                document.querySelectorAll('.possible-capture').forEach(el => 
-                    el.classList.remove('possible-capture')
-                );
-                document.querySelectorAll('.selected').forEach(el => 
-                    el.classList.remove('selected')
-                );
-                document.querySelectorAll('.check').forEach(el => 
-                    el.classList.remove('check')
-                );
-            }
-
-            getSquareElement(x, y) {
-                return document.querySelector(`.square[data-x="${x}"][data-y="${y}"]`);
-            }
-
-            showPromotionModal() {
-                document.getElementById('promotionModal').style.display = 'flex';
-            }
-
-            hidePromotionModal() {
-                document.getElementById('promotionModal').style.display = 'none';
-                this.pendingPromotion = null;
-            }
-
-            updateStatus() {
-                let status = '';
-                
-                if (this.chess.gameOver) {
-                    if (this.chess.winner === 'w') {
-                        status = '🎉 Νίκησες! Ματ στους Μαύρους!';
-                    } else if (this.chess.winner === 'b') {
-                        status = '😞 Ηττήθηκες! Ματ στα Λευκά!';
-                    } else {
-                        status = '🤝 Ισοπαλία!';
-                    }
-                } else {
-                    status = this.chess.turn === 'w' ? 
-                        '⚪ Σειρά σου - Λευκά' : '⚫ Σειρά AI - Μαύρα';
-                    
-                    if (this.chess.check) {
-                        status += ' - ΣΑΧ! ⚡';
-                    }
-                }
-                
-                document.getElementById('status').textContent = status;
-            }
-
-            bindEvents() {
-                document.getElementById('newGame').addEventListener('click', () => {
-                    this.chess.reset();
-                    this.selectedPiece = null;
-                    this.possibleMoves = [];
-                    this.pendingPromotion = null;
-                    this.createBoard();
-                    this.updateStatus();
-                });
-
-                document.getElementById('undoMove').addEventListener('click', () => {
-                    if (this.chess.undoMove()) {
-                        this.selectedPiece = null;
-                        this.possibleMoves = [];
-                        this.createBoard();
-                        this.updateStatus();
-                    }
-                });
-
-                document.querySelectorAll('.promotion-option').forEach(option => {
-                    option.addEventListener('click', () => {
-                        if (this.pendingPromotion) {
-                            const piece = option.dataset.piece;
-                            this.makeMove(
-                                this.pendingPromotion.fromX, 
-                                this.pendingPromotion.fromY, 
-                                this.pendingPromotion.toX, 
-                                this.pendingPromotion.toY, 
-                                piece
-                            );
-                            this.hidePromotionModal();
-                        }
-                    });
-                });
-
-                document.getElementById('difficulty').addEventListener('change', () => {
-                    // Αλλαγή δυσκολίας
-                });
-            }
-        }
-
-        // Αρχικοποίηση του παιχνιδιού
-        document.addEventListener('DOMContentLoaded', () => {
-            new ChessGame();
-        });
-    </script>
+/* Touch improvements: prevent double-tap zoom on iOS-land by touch-action CSS on board */
+</script>
 </body>
 </html>
