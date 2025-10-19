@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Σκάκι με AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Σκάκι vs AI</h1>
+        
+        <div class="game-info">
+            <div id="status">Είσαι Λευκό - Εσύ παίζεις πρώτος</div>
+            <div id="eval">Αξιολόγηση: 0.0</div>
+        </div>
+        
+        <div id="board"></div>
+        
+        <div class="controls">
+            <button id="newGame">Νέο Παιχνίδι</button>
+            <button id="undoMove">Αναίρεση</button>
+            <select id="difficulty">
+                <option value="1">Εύκολο (800 ELO)</option>
+                <option value="2" selected>Μέτριο (1200 ELO)</option>
+                <option value="3">Δύσκολο (1800 ELO)</option>
+                <option value="4">Πολύ Δύσκολο (2200 ELO)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Βιβλιοθήκες -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+    
+    <script src="script.js"></script>
+</body>
+</html>
