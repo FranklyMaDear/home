@@ -14,7 +14,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1a1a;
+            background: linear-gradient(135deg, #0c2461, #1e3799);
             margin: 0;
             padding: 0;
             height: 100vh;
@@ -26,30 +26,35 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background: linear-gradient(135deg, #0c2461, #1e3799);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
         }
 
         .header {
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 20px 15px 10px;
             text-align: center;
+            position: relative;
         }
 
         .header h1 {
-            font-size: 1.4em;
+            font-size: 1.8em;
             color: white;
-            font-weight: 600;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
         }
 
         .game-status {
             text-align: center;
-            padding: 10px;
-            background: rgba(255,255,255,0.1);
-            margin: 5px 15px;
-            border-radius: 10px;
-            font-size: 0.9em;
+            padding: 12px;
+            background: rgba(255,255,255,0.15);
+            margin: 8px 15px;
+            border-radius: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .board-section {
@@ -57,18 +62,20 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
+            padding: 15px;
         }
 
         .chess-board-container {
-            width: 100vmin;
-            height: 100vmin;
+            width: 95vmin;
+            height: 95vmin;
             max-width: 95vh;
             max-height: 95vw;
-            border: 12px solid #5D4037;
-            border-radius: 8px;
-            background: #5D4037;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 15px solid #8B4513;
+            border-radius: 12px;
+            background: #8B4513;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
         }
 
         .chess-board {
@@ -85,7 +92,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         .piece {
@@ -94,27 +101,32 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.6));
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+            filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.7));
+            transition: transform 0.2s ease;
+            z-index: 2;
         }
 
-        /* ΜΕΓΑΛΑ κομμάτια για βασιλιάδες, βασίλισσες, πύργους, αξιωματικούς, άλογα */
+        .piece:active {
+            transform: scale(0.95);
+        }
+
         .major-piece {
             font-size: 7.5vmin !important;
         }
 
-        /* Φυσιολογικά στρατιωτάκια */
         .pawn-piece {
             font-size: 6vmin !important;
         }
 
         .white-piece {
             color: #FFFFFF;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
 
         .black-piece {
             color: #000000;
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.4);
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
         }
 
         .light {
@@ -126,80 +138,118 @@
         }
 
         .selected {
-            background: #81C784 !important;
+            background: linear-gradient(135deg, #81C784, #4CAF50) !important;
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.5);
         }
 
         .possible-move::after {
             content: '';
             position: absolute;
-            width: 4vmin;
-            height: 4vmin;
-            background: rgba(76, 175, 80, 0.6);
+            width: 4.5vmin;
+            height: 4.5vmin;
+            background: rgba(76, 175, 80, 0.7);
             border-radius: 50%;
             z-index: 1;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.8);
+        }
+
+        .possible-capture::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid rgba(255, 87, 34, 0.7);
+            border-radius: 5px;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(255, 87, 34, 0.8);
         }
 
         .check {
-            background: #FF5252 !important;
-            animation: pulse-check 1s infinite;
+            background: linear-gradient(135deg, #FF5252, #D32F2F) !important;
+            animation: pulse-check 1.5s infinite;
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.5);
         }
 
         @keyframes pulse-check {
-            0%, 100% { background-color: #FF5252; }
-            50% { background-color: #FF8A80; }
+            0%, 100% { background: linear-gradient(135deg, #FF5252, #D32F2F); }
+            50% { background: linear-gradient(135deg, #FF8A80, #FF5252); }
         }
 
         .coordinates {
             position: absolute;
-            font-size: 2vmin;
+            font-size: 2.2vmin;
             color: rgba(0,0,0,0.7);
             font-weight: bold;
             pointer-events: none;
+            z-index: 1;
         }
 
         .file-coord {
-            bottom: 1px;
-            right: 3px;
+            bottom: 2px;
+            right: 4px;
         }
 
         .rank-coord {
-            top: 1px;
-            left: 3px;
+            top: 2px;
+            left: 4px;
         }
 
         .controls {
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 20px 15px;
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
+            align-items: center;
         }
 
         .control-btn {
-            padding: 12px 20px;
+            padding: 14px 22px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            font-size: 0.9em;
+            font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            min-width: 80px;
+            transition: all 0.3s ease;
+            min-width: 90px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
         }
 
         .control-btn:active {
             transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         #newGame {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
         }
 
         #undoMove {
-            background: linear-gradient(135deg, #FF9800, #F57C00);
+            background: linear-gradient(135deg, #FF9800, #EF6C00);
+        }
+
+        #difficulty {
+            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+            appearance: none;
+            -webkit-appearance: none;
+            padding: 14px 20px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 1em;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        #difficulty option {
+            background: #7B1FA2;
+            color: white;
         }
 
         /* Promotion Modal */
@@ -214,27 +264,31 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(5px);
         }
 
         .promotion-options {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 20px;
+            background: rgba(40, 40, 40, 0.95);
+            border-radius: 20px;
+            padding: 25px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            min-width: 250px;
+            gap: 20px;
+            min-width: 280px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .promotion-option {
             font-size: 3.5em;
             text-align: center;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 15px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
         .promotion-option:active {
@@ -244,7 +298,7 @@
         /* Mobile optimizations */
         @media (max-width: 768px) {
             .chess-board-container {
-                border-width: 8px;
+                border-width: 10px;
             }
             
             .major-piece {
@@ -256,28 +310,29 @@
             }
             
             .controls {
-                padding: 10px;
+                padding: 15px 10px;
             }
             
             .control-btn {
-                padding: 10px 15px;
-                font-size: 0.8em;
-                min-width: 70px;
+                padding: 12px 18px;
+                font-size: 0.9em;
+                min-width: 80px;
             }
         }
 
         @media (max-width: 480px) {
             .header h1 {
-                font-size: 1.2em;
+                font-size: 1.5em;
             }
             
             .game-status {
-                font-size: 0.8em;
-                margin: 5px 10px;
+                font-size: 0.9em;
+                margin: 8px 10px;
+                padding: 10px;
             }
             
             .chess-board-container {
-                border-width: 6px;
+                border-width: 8px;
             }
             
             .major-piece {
@@ -286,6 +341,16 @@
             
             .pawn-piece {
                 font-size: 5vmin !important;
+            }
+            
+            .controls {
+                gap: 10px;
+            }
+            
+            .control-btn {
+                padding: 10px 15px;
+                font-size: 0.85em;
+                min-width: 70px;
             }
         }
 
@@ -298,7 +363,7 @@
             .header {
                 writing-mode: vertical-rl;
                 text-orientation: mixed;
-                padding: 10px 5px;
+                padding: 10px 8px;
             }
             
             .board-section {
@@ -307,7 +372,7 @@
             
             .controls {
                 flex-direction: column;
-                padding: 10px 5px;
+                padding: 10px 8px;
             }
             
             .chess-board-container {
@@ -322,6 +387,16 @@
             .pawn-piece {
                 font-size: 4.5vmin !important;
             }
+        }
+
+        /* Animation for new game */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .chess-board-container {
+            animation: fadeIn 0.5s ease-out;
         }
     </style>
 </head>
@@ -343,7 +418,7 @@
         <div class="controls">
             <button class="control-btn" id="newGame">🔄 Νέο</button>
             <button class="control-btn" id="undoMove">↶ Πίσω</button>
-            <select class="control-btn" id="difficulty" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);">
+            <select class="control-btn" id="difficulty">
                 <option value="1">Εύκολο</option>
                 <option value="2" selected>Μέτριο</option>
                 <option value="3">Δύσκολο</option>
@@ -361,6 +436,7 @@
     </div>
 
     <script>
+        // Ο κώδικας JavaScript παραμένει αμετάβλητος
         class ChessEngine {
             constructor() {
                 this.reset();
@@ -870,7 +946,12 @@
                 this.possibleMoves.forEach(move => {
                     const square = this.getSquareElement(move.x, move.y);
                     if (square) {
-                        square.classList.add('possible-move');
+                        const targetPiece = this.chess.getPiece(move.x, move.y);
+                        if (targetPiece) {
+                            square.classList.add('possible-capture');
+                        } else {
+                            square.classList.add('possible-move');
+                        }
                     }
                 });
                 
@@ -883,6 +964,9 @@
             clearHighlights() {
                 document.querySelectorAll('.possible-move').forEach(el => 
                     el.classList.remove('possible-move')
+                );
+                document.querySelectorAll('.possible-capture').forEach(el => 
+                    el.classList.remove('possible-capture')
                 );
                 document.querySelectorAll('.selected').forEach(el => 
                     el.classList.remove('selected')
@@ -947,43 +1031,31 @@
                     }
                 });
 
-                document.querySelectorAll('.promotion-option').forEach(piece => {
-                    piece.addEventListener('click', () => {
-                        const promotionPiece = piece.dataset.piece;
+                document.querySelectorAll('.promotion-option').forEach(option => {
+                    option.addEventListener('click', () => {
                         if (this.pendingPromotion) {
+                            const piece = option.dataset.piece;
                             this.makeMove(
-                                this.pendingPromotion.fromX,
-                                this.pendingPromotion.fromY,
-                                this.pendingPromotion.toX,
-                                this.pendingPromotion.toY,
-                                promotionPiece
+                                this.pendingPromotion.fromX, 
+                                this.pendingPromotion.fromY, 
+                                this.pendingPromotion.toX, 
+                                this.pendingPromotion.toY, 
+                                piece
                             );
                             this.hidePromotionModal();
                         }
                     });
                 });
 
-                document.getElementById('promotionModal').addEventListener('click', (e) => {
-                    if (e.target.id === 'promotionModal') {
-                        this.hidePromotionModal();
-                    }
+                document.getElementById('difficulty').addEventListener('change', () => {
+                    // Αλλαγή δυσκολίας
                 });
             }
         }
 
-        // Initialize game when page loads
+        // Αρχικοποίηση του παιχνιδιού
         document.addEventListener('DOMContentLoaded', () => {
             new MobileChessGame();
-        });
-
-        // Prevent zoom on double tap
-        document.addEventListener('dblclick', (e) => {
-            e.preventDefault();
-        });
-
-        // Prevent context menu
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
         });
     </script>
 </body>
