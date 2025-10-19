@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Μπαλόνια με Διαφημίσεις</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(160deg, #1a2980, #26d0ce);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+            background: linear-gradient(to right, #ff8a00, #e52e71);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .score-container, .timer-container {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .score, .timer {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .game-area {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .balloon {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
+        }
+        
+        .balloon-body {
+            width: 60px;
+            height: 70px;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .balloon-body::before {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 15px;
+            background: inherit;
+            clip-path: polygon(0 0, 100% 0, 80% 100%, 20% 100%);
+        }
+        
+        .balloon-string {
+            width: 2px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.7);
+            margin-top: -5px;
+            z-index: 1;
+            position: relative;
+        }
+        
+        .balloon-string::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .balloon:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(4px 6px 8px rgba(0, 0, 0, 0.4)) brightness(1.1);
+        }
+        
+        .balloon.popped {
+            animation: pop 0.5s forwards;
+        }
+        
+        .special-balloon {
+            animation: special-glow 2s infinite alternate, float-special 8s ease-in-out infinite;
+        }
+        
+        @keyframes special-glow {
+            0% {
+                filter: drop-shadow(0 0 5px gold) brightness(1);
+            }
+            100% {
+                filter: drop-shadow(0 0 20px #ff00ff) brightness(1.3);
+            }
+        }
+        
+        @keyframes float-special {
+            0%, 100% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-20px) translateX(10px) rotate(5deg);
+            }
+            50% {
+                transform: translateY(-10px) translateX(-10px) rotate(-3deg);
+            }
+            75% {
+                transform: translateY(-15px) translateX(8px) rotate(3deg);
+            }
+        }
+        
+        @keyframes pop {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.3);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(to right, #ff8a00, #e52e71);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .instructions h2 {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .instructions li:before {
+            content: '🎈';
+            position: absolute;
+            left: 0;
+        }
+        
+        .game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 15px;
+            display: none;
+        }
+        
+        .game-over h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ff8a00;
+        }
+        
+        .final-score {
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+        
+        .points-popup {
+            position: absolute;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FFC107;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            pointer-events: none;
+            z-index: 5;
+            animation: float-up 1.5s forwards;
+        }
+        
+        @keyframes float-up {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-80px);
+                opacity: 0;
+            }
+        }
+        
+        .ad-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            z-index: 100;
+            display: none;
+            max-width: 90%;
+            width: 400px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .ad-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .ad-title {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .close-ad {
+            background: #ff5252;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .ad-content {
+            margin-bottom: 15px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+        
+        .ad-timer {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .special-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 215, 0, 0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: gold;
+            border: 1px solid gold;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .game-area {
+                height: 500px;
+            }
+            
+            .balloon-body {
+                width: 50px;
+                height: 60px;
+            }
+            
+            .score, .timer {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Μπαλόνια με Διαφημίσεις</h1>
+        <p>Σκάσε τα κανονικά μπαλόνια και πρόσεχε τα χρυσά για μπόνους!</p>
+    </header>
+    
+    <div class="game-container">
+        <div class="game-info">
+            <div class="score-container">
+                <h3>Πόντοι</h3>
+                <div class="score">0</div>
+            </div>
+            <div class="timer-container">
+                <h3>Χρόνος</h3>
+                <div class="timer">60</div>
+            </div>
+        </div>
+        
+        <div class="special-indicator">
+            Επόμενο χρυσό μπαλόνι: <span id="specialTimer">10</span>s
+        </div>
+        
+        <div class="game-area" id="gameArea">
+            <!-- Μπαλόνια θα προστεθούν εδώ -->
+            <div class="game-over" id="gameOver">
+                <h2>Τέλος Παιχνιδιού!</h2>
+                <div class="final-score">Πόντοι: <span id="finalScore">0</span></div>
+                <button id="restartButton">Παίξε Ξανά</button>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="startButton">Έναρξη</button>
+            <button id="pauseButton">Παύση</button>
+        </div>
+    </div>
+    
+    <div class="ad-container" id="adContainer">
+        <div class="ad-header">
+            <div class="ad-title">Διαφήμιση</div>
+            <button class="close-ad" id="closeAd">X</button>
+        </div>
+        <div class="ad-content" id="adContent">
+            Η διαφήμιση θα εμφανιστεί εδώ για 5 δευτερόλεπτα...
+        </div>
+        <div class="ad-timer">
+            Κλείσιμο σε: <span id="adTimer">5</span> δευτερόλεπτα
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h2>Οδηγίες Παιχνιδιού</h2>
+        <ul>
+            <li>Κάνε κλικ στα μπαλόνια για να τα σκάσεις και να κερδίσεις πόντους</li>
+            <li>Κανονικά μπαλόνια: 10-25 πόντοι</li>
+            <li>Χρυσά μπαλόνια: 100 πόντοι + διαφήμιση</li>
+            <li>Τα χρυσά μπαλόνια εμφανίζονται κάθε 10 δευτερόλεπτα</li>
+            <li>Σκάσε όσα περισσότερα μπαλόνια μπορείς σε 60 δευτερόλεπτα</li>
+        </ul>
+    </div>
+    
+    <footer>
+        <p>Παιχνίδι Μπαλονιών &copy; 2023 | Με διαφημίσεις Monetag</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Στοιχεία παιχνιδιού
+            const gameArea = document.getElementById('gameArea');
+            const scoreElement = document.querySelector('.score');
+            const timerElement = document.querySelector('.timer');
+            const startButton = document.getElementById('startButton');
+            const pauseButton = document.getElementById('pauseButton');
+            const gameOverScreen = document.getElementById('gameOver');
+            const finalScoreElement = document.getElementById('finalScore');
+            const restartButton = document.getElementById('restartButton');
+            const specialTimerElement = document.getElementById('specialTimer');
+            const adContainer = document.getElementById('adContainer');
+            const closeAdButton = document.getElementById('closeAd');
+            const adTimerElement = document.getElementById('adTimer');
+            const adContent = document.getElementById('adContent');
+            
+            // Μεταβλητές παιχνιδιού
+            let score = 0;
+            let timeLeft = 60;
+            let gameActive = false;
+            let gameTimer;
+            let balloonInterval;
+            let specialBalloonInterval;
+            let specialTimer = 10;
+            let balloons = [];
+            let adActive = false;
+            let adCountdown;
+            
+            // Τύποι μπαλονιών και πόντοι
+            const balloonTypes = [
+                { color: '#FF5252', points: 10, name: 'Κόκκινο' },
+                { color: '#2196F3', points: 15, name: 'Μπλε' },
+                { color: '#4CAF50', points: 20, name: 'Πράσινο' },
+                { color: '#FFC107', points: 25, name: 'Κίτρινο' }
+            ];
+            
+            // Έναρξη παιχνιδιού
+            function startGame() {
+                if (gameActive) return;
+                
+                // Επαναφορά κατάστασης παιχνιδιού
+                score = 0;
+                timeLeft = 60;
+                specialTimer = 10;
+                gameActive = true;
+                scoreElement.textContent = score;
+                timerElement.textContent = timeLeft;
+                specialTimerElement.textContent = specialTimer;
+                gameOverScreen.style.display = 'none';
+                balloons = [];
+                
+                // Καθαρισμός υπαρχόντων μπαλονιών
+                clearBalloons();
+                
+                // Έναρξη χρονομέτρου
+                gameTimer = setInterval(updateTimer, 1000);
+                
+                // Έναρξη δημιουργίας μπαλονιών
+                balloonInterval = setInterval(createBalloon, 800);
+                
+                // Έναρξη χρονομέτρου για ειδικά μπαλόνια
+                specialBalloonInterval = setInterval(updateSpecialTimer, 1000);
+                
+                // Ενημέρωση κειμένου κουμπιού
+                startButton.textContent = 'Επανεκκίνηση';
+            }
+            
+            // Παύση παιχνιδιού
+            function pauseGame() {
+                if (!gameActive) return;
+                
+                gameActive = !gameActive;
+                
+                if (gameActive) {
+                    // Συνέχιση παιχνιδιού
+                    gameTimer = setInterval(updateTimer, 1000);
+                    balloonInterval = setInterval(createBalloon, 800);
+                    specialBalloonInterval = setInterval(updateSpecialTimer, 1000);
+                    pauseButton.textContent = 'Παύση';
+                    
+                    // Επανέναρξη κίνησης μπαλονιών
+                    balloons.forEach(balloon => {
+                        if (balloon.animation) {
+                            balloon.animation.play();
+                        }
+                    });
+                } else {
+                    // Παύση παιχνιδιού
+                    clearInterval(gameTimer);
+                    clearInterval(balloonInterval);
+                    clearInterval(specialBalloonInterval);
+                    pauseButton.textContent = 'Συνέχεια';
+                    
+                    // Παύση κίνησης μπαλονιών
+                    balloons.forEach(balloon => {
+                        if (balloon.animation) {
+                            balloon.animation.pause();
+                        }
+                    });
+                }
+            }
+            
+            // Ενημέρωση χρονομέτρου
+            function updateTimer() {
+                timeLeft--;
+                timerElement.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }
+            
+            // Ενημέρωση χρονομέτρου για ειδικά μπαλόνια
+            function updateSpecialTimer() {
+                if (!gameActive) return;
+                
+                specialTimer--;
+                specialTimerElement.textContent = specialTimer;
+                
+                if (specialTimer <= 0) {
+                    createSpecialBalloon();
+                    specialTimer = 10;
+                }
+            }
+            
+            // Δημιουργία κανονικού μπαλονιού
+            function createBalloon() {
+                if (!gameActive || adActive) return;
+                
+                const balloon = document.createElement('div');
+                balloon.classList.add('balloon');
+                
+                // Τυχαία επιλογή τύπου μπαλονιού
+                const balloonType = balloonTypes[Math.floor(Math.random() * balloonTypes.length)];
+                
+                // Δημιουργία σώματος μπαλονιού
+                const balloonBody = document.createElement('div');
+                balloonBody.classList.add('balloon-body');
+                balloonBody.style.backgroundColor = balloonType.color;
+                
+                // Δημιουργία κορδονιού μπαλονιού
+                const balloonString = document.createElement('div');
+                balloonString.classList.add('balloon-string');
+                
+                // Συσκευασία μπαλονιού
+                balloon.appendChild(balloonBody);
+                balloon.appendChild(balloonString);
+                
+                // Τυχαία θέση
+                const leftPos = Math.random() * (gameArea.offsetWidth - 60);
+                balloon.style.left = leftPos + 'px';
+                balloon.style.bottom = '-100px';
+                
+                // Αποθήκευση πόντων
+                balloon.dataset.points = balloonType.points;
+                balloon.dataset.type = 'normal';
+                
+                // Προσθήκη event για σκάσιμο
+                balloon.addEventListener('click', popBalloon);
+                
+                // Προσθήκη στο game area
+                gameArea.appendChild(balloon);
+                
+                // Κίνηση μπαλονιού
+                const animation = animateBalloon(balloon);
+                
+                // Αποθήκευση μπαλονιού
+                const balloonObj = {
+                    element: balloon,
+                    animation: animation,
+                    speed: 0.5 + Math.random() * 1.5,
+                    horizontalMovement: (Math.random() - 0.5) * 4,
+                    verticalDirection: Math.random() > 0.5 ? 1 : -1,
+                    floatOffset: 0
+                };
+                
+                balloons.push(balloonObj);
+                
+                // Αφαίρεση μπαλονιού μετά από κάποιο χρόνο
+                setTimeout(() => {
+                    if (balloon.parentNode && !balloon.classList.contains('popped')) {
+                        balloon.remove();
+                        balloons = balloons.filter(b => b.element !== balloon);
+                    }
+                }, 15000);
+            }
+            
+            // Δημιουργία ειδικού μπαλονιού
+            function createSpecialBalloon() {
+                if (!gameActive || adActive) return;
+                
+                const balloon = document.createElement('div');
+                balloon.classList.add('balloon', 'special-balloon');
+                
+                // Δημιουργία σώματος μπαλονιού (χρυσό)
+                const balloonBody = document.createElement('div');
+                balloonBody.classList.add('balloon-body');
+                balloonBody.style.background = 'radial-gradient(circle at 30% 30%, #FFD700, #FFA500)';
+                
+                // Προσθήκη κειμένου για μπόνους
+                const text = document.createElement('div');
+                text.textContent = '100';
+                text.style.position = 'absolute';
+                text.style.top = '50%';
+                text.style.left = '50%';
+                text.style.transform = 'translate(-50%, -50%)';
+                text.style.color = 'white';
+                text.style.fontWeight = 'bold';
+                text.style.fontSize = '1rem';
+                text.style.textShadow = '1px 1px 1px rgba(0,0,0,0.5)';
+                balloonBody.appendChild(text);
+                
+                // Δημιουργία κορδονιού μπαλονιού
+                const balloonString = document.createElement('div');
+                balloonString.classList.add('balloon-string');
+                
+                // Συσκευασία μπαλονιού
+                balloon.appendChild(balloonBody);
+                balloon.appendChild(balloonString);
+                
+                // Τυχαία θέση
+                const leftPos = Math.random() * (gameArea.offsetWidth - 60);
+                balloon.style.left = leftPos + 'px';
+                balloon.style.bottom = '-100px';
+                
+                // Αποθήκευση πόντων και τύπου
+                balloon.dataset.points = 100;
+                balloon.dataset.type = 'special';
+                
+                // Προσθήκη event για σκάσιμο
+                balloon.addEventListener('click', popBalloon);
+                
+                // Προσθήκη στο game area
+                gameArea.appendChild(balloon);
+                
+                // Κίνηση μπαλονιού
+                const animation = animateBalloon(balloon);
+                
+                // Αποθήκευση μπαλονιού
+                const balloonObj = {
+                    element: balloon,
+                    animation: animation,
+                    speed: 0.5 + Math.random() * 1.5,
+                    horizontalMovement: (Math.random() - 0.5) * 4,
+                    verticalDirection: Math.random() > 0.5 ? 1 : -1,
+                    floatOffset: 0
+                };
+                
+                balloons.push(balloonObj);
+                
+                // Αφαίρεση μπαλονιού μετά από κάποιο χρόνο
+                setTimeout(() => {
+                    if (balloon.parentNode && !balloon.classList.contains('popped')) {
+                        balloon.remove();
+                        balloons = balloons.filter(b => b.element !== balloon);
+                    }
+                }, 15000);
+            }
+            
+            // Κίνηση μπαλονιού
+            function animateBalloon(balloon) {
+                let startTime = null;
+                let position = -100;
+                let horizontalPos = parseFloat(balloon.style.left);
+                let floatPhase = Math.random() * Math.PI * 2;
+                
+                function step(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    const progress = timestamp - startTime;
+                    
+                    // Κίνηση προς τα πάνω με διακυμάνσεις
+                    position += 0.5;
+                    floatPhase += 0.05;
+                    
+                    // Οριζόντια κίνηση (αριστερά-δεξιά)
+                    horizontalPos += Math.sin(floatPhase) * 0.8;
+                    
+                    // Κίνηση πάνω-κάτω (ρεαλιστική κίνηση μπαλονιού)
+                    const floatOffset = Math.sin(floatPhase * 1.5) * 10;
+                    
+                    // Εφαρμογή θέσης
+                    balloon.style.bottom = position + 'px';
+                    balloon.style.left = horizontalPos + 'px';
+                    
+                    // Ειδική κίνηση για τα ειδικά μπαλόνια
+                    if (balloon.classList.contains('special-balloon')) {
+                        balloon.style.transform = `translateY(${floatOffset}px) rotate(${Math.sin(floatPhase) * 5}deg)`;
+                    } else {
+                        balloon.style.transform = `translateY(${floatOffset}px) rotate(${Math.sin(floatPhase) * 3}deg)`;
+                    }
+                    
+                    // Συνέχιση animation
+                    if (position < gameArea.offsetHeight + 100 && balloon.parentNode) {
+                        balloon.animationId = requestAnimationFrame(step);
+                    }
+                }
+                
+                // Έναρξη animation
+                balloon.animationId = requestAnimationFrame(step);
+                return {
+                    play: function() {
+                        if (balloon.animationId === null) {
+                            balloon.animationId = requestAnimationFrame(step);
+                        }
+                    },
+                    pause: function() {
+                        if (balloon.animationId !== null) {
+                            cancelAnimationFrame(balloon.animationId);
+                            balloon.animationId = null;
+                        }
+                    }
+                };
+            }
+            
+            // Σκάσιμο μπαλονιού
+            function popBalloon(e) {
+                if (!gameActive || adActive) return;
+                
+                const balloon = e.currentTarget;
+                const points = parseInt(balloon.dataset.points);
+                const type = balloon.dataset.type;
+                
+                // Προσθήκη πόντων
+                score += points;
+                scoreElement.textContent = score;
+                
+                // Animation σκασίματος
+                balloon.classList.add('popped');
+                
+                // Εμφάνιση πόντων
+                createPointsPopup(balloon, points);
+                
+                // Ειδική διαδικασία για ειδικά μπαλόνια
+                if (type === 'special') {
+                    showAd();
+                }
+                
+                // Αφαίρεση από τον πίνακα
+                balloons = balloons.filter(b => b.element !== balloon);
+                
+                // Αφαίρεση μπαλονιού μετά το animation
+                setTimeout(() => {
+                    if (balloon.parentNode) {
+                        balloon.remove();
+                    }
+                }, 500);
+            }
+            
+            // Εμφάνιση διαφήμισης
+            function showAd() {
+                adActive = true;
+                adContainer.style.display = 'block';
+                
+                // Απενεργοποίηση παιχνιδιού
+                clearInterval(gameTimer);
+                clearInterval(balloonInterval);
+                clearInterval(specialBalloonInterval);
+                
+                // Εμφάνιση χρονομέτρου διαφήμισης
+                let adTimeLeft = 5;
+                adTimerElement.textContent = adTimeLeft;
+                
+                adCountdown = setInterval(() => {
+                    adTimeLeft--;
+                    adTimerElement.textContent = adTimeLeft;
+                    
+                    if (adTimeLeft <= 0) {
+                        closeAd();
+                    }
+                }, 1000);
+                
+                // Φόρτωση του script της Monetag
+                try {
+                    (function(s){
+                        s.dataset.zone='10051095',
+                        s.src='https://groleegni.net/vignette.min.js'
+                    })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
+                    
+                    // Προσομοίωση περιεχομένου διαφήμισης
+                    adContent.innerHTML = '<div style="padding: 20px; color: #333;">Διαφήμιση Monetag<br><small>Αυτό είναι ένα προσομοιωμένο περιεχόμενο</small></div>';
+                } catch (error) {
+                    console.error('Σφάλμα φόρτωσης διαφήμισης:', error);
+                    adContent.innerHTML = '<div style="padding: 20px; color: #333;">Πρόβλημα φόρτωσης διαφήμισης</div>';
+                }
+            }
+            
+            // Κλείσιμο διαφήμισης
+            function closeAd() {
+                clearInterval(adCountdown);
+                adContainer.style.display = 'none';
+                adActive = false;
+                
+                // Επανέναρξη παιχνιδιού
+                if (gameActive) {
+                    gameTimer = setInterval(updateTimer, 1000);
+                    balloonInterval = setInterval(createBalloon, 800);
+                    specialBalloonInterval = setInterval(updateSpecialTimer, 1000);
+                }
+            }
+            
+            // Δημιουργία popup με πόντους
+            function createPointsPopup(balloon, points) {
+                const popup = document.createElement('div');
+                popup.classList.add('points-popup');
+                popup.textContent = '+' + points;
+                popup.style.left = balloon.style.left;
+                popup.style.bottom = balloon.style.bottom;
+                
+                gameArea.appendChild(popup);
+                
+                // Αφαίρεση popup μετά το animation
+                setTimeout(() => {
+                    if (popup.parentNode) {
+                        popup.remove();
+                    }
+                }, 1500);
+            }
+            
+            // Καθαρισμός μπαλονιών
+            function clearBalloons() {
+                const balloons = document.querySelectorAll('.balloon');
+                balloons.forEach(balloon => {
+                    if (balloon.animationId) {
+                        cancelAnimationFrame(balloon.animationId);
+                    }
+                    balloon.remove();
+                });
+            }
+            
+            // Τέλος παιχνιδιού
+            function endGame() {
+                gameActive = false;
+                clearInterval(gameTimer);
+                clearInterval(balloonInterval);
+                clearInterval(specialBalloonInterval);
+                
+                // Ακύρωση animations μπαλονιών
+                balloons.forEach(balloon => {
+                    if (balloon.animationId) {
+                        cancelAnimationFrame(balloon.animationId);
+                    }
+                });
+                
+                // Εμφάνιση οθόνης τέλους
+                finalScoreElement.textContent = score;
+                gameOverScreen.style.display = 'flex';
+                
+                // Καθαρισμός μπαλονιών
+                clearBalloons();
+            }
+            
+            // Event listeners
+            startButton.addEventListener('click', startGame);
+            pauseButton.addEventListener('click', pauseGame);
+            restartButton.addEventListener('click', startGame);
+            closeAdButton.addEventListener('click', closeAd);
+            
+            // Δημιουργία μερικών μπαλονιών για αρχική εμφάνιση (χωρίς να είναι ενεργά)
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    createDemoBalloon();
+                }, i * 800);
+            }
+            
+            // Δημιουργία demo μπαλονιού
+            function createDemoBalloon() {
+                const balloon = document.createElement('div');
+                balloon.classList.add('balloon');
+                
+                const balloonType = balloonTypes[Math.floor(Math.random() * balloonTypes.length)];
+                
+                const balloonBody = document.createElement('div');
+                balloonBody.classList.add('balloon-body');
+                balloonBody.style.backgroundColor = balloonType.color;
+                
+                const balloonString = document.createElement('div');
+                balloonString.classList.add('balloon-string');
+                
+                balloon.appendChild(balloonBody);
+                balloon.appendChild(balloonString);
+                
+                const leftPos = Math.random() * (gameArea.offsetWidth - 60);
+                balloon.style.left = leftPos + 'px';
+                balloon.style.bottom = '-100px';
+                
+                gameArea.appendChild(balloon);
+                
+                // Απλή animation για demo
+                animateDemoBalloon(balloon);
+                
+                setTimeout(() => {
+                    if (balloon.parentNode) {
+                        balloon.remove();
+                    }
+                }, 15000);
+            }
+            
+            // Απλή animation για demo μπαλόνια
+            function animateDemoBalloon(balloon) {
+                let position = -100;
+                let horizontalPos = parseFloat(balloon.style.left);
+                let floatPhase = Math.random() * Math.PI * 2;
+                
+                function step() {
+                    position += 0.3;
+                    floatPhase += 0.03;
+                    
+                    horizontalPos += Math.sin(floatPhase) * 0.5;
+                    const floatOffset = Math.sin(floatPhase * 1.5) * 8;
+                    
+                    balloon.style.bottom = position + 'px';
+                    balloon.style.left = horizontalPos + 'px';
+                    balloon.style.transform = `translateY(${floatOffset}px) rotate(${Math.sin(floatPhase) * 4}deg)`;
+                    
+                    if (position < gameArea.offsetHeight + 100 && balloon.parentNode) {
+                        requestAnimationFrame(step);
+                    }
+                }
+                
+                requestAnimationFrame(step);
+            }
+        });
+    </script>
+</body>
+</html>
