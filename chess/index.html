@@ -4,76 +4,316 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Σκάκι vs AI</title>
-    <link rel="stylesheet" href="style.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #2a5298);
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .player-info {
+            text-align: center;
+            flex: 1;
+        }
+
+        .player {
+            font-size: 1em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .game-status {
+            text-align: center;
+            flex: 2;
+            padding: 0 10px;
+        }
+
+        #status {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 3px;
+        }
+
+        #eval {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
         .board-container {
-            width: 480px;
-            height: 480px;
-            margin: 20px auto;
-            border: 12px solid #8B4513;
-            border-radius: 8px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 400px;
+            margin: 10px auto;
+            border: 10px solid #8B4513;
+            border-radius: 6px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
             background: #f0d9b5;
         }
-        
+
         .chess-board {
             width: 100%;
-            height: 100%;
+            aspect-ratio: 1;
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(8, 1fr);
         }
-        
+
         .square {
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 36px;
+            font-size: 28px;
             cursor: pointer;
             position: relative;
             transition: background-color 0.2s;
+            user-select: none;
         }
-        
+
         .white {
             background: #f0d9b5;
         }
-        
+
         .black {
             background: #b58863;
         }
-        
+
         .selected {
             background: #aec6cf !important;
         }
-        
+
         .possible-move::after {
             content: '';
             position: absolute;
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             background: rgba(0, 255, 0, 0.4);
             border-radius: 50%;
             z-index: 1;
         }
-        
+
         .check {
             background: #ff6b6b !important;
         }
-        
+
         .coordinates {
             position: absolute;
-            font-size: 12px;
+            font-size: 10px;
             color: rgba(0,0,0,0.6);
+            pointer-events: none;
         }
-        
+
         .coord-file {
-            bottom: 2px;
-            right: 4px;
+            bottom: 1px;
+            right: 3px;
         }
-        
+
         .coord-rank {
-            top: 2px;
-            left: 4px;
+            top: 1px;
+            left: 3px;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        button, select {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            min-width: 80px;
+        }
+
+        button:hover, select:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        #newGame {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+
+        #undoMove {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+        }
+
+        select {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+
+        .move-history {
+            margin-top: 15px;
+            padding: 12px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .move-history h3 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        #movesList {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            max-height: 100px;
+            overflow-y: auto;
+            padding: 6px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #bdc3c7;
+        }
+
+        /* Promotion Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 50% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 300px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transform: translateY(-50%);
+        }
+
+        .promotion-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .promotion-piece {
+            padding: 10px;
+            background: #3498db;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .promotion-piece:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .game-info {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .board-container {
+                max-width: 350px;
+            }
+            
+            .square {
+                font-size: 24px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button, select {
+                width: 100%;
+                max-width: 200px;
+            }
+            
+            .modal-content {
+                margin: 60% auto;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .board-container {
+                max-width: 300px;
+            }
+            
+            .square {
+                font-size: 20px;
+            }
+            
+            .coordinates {
+                font-size: 8px;
+            }
         }
     </style>
 </head>
@@ -131,7 +371,627 @@
         </div>
     </div>
 
-    <script src="chess-engine.js"></script>
-    <script src="game.js"></script>
+    <script>
+        class ChessEngine {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.board = this.createInitialBoard();
+                this.turn = 'w';
+                this.moveHistory = [];
+                this.gameOver = false;
+                this.winner = null;
+                this.check = false;
+            }
+
+            createInitialBoard() {
+                return [
+                    ['br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br'],
+                    ['bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp'],
+                    ['', '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', ''],
+                    ['', '', '', '', '', '', '', ''],
+                    ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
+                    ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr']
+                ];
+            }
+
+            getPiece(x, y) {
+                if (x < 0 || x > 7 || y < 0 || y > 7) return null;
+                return this.board[y][x];
+            }
+
+            setPiece(x, y, piece) {
+                if (x >= 0 && x < 8 && y >= 0 && y < 8) {
+                    this.board[y][x] = piece;
+                }
+            }
+
+            move(fromX, fromY, toX, toY, promotion = 'q') {
+                if (this.gameOver) return false;
+
+                const piece = this.getPiece(fromX, fromY);
+                if (!piece) return false;
+                
+                if ((this.turn === 'w' && piece[0] !== 'w') || 
+                    (this.turn === 'b' && piece[0] !== 'b')) {
+                    return false;
+                }
+
+                if (!this.isValidMove(fromX, fromY, toX, toY)) {
+                    return false;
+                }
+
+                const captured = this.getPiece(toX, toY);
+                const originalFrom = this.getPiece(fromX, fromY);
+                
+                this.setPiece(toX, toY, originalFrom);
+                this.setPiece(fromX, fromY, '');
+
+                if (this.isKingInCheck(this.turn)) {
+                    this.setPiece(fromX, fromY, originalFrom);
+                    this.setPiece(toX, toY, captured);
+                    return false;
+                }
+
+                if (piece[1] === 'p' && (toY === 0 || toY === 7)) {
+                    this.setPiece(toX, toY, piece[0] + promotion);
+                }
+
+                this.moveHistory.push({
+                    from: {x: fromX, y: fromY},
+                    to: {x: toX, y: toY},
+                    piece: piece,
+                    captured: captured,
+                    promotion: promotion
+                });
+
+                this.turn = this.turn === 'w' ? 'b' : 'w';
+                this.check = this.isKingInCheck(this.turn);
+                
+                if (this.isCheckmate()) {
+                    this.gameOver = true;
+                    this.winner = this.turn === 'w' ? 'b' : 'w';
+                } else if (this.isStalemate()) {
+                    this.gameOver = true;
+                    this.winner = 'draw';
+                }
+
+                return true;
+            }
+
+            isValidMove(fromX, fromY, toX, toY) {
+                const piece = this.getPiece(fromX, fromY);
+                if (!piece) return false;
+
+                const target = this.getPiece(toX, toY);
+                if (target && target[0] === piece[0]) return false;
+
+                const type = piece[1];
+                const dx = toX - fromX;
+                const dy = toY - fromY;
+                const color = piece[0];
+
+                switch (type) {
+                    case 'p': return this.isValidPawnMove(fromX, fromY, toX, toY, color);
+                    case 'r': return this.isValidRookMove(fromX, fromY, toX, toY);
+                    case 'n': return this.isValidKnightMove(dx, dy);
+                    case 'b': return this.isValidBishopMove(fromX, fromY, toX, toY);
+                    case 'q': return this.isValidQueenMove(fromX, fromY, toX, toY);
+                    case 'k': return this.isValidKingMove(fromX, fromY, toX, toY, color);
+                    default: return false;
+                }
+            }
+
+            isValidPawnMove(fromX, fromY, toX, toY, color) {
+                const direction = color === 'w' ? -1 : 1;
+                const startRow = color === 'w' ? 6 : 1;
+                const dx = toX - fromX;
+                const dy = toY - fromY;
+                const target = this.getPiece(toX, toY);
+
+                if (dx === 0) {
+                    if (dy === direction && !target) return true;
+                    if (fromY === startRow && dy === 2 * direction && 
+                        !target && !this.getPiece(fromX, fromY + direction)) return true;
+                }
+                
+                if (Math.abs(dx) === 1 && dy === direction && target) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            isValidKnightMove(dx, dy) {
+                return (Math.abs(dx) === 2 && Math.abs(dy) === 1) || 
+                       (Math.abs(dx) === 1 && Math.abs(dy) === 2);
+            }
+
+            isValidRookMove(fromX, fromY, toX, toY) {
+                if (fromX !== toX && fromY !== toY) return false;
+                return this.isPathClear(fromX, fromY, toX, toY);
+            }
+
+            isValidBishopMove(fromX, fromY, toX, toY) {
+                if (Math.abs(toX - fromX) !== Math.abs(toY - fromY)) return false;
+                return this.isPathClear(fromX, fromY, toX, toY);
+            }
+
+            isValidQueenMove(fromX, fromY, toX, toY) {
+                return this.isValidRookMove(fromX, fromY, toX, toY) || 
+                       this.isValidBishopMove(fromX, fromY, toX, toY);
+            }
+
+            isValidKingMove(fromX, fromY, toX, toY, color) {
+                const dx = Math.abs(toX - fromX);
+                const dy = Math.abs(toY - fromY);
+                return dx <= 1 && dy <= 1;
+            }
+
+            isPathClear(fromX, fromY, toX, toY) {
+                const dx = Math.sign(toX - fromX);
+                const dy = Math.sign(toY - fromY);
+                let x = fromX + dx;
+                let y = fromY + dy;
+
+                while (x !== toX || y !== toY) {
+                    if (this.getPiece(x, y)) return false;
+                    x += dx;
+                    y += dy;
+                }
+                return true;
+            }
+
+            isKingInCheck(color) {
+                let kingX, kingY;
+                for (let y = 0; y < 8; y++) {
+                    for (let x = 0; x < 8; x++) {
+                        const piece = this.getPiece(x, y);
+                        if (piece === color + 'k') {
+                            kingX = x;
+                            kingY = y;
+                            break;
+                        }
+                    }
+                }
+
+                for (let y = 0; y < 8; y++) {
+                    for (let x = 0; x < 8; x++) {
+                        const piece = this.getPiece(x, y);
+                        if (piece && piece[0] !== color) {
+                            if (this.isValidMove(x, y, kingX, kingY)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
+            isCheckmate() {
+                if (!this.check) return false;
+                
+                for (let fromY = 0; fromY < 8; fromY++) {
+                    for (let fromX = 0; fromX < 8; fromX++) {
+                        const piece = this.getPiece(fromX, fromY);
+                        if (piece && piece[0] === this.turn) {
+                            const moves = this.getValidMovesForPiece(fromX, fromY);
+                            if (moves.length > 0) return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            isStalemate() {
+                if (this.check) return false;
+                
+                for (let fromY = 0; fromY < 8; fromY++) {
+                    for (let fromX = 0; fromX < 8; fromX++) {
+                        const piece = this.getPiece(fromX, fromY);
+                        if (piece && piece[0] === this.turn) {
+                            const moves = this.getValidMovesForPiece(fromX, fromY);
+                            if (moves.length > 0) return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            getValidMovesForPiece(x, y) {
+                const moves = [];
+                for (let toY = 0; toY < 8; toY++) {
+                    for (let toX = 0; toX < 8; toX++) {
+                        if (this.isValidMove(x, y, toX, toY)) {
+                            const captured = this.getPiece(toX, toY);
+                            const original = this.getPiece(x, y);
+                            
+                            this.setPiece(toX, toY, original);
+                            this.setPiece(x, y, '');
+                            
+                            const leavesInCheck = this.isKingInCheck(this.turn);
+                            
+                            this.setPiece(x, y, original);
+                            this.setPiece(toX, toY, captured);
+                            
+                            if (!leavesInCheck) {
+                                moves.push({x: toX, y: toY});
+                            }
+                        }
+                    }
+                }
+                return moves;
+            }
+
+            getAIMove(difficulty) {
+                const moves = [];
+                
+                for (let fromY = 0; fromY < 8; fromY++) {
+                    for (let fromX = 0; fromX < 8; fromX++) {
+                        const piece = this.getPiece(fromX, fromY);
+                        if (piece && piece[0] === this.turn) {
+                            const validMoves = this.getValidMovesForPiece(fromX, fromY);
+                            validMoves.forEach(move => {
+                                moves.push({
+                                    from: {x: fromX, y: fromY},
+                                    to: move,
+                                    piece: piece
+                                });
+                            });
+                        }
+                    }
+                }
+
+                if (moves.length === 0) return null;
+
+                const scoredMoves = moves.map(move => {
+                    let score = 0;
+                    
+                    const target = this.getPiece(move.to.x, move.to.y);
+                    if (target) {
+                        score += this.getPieceValue(target[1]) * 10;
+                    }
+                    
+                    if (move.piece[1] === 'p' && (move.to.y === 0 || move.to.y === 7)) {
+                        score += 8;
+                    }
+                    
+                    this.move(move.from.x, move.from.y, move.to.x, move.to.y);
+                    if (this.check) score += 5;
+                    if (this.gameOver) score += 1000;
+                    this.undoMove();
+                    
+                    score += this.evaluatePosition();
+                    
+                    return { move, score };
+                });
+
+                scoredMoves.sort((a, b) => b.score - a.score);
+                
+                if (difficulty === 1) {
+                    return moves[Math.floor(Math.random() * moves.length)];
+                } else if (difficulty === 2) {
+                    const topMoves = scoredMoves.slice(0, 3);
+                    return topMoves[Math.floor(Math.random() * topMoves.length)].move;
+                } else {
+                    return scoredMoves[0].move;
+                }
+            }
+
+            getPieceValue(type) {
+                const values = { 'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 100 };
+                return values[type] || 0;
+            }
+
+            evaluatePosition() {
+                let score = 0;
+                for (let y = 0; y < 8; y++) {
+                    for (let x = 0; x < 8; x++) {
+                        const piece = this.getPiece(x, y);
+                        if (piece) {
+                            const value = this.getPieceValue(piece[1]);
+                            score += piece[0] === 'w' ? value : -value;
+                        }
+                    }
+                }
+                return score;
+            }
+
+            undoMove() {
+                if (this.moveHistory.length === 0) return false;
+                
+                const lastMove = this.moveHistory.pop();
+                this.setPiece(lastMove.from.x, lastMove.from.y, lastMove.piece);
+                this.setPiece(lastMove.to.x, lastMove.to.y, lastMove.captured || '');
+                
+                this.turn = this.turn === 'w' ? 'b' : 'w';
+                this.gameOver = false;
+                this.winner = null;
+                this.check = this.isKingInCheck(this.turn);
+                
+                return true;
+            }
+
+            needsPromotion(fromX, fromY, toX, toY) {
+                const piece = this.getPiece(fromX, fromY);
+                return piece && piece[1] === 'p' && (toY === 0 || toY === 7);
+            }
+        }
+
+        class ChessGame {
+            constructor() {
+                this.chess = new ChessEngine();
+                this.selectedPiece = null;
+                this.possibleMoves = [];
+                this.pendingPromotion = null;
+                
+                this.pieceSymbols = {
+                    'wp': '♙', 'wr': '♖', 'wn': '♘', 'wb': '♗', 'wq': '♕', 'wk': '♔',
+                    'bp': '♟', 'br': '♜', 'bn': '♞', 'bb': '♝', 'bq': '♛', 'bk': '♚'
+                };
+
+                this.files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+                this.ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+
+                this.init();
+            }
+
+            init() {
+                this.createBoard();
+                this.bindEvents();
+                this.updateStatus();
+            }
+
+            createBoard() {
+                const board = document.getElementById('chessBoard');
+                board.innerHTML = '';
+                
+                for (let y = 0; y < 8; y++) {
+                    for (let x = 0; x < 8; x++) {
+                        const square = document.createElement('div');
+                        square.className = `square ${(x + y) % 2 === 0 ? 'white' : 'black'}`;
+                        square.dataset.x = x;
+                        square.dataset.y = y;
+                        
+                        if (y === 7) {
+                            const fileCoord = document.createElement('div');
+                            fileCoord.className = 'coordinates coord-file';
+                            fileCoord.textContent = this.files[x];
+                            square.appendChild(fileCoord);
+                        }
+                        
+                        if (x === 0) {
+                            const rankCoord = document.createElement('div');
+                            rankCoord.className = 'coordinates coord-rank';
+                            rankCoord.textContent = this.ranks[y];
+                            square.appendChild(rankCoord);
+                        }
+
+                        const piece = this.chess.getPiece(x, y);
+                        if (piece) {
+                            square.textContent = this.pieceSymbols[piece];
+                            
+                            if (piece[1] === 'k' && this.chess.check && piece[0] === this.chess.turn) {
+                                square.classList.add('check');
+                            }
+                        }
+                        
+                        square.addEventListener('click', () => this.handleSquareClick(x, y));
+                        board.appendChild(square);
+                    }
+                }
+            }
+
+            handleSquareClick(x, y) {
+                if (this.chess.gameOver || this.pendingPromotion) return;
+                
+                const piece = this.chess.getPiece(x, y);
+                
+                if (piece && piece[0] === 'w') {
+                    this.selectedPiece = {x, y};
+                    this.possibleMoves = this.chess.getValidMovesForPiece(x, y);
+                    this.highlightMoves();
+                    return;
+                }
+                
+                if (this.selectedPiece) {
+                    const moveX = this.selectedPiece.x;
+                    const moveY = this.selectedPiece.y;
+                    
+                    const isValidMove = this.possibleMoves.some(move => 
+                        move.x === x && move.y === y
+                    );
+
+                    if (isValidMove) {
+                        if (this.chess.needsPromotion(moveX, moveY, x, y)) {
+                            this.pendingPromotion = {fromX: moveX, fromY: moveY, toX: x, toY: y};
+                            this.showPromotionModal();
+                            return;
+                        }
+                        
+                        this.makeMove(moveX, moveY, x, y);
+                    }
+                    
+                    this.clearHighlights();
+                    this.selectedPiece = null;
+                }
+            }
+
+            makeMove(fromX, fromY, toX, toY, promotion = 'q') {
+                const success = this.chess.move(fromX, fromY, toX, toY, promotion);
+                
+                if (success) {
+                    this.createBoard();
+                    this.updateStatus();
+                    this.updateMoveHistory();
+                    
+                    if (!this.chess.gameOver && this.chess.turn === 'b') {
+                        setTimeout(() => this.makeAIMove(), 500);
+                    }
+                }
+            }
+
+            makeAIMove() {
+                const difficulty = parseInt(document.getElementById('difficulty').value);
+                const aiMove = this.chess.getAIMove(difficulty);
+                
+                if (aiMove) {
+                    this.makeMove(aiMove.from.x, aiMove.from.y, aiMove.to.x, aiMove.to.y);
+                }
+            }
+
+            highlightMoves() {
+                this.clearHighlights();
+                
+                this.possibleMoves.forEach(move => {
+                    const square = this.getSquareElement(move.x, move.y);
+                    if (square) {
+                        square.classList.add('possible-move');
+                    }
+                });
+                
+                if (this.selectedPiece) {
+                    const selectedSquare = this.getSquareElement(this.selectedPiece.x, this.selectedPiece.y);
+                    selectedSquare.classList.add('selected');
+                }
+            }
+
+            clearHighlights() {
+                document.querySelectorAll('.possible-move').forEach(el => 
+                    el.classList.remove('possible-move')
+                );
+                document.querySelectorAll('.selected').forEach(el => 
+                    el.classList.remove('selected')
+                );
+                document.querySelectorAll('.check').forEach(el => 
+                    el.classList.remove('check')
+                );
+            }
+
+            getSquareElement(x, y) {
+                return document.querySelector(`.square[data-x="${x}"][data-y="${y}"]`);
+            }
+
+            showPromotionModal() {
+                document.getElementById('promotionModal').style.display = 'block';
+            }
+
+            hidePromotionModal() {
+                document.getElementById('promotionModal').style.display = 'none';
+                this.pendingPromotion = null;
+            }
+
+            updateStatus() {
+                let status = '';
+                
+                if (this.chess.gameOver) {
+                    if (this.chess.winner === 'w') {
+                        status = '🎉 Νίκησες! Ματ στους Μαύρους!';
+                    } else if (this.chess.winner === 'b') {
+                        status = '😞 Ηττήθηκες! Ματ στα Λευκά!';
+                    } else {
+                        status = '🤝 Ισοπαλία!';
+                    }
+                } else {
+                    status = this.chess.turn === 'w' ? 
+                        '⚪ Σειρά σου - Λευκά' : '⚫ Σειρά AI - Μαύρα';
+                    
+                    if (this.chess.check) {
+                        status += ' - ΣΑΧ! ⚡';
+                    }
+                }
+                
+                document.getElementById('status').textContent = status;
+            }
+
+            updateMoveHistory() {
+                const movesList = document.getElementById('movesList');
+                movesList.innerHTML = '';
+                
+                for (let i = 0; i < this.chess.moveHistory.length; i += 2) {
+                    const moveNumber = Math.floor(i / 2) + 1;
+                    const whiteMove = this.chess.moveHistory[i];
+                    const blackMove = this.chess.moveHistory[i + 1];
+                    
+                    const moveElement = document.createElement('div');
+                    moveElement.className = 'move-pair';
+                    
+                    let moveText = `${moveNumber}. ${this.moveToNotation(whiteMove)}`;
+                    if (blackMove) {
+                        moveText += ` ${this.moveToNotation(blackMove)}`;
+                    }
+                    
+                    moveElement.textContent = moveText;
+                    movesList.appendChild(moveElement);
+                }
+                
+                movesList.scrollTop = movesList.scrollHeight;
+            }
+
+            moveToNotation(move) {
+                const file = this.files[move.to.x];
+                const rank = this.ranks[move.to.y];
+                let notation = file + rank;
+                
+                if (move.captured) {
+                    notation = 'x' + notation;
+                }
+                
+                return notation;
+            }
+
+            bindEvents() {
+                document.getElementById('newGame').addEventListener('click', () => {
+                    this.chess.reset();
+                    this.selectedPiece = null;
+                    this.possibleMoves = [];
+                    this.pendingPromotion = null;
+                    this.createBoard();
+                    this.updateStatus();
+                    this.updateMoveHistory();
+                });
+
+                document.getElementById('undoMove').addEventListener('click', () => {
+                    if (this.chess.undoMove()) {
+                        this.selectedPiece = null;
+                        this.possibleMoves = [];
+                        this.createBoard();
+                        this.updateStatus();
+                        this.updateMoveHistory();
+                    }
+                });
+
+                document.querySelectorAll('.promotion-piece').forEach(piece => {
+                    piece.addEventListener('click', () => {
+                        const promotionPiece = piece.dataset.piece;
+                        if (this.pendingPromotion) {
+                            this.makeMove(
+                                this.pendingPromotion.fromX,
+                                this.pendingPromotion.fromY,
+                                this.pendingPromotion.toX,
+                                this.pendingPromotion.toY,
+                                promotionPiece
+                            );
+                            this.hidePromotionModal();
+                        }
+                    });
+                });
+
+                document.getElementById('promotionModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'promotionModal') {
+                        this.hidePromotionModal();
+                    }
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new ChessGame();
+        });
+    </script>
 </body>
 </html>
