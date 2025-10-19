@@ -5,11 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Σκάκι vs AI</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+    <style>
+        /* ΕΝΣΩΜΑΤΩΜΕΝΟ CSS για σιγουριά */
+        .board-container {
+            width: 500px;
+            height: 500px;
+            margin: 20px auto;
+            border: 15px solid #8B4513;
+            border-radius: 5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: #f0d9b5;
+        }
+        
+        .chess-board {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+        }
+        
+        .square {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .white {
+            background: #f0d9b5;
+        }
+        
+        .black {
+            background: #b58863;
+        }
+        
+        .selected {
+            background: #aec6cf !important;
+        }
+        
+        .possible-move {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+            z-index: 1;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Σκάκι vs AI</h1>
+        <h1>♟️ Σκάκι vs AI</h1>
         
         <div class="game-info">
             <div class="player-time">
@@ -28,24 +77,24 @@
             </div>
         </div>
         
-        <!-- Η ΣΚΑΚΙΕΡΑ εδώ -->
-        <div id="board" style="width: 500px; margin: 20px auto;"></div>
+        <!-- ΑΠΛΗ ΣΚΑΚΙΕΡΑ ΧΕΡΙΣ -->
+        <div class="board-container">
+            <div id="chessBoard" class="chess-board"></div>
+        </div>
         
         <div class="controls">
             <button id="newGame">🔄 Νέο Παιχνίδι</button>
             <button id="undoMove">↶ Αναίρεση</button>
-            <button id="flipBoard">🔄 Περιστροφή Σκακιέρας</button>
+            <button id="flipBoard">🔄 Περιστροφή</button>
             <select id="difficulty">
-                <option value="1">Εύκολο (800 ELO)</option>
-                <option value="2" selected>Μέτριο (1200 ELO)</option>
-                <option value="3">Δύσκολο (1800 ELO)</option>
-                <option value="4">Πολύ Δύσκολο (2200 ELO)</option>
+                <option value="1">Εύκολο</option>
+                <option value="2" selected>Μέτριο</option>
+                <option value="3">Δύσκολο</option>
             </select>
             <select id="timeControl">
+                <option value="60">1 λεπτό</option>
                 <option value="300">5 λεπτά</option>
                 <option value="600" selected>10 λεπτά</option>
-                <option value="900">15 λεπτά</option>
-                <option value="1800">30 λεπτά</option>
             </select>
         </div>
         
@@ -55,11 +104,8 @@
         </div>
     </div>
 
-    <!-- Βιβλιοθήκες -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
-    
-    <script src="script.js"></script>
+    <!-- LOCAL αρχεία -->
+    <script src="chess.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
