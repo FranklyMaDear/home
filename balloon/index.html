@@ -358,21 +358,6 @@
             }
         }
         
-        .ad-banner {
-            width: 100%;
-            max-width: 320px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.9);
-            margin: 10px 0;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #333;
-            font-weight: bold;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-        }
-        
         .ad-container {
             position: fixed;
             top: 0;
@@ -484,10 +469,6 @@
             </div>
         </div>
         
-        <div class="ad-banner" id="adBanner">
-            Διαφήμιση
-        </div>
-        
         <div class="controls-row">
             <button id="startButton">Παίξε</button>
             <button id="restartTopButton">Επανεκκίνηση</button>
@@ -533,7 +514,6 @@
             const specialTimerElement = document.getElementById('specialTimer');
             const targetTextElement = document.getElementById('targetText');
             const targetColorElement = document.getElementById('targetColor');
-            const adBanner = document.getElementById('adBanner');
             const adContainer = document.getElementById('adContainer');
             const closeAdButton = document.getElementById('closeAd');
             
@@ -639,9 +619,6 @@
                 
                 // Έναρξη αλλαγής στόχου
                 targetInterval = setInterval(changeTarget, 15000);
-                
-                // Εμφάνιση διαφήμισης
-                showAd();
                 
                 // Ενημέρωση κειμένου κουμπιού
                 startButton.textContent = 'Παίξε';
@@ -1040,25 +1017,6 @@
                 }, 1200);
             }
             
-            // Εμφάνιση διαφήμισης
-            function showAd() {
-                // Προσομοίωση διαφήμισης
-                adBanner.innerHTML = 'Διαφήμιση - Παίξε τώρα!';
-                
-                // Αλλαγή διαφήμισης κάθε 20 δευτερόλεπτα
-                setInterval(() => {
-                    if (gameActive) {
-                        const ads = [
-                            'Νέο Παιχνίδι - Δωρεάν!',
-                            'Κερδίστε Δώρα Τώρα!',
-                            'Ειδική Προσφορά -50%',
-                            'Παίξτε & Κερδίστε!'
-                        ];
-                        adBanner.innerHTML = ads[Math.floor(Math.random() * ads.length)];
-                    }
-                }, 20000);
-            }
-            
             // Εμφάνιση διαφήμισης στο τέλος του παιχνιδιού
             function showEndGameAd() {
                 adContainer.style.display = 'flex';
@@ -1121,5 +1079,8 @@
             });
         });
     </script>
+    
+    <!-- Buy Me a Coffee Widget -->
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="franklymadear" data-description="Support me on Buy me a coffee!" data-message="" data-color="#FF5F5F" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 </body>
 </html>
