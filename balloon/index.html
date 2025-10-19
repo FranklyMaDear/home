@@ -40,6 +40,12 @@
             color: transparent;
         }
         
+        .subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
         .game-container {
             display: flex;
             flex-direction: column;
@@ -200,7 +206,7 @@
             }
         }
         
-        .controls {
+        .controls-row {
             display: flex;
             gap: 12px;
             margin-bottom: 15px;
@@ -436,13 +442,17 @@
                 font-size: 0.9rem;
                 max-width: 120px;
             }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <header>
         <h1>Balloon Games</h1>
-        <p>Χτύπα τα μπαλόνια του στόχου για να κερδίσεις.</p>
+        <div class="subtitle">Χτύπα τα μπαλόνια του στόχου για να κερδίσεις.</div>
     </header>
     
     <div class="game-container">
@@ -478,8 +488,9 @@
             Διαφήμιση
         </div>
         
-        <div class="controls">
-            <button id="startButton">Έναρξη</button>
+        <div class="controls-row">
+            <button id="startButton">Παίξε</button>
+            <button id="restartTopButton">Επανεκκίνηση</button>
             <button id="pauseButton">Παύση</button>
         </div>
     </div>
@@ -515,6 +526,7 @@
             const timerElement = document.querySelector('.timer');
             const startButton = document.getElementById('startButton');
             const pauseButton = document.getElementById('pauseButton');
+            const restartTopButton = document.getElementById('restartTopButton');
             const gameOverScreen = document.getElementById('gameOver');
             const finalScoreElement = document.getElementById('finalScore');
             const restartButton = document.getElementById('restartButton');
@@ -632,7 +644,7 @@
                 showAd();
                 
                 // Ενημέρωση κειμένου κουμπιού
-                startButton.textContent = 'Επανεκκίνηση';
+                startButton.textContent = 'Παίξε';
             }
             
             // Παύση παιχνιδιού
@@ -1050,6 +1062,16 @@
             // Εμφάνιση διαφήμισης στο τέλος του παιχνιδιού
             function showEndGameAd() {
                 adContainer.style.display = 'flex';
+                
+                // Φόρτωση του script της Monetag
+                try {
+                    (function(s){
+                        s.dataset.zone='10051095',
+                        s.src='https://groleegni.net/vignette.min.js'
+                    })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
+                } catch (error) {
+                    console.error('Σφάλμα φόρτωσης διαφήμισης:', error);
+                }
             }
             
             // Καθαρισμός μπαλονιών
@@ -1092,6 +1114,7 @@
             // Event listeners
             startButton.addEventListener('click', startGame);
             pauseButton.addEventListener('click', pauseGame);
+            restartTopButton.addEventListener('click', startGame);
             restartButton.addEventListener('click', startGame);
             closeAdButton.addEventListener('click', function() {
                 adContainer.style.display = 'none';
