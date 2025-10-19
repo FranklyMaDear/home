@@ -3,87 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ρεαλιστικό Σκάκι</title>
+    <title>Σκάκι με Ρεαλιστικά Πιόνια</title>
     <style>
-        body {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
             color: white;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
             min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        
+
         .container {
-            max-width: 900px;
-            margin: 0 auto;
+            max-width: 1000px;
+            width: 100%;
             background-color: rgba(0, 0, 0, 0.7);
             border-radius: 15px;
-            padding: 20px;
+            padding: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
         }
-        
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: #fdbb2d;
         }
-        
+
         .subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
+            font-size: 1.3rem;
             color: #ddd;
+            margin-bottom: 10px;
         }
-        
-        .game-container {
+
+        .game-area {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 30px;
             margin-top: 20px;
         }
-        
+
         .board-container {
             position: relative;
+            flex-shrink: 0;
         }
-        
+
         .board {
             display: grid;
-            grid-template-columns: repeat(8, 60px);
-            grid-template-rows: repeat(8, 60px);
-            border: 5px solid #8B4513;
+            grid-template-columns: repeat(8, 65px);
+            grid-template-rows: repeat(8, 65px);
+            border: 8px solid #5D4037;
+            border-radius: 5px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
-            margin: 0 auto;
+            overflow: hidden;
         }
-        
+
         .square {
-            width: 60px;
-            height: 60px;
+            width: 65px;
+            height: 65px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 40px;
+            font-size: 45px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
+            position: relative;
         }
-        
+
         .white {
             background-color: #f0d9b5;
         }
-        
+
         .black {
             background-color: #b58863;
         }
-        
+
         .selected {
             background-color: #aec6cf !important;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
         }
-        
-        .possible-move {
-            position: relative;
-        }
-        
+
         .possible-move::after {
             content: "";
             position: absolute;
@@ -91,126 +105,285 @@
             height: 20px;
             background-color: rgba(0, 128, 0, 0.5);
             border-radius: 50%;
+            z-index: 1;
         }
-        
+
+        .capture-move::after {
+            content: "";
+            position: absolute;
+            width: 58px;
+            height: 58px;
+            border: 3px solid rgba(255, 0, 0, 0.5);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
         .controls {
             display: flex;
             flex-direction: column;
             gap: 20px;
-            min-width: 250px;
+            min-width: 280px;
         }
-        
-        .difficulty {
+
+        .panel {
             background-color: rgba(50, 50, 50, 0.8);
             border-radius: 10px;
-            padding: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
-        
-        .difficulty h3 {
+
+        .panel h3 {
             margin-top: 0;
             color: #fdbb2d;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 1px solid #555;
+            padding-bottom: 8px;
         }
-        
+
         .difficulty-options {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
-        
+
         .difficulty-btn {
-            padding: 10px;
+            padding: 12px;
             background-color: #444;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        
+
         .difficulty-btn:hover {
             background-color: #555;
+            transform: translateY(-2px);
         }
-        
+
         .difficulty-btn.active {
-            background-color: #2a6c1a;
+            background: linear-gradient(to right, #2a6c1a, #3a8c2a);
             font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
-        
-        .game-info {
-            background-color: rgba(50, 50, 50, 0.8);
-            border-radius: 10px;
-            padding: 15px;
-        }
-        
-        .game-info h3 {
-            margin-top: 0;
-            color: #fdbb2d;
-        }
-        
+
         .status {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             margin: 15px 0;
-            min-height: 60px;
+            min-height: 80px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
+            text-align: center;
+            line-height: 1.5;
+            padding: 10px;
+            background-color: rgba(40, 40, 40, 0.7);
+            border-radius: 8px;
         }
-        
+
         .buttons {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
+            margin-top: 10px;
         }
-        
-        button {
-            padding: 10px 15px;
-            background-color: #2a6c1a;
+
+        .btn {
+            padding: 12px 20px;
+            background: linear-gradient(to bottom, #2a6c1a, #1e4d12);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: bold;
+            font-size: 1.1rem;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        
-        button:hover {
-            background-color: #3a8c2a;
+
+        .btn:hover {
+            background: linear-gradient(to bottom, #3a8c2a, #2a6c1a);
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
-        
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
         .captured {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 15px;
             margin-top: 15px;
         }
-        
+
+        .captured-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .captured-label {
+            font-weight: bold;
+            min-width: 70px;
+            font-size: 1.1rem;
+        }
+
         .captured-pieces {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
-            min-height: 30px;
+            gap: 8px;
+            min-height: 40px;
+            align-items: center;
+            flex: 1;
         }
-        
-        .notation {
+
+        .captured-piece {
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+        }
+
+        .white-player .captured-label {
+            color: #f0d9b5;
+        }
+
+        .black-player .captured-label {
+            color: #b58863;
+        }
+
+        .coordinates {
             position: absolute;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: bold;
+            pointer-events: none;
         }
-        
-        .file-notation {
-            bottom: -20px;
+
+        .file-coord {
+            bottom: -25px;
+            text-align: center;
+            width: 65px;
         }
-        
-        .rank-notation {
-            left: -20px;
+
+        .rank-coord {
+            left: -25px;
+            height: 65px;
+            display: flex;
+            align-items: center;
         }
-        
-        @media (max-width: 768px) {
-            .game-container {
+
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            background-color: rgba(40, 40, 40, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .player {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .player-icon {
+            font-size: 28px;
+        }
+
+        .white-player .player-icon {
+            color: #f0d9b5;
+        }
+
+        .black-player .player-icon {
+            color: #b58863;
+        }
+
+        .turn-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #fdbb2d;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .move-history {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(30, 30, 30, 0.7);
+            border-radius: 8px;
+            font-family: monospace;
+        }
+
+        .move-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .move-number {
+            color: #fdbb2d;
+            font-weight: bold;
+            min-width: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .game-area {
                 flex-direction: column;
                 align-items: center;
             }
             
+            .board {
+                grid-template-columns: repeat(8, 50px);
+                grid-template-rows: repeat(8, 50px);
+            }
+            
+            .square {
+                width: 50px;
+                height: 50px;
+                font-size: 35px;
+            }
+            
+            .file-coord {
+                width: 50px;
+                bottom: -20px;
+            }
+            
+            .rank-coord {
+                height: 50px;
+                left: -20px;
+            }
+        }
+
+        @media (max-width: 500px) {
             .board {
                 grid-template-columns: repeat(8, 40px);
                 grid-template-rows: repeat(8, 40px);
@@ -221,52 +394,126 @@
                 height: 40px;
                 font-size: 30px;
             }
+            
+            .file-coord {
+                width: 40px;
+                bottom: -18px;
+                font-size: 12px;
+            }
+            
+            .rank-coord {
+                height: 40px;
+                left: -18px;
+                font-size: 12px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Ρεαλιστικό Σκάκι</h1>
-        <p class="subtitle">Με επιλογές δυσκολίας και ρεαλιστικά πιόνια</p>
+        <header>
+            <h1>Σκάκι με Ρεαλιστικά Πιόνια</h1>
+            <p class="subtitle">Παίξτε εναντίον του υπολογιστή με διαφορετικούς βαθμούς δυσκολίας</p>
+        </header>
         
-        <div class="game-container">
+        <div class="player-info">
+            <div class="player white-player">
+                <div class="player-icon">♔</div>
+                <span>Εσείς (Λευκά)</span>
+                <div class="turn-indicator" id="white-indicator"></div>
+            </div>
+            <div class="player black-player">
+                <div class="player-icon">♚</div>
+                <span>Υπολογιστής (Μαύρα)</span>
+                <div class="turn-indicator" id="black-indicator" style="opacity: 0.3;"></div>
+            </div>
+        </div>
+        
+        <div class="game-area">
             <div class="board-container">
                 <div class="board" id="chessboard">
-                    <!-- Το σκακιέρα θα δημιουργηθεί με JavaScript -->
+                    <!-- The chessboard will be generated by JavaScript -->
                 </div>
+                
+                <!-- File coordinates (a-h) -->
+                <div class="coordinates file-coord" style="left: 0;">a</div>
+                <div class="coordinates file-coord" style="left: 65px;">b</div>
+                <div class="coordinates file-coord" style="left: 130px;">c</div>
+                <div class="coordinates file-coord" style="left: 195px;">d</div>
+                <div class="coordinates file-coord" style="left: 260px;">e</div>
+                <div class="coordinates file-coord" style="left: 325px;">f</div>
+                <div class="coordinates file-coord" style="left: 390px;">g</div>
+                <div class="coordinates file-coord" style="left: 455px;">h</div>
+                
+                <!-- Rank coordinates (1-8) -->
+                <div class="coordinates rank-coord" style="top: 0;">8</div>
+                <div class="coordinates rank-coord" style="top: 65px;">7</div>
+                <div class="coordinates rank-coord" style="top: 130px;">6</div>
+                <div class="coordinates rank-coord" style="top: 195px;">5</div>
+                <div class="coordinates rank-coord" style="top: 260px;">4</div>
+                <div class="coordinates rank-coord" style="top: 325px;">3</div>
+                <div class="coordinates rank-coord" style="top: 390px;">2</div>
+                <div class="coordinates rank-coord" style="top: 455px;">1</div>
             </div>
             
             <div class="controls">
-                <div class="difficulty">
-                    <h3>Επίπεδο Δυσκολίας</h3>
+                <div class="panel">
+                    <h3>Βαθμός Δυσκολίας</h3>
                     <div class="difficulty-options">
-                        <button class="difficulty-btn active" data-level="easy">Εύκολο</button>
-                        <button class="difficulty-btn" data-level="medium">Μέτριο</button>
-                        <button class="difficulty-btn" data-level="hard">Δύσκολο</button>
-                        <button class="difficulty-btn" data-level="expert">Ειδικός</button>
+                        <button class="difficulty-btn active" data-level="easy">
+                            <span>Εύκολο</span>
+                        </button>
+                        <button class="difficulty-btn" data-level="medium">
+                            <span>Μέτριο</span>
+                        </button>
+                        <button class="difficulty-btn" data-level="hard">
+                            <span>Δύσκολο</span>
+                        </button>
+                        <button class="difficulty-btn" data-level="expert">
+                            <span>Ειδικός</span>
+                        </button>
                     </div>
                 </div>
                 
-                <div class="game-info">
+                <div class="panel">
                     <h3>Πληροφορίες Παιχνιδιού</h3>
                     <div class="status" id="status">
                         Η σειρά σας να παίξετε. Επιλέξτε ένα πιόνι.
                     </div>
                     
                     <div class="captured">
-                        <div>
-                            <strong>Λευκά:</strong>
+                        <div class="captured-row white-player">
+                            <div class="captured-label">Λευκά:</div>
                             <div class="captured-pieces" id="white-captured"></div>
                         </div>
-                        <div>
-                            <strong>Μαύρα:</strong>
+                        <div class="captured-row black-player">
+                            <div class="captured-label">Μαύρα:</div>
                             <div class="captured-pieces" id="black-captured"></div>
                         </div>
                     </div>
                     
                     <div class="buttons">
-                        <button id="restart-btn">Νέο Παιχνίδι</button>
-                        <button id="hint-btn">Βοήθεια</button>
+                        <button class="btn" id="restart-btn">
+                            <span>Νέο Παιχνίδι</span>
+                        </button>
+                        <button class="btn" id="hint-btn">
+                            <span>Βοήθεια</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <h3>Ιστορία Κινήσεων</h3>
+                    <div class="move-history" id="move-history">
+                        <!-- Move history will be populated by JavaScript -->
                     </div>
                 </div>
             </div>
@@ -282,6 +529,9 @@
             const restartBtn = document.getElementById('restart-btn');
             const hintBtn = document.getElementById('hint-btn');
             const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+            const moveHistory = document.getElementById('move-history');
+            const whiteIndicator = document.getElementById('white-indicator');
+            const blackIndicator = document.getElementById('black-indicator');
             
             // Ρεαλιστικά Unicode σύμβολα για τα πιόνια
             const pieces = {
@@ -306,11 +556,16 @@
             let difficulty = 'easy';
             let whiteCapturedPieces = [];
             let blackCapturedPieces = [];
+            let moveCount = 0;
+            let moveHistoryList = [];
             
             // Αρχικοποίηση του σκακιέρα
             function initializeBoard() {
                 chessboard.innerHTML = '';
                 boardState = [];
+                moveHistoryList = [];
+                moveCount = 0;
+                moveHistory.innerHTML = '';
                 
                 // Δημιουργία αρχικής διάταξης
                 const initialSetup = [
@@ -352,6 +607,7 @@
                 blackCapturedPieces = [];
                 updateStatus();
                 updateCapturedPieces();
+                updateTurnIndicator();
             }
             
             // Χειρισμός κλικ σε τετράγωνο
@@ -374,7 +630,7 @@
                         clearSelection();
                     }
                     // Αν κάνει κλικ σε έγκυρο τετράγωνο για κίνηση
-                    else if (square.classList.contains('possible-move')) {
+                    else if (square.classList.contains('possible-move') || square.classList.contains('capture-move')) {
                         movePiece(selectedPiece.row, selectedPiece.col, row, col);
                     }
                     // Αν κάνει κλικ σε άλλο πιόνι του ίδιου χρώματος
@@ -403,7 +659,11 @@
                 possibleMoves.forEach(move => {
                     const targetSquare = document.querySelector(`.square[data-row="${move.row}"][data-col="${move.col}"]`);
                     if (targetSquare) {
-                        targetSquare.classList.add('possible-move');
+                        if (boardState[move.row][move.col]) {
+                            targetSquare.classList.add('capture-move');
+                        } else {
+                            targetSquare.classList.add('possible-move');
+                        }
                     }
                 });
             }
@@ -538,12 +798,18 @@
                     updateCapturedPieces();
                 }
                 
+                // Προσθήκη στην ιστορία κινήσεων
+                moveCount++;
+                const moveNotation = getMoveNotation(fromPiece, fromRow, fromCol, toRow, toCol, toPiece);
+                addMoveToHistory(moveNotation);
+                
                 // Αλλαγή παίκτη
                 currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+                updateTurnIndicator();
                 
                 // Προσομοίωση κίνησης του υπολογιστή αν είναι η σειρά του
                 if (currentPlayer === 'black' && gameActive) {
-                    setTimeout(computerMove, 500);
+                    setTimeout(computerMove, 800);
                 }
                 
                 clearSelection();
@@ -582,8 +848,8 @@
             
             // Καθαρισμός επιλογής
             function clearSelection() {
-                document.querySelectorAll('.selected, .possible-move').forEach(el => {
-                    el.classList.remove('selected', 'possible-move');
+                document.querySelectorAll('.selected, .possible-move, .capture-move').forEach(el => {
+                    el.classList.remove('selected', 'possible-move', 'capture-move');
                 });
                 selectedPiece = null;
             }
@@ -602,6 +868,17 @@
                 }
             }
             
+            // Ενημέρωση δείκτη σειράς
+            function updateTurnIndicator() {
+                if (currentPlayer === 'white') {
+                    whiteIndicator.style.opacity = '1';
+                    blackIndicator.style.opacity = '0.3';
+                } else {
+                    whiteIndicator.style.opacity = '0.3';
+                    blackIndicator.style.opacity = '1';
+                }
+            }
+            
             // Ενημέρωση λίστας αιχμαλωτισμένων πιονιών
             function updateCapturedPieces() {
                 whiteCaptured.innerHTML = '';
@@ -609,17 +886,68 @@
                 
                 whiteCapturedPieces.forEach(piece => {
                     const span = document.createElement('span');
+                    span.className = 'captured-piece';
                     span.textContent = pieces[piece];
-                    span.style.fontSize = '20px';
                     whiteCaptured.appendChild(span);
                 });
                 
                 blackCapturedPieces.forEach(piece => {
                     const span = document.createElement('span');
+                    span.className = 'captured-piece';
                     span.textContent = pieces[piece];
-                    span.style.fontSize = '20px';
                     blackCaptured.appendChild(span);
                 });
+            }
+            
+            // Προσθήκη κίνησης στην ιστορία
+            function addMoveToHistory(moveNotation) {
+                const moveEntry = document.createElement('div');
+                moveEntry.className = 'move-entry';
+                
+                if (moveCount % 2 === 1) {
+                    // Νέα σειρά κινήσεων
+                    moveEntry.innerHTML = `<span class="move-number">${Math.ceil(moveCount/2)}.</span> <span>${moveNotation}</span>`;
+                    moveHistoryList.push({ white: moveNotation, black: '' });
+                } else {
+                    // Προσθήκη μαύρης κίνησης στην τελευταία σειρά
+                    const lastEntry = moveHistoryList[moveHistoryList.length - 1];
+                    lastEntry.black = moveNotation;
+                    moveEntry.innerHTML = `<span class="move-number">${Math.ceil(moveCount/2)}.</span> <span>${lastEntry.white}</span> <span>${moveNotation}</span>`;
+                }
+                
+                moveHistory.appendChild(moveEntry);
+                moveHistory.scrollTop = moveHistory.scrollHeight;
+            }
+            
+            // Σημειογραφία κίνησης (απλοποιημένη)
+            function getMoveNotation(piece, fromRow, fromCol, toRow, toCol, capturedPiece) {
+                const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+                const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+                
+                const pieceSymbol = piece[1] === 'p' ? '' : 
+                    piece[1] === 'r' ? 'R' : 
+                    piece[1] === 'n' ? 'N' : 
+                    piece[1] === 'b' ? 'B' : 
+                    piece[1] === 'q' ? 'Q' : 'K';
+                
+                const fromFile = files[fromCol];
+                const fromRank = ranks[fromRow];
+                const toFile = files[toCol];
+                const toRank = ranks[toRow];
+                
+                let notation = pieceSymbol;
+                
+                if (capturedPiece) {
+                    if (piece[1] === 'p') {
+                        notation += fromFile + 'x';
+                    } else {
+                        notation += 'x';
+                    }
+                }
+                
+                notation += toFile + toRank;
+                
+                return notation;
             }
             
             // Εκκίνηση νέου παιχνιδιού
