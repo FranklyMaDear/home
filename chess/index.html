@@ -426,11 +426,11 @@
                     <h2 class="section-title">Χρονόμετρο</h2>
                     <div class="timer-container">
                         <div class="timer-white" id="timerWhite">
-                            <div>Λευκό</div>
+                            <div>Λευκός Παίκτης</div>
                             <div class="time-display" id="whiteTime">10:00</div>
                         </div>
                         <div class="timer-black" id="timerBlack">
-                            <div>Μαύρο</div>
+                            <div>Μαύρος Παίκτης</div>
                             <div class="time-display" id="blackTime">10:00</div>
                         </div>
                     </div>
@@ -461,16 +461,16 @@
                 }
             };
 
-            // Αρχική κατάσταση του παιχνιδιού
+            // ΔΙΟΡΘΩΣΗ: Σωστή αρχική τοποθέτηση - ΛΕΥΚΑ ΠΑΝΩ, ΜΑΥΡΑ ΚΑΤΩ
             const initialBoard = [
-                ['br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br'],
-                ['bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp'],
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', ''],
-                ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
-                ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr']
+                ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr'], // Σειρά 0: Λευκοί
+                ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'], // Σειρά 1: Λευκά πιόνια
+                ['', '', '', '', '', '', '', ''],                // Σειρά 2: Κενή
+                ['', '', '', '', '', '', '', ''],                // Σειρά 3: Κενή
+                ['', '', '', '', '', '', '', ''],                // Σειρά 4: Κενή
+                ['', '', '', '', '', '', '', ''],                // Σειρά 5: Κενή
+                ['bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp'], // Σειρά 6: Μαύρα πιόνια
+                ['br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br']  // Σειρά 7: Μαύροι
             ];
 
             let boardState = JSON.parse(JSON.stringify(initialBoard));
@@ -525,6 +525,15 @@
                         if (piece) {
                             cell.textContent = getPieceSymbol(piece);
                             cell.dataset.piece = piece;
+                            
+                            // Προσθήκη χρώματος στο κείμενο
+                            if (piece[0] === 'w') {
+                                cell.style.color = '#f0f0f0';
+                                cell.style.textShadow = '0 2px 4px rgba(0,0,0,0.5)';
+                            } else {
+                                cell.style.color = '#2a2a2a';
+                                cell.style.textShadow = '0 1px 2px rgba(255,255,255,0.3)';
+                            }
                         }
                         
                         cell.addEventListener('click', handleCellClick);
@@ -665,8 +674,9 @@
                 // Βασικές κινήσεις για κάθε τύπο κομματιού
                 switch(pieceType) {
                     case 'p': // Πιόνι
-                        const direction = color === 'white' ? -1 : 1;
-                        const startRow = color === 'white' ? 6 : 1;
+                        // ΔΙΟΡΘΩΣΗ: Λευκά πάνω -> κινούνται προς τα κάτω, Μαύρα κάτω -> κινούνται προς τα πάνω
+                        const direction = color === 'white' ? 1 : -1;
+                        const startRow = color === 'white' ? 1 : 6;
                         
                         // Κίνηση μπροστά
                         if (isValidPosition(row + direction, col) && !boardState[row + direction][col]) {
@@ -814,6 +824,20 @@
                     cell.textContent = piece ? getPieceSymbol(piece) : '';
                     cell.dataset.piece = piece || '';
                     
+                    // Προσθήκη χρώματος στο κείμενο
+                    if (piece) {
+                        if (piece[0] === 'w') {
+                            cell.style.color = '#f0f0f0';
+                            cell.style.textShadow = '0 2px 4px rgba(0,0,0,0.5)';
+                        } else {
+                            cell.style.color = '#2a2a2a';
+                            cell.style.textShadow = '0 1px 2px rgba(255,255,255,0.3)';
+                        }
+                    } else {
+                        cell.style.color = '';
+                        cell.style.textShadow = '';
+                    }
+                    
                     // Προσθήκη συντεταγμένων αν λείπουν
                     if (!cell.querySelector('.coordinate')) {
                         addCoordinates();
@@ -877,6 +901,7 @@
                     const pieceElement = document.createElement('span');
                     pieceElement.classList.add('captured-piece');
                     pieceElement.textContent = getPieceSymbol(piece);
+                    pieceElement.style.color = '#f0f0f0';
                     capturedWhite.appendChild(pieceElement);
                 });
                 
@@ -884,6 +909,7 @@
                     const pieceElement = document.createElement('span');
                     pieceElement.classList.add('captured-piece');
                     pieceElement.textContent = getPieceSymbol(piece);
+                    pieceElement.style.color = '#2a2a2a';
                     capturedBlack.appendChild(pieceElement);
                 });
             }
@@ -891,11 +917,11 @@
             // Ενημέρωση κατάστασης παιχνιδιού
             function updateStatus() {
                 if (currentPlayer === 'white') {
-                    statusMessage.textContent = 'Σειρά του Λευκού';
+                    statusMessage.textContent = 'Σειρά του Λευκού Παίκτη';
                     timerWhite.classList.add('timer-active');
                     timerBlack.classList.remove('timer-active');
                 } else {
-                    statusMessage.textContent = 'Σειρά του Μαύρου';
+                    statusMessage.textContent = 'Σειρά του Μαύρου Παίκτη';
                     timerWhite.classList.remove('timer-active');
                     timerBlack.classList.add('timer-active');
                 }
@@ -928,9 +954,9 @@
                 }
                 
                 if (!kings.white) {
-                    endGame('Ματ! Ο Μαύρος κερδίζει.', 'Ο βασιλιάς του λευκού αιχμαλωτίστηκε.');
+                    endGame('Ματ! Ο Μαύρος Παίκτης κερδίζει.', 'Ο βασιλιάς του λευκού αιχμαλωτίστηκε.');
                 } else if (!kings.black) {
-                    endGame('Ματ! Ο Λευκός κερδίζει.', 'Ο βασιλιάς του μαύρου αιχμαλωτίστηκε.');
+                    endGame('Ματ! Ο Λευκός Παίκτης κερδίζει.', 'Ο βασιλιάς του μαύρου αιχμαλωτίστηκε.');
                 }
             }
 
@@ -966,13 +992,13 @@
                     if (currentPlayer === 'white') {
                         whiteTime--;
                         if (whiteTime <= 0) {
-                            endGame('Νίκη για τον Μαύρο!', 'Ο χρόνος του Λευκού έληξε.');
+                            endGame('Νίκη για τον Μαύρο Παίκτη!', 'Ο χρόνος του Λευκού έληξε.');
                             return;
                         }
                     } else {
                         blackTime--;
                         if (blackTime <= 0) {
-                            endGame('Νίκη για τον Λευκό!', 'Ο χρόνος του Μαύρου έληξε.');
+                            endGame('Νίκη για τον Λευκό Παίκτη!', 'Ο χρόνος του Μαύρου έληξε.');
                             return;
                         }
                     }
