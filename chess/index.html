@@ -461,16 +461,16 @@
                 }
             };
 
-            // Σωστή αρχική τοποθέτηση - ΛΕΥΚΑ ΠΑΝΩ, ΜΑΥΡΑ ΚΑΤΩ
+            // Σωστή αρχική τοποθέτηση - ΛΕΥΚΑ ΚΑΤΩ, ΜΑΥΡΑ ΠΑΝΩ (όπως στο πραγματικό σκάκι)
             const initialBoard = [
-                ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr'], // Σειρά 0: Λευκοί
-                ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'], // Σειρά 1: Λευκά πιόνια
+                ['br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br'], // Σειρά 0: Μαύροι (πάνω)
+                ['bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp'], // Σειρά 1: Μαύρα πιόνια
                 ['', '', '', '', '', '', '', ''],                // Σειρά 2: Κενή
                 ['', '', '', '', '', '', '', ''],                // Σειρά 3: Κενή
                 ['', '', '', '', '', '', '', ''],                // Σειρά 4: Κενή
                 ['', '', '', '', '', '', '', ''],                // Σειρά 5: Κενή
-                ['bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp'], // Σειρά 6: Μαύρα πιόνια
-                ['br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br']  // Σειρά 7: Μαύροι
+                ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'], // Σειρά 6: Λευκά πιόνια
+                ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr']  // Σειρά 7: Λευκοί (κάτω)
             ];
 
             let boardState = JSON.parse(JSON.stringify(initialBoard));
@@ -526,11 +526,13 @@
                             cell.textContent = getPieceSymbol(piece);
                             cell.dataset.piece = piece;
                             
-                            // ΔΙΟΡΘΩΣΗ: Ίδιο μέγεθος για όλα τα πιόνια και bold λευκά
+                            // ΔΙΟΡΘΩΣΗ: Ίδιο μέγεθος και στυλ για όλα τα πιόνια
+                            // Τα λευκά πιόνια (σειρά 6) έχουν το ίδιο μέγεθος με τα μαύρα (σειρά 1)
                             if (piece[0] === 'w') {
                                 cell.style.color = '#ffffff';
                                 cell.style.textShadow = '0 2px 4px rgba(0,0,0,0.7)';
                                 cell.style.fontWeight = 'bold';
+                                // Ίδιο μέγεθος με τα μαύρα πιόνια
                                 cell.style.fontSize = '40px';
                             } else {
                                 cell.style.color = '#000000';
@@ -678,9 +680,9 @@
                 // Βασικές κινήσεις για κάθε τύπο κομματιού
                 switch(pieceType) {
                     case 'p': // Πιόνι
-                        // Σωστή κατεύθυνση: Λευκά πάνω -> κινούνται προς τα κάτω, Μαύρα κάτω -> κινούνται προς τα πάνω
-                        const direction = color === 'white' ? 1 : -1;
-                        const startRow = color === 'white' ? 1 : 6;
+                        // Σωστή κατεύθυνση: Λευκά κάτω -> κινούνται προς τα πάνω, Μαύρα πάνω -> κινούνται προς τα κάτω
+                        const direction = color === 'white' ? -1 : 1;
+                        const startRow = color === 'white' ? 6 : 1;
                         
                         // Κίνηση μπροστά
                         if (isValidPosition(row + direction, col) && !boardState[row + direction][col]) {
@@ -828,12 +830,14 @@
                     cell.textContent = piece ? getPieceSymbol(piece) : '';
                     cell.dataset.piece = piece || '';
                     
-                    // ΔΙΟΡΘΩΣΗ: Ίδιο μέγεθος για όλα τα πιόνια και bold λευκά
+                    // ΔΙΟΡΘΩΣΗ: Ίδιο μέγεθος και στυλ για όλα τα πιόνια
+                    // Τα λευκά πιόνια (σειρά 6) έχουν το ίδιο μέγεθος με τα μαύρα (σειρά 1)
                     if (piece) {
                         if (piece[0] === 'w') {
                             cell.style.color = '#ffffff';
                             cell.style.textShadow = '0 2px 4px rgba(0,0,0,0.7)';
                             cell.style.fontWeight = 'bold';
+                            // Ίδιο μέγεθος με τα μαύρα πιόνια
                             cell.style.fontSize = '40px';
                         } else {
                             cell.style.color = '#000000';
@@ -913,6 +917,7 @@
                     pieceElement.textContent = getPieceSymbol(piece);
                     pieceElement.style.color = '#ffffff';
                     pieceElement.style.fontWeight = 'bold';
+                    pieceElement.style.fontSize = '24px';
                     capturedWhite.appendChild(pieceElement);
                 });
                 
@@ -922,6 +927,7 @@
                     pieceElement.textContent = getPieceSymbol(piece);
                     pieceElement.style.color = '#000000';
                     pieceElement.style.fontWeight = 'normal';
+                    pieceElement.style.fontSize = '24px';
                     capturedBlack.appendChild(pieceElement);
                 });
             }
