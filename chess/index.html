@@ -395,7 +395,7 @@
 
             <div class="info-section">
                 <div class="game-status">
-                    <div class="status-message" id="statusMessage">Σειρά του Λευκού</div>
+                    <div class="status-message" id="statusMessage">Σειρά του Λευκού Παίκτη</div>
                     <div class="status-detail" id="statusDetail">Επιλέξτε ένα κομμάτι για να αρχίσει το παιχνίδι</div>
                     <div class="controls">
                         <button id="newGame">Νέο Παιχνίδι</button>
@@ -461,7 +461,7 @@
                 }
             };
 
-            // ΔΙΟΡΘΩΣΗ: Σωστή αρχική τοποθέτηση - ΛΕΥΚΑ ΠΑΝΩ, ΜΑΥΡΑ ΚΑΤΩ
+            // Σωστή αρχική τοποθέτηση - ΛΕΥΚΑ ΠΑΝΩ, ΜΑΥΡΑ ΚΑΤΩ
             const initialBoard = [
                 ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr'], // Σειρά 0: Λευκοί
                 ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'], // Σειρά 1: Λευκά πιόνια
@@ -526,13 +526,17 @@
                             cell.textContent = getPieceSymbol(piece);
                             cell.dataset.piece = piece;
                             
-                            // Προσθήκη χρώματος στο κείμενο
+                            // ΔΙΟΡΘΩΣΗ: Ίδιο μέγεθος για όλα τα πιόνια και bold λευκά
                             if (piece[0] === 'w') {
-                                cell.style.color = '#f0f0f0';
-                                cell.style.textShadow = '0 2px 4px rgba(0,0,0,0.5)';
+                                cell.style.color = '#ffffff';
+                                cell.style.textShadow = '0 2px 4px rgba(0,0,0,0.7)';
+                                cell.style.fontWeight = 'bold';
+                                cell.style.fontSize = '40px';
                             } else {
-                                cell.style.color = '#2a2a2a';
-                                cell.style.textShadow = '0 1px 2px rgba(255,255,255,0.3)';
+                                cell.style.color = '#000000';
+                                cell.style.textShadow = '0 1px 3px rgba(255,255,255,0.5)';
+                                cell.style.fontWeight = 'normal';
+                                cell.style.fontSize = '40px';
                             }
                         }
                         
@@ -674,7 +678,7 @@
                 // Βασικές κινήσεις για κάθε τύπο κομματιού
                 switch(pieceType) {
                     case 'p': // Πιόνι
-                        // ΔΙΟΡΘΩΣΗ: Λευκά πάνω -> κινούνται προς τα κάτω, Μαύρα κάτω -> κινούνται προς τα πάνω
+                        // Σωστή κατεύθυνση: Λευκά πάνω -> κινούνται προς τα κάτω, Μαύρα κάτω -> κινούνται προς τα πάνω
                         const direction = color === 'white' ? 1 : -1;
                         const startRow = color === 'white' ? 1 : 6;
                         
@@ -824,18 +828,24 @@
                     cell.textContent = piece ? getPieceSymbol(piece) : '';
                     cell.dataset.piece = piece || '';
                     
-                    // Προσθήκη χρώματος στο κείμενο
+                    // ΔΙΟΡΘΩΣΗ: Ίδιο μέγεθος για όλα τα πιόνια και bold λευκά
                     if (piece) {
                         if (piece[0] === 'w') {
-                            cell.style.color = '#f0f0f0';
-                            cell.style.textShadow = '0 2px 4px rgba(0,0,0,0.5)';
+                            cell.style.color = '#ffffff';
+                            cell.style.textShadow = '0 2px 4px rgba(0,0,0,0.7)';
+                            cell.style.fontWeight = 'bold';
+                            cell.style.fontSize = '40px';
                         } else {
-                            cell.style.color = '#2a2a2a';
-                            cell.style.textShadow = '0 1px 2px rgba(255,255,255,0.3)';
+                            cell.style.color = '#000000';
+                            cell.style.textShadow = '0 1px 3px rgba(255,255,255,0.5)';
+                            cell.style.fontWeight = 'normal';
+                            cell.style.fontSize = '40px';
                         }
                     } else {
                         cell.style.color = '';
                         cell.style.textShadow = '';
+                        cell.style.fontWeight = '';
+                        cell.style.fontSize = '';
                     }
                     
                     // Προσθήκη συντεταγμένων αν λείπουν
@@ -901,7 +911,8 @@
                     const pieceElement = document.createElement('span');
                     pieceElement.classList.add('captured-piece');
                     pieceElement.textContent = getPieceSymbol(piece);
-                    pieceElement.style.color = '#f0f0f0';
+                    pieceElement.style.color = '#ffffff';
+                    pieceElement.style.fontWeight = 'bold';
                     capturedWhite.appendChild(pieceElement);
                 });
                 
@@ -909,7 +920,8 @@
                     const pieceElement = document.createElement('span');
                     pieceElement.classList.add('captured-piece');
                     pieceElement.textContent = getPieceSymbol(piece);
-                    pieceElement.style.color = '#2a2a2a';
+                    pieceElement.style.color = '#000000';
+                    pieceElement.style.fontWeight = 'normal';
                     capturedBlack.appendChild(pieceElement);
                 });
             }
