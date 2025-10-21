@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Σκακιστική Μονομαχία</title>
+    <title>Σύγχρονο Σκακι Σετ | Μινιμαλιστική Αισθητική</title>
     <style>
         * {
             margin: 0;
@@ -13,48 +13,124 @@
         }
 
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+            color: #e0e0e0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
             width: 100%;
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin-bottom: 10px;
-            color: #e94560;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(90deg, #d4af37, #f0e6d2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+            letter-spacing: 1px;
         }
 
         .subtitle {
             font-size: 1.2rem;
-            color: #ccc;
+            color: #b0b0b0;
             margin-bottom: 20px;
+            font-weight: 300;
         }
 
-        .game-container {
+        .design-concept {
+            max-width: 800px;
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(30, 30, 30, 0.7);
+            border-radius: 10px;
+            border-left: 3px solid #d4af37;
+        }
+
+        .design-concept h2 {
+            color: #d4af37;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .design-concept p {
+            line-height: 1.6;
+            color: #c0c0c0;
+        }
+
+        .chess-set-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 30px;
-            max-width: 1200px;
+            gap: 50px;
             width: 100%;
+            margin-bottom: 50px;
         }
 
+        .board-section {
+            flex: 1;
+            min-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pieces-section {
+            flex: 1;
+            min-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #d4af37;
+            text-align: center;
+            font-weight: 400;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: #d4af37;
+        }
+
+        /* Στυλ Σκακιέρας */
         .board-container {
             position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             border-radius: 8px;
             overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .board-container:hover {
+            transform: translateY(-5px);
         }
 
         .board {
@@ -63,169 +139,286 @@
             grid-template-rows: repeat(8, 1fr);
             width: 500px;
             height: 500px;
-            border: 2px solid #333;
+            border: 15px solid #2a1e15;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            background: #2a1e15;
+        }
+
+        .board::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, #3d2c21, #1f1712);
+            z-index: -1;
+            border-radius: 12px;
         }
 
         .cell {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            cursor: pointer;
-            transition: all 0.2s ease;
             position: relative;
+            transition: all 0.3s ease;
         }
 
         .light {
-            background-color: #f0d9b5;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(227, 198, 156, 0.8) 0%, transparent 70%),
+                #e3c69c;
+            background-blend-mode: overlay;
         }
 
         .dark {
-            background-color: #b58863;
+            background: 
+                radial-gradient(circle at 70% 70%, rgba(101, 67, 33, 0.9) 0%, transparent 70%),
+                #654321;
+            background-blend-mode: overlay;
         }
 
-        .cell.selected {
-            background-color: rgba(106, 190, 255, 0.7);
-        }
-
-        .cell.possible-move::after {
-            content: "";
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: rgba(106, 190, 255, 0.5);
-        }
-
-        .cell.possible-capture {
-            box-shadow: inset 0 0 0 3px rgba(255, 50, 50, 0.7);
+        .cell:hover {
+            filter: brightness(1.1);
         }
 
         .coordinate {
             position: absolute;
             font-size: 12px;
-            color: rgba(0, 0, 0, 0.7);
             pointer-events: none;
+            z-index: 2;
         }
 
         .coordinate.file {
-            bottom: 2px;
-            right: 4px;
+            bottom: 4px;
+            right: 6px;
         }
 
         .coordinate.rank {
-            top: 2px;
-            left: 4px;
+            top: 4px;
+            left: 6px;
         }
 
-        .game-info {
-            flex: 1;
-            min-width: 300px;
-            background: rgba(30, 30, 46, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        .light .coordinate {
+            color: #654321;
         }
 
-        .status {
-            background: rgba(233, 69, 96, 0.2);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.2rem;
-            border: 1px solid rgba(233, 69, 96, 0.5);
+        .dark .coordinate {
+            color: #e3c69c;
         }
 
-        .moves-container {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            background: rgba(20, 20, 35, 0.7);
-            border-radius: 8px;
-            padding: 10px;
-        }
-
-        .moves-list {
+        /* Στυλ Πιονιών */
+        .pieces-display {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 500px;
         }
 
-        .move {
-            padding: 8px;
-            background: rgba(40, 40, 60, 0.7);
-            border-radius: 4px;
-            text-align: center;
-        }
-
-        .controls {
+        .piece-set {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            flex-direction: column;
+            align-items: center;
         }
 
-        button {
-            flex: 1;
-            padding: 12px;
-            background: #0f3460;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background: #1a508b;
-        }
-
-        .captured-pieces {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .captured-white, .captured-black {
+        .piece-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
-            min-height: 40px;
-            padding: 10px;
-            background: rgba(20, 20, 35, 0.7);
-            border-radius: 8px;
-            width: 48%;
-        }
-
-        .captured-piece {
-            font-size: 20px;
-        }
-
-        .timer {
-            display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            gap: 15px;
             margin-top: 20px;
         }
 
-        .timer-white, .timer-black {
+        .piece-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .piece {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            border-radius: 50%;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .piece:hover {
+            transform: translateY(-5px);
+        }
+
+        .white-piece {
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9) 0%, rgba(240,240,240,0.8) 100%),
+                linear-gradient(145deg, #f5f5f5, #e0e0e0);
+            box-shadow: 
+                0 5px 15px rgba(0,0,0,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.8),
+                inset 0 -1px 0 rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .black-piece {
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(40,40,40,0.9) 0%, rgba(20,20,20,0.8) 100%),
+                linear-gradient(145deg, #303030, #101010);
+            box-shadow: 
+                0 5px 15px rgba(0,0,0,0.4),
+                inset 0 1px 0 rgba(100,100,100,0.3),
+                inset 0 -1px 0 rgba(0,0,0,0.5);
+            border: 1px solid rgba(0,0,0,0.5);
+        }
+
+        .piece-symbol {
+            font-size: 28px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .white-piece .piece-symbol {
+            color: #2a2a2a;
+        }
+
+        .black-piece .piece-symbol {
+            color: #d4d4d4;
+        }
+
+        .piece-name {
+            font-size: 0.9rem;
+            color: #b0b0b0;
             text-align: center;
-            padding: 10px;
-            background: rgba(20, 20, 35, 0.7);
+        }
+
+        /* Ειδικά Στυλ για Κάθε Κομμάτι */
+        .king {
+            transform: scale(1.1);
+        }
+
+        .queen {
+            transform: scale(1.05);
+        }
+
+        .bishop::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            width: 20px;
+            height: 8px;
+            background: inherit;
+            border-radius: 50%;
+            filter: brightness(0.8);
+        }
+
+        .knight::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            width: 24px;
+            height: 12px;
+            background: inherit;
+            border-radius: 40% 40% 0 0;
+            transform: rotate(10deg);
+            filter: brightness(0.9);
+        }
+
+        .rook::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            width: 30px;
+            height: 6px;
+            background: inherit;
+            border-radius: 2px;
+            filter: brightness(0.8);
+        }
+
+        .pawn {
+            transform: scale(0.9);
+        }
+
+        /* Materials Section */
+        .materials-section {
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(30, 30, 30, 0.7);
+            border-radius: 10px;
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .material-card {
+            background: rgba(40, 40, 40, 0.8);
             border-radius: 8px;
-            width: 48%;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
         }
 
-        .timer-active {
-            box-shadow: 0 0 10px rgba(233, 69, 96, 0.7);
+        .material-card:hover {
+            transform: translateY(-5px);
+            background: rgba(50, 50, 50, 0.8);
         }
 
-        @media (max-width: 900px) {
-            .game-container {
+        .material-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .material-card h3 {
+            color: #d4af37;
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+
+        .material-card p {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            font-size: 0.9rem;
+            width: 100%;
+            border-top: 1px solid #333;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .chess-set-container {
                 flex-direction: column;
                 align-items: center;
             }
             
+            .board-section, .pieces-section {
+                min-width: 100%;
+            }
+            
+            .materials-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
             .board {
                 width: 90vw;
                 height: 90vw;
@@ -233,183 +426,206 @@
                 max-height: 400px;
             }
             
-            .cell {
-                font-size: 30px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .board {
-                width: 95vw;
-                height: 95vw;
+            .piece {
+                width: 50px;
+                height: 50px;
             }
             
-            .cell {
-                font-size: 24px;
+            .piece-symbol {
+                font-size: 22px;
+            }
+            
+            .materials-grid {
+                grid-template-columns: 1fr;
             }
             
             h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Σκακιστική Μονομαχία</h1>
-        <p class="subtitle">Κλασικό παιχνίδι σκάκι σε διαδραστική μορφή</p>
-    </header>
+    <div class="container">
+        <header>
+            <h1>Σύγχρονο Σκακι Σετ</h1>
+            <p class="subtitle">Μινιμαλιστική Αισθητική & Εκλεπτυσμένος Σχεδιασμός</p>
+        </header>
 
-    <div class="game-container">
-        <div class="board-container">
-            <div class="board" id="chessboard">
-                <!-- Η σκακιέρα θα δημιουργηθεί δυναμικά με JavaScript -->
+        <div class="design-concept">
+            <h2>Σχεδιαστική Φιλοσοφία</h2>
+            <p>Αυτό το σύγχρονο σετ σκακιού συνδυάζει την κλασική ομορφιά του παιχνιδιού με μινιμαλιστική αισθητική. Τα κομμάτια έχουν καθαρές γραμμές, αισθητική βάρους και ισορροπίας, και σχεδιάστηκαν με έμφαση στην αναγνωσιμότητα και τη λειτουργικότητα. Η σκακιέρα προσφέρει οπτικό ενδιαφέρον με τα φυσικά της υφές, δημιουργώντας μια πολυτελή εμπειρία παιχνιδιού.</p>
+        </div>
+
+        <div class="chess-set-container">
+            <div class="board-section">
+                <h2 class="section-title">Σκακιέρα</h2>
+                <div class="board-container">
+                    <div class="board" id="chessboard">
+                        <!-- Η σκακιέρα θα δημιουργηθεί δυναμικά με JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="pieces-section">
+                <h2 class="section-title">Σύνολο Πιονιών</h2>
+                <div class="pieces-display">
+                    <div class="piece-set">
+                        <h3>Λευκά Πιόνια</h3>
+                        <div class="piece-group">
+                            <div class="piece-container">
+                                <div class="piece white-piece king">
+                                    <span class="piece-symbol">♔</span>
+                                </div>
+                                <div class="piece-name">Βασιλιάς</div>
+                            </div>
+                            <div class="piece-container">
+                                <div class="piece white-piece queen">
+                                    <span class="piece-symbol">♕</span>
+                                </div>
+                                <div class="piece-name">Βασίλισσα</div>
+                            </div>
+                            <div class="piece-container">
+                                <div class="piece white-piece rook">
+                                    <span class="piece-symbol">♖</span>
+                                </div>
+                                <div class="piece-name">Πύργος</div>
+                            </div>
+                            <div class="piece-container">
+                                <div class="piece white-piece bishop">
+                                    <span class="piece-symbol">♗</span>
+                                </div>
+                                <div class="piece-name">Αξιωματικός</div>
+                            </div>
+                            <div class="piece-container">
+                                <div class="piece white-piece knight">
+                                    <span class="piece-symbol">♘</span>
+                                </div>
+                                <div class="piece-name">Ίππος</div>
+                            </div>
+                            <div class="piece-container">
+                                <div class="piece white-piece pawn">
+                                    <span class="piece-symbol">♙</span>
+                                </div>
+                                <div class="piece-name">Πιόνι</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="piece-set">
+                        <h3>Μαύρα Πιόνια</h3>
+                        <div class="piece-group">
+                            <div class="piece-container">
+                                <div class="piece black-piece king">
+                                    <span class="piece-symbol">♚</span>
+                                </div>
+                                <div class="piece-name">Βασιλιάς</div>
+                            </div>
+                            <div class="piece-container">
+                                <div class="piece black-piece queen">
+                                    <span class="piece-symbol">♛</span>
+                                </div>
+                                <div class="piece-name">Βασίλισσα</div>
+                            </div>
+                            <div class="piece-container">
+                                <div class="piece black-piece rook">
+                                    <span class="piece-symbol">♜</span>
+                                </div>
+                                <div class="piece-name">Πύργος</div>
+                            </div>
+                            <div class="piece-container">
+                                <div class="piece black-piece bishop">
+                                    <span class="piece-symbol">♝</span>
+                                </div>
+                                <div class="piece-name">Αξιωματικός</div>
+                            </div>
+                            <div class="piece-container">
+                                <div class="piece black-piece knight">
+                                    <span class="piece-symbol">♞</span>
+                                </div>
+                                <div class="piece-name">Ίππος</div>
+                            </div>
+                            <div class="piece-container">
+                                <div class="piece black-piece pawn">
+                                    <span class="piece-symbol">♟</span>
+                                </div>
+                                <div class="piece-name">Πιόνι</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="game-info">
-            <div class="status" id="status">
-                Σειρά του Λευκού
-            </div>
-
-            <div class="controls">
-                <button id="newGame">Νέο Παιχνίδι</button>
-                <button id="undoMove">Αναίρεση</button>
-            </div>
-
-            <div class="captured-pieces">
-                <div class="captured-white" id="capturedWhite">
-                    <!-- Τα αιχμαλωτισμένα λευκά κομμάτια θα προστεθούν εδώ -->
+        <div class="materials-section">
+            <h2 class="section-title">Υλικά & Κατασκευή</h2>
+            <div class="materials-grid">
+                <div class="material-card">
+                    <div class="material-icon">♔</div>
+                    <h3>Ματ Μέταλλο</h3>
+                    <p>Τα μαύρα κομμάτια κατασκευάζονται από ματ αλουμίνιο με λεπτές γραμμικές λεπτομέρειες που δίνουν αίσθηση βάρους και σταθερότητας.</p>
                 </div>
-                <div class="captured-black" id="capturedBlack">
-                    <!-- Τα αιχμαλωτισμένα μαύρα κομμάτια θα προστεθούν εδώ -->
+                <div class="material-card">
+                    <div class="material-icon">♕</div>
+                    <h3>Γυαλισμένο Ακρυλικό</h3>
+                    <p>Τα λευκά κομμάτια είναι κατασκευασμένα από γυαλισμένο ακρυλικό που δίνει μια διαφανή εμφάνιση με ανταύγειες φωτός.</p>
                 </div>
-            </div>
-
-            <div class="moves-container">
-                <h3>Ιστορικό Κινήσεων</h3>
-                <div class="moves-list" id="movesList">
-                    <!-- Οι κινήσεις θα προστεθούν εδώ -->
-                </div>
-            </div>
-
-            <div class="timer">
-                <div class="timer-white" id="timerWhite">
-                    <div>Λευκό</div>
-                    <div id="whiteTime">10:00</div>
-                </div>
-                <div class="timer-black" id="timerBlack">
-                    <div>Μαύρο</div>
-                    <div id="blackTime">10:00</div>
+                <div class="material-card">
+                    <div class="material-icon">◼</div>
+                    <h3>Ξύλο με Έντονα Νερά</h3>
+                    <p>Η σκακιέρα είναι κατασκευασμένη από φυσικό ξύλο βελάντου με έντονα νερά, προσφέροντας μοναδική υφή και αντίθεση.</p>
                 </div>
             </div>
         </div>
+
+        <footer>
+            <p>Σύγχρονο Σκακι Σετ | Σχεδίαση με αγάπη για το παιχνίδι των βασιλιάδων</p>
+            <p>© 2023 Σχεδιαστική Ομάδα ChessModern</p>
+        </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Σύμβολα Unicode για τα κομμάτια του σκακιού
-            const PIECES = {
-                'white': {
-                    'king': '♔',
-                    'queen': '♕',
-                    'rook': '♖',
-                    'bishop': '♗',
-                    'knight': '♘',
-                    'pawn': '♙'
-                },
-                'black': {
-                    'king': '♚',
-                    'queen': '♛',
-                    'rook': '♜',
-                    'bishop': '♝',
-                    'knight': '♞',
-                    'pawn': '♟'
-                }
-            };
-
-            // Αρχική κατάσταση του παιχνιδιού
-            const initialBoard = [
-                ['br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br'],
-                ['bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp'],
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', ''],
-                ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
-                ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr']
-            ];
-
-            let boardState = JSON.parse(JSON.stringify(initialBoard));
-            let currentPlayer = 'white';
-            let selectedPiece = null;
-            let possibleMoves = [];
-            let gameHistory = [];
-            let moveHistory = [];
-            let capturedPieces = { white: [], black: [] };
-            let whiteTime = 600; // 10 λεπτά σε δευτερόλεπτα
-            let blackTime = 600;
-            let timerInterval = null;
-            let gameActive = true;
-
             // Δημιουργία της σκακιέρας
             const chessboard = document.getElementById('chessboard');
-            const statusElement = document.getElementById('status');
-            const movesList = document.getElementById('movesList');
-            const capturedWhite = document.getElementById('capturedWhite');
-            const capturedBlack = document.getElementById('capturedBlack');
-            const whiteTimeElement = document.getElementById('whiteTime');
-            const blackTimeElement = document.getElementById('blackTime');
-            const newGameButton = document.getElementById('newGame');
-            const undoButton = document.getElementById('undoMove');
-
-            // Αρχικοποίηση του παιχνιδιού
-            function initGame() {
-                createBoard();
-                updateStatus();
-                startTimer();
-                
-                // Προσθήκη αριθμών και γραμμάτων στις άκρες της σκακιέρας
-                addCoordinates();
-            }
-
+            
+            // Σύμβολα Unicode για τα κομμάτια του σκακιού
+            const initialBoard = [
+                ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
+                ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
+                ['', '', '', '', '', '', '', ''],
+                ['', '', '', '', '', '', '', ''],
+                ['', '', '', '', '', '', '', ''],
+                ['', '', '', '', '', '', '', ''],
+                ['♙', '♙', '♙', '♙', '♙', '♙', '♙', '♙'],
+                ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']
+            ];
+            
+            const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+            const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+            
             // Δημιουργία της σκακιέρας
-            function createBoard() {
-                chessboard.innerHTML = '';
-                
-                for (let row = 0; row < 8; row++) {
-                    for (let col = 0; col < 8; col++) {
-                        const cell = document.createElement('div');
-                        cell.classList.add('cell');
-                        cell.classList.add((row + col) % 2 === 0 ? 'light' : 'dark');
-                        cell.dataset.row = row;
-                        cell.dataset.col = col;
-                        
-                        // Προσθήκη κομματιού αν υπάρχει
-                        const piece = boardState[row][col];
-                        if (piece) {
-                            cell.textContent = getPieceSymbol(piece);
-                            cell.dataset.piece = piece;
-                        }
-                        
-                        cell.addEventListener('click', handleCellClick);
-                        chessboard.appendChild(cell);
-                    }
-                }
-            }
-
-            // Προσθήκη συντεταγμένων στην σκακιέρα
-            function addCoordinates() {
-                const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-                const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
-                
-                const cells = document.querySelectorAll('.cell');
-                
-                cells.forEach(cell => {
-                    const row = parseInt(cell.dataset.row);
-                    const col = parseInt(cell.dataset.col);
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.classList.add((row + col) % 2 === 0 ? 'light' : 'dark');
                     
-                    // Προσθήκη γραμμάτων (files) στην κάτω σειρά
+                    // Προσθήκη κομματιού αν υπάρχει
+                    const piece = initialBoard[row][col];
+                    if (piece) {
+                        cell.textContent = piece;
+                        // Προσθήκη κλάσης ανάλογα με το χρώμα του κομματιού
+                        if (piece === piece.toUpperCase()) {
+                            cell.style.color = '#2a2a2a';
+                            cell.style.textShadow = '0 1px 2px rgba(0,0,0,0.2)';
+                        } else {
+                            cell.style.color = '#1a1a1a';
+                            cell.style.textShadow = '0 1px 2px rgba(255,255,255,0.3)';
+                        }
+                    }
+                    
+                    // Προσθήκη συντεταγμένων
                     if (row === 7) {
                         const fileElement = document.createElement('div');
                         fileElement.classList.add('coordinate', 'file');
@@ -417,464 +633,26 @@
                         cell.appendChild(fileElement);
                     }
                     
-                    // Προσθήκη αριθμών (ranks) στην αριστερή στήλη
                     if (col === 0) {
                         const rankElement = document.createElement('div');
                         rankElement.classList.add('coordinate', 'rank');
                         rankElement.textContent = ranks[row];
                         cell.appendChild(rankElement);
                     }
+                    
+                    chessboard.appendChild(cell);
+                }
+            }
+            
+            // Προσθήκη αλληλεπίδρασης στα κομμάτια
+            const pieces = document.querySelectorAll('.piece');
+            pieces.forEach(piece => {
+                piece.addEventListener('click', function() {
+                    // Απλή αλληλεπίδραση - στην πραγματική εφαρμογή θα υπήρχε λειτουργικότητα παιχνιδιού
+                    this.style.transform = this.style.transform === 'translateY(-5px) scale(1.05)' ? 
+                                          '' : 'translateY(-5px) scale(1.05)';
                 });
-            }
-
-            // Λήψη του συμβόλου Unicode για ένα κομμάτι
-            function getPieceSymbol(pieceCode) {
-                const color = pieceCode[0] === 'w' ? 'white' : 'black';
-                const pieceType = getPieceType(pieceCode[1]);
-                return PIECES[color][pieceType];
-            }
-
-            // Μετατροπή τύπου κομματιού από κωδικό
-            function getPieceType(code) {
-                switch(code) {
-                    case 'p': return 'pawn';
-                    case 'r': return 'rook';
-                    case 'n': return 'knight';
-                    case 'b': return 'bishop';
-                    case 'q': return 'queen';
-                    case 'k': return 'king';
-                    default: return '';
-                }
-            }
-
-            // Χειρισμός κλικ σε κελί
-            function handleCellClick(event) {
-                if (!gameActive) return;
-                
-                const cell = event.currentTarget;
-                const row = parseInt(cell.dataset.row);
-                const col = parseInt(cell.dataset.col);
-                const piece = boardState[row][col];
-                
-                // Αν έχει επιλεγεί ήδη ένα κομμάτι
-                if (selectedPiece) {
-                    const [selectedRow, selectedCol] = selectedPiece;
-                    
-                    // Έλεγχος αν η κίνηση είναι έγκυρη
-                    const isValidMove = possibleMoves.some(move => 
-                        move[0] === row && move[1] === col
-                    );
-                    
-                    if (isValidMove) {
-                        // Αποθήκευση της προηγούμενης κατάστασης για αναίρεση
-                        gameHistory.push(JSON.parse(JSON.stringify(boardState)));
-                        
-                        // Μετακίνηση του κομματιού
-                        movePiece(selectedRow, selectedCol, row, col);
-                        
-                        // Εναλλαγή παίκτη
-                        currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
-                        updateStatus();
-                        resetSelection();
-                    } else if (piece && getPieceColor(piece) === currentPlayer) {
-                        // Επιλογή νέου κομματιού του ίδιου παίκτη
-                        selectPiece(row, col);
-                    } else {
-                        // Αποεπιλογή αν κλικάρεται σε άκυρο κελί
-                        resetSelection();
-                    }
-                } else if (piece && getPieceColor(piece) === currentPlayer) {
-                    // Επιλογή νέου κομματιού
-                    selectPiece(row, col);
-                }
-            }
-
-            // Επιλογή κομματιού
-            function selectPiece(row, col) {
-                resetSelection();
-                
-                selectedPiece = [row, col];
-                const cell = getCellElement(row, col);
-                cell.classList.add('selected');
-                
-                // Υπολογισμός πιθανών κινήσεων
-                possibleMoves = calculatePossibleMoves(row, col);
-                
-                // Εμφάνιση πιθανών κινήσεων
-                possibleMoves.forEach(([moveRow, moveCol]) => {
-                    const moveCell = getCellElement(moveRow, moveCol);
-                    if (boardState[moveRow][moveCol]) {
-                        moveCell.classList.add('possible-capture');
-                    } else {
-                        moveCell.classList.add('possible-move');
-                    }
-                });
-            }
-
-            // Υπολογισμός πιθανών κινήσεων για ένα κομμάτι
-            function calculatePossibleMoves(row, col) {
-                const piece = boardState[row][col];
-                if (!piece) return [];
-                
-                const pieceType = piece[1];
-                const color = getPieceColor(piece);
-                const moves = [];
-                
-                // Βασικές κινήσεις για κάθε τύπο κομματιού
-                switch(pieceType) {
-                    case 'p': // Πιόνι
-                        const direction = color === 'white' ? -1 : 1;
-                        const startRow = color === 'white' ? 6 : 1;
-                        
-                        // Κίνηση μπροστά
-                        if (isValidPosition(row + direction, col) && !boardState[row + direction][col]) {
-                            moves.push([row + direction, col]);
-                            
-                            // Διπλή κίνηση από αρχική θέση
-                            if (row === startRow && !boardState[row + 2 * direction][col]) {
-                                moves.push([row + 2 * direction, col]);
-                            }
-                        }
-                        
-                        // Κατάληψη
-                        const captureDirections = [[direction, -1], [direction, 1]];
-                        for (const [dr, dc] of captureDirections) {
-                            const newRow = row + dr;
-                            const newCol = col + dc;
-                            
-                            if (isValidPosition(newRow, newCol) && 
-                                boardState[newRow][newCol] && 
-                                getPieceColor(boardState[newRow][newCol]) !== color) {
-                                moves.push([newRow, newCol]);
-                            }
-                        }
-                        break;
-                        
-                    case 'r': // Πύργος
-                        addLinearMoves(moves, row, col, [[-1, 0], [1, 0], [0, -1], [0, 1]], color);
-                        break;
-                        
-                    case 'n': // Ίππος
-                        const knightMoves = [
-                            [-2, -1], [-2, 1], [-1, -2], [-1, 2],
-                            [1, -2], [1, 2], [2, -1], [2, 1]
-                        ];
-                        addJumpMoves(moves, row, col, knightMoves, color);
-                        break;
-                        
-                    case 'b': // Αξιωματικός
-                        addLinearMoves(moves, row, col, [[-1, -1], [-1, 1], [1, -1], [1, 1]], color);
-                        break;
-                        
-                    case 'q': // Βασίλισσα
-                        addLinearMoves(moves, row, col, [
-                            [-1, 0], [1, 0], [0, -1], [0, 1],
-                            [-1, -1], [-1, 1], [1, -1], [1, 1]
-                        ], color);
-                        break;
-                        
-                    case 'k': // Βασιλιάς
-                        const kingMoves = [
-                            [-1, -1], [-1, 0], [-1, 1],
-                            [0, -1], [0, 1],
-                            [1, -1], [1, 0], [1, 1]
-                        ];
-                        addJumpMoves(moves, row, col, kingMoves, color);
-                        break;
-                }
-                
-                return moves;
-            }
-
-            // Προσθήκη γραμμικών κινήσεων (πύργος, αξιωματικός, βασίλισσα)
-            function addLinearMoves(moves, row, col, directions, color) {
-                for (const [dr, dc] of directions) {
-                    let newRow = row + dr;
-                    let newCol = col + dc;
-                    
-                    while (isValidPosition(newRow, newCol)) {
-                        if (!boardState[newRow][newCol]) {
-                            moves.push([newRow, newCol]);
-                        } else {
-                            if (getPieceColor(boardState[newRow][newCol]) !== color) {
-                                moves.push([newRow, newCol]);
-                            }
-                            break;
-                        }
-                        
-                        newRow += dr;
-                        newCol += dc;
-                    }
-                }
-            }
-
-            // Προσθήκη κινήσεων άλματος (ίππος, βασιλιάς)
-            function addJumpMoves(moves, row, col, jumps, color) {
-                for (const [dr, dc] of jumps) {
-                    const newRow = row + dr;
-                    const newCol = col + dc;
-                    
-                    if (isValidPosition(newRow, newCol) && 
-                        (!boardState[newRow][newCol] || 
-                         getPieceColor(boardState[newRow][newCol]) !== color)) {
-                        moves.push([newRow, newCol]);
-                    }
-                }
-            }
-
-            // Έλεγχος εάν μια θέση είναι εντός σκακιέρας
-            function isValidPosition(row, col) {
-                return row >= 0 && row < 8 && col >= 0 && col < 8;
-            }
-
-            // Λήψη χρώματος κομματιού
-            function getPieceColor(piece) {
-                return piece[0] === 'w' ? 'white' : 'black';
-            }
-
-            // Μετακίνηση κομματιού
-            function movePiece(fromRow, fromCol, toRow, toCol) {
-                const piece = boardState[fromRow][fromCol];
-                const targetPiece = boardState[toRow][toCol];
-                
-                // Καταγραφή αιχμαλωτισμένου κομματιού
-                if (targetPiece) {
-                    const color = getPieceColor(targetPiece);
-                    capturedPieces[color].push(targetPiece);
-                    updateCapturedPieces();
-                }
-                
-                // Μετακίνηση κομματιού
-                boardState[toRow][toCol] = piece;
-                boardState[fromRow][fromCol] = '';
-                
-                // Καταγραφή κίνησης
-                recordMove(fromRow, fromCol, toRow, toCol, targetPiece);
-                
-                // Ενημέρωση οπτικής αναπαράστασης
-                updateBoard();
-                
-                // Έλεγχος για τερματισμό του παιχνιδιού
-                checkGameEnd();
-            }
-
-            // Ενημέρωση της οπτικής αναπαράστασης της σκακιέρας
-            function updateBoard() {
-                const cells = document.querySelectorAll('.cell');
-                
-                cells.forEach(cell => {
-                    const row = parseInt(cell.dataset.row);
-                    const col = parseInt(cell.dataset.col);
-                    const piece = boardState[row][col];
-                    
-                    cell.textContent = piece ? getPieceSymbol(piece) : '';
-                    cell.dataset.piece = piece || '';
-                    
-                    // Αφαίρεση συντεταγμένων που μπορεί να έχουν αφαιρεθεί
-                    if (!cell.querySelector('.coordinate')) {
-                        addCoordinates();
-                    }
-                });
-            }
-
-            // Καταγραφή κίνησης
-            function recordMove(fromRow, fromCol, toRow, toCol, capturedPiece) {
-                const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-                const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
-                
-                const fromFile = files[fromCol];
-                const fromRank = ranks[fromRow];
-                const toFile = files[toCol];
-                const toRank = ranks[toRow];
-                
-                const moveNumber = Math.floor(moveHistory.length / 2) + 1;
-                const moveNotation = `${fromFile}${fromRank} → ${toFile}${toRank}`;
-                
-                if (currentPlayer === 'white') {
-                    moveHistory.push({ number: moveNumber, white: moveNotation, black: '' });
-                } else {
-                    moveHistory[moveHistory.length - 1].black = moveNotation;
-                }
-                
-                updateMoveHistory();
-            }
-
-            // Ενημέρωση ιστορικού κινήσεων
-            function updateMoveHistory() {
-                movesList.innerHTML = '';
-                
-                moveHistory.forEach(move => {
-                    const moveElement = document.createElement('div');
-                    moveElement.classList.add('move');
-                    moveElement.textContent = `${move.number}. ${move.white}`;
-                    movesList.appendChild(moveElement);
-                    
-                    if (move.black) {
-                        const blackMoveElement = document.createElement('div');
-                        blackMoveElement.classList.add('move');
-                        blackMoveElement.textContent = move.black;
-                        movesList.appendChild(blackMoveElement);
-                    }
-                });
-                
-                // Αυτόματη κύλιση στο τέλος
-                movesList.scrollTop = movesList.scrollHeight;
-            }
-
-            // Ενημέρωση αιχμαλωτισμένων κομματιών
-            function updateCapturedPieces() {
-                capturedWhite.innerHTML = '';
-                capturedBlack.innerHTML = '';
-                
-                capturedPieces.white.forEach(piece => {
-                    const pieceElement = document.createElement('span');
-                    pieceElement.classList.add('captured-piece');
-                    pieceElement.textContent = getPieceSymbol(piece);
-                    capturedWhite.appendChild(pieceElement);
-                });
-                
-                capturedPieces.black.forEach(piece => {
-                    const pieceElement = document.createElement('span');
-                    pieceElement.classList.add('captured-piece');
-                    pieceElement.textContent = getPieceSymbol(piece);
-                    capturedBlack.appendChild(pieceElement);
-                });
-            }
-
-            // Ενημέρωση κατάστασης παιχνιδιού
-            function updateStatus() {
-                if (currentPlayer === 'white') {
-                    statusElement.textContent = 'Σειρά του Λευκού';
-                    document.getElementById('timerWhite').classList.add('timer-active');
-                    document.getElementById('timerBlack').classList.remove('timer-active');
-                } else {
-                    statusElement.textContent = 'Σειρά του Μαύρου';
-                    document.getElementById('timerWhite').classList.remove('timer-active');
-                    document.getElementById('timerBlack').classList.add('timer-active');
-                }
-            }
-
-            // Έλεγχος για τερματισμό του παιχνιδιού
-            function checkGameEnd() {
-                // Απλοποιημένος έλεγχος - στην πραγματική υλοποίηση θα πρέπει 
-                // να ελέγχουμε για σαχ, ματ και πατ
-                
-                // Έλεγχος για βασικό ματ (χωρίς πλήρη υλοποίηση κανόνων)
-                const kings = { white: false, black: false };
-                
-                for (let row = 0; row < 8; row++) {
-                    for (let col = 0; col < 8; col++) {
-                        const piece = boardState[row][col];
-                        if (piece && piece[1] === 'k') {
-                            kings[getPieceColor(piece)] = true;
-                        }
-                    }
-                }
-                
-                if (!kings.white) {
-                    endGame('Μαύρος κερδίζει! Ο βασιλιάς του λευκού αιχμαλωτίστηκε.');
-                } else if (!kings.black) {
-                    endGame('Λευκός κερδίζει! Ο βασιλιάς του μαύρου αιχμαλωτίστηκε.');
-                }
-            }
-
-            // Τερματισμός παιχνιδιού
-            function endGame(message) {
-                gameActive = false;
-                statusElement.textContent = message;
-                clearInterval(timerInterval);
-            }
-
-            // Επανεκκίνηση επιλογής
-            function resetSelection() {
-                selectedPiece = null;
-                possibleMoves = [];
-                
-                const cells = document.querySelectorAll('.cell');
-                cells.forEach(cell => {
-                    cell.classList.remove('selected', 'possible-move', 'possible-capture');
-                });
-            }
-
-            // Λήψη στοιχείου κελιού από συντεταγμένες
-            function getCellElement(row, col) {
-                return document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-            }
-
-            // Χρονομέτρηση
-            function startTimer() {
-                clearInterval(timerInterval);
-                
-                timerInterval = setInterval(() => {
-                    if (currentPlayer === 'white') {
-                        whiteTime--;
-                        if (whiteTime <= 0) {
-                            endGame('Μαύρος κερδίζει! Ο χρόνος του λευκού έληξε.');
-                            return;
-                        }
-                    } else {
-                        blackTime--;
-                        if (blackTime <= 0) {
-                            endGame('Λευκός κερδίζει! Ο χρόνος του μαύρου έληξε.');
-                            return;
-                        }
-                    }
-                    
-                    updateTimerDisplay();
-                }, 1000);
-            }
-
-            // Ενημέρωση εμφάνισης χρονομέτρου
-            function updateTimerDisplay() {
-                const formatTime = (seconds) => {
-                    const mins = Math.floor(seconds / 60);
-                    const secs = seconds % 60;
-                    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-                };
-                
-                whiteTimeElement.textContent = formatTime(whiteTime);
-                blackTimeElement.textContent = formatTime(blackTime);
-            }
-
-            // Νέο παιχνίδι
-            newGameButton.addEventListener('click', () => {
-                boardState = JSON.parse(JSON.stringify(initialBoard));
-                currentPlayer = 'white';
-                gameHistory = [];
-                moveHistory = [];
-                capturedPieces = { white: [], black: [] };
-                whiteTime = 600;
-                blackTime = 600;
-                gameActive = true;
-                
-                resetSelection();
-                createBoard();
-                updateStatus();
-                updateMoveHistory();
-                updateCapturedPieces();
-                updateTimerDisplay();
-                startTimer();
             });
-
-            // Αναίρεση κίνησης
-            undoButton.addEventListener('click', () => {
-                if (gameHistory.length > 0) {
-                    boardState = gameHistory.pop();
-                    moveHistory.pop();
-                    
-                    // Εναλλαγή παίκτη μετά από αναίρεση
-                    currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
-                    
-                    resetSelection();
-                    updateBoard();
-                    updateStatus();
-                    updateMoveHistory();
-                    updateCapturedPieces();
-                }
-            });
-
-            // Αρχικοποίηση του παιχνιδιού
-            initGame();
         });
     </script>
 </body>
