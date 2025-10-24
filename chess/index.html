@@ -170,33 +170,6 @@
             box-shadow: inset 0 0 0 4px rgba(239, 71, 111, 0.9);
         }
 
-        .coordinate {
-            position: absolute;
-            font-size: 14px;
-            color: rgba(0, 0, 0, 0.7);
-            pointer-events: none;
-            z-index: 2;
-            font-weight: 700;
-        }
-
-        .coordinate.file {
-            bottom: 6px;
-            right: 8px;
-        }
-
-        .coordinate.rank {
-            top: 6px;
-            left: 8px;
-        }
-
-        .light .coordinate {
-            color: #2d4059;
-        }
-
-        .dark .coordinate {
-            color: #e8e8e8;
-        }
-
         /* Πληροφορίες Παιχνιδιού */
         .game-status {
             background: linear-gradient(135deg, rgba(45, 64, 89, 0.9) 0%, rgba(30, 42, 58, 0.9) 100%);
@@ -304,45 +277,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .timer {
-            background: linear-gradient(135deg, rgba(45, 64, 89, 0.9) 0%, rgba(30, 42, 58, 0.9) 100%);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .timer-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        .timer-white, .timer-black {
-            text-align: center;
-            padding: 25px;
-            background: rgba(30, 42, 58, 0.8);
-            border-radius: 12px;
-            width: 48%;
-            transition: all 0.3s;
-            font-weight: 600;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .timer-active {
-            box-shadow: 0 0 25px rgba(0, 180, 219, 0.8);
-            transform: scale(1.05);
-            background: rgba(45, 64, 89, 0.9);
-            border-color: #00b4db;
-        }
-
-        .time-display {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin-top: 10px;
-            font-family: 'Courier New', monospace;
-            color: #4cc9f0;
-        }
-
         /* Responsive Design */
         @media (max-width: 900px) {
             .game-container {
@@ -439,20 +373,6 @@
                         <!-- Οι κινήσεις θα προστεθούν εδώ -->
                     </div>
                 </div>
-
-                <div class="timer">
-                    <h2 class="section-title">ΧΡΟΝΟΜΕΤΡΟ</h2>
-                    <div class="timer-container">
-                        <div class="timer-white" id="timerWhite">
-                            <div>ΛΕΥΚΟΣ</div>
-                            <div class="time-display" id="whiteTime">10:00</div>
-                        </div>
-                        <div class="timer-black" id="timerBlack">
-                            <div>ΜΑΥΡΟΣ</div>
-                            <div class="time-display" id="blackTime">10:00</div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -466,12 +386,8 @@
             const movesList = document.getElementById('movesList');
             const capturedWhite = document.getElementById('capturedWhite');
             const capturedBlack = document.getElementById('capturedBlack');
-            const whiteTimeElement = document.getElementById('whiteTime');
-            const blackTimeElement = document.getElementById('blackTime');
             const newGameButton = document.getElementById('newGame');
             const undoButton = document.getElementById('undoMove');
-            const timerWhite = document.getElementById('timerWhite');
-            const timerBlack = document.getElementById('timerBlack');
 
             // Κατάσταση παιχνιδιού
             let boardState = createInitialBoard();
@@ -481,9 +397,6 @@
             let gameHistory = [];
             let moveHistory = [];
             let capturedPieces = { white: [], black: [] };
-            let whiteTime = 600;
-            let blackTime = 600;
-            let timerInterval = null;
             let gameActive = true;
 
             // Αρχικοποίηση σκακιέρας
@@ -500,9 +413,9 @@
                 ];
             }
 
-            // Σύμβολα για τα κομμάτια
+            // Σύμβολα για τα κομμάτια - ΟΜΟΙΟΜΟΡΦΑ ΜΕΓΕΘΗ
             const pieceSymbols = {
-                'wp': '♙', 'wr': '♖', 'wn': '♘', 'wb': '♗', 'wq': '♕', 'wk': '♔',
+                'wp': '♟', 'wr': '♜', 'wn': '♞', 'wb': '♝', 'wq': '♛', 'wk': '♚',
                 'bp': '♟', 'br': '♜', 'bn': '♞', 'bb': '♝', 'bq': '♛', 'bk': '♚'
             };
 
@@ -510,8 +423,6 @@
             function initGame() {
                 createBoard();
                 updateStatus();
-                startTimer();
-                addCoordinates();
             }
 
             // Δημιουργία σκακιέρας
@@ -531,15 +442,17 @@
                             cell.textContent = pieceSymbols[piece];
                             cell.dataset.piece = piece;
                             
-                            // Στυλ για κομμάτια
+                            // ΣΤΑΘΕΡΟ ΜΕΓΕΘΟΣ ΚΑΙ ΧΡΩΜΑ ΓΙΑ ΟΛΑ ΤΑ ΠΙΟΝΙΑ
                             if (piece.startsWith('w')) {
                                 cell.style.color = '#ffffff';
                                 cell.style.textShadow = '0 3px 6px rgba(0,0,0,0.8)';
                                 cell.style.fontWeight = '700';
+                                cell.style.fontSize = '45px';
                             } else {
                                 cell.style.color = '#000000';
                                 cell.style.textShadow = '0 2px 4px rgba(255,255,255,0.5)';
                                 cell.style.fontWeight = '700';
+                                cell.style.fontSize = '45px';
                             }
                         }
                         
@@ -547,33 +460,6 @@
                         chessboard.appendChild(cell);
                     }
                 }
-            }
-
-            // Προσθήκη συντεταγμένων
-            function addCoordinates() {
-                const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-                const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
-                
-                const cells = document.querySelectorAll('.cell');
-                
-                cells.forEach(cell => {
-                    const row = parseInt(cell.dataset.row);
-                    const col = parseInt(cell.dataset.col);
-                    
-                    if (row === 7) {
-                        const fileElement = document.createElement('div');
-                        fileElement.classList.add('coordinate', 'file');
-                        fileElement.textContent = files[col];
-                        cell.appendChild(fileElement);
-                    }
-                    
-                    if (col === 0) {
-                        const rankElement = document.createElement('div');
-                        rankElement.classList.add('coordinate', 'rank');
-                        rankElement.textContent = ranks[row];
-                        cell.appendChild(rankElement);
-                    }
-                });
             }
 
             // Χειρισμός κλικ
@@ -692,6 +578,89 @@
                         }
                     }
                 }
+                // Βασικές κινήσεις πύργου
+                else if (piece.endsWith('r')) {
+                    const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                    for (const [dr, dc] of directions) {
+                        let newRow = row + dr;
+                        let newCol = col + dc;
+                        
+                        while (isValidPosition(newRow, newCol)) {
+                            if (!boardState[newRow][newCol]) {
+                                moves.push([newRow, newCol]);
+                            } else {
+                                if (getPieceColor(boardState[newRow][newCol]) !== color) {
+                                    moves.push([newRow, newCol]);
+                                }
+                                break;
+                            }
+                            newRow += dr;
+                            newCol += dc;
+                        }
+                    }
+                }
+                // Βασικές κινήσεις αξιωματικού
+                else if (piece.endsWith('b')) {
+                    const directions = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
+                    for (const [dr, dc] of directions) {
+                        let newRow = row + dr;
+                        let newCol = col + dc;
+                        
+                        while (isValidPosition(newRow, newCol)) {
+                            if (!boardState[newRow][newCol]) {
+                                moves.push([newRow, newCol]);
+                            } else {
+                                if (getPieceColor(boardState[newRow][newCol]) !== color) {
+                                    moves.push([newRow, newCol]);
+                                }
+                                break;
+                            }
+                            newRow += dr;
+                            newCol += dc;
+                        }
+                    }
+                }
+                // Βασικές κινήσεις βασίλισσας
+                else if (piece.endsWith('q')) {
+                    const directions = [
+                        [-1, 0], [1, 0], [0, -1], [0, 1],
+                        [-1, -1], [-1, 1], [1, -1], [1, 1]
+                    ];
+                    for (const [dr, dc] of directions) {
+                        let newRow = row + dr;
+                        let newCol = col + dc;
+                        
+                        while (isValidPosition(newRow, newCol)) {
+                            if (!boardState[newRow][newCol]) {
+                                moves.push([newRow, newCol]);
+                            } else {
+                                if (getPieceColor(boardState[newRow][newCol]) !== color) {
+                                    moves.push([newRow, newCol]);
+                                }
+                                break;
+                            }
+                            newRow += dr;
+                            newCol += dc;
+                        }
+                    }
+                }
+                // Βασικές κινήσεις ίππου
+                else if (piece.endsWith('n')) {
+                    const knightMoves = [
+                        [-2, -1], [-2, 1], [-1, -2], [-1, 2],
+                        [1, -2], [1, 2], [2, -1], [2, 1]
+                    ];
+                    for (const [dr, dc] of knightMoves) {
+                        const newRow = row + dr;
+                        const newCol = col + dc;
+                        
+                        if (isValidPosition(newRow, newCol) && 
+                            (!boardState[newRow][newCol] || 
+                             getPieceColor(boardState[newRow][newCol]) !== color)) {
+                            moves.push([newRow, newCol]);
+                        }
+                    }
+                }
                 
                 return moves;
             }
@@ -740,15 +709,20 @@
                             cell.style.color = '#ffffff';
                             cell.style.textShadow = '0 3px 6px rgba(0,0,0,0.8)';
                             cell.style.fontWeight = '700';
+                            cell.style.fontSize = '45px';
                         } else {
                             cell.style.color = '#000000';
                             cell.style.textShadow = '0 2px 4px rgba(255,255,255,0.5)';
                             cell.style.fontWeight = '700';
+                            cell.style.fontSize = '45px';
                         }
+                    } else {
+                        cell.style.color = '';
+                        cell.style.textShadow = '';
+                        cell.style.fontWeight = '';
+                        cell.style.fontSize = '';
                     }
                 });
-                
-                addCoordinates();
             }
 
             function recordMove(fromRow, fromCol, toRow, toCol) {
@@ -800,6 +774,7 @@
                     pieceElement.classList.add('captured-piece');
                     pieceElement.textContent = pieceSymbols[piece];
                     pieceElement.style.color = '#ffffff';
+                    pieceElement.style.fontSize = '32px';
                     capturedWhite.appendChild(pieceElement);
                 });
                 
@@ -808,6 +783,7 @@
                     pieceElement.classList.add('captured-piece');
                     pieceElement.textContent = pieceSymbols[piece];
                     pieceElement.style.color = '#000000';
+                    pieceElement.style.fontSize = '32px';
                     capturedBlack.appendChild(pieceElement);
                 });
             }
@@ -821,7 +797,6 @@
             }
 
             function checkGameEnd() {
-                // Απλοποιημένος έλεγχος τέλους παιχνιδιού
                 let whiteKing = false;
                 let blackKing = false;
                 
@@ -840,7 +815,6 @@
                 gameActive = false;
                 statusMessage.textContent = message;
                 statusDetail.textContent = 'Το παιχνίδι τελείωσε';
-                clearInterval(timerInterval);
             }
 
             function resetSelection() {
@@ -857,51 +831,12 @@
                 return document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
             }
 
-            function startTimer() {
-                clearInterval(timerInterval);
-                
-                timerInterval = setInterval(() => {
-                    if (gameActive) {
-                        if (currentPlayer === 'white') {
-                            whiteTime--;
-                            if (whiteTime <= 0) endGame('ΝΙΚΗ ΜΑΥΡΟΥ (ΧΡΟΝΟΣ)');
-                        } else {
-                            blackTime--;
-                            if (blackTime <= 0) endGame('ΝΙΚΗ ΛΕΥΚΟΥ (ΧΡΟΝΟΣ)');
-                        }
-                        
-                        updateTimerDisplay();
-                    }
-                }, 1000);
-            }
-
-            function updateTimerDisplay() {
-                const formatTime = (seconds) => {
-                    const mins = Math.floor(seconds / 60);
-                    const secs = seconds % 60;
-                    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-                };
-                
-                whiteTimeElement.textContent = formatTime(whiteTime);
-                blackTimeElement.textContent = formatTime(blackTime);
-                
-                if (currentPlayer === 'white') {
-                    timerWhite.classList.add('timer-active');
-                    timerBlack.classList.remove('timer-active');
-                } else {
-                    timerWhite.classList.remove('timer-active');
-                    timerBlack.classList.add('timer-active');
-                }
-            }
-
             function newGame() {
                 boardState = createInitialBoard();
                 currentPlayer = 'white';
                 gameHistory = [];
                 moveHistory = [];
                 capturedPieces = { white: [], black: [] };
-                whiteTime = 600;
-                blackTime = 600;
                 gameActive = true;
                 
                 resetSelection();
@@ -909,8 +844,6 @@
                 updateStatus();
                 updateCapturedPieces();
                 updateMoveHistory();
-                updateTimerDisplay();
-                startTimer();
             }
 
             function undoMove() {
