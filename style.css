@@ -640,80 +640,6 @@ body {
     font-size: 1.4rem !important;
 }
 
-/* Support Section Styles */
-.support-section {
-    padding: 80px 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.support-content {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.support-intro {
-    text-align: center;
-    margin-bottom: 60px;
-}
-
-.support-intro h2 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-}
-
-.support-intro p {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.support-methods {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-bottom: 60px;
-}
-
-.support-method {
-    background: white;
-    padding: 40px 30px;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
-    color: #333;
-}
-
-.support-method:hover {
-    transform: translateY(-5px);
-}
-
-.method-icon {
-    font-size: 3rem;
-    margin-bottom: 20px;
-}
-
-.support-method h3 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.support-method p {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-.support-impact {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 40px;
-    border-radius: 15px;
-    text-align: center;
-}
-
 .support-impact h2 {
     font-size: 2rem;
     margin-bottom: 30px;
@@ -742,25 +668,3 @@ body {
     opacity: 0.9;
 }
 
-/* Responsive design for support section */
-@media (max-width: 768px) {
-    .support-section {
-        padding: 60px 0;
-    }
-    
-    .support-intro h2 {
-        font-size: 2rem;
-    }
-    
-    .support-methods {
-        grid-template-columns: 1fr;
-    }
-    
-    .impact-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .support-impact {
-        padding: 30px 20px;
-    }
-}
