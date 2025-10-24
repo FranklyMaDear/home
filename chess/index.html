@@ -413,9 +413,11 @@
                 ];
             }
 
-            // Σύμβολα για τα κομμάτια - ΟΜΟΙΟΜΟΡΦΑ ΜΕΓΕΘΗ
+            // Σύμβολα για τα κομμάτια - ΣΩΣΤΑ ΣΥΜΒΟΛΑ ΓΙΑ ΚΑΘΕ ΧΡΩΜΑ
             const pieceSymbols = {
-                'wp': '♟', 'wr': '♜', 'wn': '♞', 'wb': '♝', 'wq': '♛', 'wk': '♚',
+                // Λευκά κομμάτια (άσπρα)
+                'wp': '♙', 'wr': '♖', 'wn': '♘', 'wb': '♗', 'wq': '♕', 'wk': '♔',
+                // Μαύρα κομμάτια (μαύρα)
                 'bp': '♟', 'br': '♜', 'bn': '♞', 'bb': '♝', 'bq': '♛', 'bk': '♚'
             };
 
@@ -442,15 +444,17 @@
                             cell.textContent = pieceSymbols[piece];
                             cell.dataset.piece = piece;
                             
-                            // ΣΤΑΘΕΡΟ ΜΕΓΕΘΟΣ ΚΑΙ ΧΡΩΜΑ ΓΙΑ ΟΛΑ ΤΑ ΠΙΟΝΙΑ
+                            // ΣΤΑΘΕΡΟ ΜΕΓΕΘΟΣ ΚΑΙ ΧΡΩΜΑ - ΑΣΠΡΑ ΓΙΑ ΛΕΥΚΑ, ΜΑΥΡΑ ΓΙΑ ΜΑΥΡΑ
                             if (piece.startsWith('w')) {
+                                // ΛΕΥΚΑ ΠΙΟΝΙΑ - ΑΣΠΡΟ ΧΡΩΜΑ
                                 cell.style.color = '#ffffff';
                                 cell.style.textShadow = '0 3px 6px rgba(0,0,0,0.8)';
                                 cell.style.fontWeight = '700';
                                 cell.style.fontSize = '45px';
                             } else {
+                                // ΜΑΥΡΑ ΠΙΟΝΙΑ - ΜΑΥΡΟ ΧΡΩΜΑ
                                 cell.style.color = '#000000';
-                                cell.style.textShadow = '0 2px 4px rgba(255,255,255,0.5)';
+                                cell.style.textShadow = '0 2px 4px rgba(255,255,255,0.3)';
                                 cell.style.fontWeight = '700';
                                 cell.style.fontSize = '45px';
                             }
@@ -706,13 +710,15 @@
                     
                     if (piece) {
                         if (piece.startsWith('w')) {
+                            // ΛΕΥΚΑ ΠΙΟΝΙΑ - ΑΣΠΡΟ ΧΡΩΜΑ
                             cell.style.color = '#ffffff';
                             cell.style.textShadow = '0 3px 6px rgba(0,0,0,0.8)';
                             cell.style.fontWeight = '700';
                             cell.style.fontSize = '45px';
                         } else {
+                            // ΜΑΥΡΑ ΠΙΟΝΙΑ - ΜΑΥΡΟ ΧΡΩΜΑ
                             cell.style.color = '#000000';
-                            cell.style.textShadow = '0 2px 4px rgba(255,255,255,0.5)';
+                            cell.style.textShadow = '0 2px 4px rgba(255,255,255,0.3)';
                             cell.style.fontWeight = '700';
                             cell.style.fontSize = '45px';
                         }
@@ -773,6 +779,7 @@
                     const pieceElement = document.createElement('span');
                     pieceElement.classList.add('captured-piece');
                     pieceElement.textContent = pieceSymbols[piece];
+                    // ΑΣΠΡΑ ΠΙΟΝΙΑ ΣΤΟΝ ΛΕΥΚΟ ΠΑΙΚΤΗ
                     pieceElement.style.color = '#ffffff';
                     pieceElement.style.fontSize = '32px';
                     capturedWhite.appendChild(pieceElement);
@@ -782,6 +789,7 @@
                     const pieceElement = document.createElement('span');
                     pieceElement.classList.add('captured-piece');
                     pieceElement.textContent = pieceSymbols[piece];
+                    // ΜΑΥΡΑ ΠΙΟΝΙΑ ΣΤΟΝ ΜΑΥΡΟ ΠΑΙΚΤΗ
                     pieceElement.style.color = '#000000';
                     pieceElement.style.fontSize = '32px';
                     capturedBlack.appendChild(pieceElement);
