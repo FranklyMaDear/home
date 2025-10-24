@@ -38,20 +38,21 @@
         }
 
         h1 {
-            font-size: 2.8rem;
+            font-size: 3.2rem;
             margin-bottom: 10px;
-            background: linear-gradient(90deg, #d4af37, #f0e6d2);
+            background: linear-gradient(90deg, #ff6b35, #f7931e, #ffd200);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
-            letter-spacing: 1px;
+            text-shadow: 0 2px 15px rgba(255, 107, 53, 0.4);
+            letter-spacing: 1.5px;
+            font-weight: 800;
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: #b0b0b0;
             margin-bottom: 20px;
-            font-weight: 300;
+            font-weight: 400;
         }
 
         .game-container {
@@ -80,11 +81,11 @@
         }
 
         .section-title {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             margin-bottom: 15px;
-            color: #d4af37;
+            color: #ff6b35;
             text-align: center;
-            font-weight: 400;
+            font-weight: 700;
             position: relative;
         }
 
@@ -94,18 +95,24 @@
             bottom: -8px;
             left: 50%;
             transform: translateX(-50%);
-            width: 60px;
-            height: 2px;
-            background: #d4af37;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b35, #ffd200);
+            border-radius: 3px;
         }
 
         /* Στυλ Σκακιέρας */
         .board-container {
             position: relative;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
             overflow: hidden;
             transition: transform 0.3s ease;
+            border: 5px solid #2a1e15;
+        }
+
+        .board-container:hover {
+            transform: translateY(-5px);
         }
 
         .board {
@@ -114,7 +121,6 @@
             grid-template-rows: repeat(8, 1fr);
             width: 500px;
             height: 500px;
-            border: 15px solid #2a1e15;
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
             position: relative;
             background: #2a1e15;
@@ -144,20 +150,21 @@
 
         .light {
             background: 
-                radial-gradient(circle at 30% 30%, rgba(227, 198, 156, 0.8) 0%, transparent 70%),
-                #e3c69c;
+                radial-gradient(circle at 30% 30%, rgba(255, 230, 200, 0.9) 0%, transparent 70%),
+                #f0d9b5;
             background-blend-mode: overlay;
         }
 
         .dark {
             background: 
-                radial-gradient(circle at 70% 70%, rgba(101, 67, 33, 0.9) 0%, transparent 70%),
-                #654321;
+                radial-gradient(circle at 70% 70%, rgba(120, 70, 20, 0.9) 0%, transparent 70%),
+                #b58863;
             background-blend-mode: overlay;
         }
 
         .cell.selected {
             background-color: rgba(106, 190, 255, 0.7);
+            box-shadow: inset 0 0 0 3px rgba(106, 190, 255, 0.9);
         }
 
         .cell.possible-move::after {
@@ -166,7 +173,8 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background-color: rgba(106, 190, 255, 0.5);
+            background-color: rgba(106, 190, 255, 0.7);
+            box-shadow: 0 0 10px rgba(106, 190, 255, 0.9);
         }
 
         .cell.possible-capture {
@@ -175,6 +183,7 @@
 
         .cell.check {
             background-color: rgba(255, 50, 50, 0.5);
+            box-shadow: inset 0 0 0 3px rgba(255, 50, 50, 0.9);
         }
 
         .coordinate {
@@ -183,6 +192,7 @@
             color: rgba(0, 0, 0, 0.7);
             pointer-events: none;
             z-index: 2;
+            font-weight: 700;
         }
 
         .coordinate.file {
@@ -196,90 +206,98 @@
         }
 
         .light .coordinate {
-            color: #654321;
+            color: #7a5230;
         }
 
         .dark .coordinate {
-            color: #e3c69c;
+            color: #f0d9b5;
         }
 
         /* Πληροφορίες Παιχνιδιού */
         .game-status {
-            background: rgba(30, 30, 30, 0.8);
-            border-radius: 10px;
-            padding: 20px;
+            background: rgba(40, 40, 40, 0.9);
+            border-radius: 12px;
+            padding: 25px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            border-left: 3px solid #d4af37;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            border-left: 4px solid #ff6b35;
         }
 
         .status-message {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             margin-bottom: 10px;
-            color: #f0e6d2;
+            color: #ffd200;
+            font-weight: 700;
         }
 
         .status-detail {
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: #b0b0b0;
+            font-weight: 500;
         }
 
         .controls {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         button {
             flex: 1;
-            padding: 12px;
-            background: #0f3460;
+            padding: 14px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c42);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 700;
             transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(255, 107, 53, 0.3);
+            font-size: 1rem;
         }
 
         button:hover {
-            background: #1a508b;
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, #ff8c42, #ffa95e);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 107, 53, 0.5);
         }
 
         .captured-pieces {
-            background: rgba(30, 30, 30, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            background: rgba(40, 40, 40, 0.9);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
         .captured-container {
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         .captured-white, .captured-black {
             display: flex;
             flex-wrap: wrap;
             gap: 5px;
-            min-height: 40px;
-            padding: 10px;
-            background: rgba(20, 20, 35, 0.7);
-            border-radius: 8px;
+            min-height: 50px;
+            padding: 15px;
+            background: rgba(30, 30, 45, 0.8);
+            border-radius: 10px;
             width: 48%;
+            align-items: center;
+            justify-content: center;
         }
 
         .captured-piece {
-            font-size: 24px;
+            font-size: 28px;
+            font-weight: 700;
         }
 
         .move-history {
-            background: rgba(30, 30, 30, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            background: rgba(40, 40, 40, 0.9);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             max-height: 300px;
             overflow-y: auto;
         }
@@ -287,50 +305,54 @@
         .moves-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 5px;
-            margin-top: 10px;
+            gap: 8px;
+            margin-top: 15px;
         }
 
         .move {
-            padding: 8px;
-            background: rgba(40, 40, 60, 0.7);
-            border-radius: 4px;
+            padding: 10px;
+            background: rgba(50, 50, 70, 0.8);
+            border-radius: 6px;
             text-align: center;
             font-family: monospace;
+            font-weight: 600;
         }
 
         .timer {
-            background: rgba(30, 30, 30, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            background: rgba(40, 40, 40, 0.9);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
         .timer-container {
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         .timer-white, .timer-black {
             text-align: center;
-            padding: 15px;
-            background: rgba(20, 20, 35, 0.7);
-            border-radius: 8px;
+            padding: 20px;
+            background: rgba(30, 30, 45, 0.8);
+            border-radius: 10px;
             width: 48%;
             transition: all 0.3s;
+            font-weight: 600;
         }
 
         .timer-active {
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.7);
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.8);
             transform: scale(1.05);
+            background: rgba(40, 40, 55, 0.9);
         }
 
         .time-display {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-top: 5px;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-top: 8px;
             font-family: monospace;
+            color: #ffd200;
         }
 
         /* Responsive Design */
@@ -354,6 +376,10 @@
             .cell {
                 font-size: 30px;
             }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -373,19 +399,23 @@
             .controls {
                 flex-direction: column;
             }
+            
+            .section-title {
+                font-size: 1.4rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Σκακιστική Μονομαχία</h1>
+            <h1>ΣΚΑΚΙΣΤΙΚΗ ΜΟΝΟΜΑΧΙΑ</h1>
             <p class="subtitle">Διαδραστικό Παιχνίδι Σκάκι</p>
         </header>
 
         <div class="game-container">
             <div class="board-section">
-                <h2 class="section-title">Σκακιέρα</h2>
+                <h2 class="section-title">ΣΚΑΚΙΕΡΑ</h2>
                 <div class="board-container">
                     <div class="board" id="chessboard">
                         <!-- Η σκακιέρα θα δημιουργηθεί δυναμικά με JavaScript -->
@@ -395,16 +425,16 @@
 
             <div class="info-section">
                 <div class="game-status">
-                    <div class="status-message" id="statusMessage">Σειρά του Λευκού Παίκτη</div>
+                    <div class="status-message" id="statusMessage">ΣΕΙΡΑ ΤΟΥ ΛΕΥΚΟΥ ΠΑΙΚΤΗ</div>
                     <div class="status-detail" id="statusDetail">Επιλέξτε ένα κομμάτι για να αρχίσει το παιχνίδι</div>
                     <div class="controls">
-                        <button id="newGame">Νέο Παιχνίδι</button>
-                        <button id="undoMove">Αναίρεση Κίνησης</button>
+                        <button id="newGame">ΝΕΟ ΠΑΙΧΝΙΔΙ</button>
+                        <button id="undoMove">ΑΝΑΙΡΕΣΗ ΚΙΝΗΣΗΣ</button>
                     </div>
                 </div>
 
                 <div class="captured-pieces">
-                    <h2 class="section-title">Αιχμαλωτισμένα Κομμάτια</h2>
+                    <h2 class="section-title">ΑΙΧΜΑΛΩΤΙΣΜΕΝΑ ΚΟΜΜΑΤΙΑ</h2>
                     <div class="captured-container">
                         <div class="captured-white" id="capturedWhite">
                             <!-- Τα αιχμαλωτισμένα λευκά κομμάτια θα προστεθούν εδώ -->
@@ -416,21 +446,21 @@
                 </div>
 
                 <div class="move-history">
-                    <h2 class="section-title">Ιστορικό Κινήσεων</h2>
+                    <h2 class="section-title">ΙΣΤΟΡΙΚΟ ΚΙΝΗΣΕΩΝ</h2>
                     <div class="moves-list" id="movesList">
                         <!-- Οι κινήσεις θα προστεθούν εδώ -->
                     </div>
                 </div>
 
                 <div class="timer">
-                    <h2 class="section-title">Χρονόμετρο</h2>
+                    <h2 class="section-title">ΧΡΟΝΟΜΕΤΡΟ</h2>
                     <div class="timer-container">
                         <div class="timer-white" id="timerWhite">
-                            <div>Λευκός Παίκτης</div>
+                            <div>ΛΕΥΚΟΣ ΠΑΙΚΤΗΣ</div>
                             <div class="time-display" id="whiteTime">10:00</div>
                         </div>
                         <div class="timer-black" id="timerBlack">
-                            <div>Μαύρος Παίκτης</div>
+                            <div>ΜΑΥΡΟΣ ΠΑΙΚΤΗΣ</div>
                             <div class="time-display" id="blackTime">10:00</div>
                         </div>
                     </div>
@@ -526,17 +556,17 @@
                             cell.textContent = getPieceSymbol(piece);
                             cell.dataset.piece = piece;
                             
-                            // ΔΙΟΡΘΩΣΗ: Ίδιο μέγεθος για όλα τα πιόνια και bold λευκά
+                            // Βελτιωμένο στυλ για τα κομμάτια
                             if (piece[0] === 'w') {
                                 cell.style.color = '#ffffff';
-                                cell.style.textShadow = '0 2px 4px rgba(0,0,0,0.7)';
-                                cell.style.fontWeight = 'bold';
-                                cell.style.fontSize = '40px';
+                                cell.style.textShadow = '0 3px 6px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.3)';
+                                cell.style.fontWeight = '800';
+                                cell.style.fontSize = '42px';
                             } else {
                                 cell.style.color = '#000000';
-                                cell.style.textShadow = '0 1px 3px rgba(255,255,255,0.5)';
-                                cell.style.fontWeight = 'normal';
-                                cell.style.fontSize = '40px';
+                                cell.style.textShadow = '0 2px 5px rgba(255,255,255,0.5), 0 0 8px rgba(0,0,0,0.3)';
+                                cell.style.fontWeight = '800';
+                                cell.style.fontSize = '42px';
                             }
                         }
                         
@@ -828,18 +858,18 @@
                     cell.textContent = piece ? getPieceSymbol(piece) : '';
                     cell.dataset.piece = piece || '';
                     
-                    // ΔΙΟΡΘΩΣΗ: Ίδιο μέγεθος για όλα τα πιόνια και bold λευκά
+                    // Βελτιωμένο στυλ για τα κομμάτια
                     if (piece) {
                         if (piece[0] === 'w') {
                             cell.style.color = '#ffffff';
-                            cell.style.textShadow = '0 2px 4px rgba(0,0,0,0.7)';
-                            cell.style.fontWeight = 'bold';
-                            cell.style.fontSize = '40px';
+                            cell.style.textShadow = '0 3px 6px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.3)';
+                            cell.style.fontWeight = '800';
+                            cell.style.fontSize = '42px';
                         } else {
                             cell.style.color = '#000000';
-                            cell.style.textShadow = '0 1px 3px rgba(255,255,255,0.5)';
-                            cell.style.fontWeight = 'normal';
-                            cell.style.fontSize = '40px';
+                            cell.style.textShadow = '0 2px 5px rgba(255,255,255,0.5), 0 0 8px rgba(0,0,0,0.3)';
+                            cell.style.fontWeight = '800';
+                            cell.style.fontSize = '42px';
                         }
                     } else {
                         cell.style.color = '';
@@ -912,7 +942,8 @@
                     pieceElement.classList.add('captured-piece');
                     pieceElement.textContent = getPieceSymbol(piece);
                     pieceElement.style.color = '#ffffff';
-                    pieceElement.style.fontWeight = 'bold';
+                    pieceElement.style.fontWeight = '800';
+                    pieceElement.style.textShadow = '0 2px 4px rgba(0,0,0,0.7)';
                     capturedWhite.appendChild(pieceElement);
                 });
                 
@@ -921,28 +952,22 @@
                     pieceElement.classList.add('captured-piece');
                     pieceElement.textContent = getPieceSymbol(piece);
                     pieceElement.style.color = '#000000';
-                    pieceElement.style.fontWeight = 'normal';
+                    pieceElement.style.fontWeight = '800';
+                    pieceElement.style.textShadow = '0 2px 4px rgba(255,255,255,0.5)';
                     capturedBlack.appendChild(pieceElement);
                 });
             }
 
             // Ενημέρωση κατάστασης παιχνιδιού
             function updateStatus() {
-                if (currentPlayer === 'white') {
-                    statusMessage.textContent = 'Σειρά του Λευκού Παίκτη';
-                    timerWhite.classList.add('timer-active');
-                    timerBlack.classList.remove('timer-active');
-                } else {
-                    statusMessage.textContent = 'Σειρά του Μαύρου Παίκτη';
-                    timerWhite.classList.remove('timer-active');
-                    timerBlack.classList.add('timer-active');
-                }
+                statusMessage.textContent = currentPlayer === 'white' 
+                    ? 'ΣΕΙΡΑ ΤΟΥ ΛΕΥΚΟΥ ΠΑΙΚΤΗ' 
+                    : 'ΣΕΙΡΑ ΤΟΥ ΜΑΥΡΟΥ ΠΑΙΚΤΗ';
                 
-                // Έλεγχος για σαχ
                 if (checkState.white) {
-                    statusDetail.textContent = 'Ο Λευκός Βασιλιάς είναι σε σαχ!';
+                    statusDetail.textContent = 'Ο ΛΕΥΚΟΣ ΒΑΣΙΛΙΑΣ ΕΙΝΑΙ ΣΕ ΣΑΧ!';
                 } else if (checkState.black) {
-                    statusDetail.textContent = 'Ο Μαύρος Βασιλιάς είναι σε σαχ!';
+                    statusDetail.textContent = 'Ο ΜΑΥΡΟΣ ΒΑΣΙΛΙΑΣ ΕΙΝΑΙ ΣΕ ΣΑΧ!';
                 } else {
                     statusDetail.textContent = 'Επιλέξτε ένα κομμάτι για να παίξετε';
                 }
@@ -950,72 +975,76 @@
 
             // Έλεγχος για τερματισμό του παιχνιδιού
             function checkGameEnd() {
-                // Απλοποιημένος έλεγχος - στην πραγματική υλοποίηση θα πρέπει 
-                // να ελέγχουμε για σαχ, ματ και πατ
-                
-                // Έλεγχος για βασικό ματ (χωρίς πλήρη υλοποίηση κανόνων)
+                // Απλοποιημένος έλεγχος - θα μπορούσε να επεκταθεί
                 const kings = { white: false, black: false };
                 
                 for (let row = 0; row < 8; row++) {
                     for (let col = 0; col < 8; col++) {
                         const piece = boardState[row][col];
-                        if (piece && piece[1] === 'k') {
-                            kings[getPieceColor(piece)] = true;
-                        }
+                        if (piece === 'wk') kings.white = true;
+                        if (piece === 'bk') kings.black = true;
                     }
                 }
                 
                 if (!kings.white) {
-                    endGame('Ματ! Ο Μαύρος Παίκτης κερδίζει.', 'Ο βασιλιάς του λευκού αιχμαλωτίστηκε.');
+                    endGame('Ο ΜΑΥΡΟΣ ΠΑΙΚΤΗΣ ΚΕΡΔΙΣΕ!');
                 } else if (!kings.black) {
-                    endGame('Ματ! Ο Λευκός Παίκτης κερδίζει.', 'Ο βασιλιάς του μαύρου αιχμαλωτίστηκε.');
+                    endGame('Ο ΛΕΥΚΟΣ ΠΑΙΚΤΗΣ ΚΕΡΔΙΣΕ!');
                 }
             }
 
             // Τερματισμός παιχνιδιού
-            function endGame(message, detail) {
+            function endGame(message) {
                 gameActive = false;
                 statusMessage.textContent = message;
-                statusDetail.textContent = detail;
+                statusDetail.textContent = 'Πατήστε "Νέο Παιχνίδι" για να ξαναρχίσετε';
                 clearInterval(timerInterval);
             }
 
-            // Επανεκκίνηση επιλογής
-            function resetSelection() {
-                selectedPiece = null;
-                possibleMoves = [];
+            // Επανάληψη κίνησης
+            function undoMove() {
+                if (gameHistory.length === 0) return;
                 
-                const cells = document.querySelectorAll('.cell');
-                cells.forEach(cell => {
-                    cell.classList.remove('selected', 'possible-move', 'possible-capture');
-                });
+                const lastState = gameHistory.pop();
+                boardState = lastState.board;
+                currentPlayer = lastState.currentPlayer;
+                capturedPieces = lastState.capturedPieces;
+                
+                // Αφαίρεση της τελευταίας κίνησης από το ιστορικό
+                if (currentPlayer === 'white') {
+                    moveHistory.pop();
+                } else {
+                    const lastMove = moveHistory[moveHistory.length - 1];
+                    lastMove.black = '';
+                }
+                
+                updateBoard();
+                updateStatus();
+                updateCapturedPieces();
+                updateMoveHistory();
+                resetSelection();
             }
 
-            // Λήψη στοιχείου κελιού από συντεταγμένες
-            function getCellElement(row, col) {
-                return document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-            }
-
-            // Χρονομέτρηση
+            // Εκκίνηση χρονομέτρου
             function startTimer() {
                 clearInterval(timerInterval);
                 
                 timerInterval = setInterval(() => {
-                    if (currentPlayer === 'white') {
-                        whiteTime--;
-                        if (whiteTime <= 0) {
-                            endGame('Νίκη για τον Μαύρο Παίκτη!', 'Ο χρόνος του Λευκού έληξε.');
-                            return;
+                    if (gameActive) {
+                        if (currentPlayer === 'white') {
+                            whiteTime--;
+                            if (whiteTime <= 0) {
+                                endGame('Ο ΜΑΥΡΟΣ ΠΑΙΚΤΗΣ ΚΕΡΔΙΣΕ ΛΟΓΩ ΧΡΟΝΟΥ!');
+                            }
+                        } else {
+                            blackTime--;
+                            if (blackTime <= 0) {
+                                endGame('Ο ΛΕΥΚΟΣ ΠΑΙΚΤΗΣ ΚΕΡΔΙΣΕ ΛΟΓΩ ΧΡΟΝΟΥ!');
+                            }
                         }
-                    } else {
-                        blackTime--;
-                        if (blackTime <= 0) {
-                            endGame('Νίκη για τον Λευκό Παίκτη!', 'Ο χρόνος του Μαύρου έληξε.');
-                            return;
-                        }
+                        
+                        updateTimerDisplay();
                     }
-                    
-                    updateTimerDisplay();
                 }, 1000);
             }
 
@@ -1024,15 +1053,40 @@
                 const formatTime = (seconds) => {
                     const mins = Math.floor(seconds / 60);
                     const secs = seconds % 60;
-                    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
                 };
                 
                 whiteTimeElement.textContent = formatTime(whiteTime);
                 blackTimeElement.textContent = formatTime(blackTime);
+                
+                // Επισήμανση ενεργού χρονομέτρου
+                if (currentPlayer === 'white') {
+                    timerWhite.classList.add('timer-active');
+                    timerBlack.classList.remove('timer-active');
+                } else {
+                    timerWhite.classList.remove('timer-active');
+                    timerBlack.classList.add('timer-active');
+                }
+            }
+
+            // Αποεπιλογή κομματιού
+            function resetSelection() {
+                selectedPiece = null;
+                possibleMoves = [];
+                
+                const cells = document.querySelectorAll('.cell');
+                cells.forEach(cell => {
+                    cell.classList.remove('selected', 'possible-move', 'possible-capture', 'check');
+                });
+            }
+
+            // Λήψη στοιχείου κελιού από συντεταγμένες
+            function getCellElement(row, col) {
+                return document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
             }
 
             // Νέο παιχνίδι
-            newGameButton.addEventListener('click', () => {
+            function newGame() {
                 boardState = JSON.parse(JSON.stringify(initialBoard));
                 currentPlayer = 'white';
                 gameHistory = [];
@@ -1044,31 +1098,17 @@
                 checkState = { white: false, black: false };
                 
                 resetSelection();
-                createBoard();
+                updateBoard();
                 updateStatus();
-                updateMoveHistory();
                 updateCapturedPieces();
+                updateMoveHistory();
                 updateTimerDisplay();
                 startTimer();
-            });
+            }
 
-            // Αναίρεση κίνησης
-            undoButton.addEventListener('click', () => {
-                if (gameHistory.length > 0) {
-                    const previousState = gameHistory.pop();
-                    boardState = previousState.board;
-                    currentPlayer = previousState.currentPlayer;
-                    capturedPieces = previousState.capturedPieces;
-                    
-                    moveHistory.pop();
-                    
-                    resetSelection();
-                    updateBoard();
-                    updateStatus();
-                    updateMoveHistory();
-                    updateCapturedPieces();
-                }
-            });
+            // Προσθήκη event listeners για τα κουμπιά
+            newGameButton.addEventListener('click', newGame);
+            undoButton.addEventListener('click', undoMove);
 
             // Αρχικοποίηση του παιχνιδιού
             initGame();
