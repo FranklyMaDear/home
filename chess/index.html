@@ -48,6 +48,8 @@
             box-shadow: 0 0 40px rgba(0,0,0,0.4);
             width: var(--board-size);
             flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
         }
 
         .board {
@@ -349,6 +351,58 @@
             align-items: center;
             width: 100%;
         }
+        
+        /* Στυλ για χρονομέτρηση */
+        .timer-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .timer {
+            background: #2c2414;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .timer.white {
+            border: 2px solid #f0d9b5;
+        }
+        
+        .timer.black {
+            border: 2px solid #b58863;
+        }
+        
+        .timer.low {
+            color: #ff6b6b;
+            animation: pulse 1s infinite;
+        }
+        
+        .time-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .time-btn {
+            min-width: 80px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .time-btn.active {
+            background: #e0ad61;
+            box-shadow: 0 0 0 2px white;
+        }
     </style>
 </head>
 <body>
@@ -358,7 +412,16 @@
             <div class="board-container">
                 <h1>♕ Σκάκι Deluxe Pro ♛</h1>
                 <div class="game-info" id="gameInfo">Παίζουν τα Λευκά</div>
+                <div class="timer-container">
+                    <div class="timer white" id="whiteTimer">5:00</div>
+                    <div class="timer black" id="blackTimer">5:00</div>
+                </div>
                 <div id="board" class="board"></div>
+                <div class="time-controls">
+                    <button class="time-btn active" data-time="180">3 λεπτά</button>
+                    <button class="time-btn" data-time="300">5 λεπτά</button>
+                    <button class="time-btn" data-time="600">10 λεπτών</button>
+                </div>
                 <div class="controls">
                     <button id="resetBtn">Νέα Παρτίδα</button>
                     <button id="flipBtn">Αντιστροφή</button>
@@ -413,6 +476,8 @@
         const victoryMessageEl = document.getElementById("victoryMessage");
         const winnerTextEl = document.getElementById("winnerText");
         const celebrationEl = document.getElementById("celebration");
+        const whiteTimerEl = document.getElementById("whiteTimer");
+        const blackTimerEl = document.getElementById("blackTimer");
         
         let board = [];
         let whiteToMove = true;
@@ -425,6 +490,12 @@
         let aiDepth = 4;
         let kingInCheck = false;
         let promotionPending = null;
+        
+        // Μεταβλητές για το χρονομέτρημα
+        let whiteTime = 300; // 5 λεπτά σε δευτερόλεπτα
+        let blackTime = 300;
+        let timerInterval = null;
+        let timeControl = 300; // Προεπιλεγμένο: 5 λεπτά
         
         const START = [
             ['r','n','b','q','k','b','n','r'],
@@ -505,6 +576,15 @@
                         oscillator.start(audioContext.currentTime);
                         oscillator.stop(audioContext.currentTime + 1);
                         break;
+                    case 'pieceTap':
+                        // Ήχος για άγγιγμα πιονιού
+                        oscillator.frequency.value = 300;
+                        oscillator.type = 'triangle';
+                        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.1);
+                        break;
                 }
             } catch (e) {
                 console.log("Αδυναμία αναπαραγωγής ήχου:", e);
@@ -532,6 +612,15 @@
             gameActive = true;
             kingInCheck = false;
             promotionPending = null;
+            
+            // Επαναφορά χρονομέτρων
+            whiteTime = timeControl;
+            blackTime = timeControl;
+            updateTimers();
+            
+            // Έναρξη χρονομέτρου
+            startTimer();
+            
             updateGameInfo();
             render();
         }
@@ -592,6 +681,15 @@
                                 e.stopPropagation();
                                 onSquareTap(row, col);
                             });
+                            
+                            // Προσθήκη event listener για ήχο αγγίγματος
+                            img.addEventListener("mousedown", () => {
+                                playSound('pieceTap');
+                            });
+                            
+                            img.addEventListener("touchstart", () => {
+                                playSound('pieceTap');
+                            });
                         }
                         
                         sq.appendChild(img);
@@ -650,7 +748,11 @@
                 playSound('move'); // Ήχος για απλή κίνηση
             }
             
+            // Αλλαγή σειράς
             whiteToMove=!whiteToMove;
+            
+            // Αλλαγή χρονομέτρου
+            updateTimers();
             
             // Έλεγχος για προαγωγή πιονιού
             const piece = board[tr][tc];
@@ -705,6 +807,7 @@
             
             if (!hasLegalMoves) {
                 gameActive = false;
+                stopTimer();
                 if (kingInCheck) {
                     // Ματ
                     playSound('checkmate'); // Προφορά "Σάχ Ματ"
@@ -855,119 +958,147 @@
                 'nb':'e/ef/Chess_ndt45.svg',
                 'bw':'b/b1/Chess_blt45.svg',
                 'bb':'9/98/Chess_bdt45.svg',
-                'qw':'1/15/Chess_qlt45.svg',
-                'qb':'4/47/Chess_qdt45.svg',
-                'kw':'4/42/Chess_klt45.svg',
-                'kb':'f/f0/Chess_kdt45.svg'
-            }[t+c]}`;
+                'qw':'3/3b/Chess_qlt45.svg',
+                'qb':'a/af/Chess_qdt45.svg',
+                'kw':'1/1b/Chess_klt45.svg',
+                'kb':'7/7c/Chess_kdt45.svg'
+            }[c+t]}`;
         }
         
-        function updateGameInfo() {
+        function updateGameInfo(){
             if (!gameActive) return;
             
+            let status = whiteToMove ? "Παίζουν τα Λευκά" : "Παίζουν τα Μαύρα";
             if (kingInCheck) {
-                gameInfoEl.innerHTML = `<span class="status-check">${whiteToMove ? "Σαχ στα Λευκά!" : "Σαχ στα Μαύρα!"}</span>`;
-            } else {
-                gameInfoEl.textContent = whiteToMove ? "Παίζουν τα Λευκά" : "Παίζουν τα Μαύρα";
+                status += " - Σαχ!";
             }
+            gameInfoEl.textContent = status;
         }
         
-        // AI ΚΙΝΗΣΕΙΣ - Βελτιωμένο AI
+        // AI κίνηση
         function makeAIMove() {
+            if (!gameActive) return;
+            
             thinkingIndicator.style.display = 'block';
             
             setTimeout(() => {
-                const bestMove = findBestMove();
+                const bestMove = getBestMove(aiDepth);
                 if (bestMove) {
                     movePiece(bestMove.from.r, bestMove.from.c, bestMove.to.r, bestMove.to.c);
                     render();
                 }
                 thinkingIndicator.style.display = 'none';
-            }, 800);
+            }, 500);
         }
         
-        function findBestMove() {
-            const possibleMoves = [];
+        function getBestMove(depth) {
+            const moves = getAllLegalMoves(aiColor);
+            if (moves.length === 0) return null;
             
-            // Βρες όλες τις πιθανές κινήσεις για το AI
+            let bestMove = null;
+            let bestValue = -Infinity;
+            
+            for (const move of moves) {
+                // Εκτέλεση προσωρινής κίνησης
+                const originalPiece = board[move.to.r][move.to.c];
+                board[move.to.r][move.to.c] = board[move.from.r][move.from.c];
+                board[move.from.r][move.from.c] = null;
+                
+                // Αξιολόγηση θέσης
+                const value = -minimax(depth - 1, -Infinity, Infinity, false);
+                
+                // Αναίρεση κίνησης
+                board[move.from.r][move.from.c] = board[move.to.r][move.to.c];
+                board[move.to.r][move.to.c] = originalPiece;
+                
+                if (value > bestValue) {
+                    bestValue = value;
+                    bestMove = move;
+                }
+            }
+            
+            return bestMove;
+        }
+        
+        function minimax(depth, alpha, beta, isMaximizing) {
+            if (depth === 0) {
+                return evaluateBoard();
+            }
+            
+            const currentColor = isMaximizing ? aiColor : (aiColor === 'w' ? 'b' : 'w');
+            const moves = getAllLegalMoves(currentColor);
+            
+            if (moves.length === 0) {
+                // Ματ ή πατ
+                if (isKingInCheck(currentColor)) {
+                    return isMaximizing ? -1000 : 1000; // Ματ
+                } else {
+                    return 0; // Πατ
+                }
+            }
+            
+            if (isMaximizing) {
+                let maxEval = -Infinity;
+                for (const move of moves) {
+                    // Εκτέλεση προσωρινής κίνησης
+                    const originalPiece = board[move.to.r][move.to.c];
+                    board[move.to.r][move.to.c] = board[move.from.r][move.from.c];
+                    board[move.from.r][move.from.c] = null;
+                    
+                    const eval = minimax(depth - 1, alpha, beta, false);
+                    
+                    // Αναίρεση κίνησης
+                    board[move.from.r][move.from.c] = board[move.to.r][move.to.c];
+                    board[move.to.r][move.to.c] = originalPiece;
+                    
+                    maxEval = Math.max(maxEval, eval);
+                    alpha = Math.max(alpha, eval);
+                    if (beta <= alpha) break; // Αποκοπή
+                }
+                return maxEval;
+            } else {
+                let minEval = Infinity;
+                for (const move of moves) {
+                    // Εκτέλεση προσωρινής κίνησης
+                    const originalPiece = board[move.to.r][move.to.c];
+                    board[move.to.r][move.to.c] = board[move.from.r][move.from.c];
+                    board[move.from.r][move.from.c] = null;
+                    
+                    const eval = minimax(depth - 1, alpha, beta, true);
+                    
+                    // Αναίρεση κίνησης
+                    board[move.from.r][move.from.c] = board[move.to.r][move.to.c];
+                    board[move.to.r][move.to.c] = originalPiece;
+                    
+                    minEval = Math.min(minEval, eval);
+                    beta = Math.min(beta, eval);
+                    if (beta <= alpha) break; // Αποκοπή
+                }
+                return minEval;
+            }
+        }
+        
+        function getAllLegalMoves(color) {
+            const moves = [];
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const piece = board[r][c];
-                    if (piece && piece.color === aiColor) {
-                        const moves = generateLegalMoves(r, c);
-                        moves.forEach(move => {
-                            possibleMoves.push({
+                    if (piece && piece.color === color) {
+                        const legalMoves = generateLegalMoves(r, c);
+                        legalMoves.forEach(move => {
+                            moves.push({
                                 from: {r, c},
-                                to: move
+                                to: {r: move.r, c: move.c}
                             });
                         });
                     }
                 }
             }
-            
-            // Αν δεν υπάρχουν κινήσεις, επέστρεψε null
-            if (possibleMoves.length === 0) return null;
-            
-            // Αξιολόγηση κινήσεων με βάση την τρέχουσα δυσκολία
-            let bestScore = -Infinity;
-            let bestMoves = [];
-            
-            for (const move of possibleMoves) {
-                // Προσωρινή εκτέλεση κίνησης
-                const originalPiece = board[move.to.r][move.to.c];
-                const movingPiece = board[move.from.r][move.from.c];
-                
-                board[move.to.r][move.to.c] = movingPiece;
-                board[move.from.r][move.from.c] = null;
-                
-                // Αξιολόγηση θέσης
-                let score = evaluatePosition();
-                
-                // Αν η κίνηση καταλαμβάνει κομμάτι, προσθέτουμε επιπλέον πόντους
-                if (originalPiece) {
-                    score += PIECE_VALUES[originalPiece.type] * 2;
-                }
-                
-                // Αν η κίνηση προστατεύει βασικό κομμάτι
-                if (protectsImportantPiece(move)) {
-                    score += 10;
-                }
-                
-                // Αν η κίνηση απειλεί βασικό κομμάτι
-                if (threatensImportantPiece(move)) {
-                    score += 15;
-                }
-                
-                // Αν η κίνηση βάζει τον αντίπαλο βασιλιά σε σαχ
-                const tempWhiteToMove = whiteToMove;
-                whiteToMove = !whiteToMove;
-                if (isKingInCheck(whiteToMove ? 'w' : 'b')) {
-                    score += 50;
-                }
-                whiteToMove = tempWhiteToMove;
-                
-                // Ανάκληση κίνησης
-                board[move.from.r][move.from.c] = movingPiece;
-                board[move.to.r][move.to.c] = originalPiece;
-                
-                // Ενημέρωση καλύτερης κίνησης
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestMoves = [move];
-                } else if (score === bestScore) {
-                    bestMoves.push(move);
-                }
-            }
-            
-            // Επέλεξε τυχαία από τις καλύτερες κινήσεις
-            const randomIndex = Math.floor(Math.random() * bestMoves.length);
-            return bestMoves[randomIndex];
+            return moves;
         }
         
-        function evaluatePosition() {
+        function evaluateBoard() {
             let score = 0;
-            
-            // Αξιολόγηση βάσει υλικού
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const piece = board[r][c];
@@ -981,59 +1112,93 @@
                     }
                 }
             }
-            
             return score;
         }
         
-        function protectsImportantPiece(move) {
-            // Έλεγχος αν η κίνηση προστατεύει βασικό κομμάτι
-            // Απλοποιημένη υλοποίηση
-            return false;
+        // Χειρισμός χρονομέτρων
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                if (whiteToMove) {
+                    whiteTime--;
+                    if (whiteTime <= 0) {
+                        whiteTime = 0;
+                        gameActive = false;
+                        stopTimer();
+                        showVictoryMessage("Μαύρα");
+                        playSound('victory');
+                        gameInfoEl.textContent = "Τα Μαύρα κέρδισαν λόγω χρόνου!";
+                    }
+                } else {
+                    blackTime--;
+                    if (blackTime <= 0) {
+                        blackTime = 0;
+                        gameActive = false;
+                        stopTimer();
+                        showVictoryMessage("Λευκά");
+                        playSound('victory');
+                        gameInfoEl.textContent = "Τα Λευκά κέρδισαν λόγω χρόνου!";
+                    }
+                }
+                
+                updateTimers();
+            }, 1000);
         }
         
-        function threatensImportantPiece(move) {
-            // Έλεγχος αν η κίνηση απειλεί βασικό κομμάτι
-            // Απλοποιημένη υλοποίηση
-            return false;
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
         }
         
-        // Συναρτήσεις για διαχείριση τρόπων παιχνιδιού
-        function setGameMode(aiEnabled, aiPlaysAs = 'b') {
-            vsAI = aiEnabled;
-            aiColor = aiPlaysAs;
-            gameModeModal.style.display = 'none';
-            init();
+        function updateTimers() {
+            whiteTimerEl.textContent = formatTime(whiteTime);
+            blackTimerEl.textContent = formatTime(blackTime);
+            
+            // Προειδοποίηση όταν ο χρόνος είναι χαμηλός
+            whiteTimerEl.classList.toggle('low', whiteTime <= 30 && whiteTime > 0);
+            blackTimerEl.classList.toggle('low', blackTime <= 30 && blackTime > 0);
         }
         
-        function setDifficulty(depth) {
-            aiDepth = depth;
-            // Ενημέρωση UI για επιλεγμένη δυσκολία
-            document.querySelectorAll('.difficulty-btn').forEach(btn => {
-                btn.classList.remove('active');
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        
+        function setTimeControl(seconds) {
+            timeControl = seconds;
+            whiteTime = seconds;
+            blackTime = seconds;
+            updateTimers();
+            
+            // Ενημέρωση ενεργού κουμπιού
+            document.querySelectorAll('.time-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.time) === seconds);
             });
-            event.target.classList.add('active');
         }
         
-        // Συνάρτηση για εμφάνιση μηνύματος νίκης και πανηγυρισμού
+        // Πανηγυρισμοί για νίκη
         function showVictoryMessage(winner) {
-            winnerTextEl.textContent = `Τα ${winner} κέρδισαν!`;
+            winnerTextEl.textContent = `Νίκη για τα ${winner}!`;
             victoryMessageEl.style.display = 'block';
             
-            // Δημιουργία πανηγυρισμού με confetti
+            // Δημιουργία πανηγυρισμών
             createConfetti();
             
             // Απόκρυψη μηνύματος μετά από 5 δευτερόλεπτα
             setTimeout(() => {
                 victoryMessageEl.style.display = 'none';
-                celebrationEl.innerHTML = '';
             }, 5000);
         }
         
-        // Συνάρτηση για δημιουργία confetti
         function createConfetti() {
-            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff', '#ff6600'];
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            const confettiCount = 150;
             
-            for (let i = 0; i < 150; i++) {
+            for (let i = 0; i < confettiCount; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 confetti.style.left = Math.random() * 100 + 'vw';
@@ -1042,7 +1207,13 @@
                 confetti.style.height = Math.random() * 10 + 5 + 'px';
                 confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
                 confetti.style.animationDelay = Math.random() * 2 + 's';
+                
                 celebrationEl.appendChild(confetti);
+                
+                // Αφαίρεση μετά το τέλος της κίνησης
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
             }
         }
         
@@ -1061,7 +1232,9 @@
         });
         
         document.getElementById("twoPlayersBtn").addEventListener("click", () => {
-            setGameMode(false);
+            vsAI = false;
+            gameModeModal.style.display = 'none';
+            init();
         });
         
         document.getElementById("vsAiBtn").addEventListener("click", () => {
@@ -1070,13 +1243,22 @@
         
         document.getElementById("closeModalBtn").addEventListener("click", () => {
             gameModeModal.style.display = 'none';
+            document.getElementById("difficultySelector").style.display = 'none';
         });
         
-        // Προσθήκη event listeners για επιλογή δυσκολίας
-        document.querySelectorAll('.difficulty-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                setDifficulty(parseInt(e.target.dataset.depth));
-                setGameMode(true, 'b');
+        // Επιλογή δυσκολίας AI
+        document.querySelectorAll(".difficulty-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".difficulty-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                aiDepth = parseInt(btn.dataset.depth);
+            });
+        });
+        
+        // Επιλογή χρονικού ελέγχου
+        document.querySelectorAll(".time-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                setTimeControl(parseInt(btn.dataset.time));
             });
         });
         
