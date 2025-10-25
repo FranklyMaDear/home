@@ -6,7 +6,7 @@
     <title>Σκάκι Deluxe Pro - Online</title>
     <style>
         :root {
-            --board-size: min(80vw, 80vh, 600px);
+            --board-size: min(70vh, 70vw, 600px);
             --square-size: calc(var(--board-size) / 8);
             --piece-size: calc(var(--square-size) * 0.85);
             --dot-size: calc(var(--square-size) * 0.25);
@@ -15,39 +15,74 @@
         * {
             box-sizing: border-box;
             touch-action: manipulation;
+            margin: 0;
+            padding: 0;
         }
         
         body {
             background: radial-gradient(circle at center, #d6c6a1 0%, #b29466 80%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 10px;
             font-family: "Segoe UI", sans-serif;
-            overflow: auto;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container {
+        .header {
+            background: #3a2e16;
+            color: white;
+            padding: 10px 20px;
             display: flex;
-            width: 100%;
-            max-width: 1400px;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: clamp(18px, 4vw, 24px);
+            margin: 0;
+        }
+
+        .online-counter {
+            background: #d19a4c;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .online-counter::before {
+            content: "●";
+            color: #4CAF50;
+            font-size: 16px;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            padding: 20px;
             gap: 20px;
             justify-content: center;
             align-items: flex-start;
         }
 
-        .board-container {
+        .game-section {
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 15px;
+        }
+
+        .board-container {
             background: #3a2e16;
             padding: 15px;
             border-radius: 15px;
             box-shadow: 0 0 40px rgba(0,0,0,0.4);
-            width: var(--board-size);
-            flex-shrink: 0;
         }
 
         .board {
@@ -110,20 +145,22 @@
             100% { box-shadow: inset 0 0 0 4px rgba(255, 0, 0, 0.7); }
         }
 
-        h1 {
-            color: #fff;
-            font-size: clamp(18px, 5vw, 24px);
-            margin: 5px 0;
+        .game-info {
+            color: white;
+            font-size: clamp(14px, 3vw, 18px);
             text-align: center;
+            min-height: 24px;
+            background: #3a2e16;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
         }
 
         .controls {
-            margin-top: 10px;
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
             justify-content: center;
-            width: 100%;
         }
 
         button {
@@ -135,11 +172,9 @@
             border-radius: 8px;
             cursor: pointer;
             box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-            font-size: clamp(14px, 4vw, 16px);
-            min-width: 120px;
+            font-size: clamp(12px, 2.5vw, 14px);
+            min-width: 100px;
             transition: all 0.15s ease;
-            position: relative;
-            overflow: hidden;
         }
         
         button:active {
@@ -150,15 +185,129 @@
         button:hover, button:active { 
             background: #e0ad61; 
         }
-        
-        .game-info {
+
+        .players-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 250px;
+        }
+
+        .players-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .player-card {
+            background: #3a2e16;
+            padding: 15px;
+            border-radius: 10px;
             color: white;
-            margin: 8px 0;
-            font-size: clamp(14px, 4vw, 16px);
             text-align: center;
-            min-height: 24px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .player-card.active {
+            background: #d19a4c;
+            box-shadow: 0 0 15px rgba(209, 154, 76, 0.5);
+        }
+
+        .player-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .player-score {
+            font-size: 14px;
+            color: #ffd700;
+        }
+
+        .leaderboard {
+            background: #3a2e16;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .leaderboard h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #d19a4c;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #5d4037;
+        }
+
+        .leaderboard-rank {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .online-panel {
+            background: #3a2e16;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .online-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .online-btn {
+            background: #5d4037;
         }
         
+        .online-btn.active {
+            background: #d19a4c;
+        }
+
+        .game-list, .players-list {
+            max-height: 150px;
+            overflow-y: auto;
+            background: #2c2414;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .game-item, .player-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            background: #5d4037;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .game-item:hover, .player-item:hover {
+            background: #6d5047;
+        }
+
+        .challenge-btn {
+            background: #8b4513;
+            padding: 4px 8px;
+            font-size: 11px;
+            min-width: auto;
+            margin-left: 10px;
+        }
+
         .modal {
             position: fixed;
             top: 0;
@@ -202,199 +351,7 @@
         .close-btn {
             background: #8b4513;
         }
-        
-        .thinking {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            font-size: 18px;
-            z-index: 10;
-            display: none;
-        }
-        
-        .difficulty-selector {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .difficulty-btn {
-            background: #5d4037;
-        }
-        
-        .difficulty-btn.active {
-            background: #d19a4c;
-        }
-        
-        .status-check {
-            color: #ff6b6b;
-            font-weight: bold;
-        }
-        
-        .status-mate {
-            color: #ff0000;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-        
-        /* Στυλ για πανηγυρισμούς */
-        .celebration {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 200;
-        }
-        
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #f00;
-            opacity: 0.8;
-            animation: fall linear forwards;
-        }
-        
-        @keyframes fall {
-            to {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        .victory-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 20px 40px;
-            border-radius: 15px;
-            font-size: 24px;
-            font-weight: bold;
-            z-index: 201;
-            text-align: center;
-            display: none;
-            box-shadow: 0 0 30px rgba(255,215,0,0.5);
-            border: 2px solid gold;
-        }
-        
-        .victory-message h2 {
-            margin: 0 0 10px 0;
-            color: gold;
-        }
-        
-        .victory-message p {
-            margin: 0;
-        }
-        
-        /* Στυλ για online παιχνίδι */
-        .online-panel {
-            background: #3a2e16;
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            width: 300px;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .user-card {
-            background: #5d4037;
-            padding: 10px 15px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        
-        .user-card.active {
-            background: #d19a4c;
-            box-shadow: 0 0 10px rgba(209, 154, 76, 0.5);
-        }
-        
-        .score-display {
-            font-size: 14px;
-            margin-top: 5px;
-            color: #ffd700;
-        }
-        
-        .online-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .online-btn {
-            background: #5d4037;
-            min-width: 140px;
-        }
-        
-        .online-btn.active {
-            background: #d19a4c;
-        }
-        
-        .game-list {
-            max-height: 200px;
-            overflow-y: auto;
-            background: #2c2414;
-            border-radius: 10px;
-            padding: 10px;
-        }
-        
-        .game-item {
-            padding: 10px;
-            margin-bottom: 8px;
-            background: #5d4037;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .game-item:hover {
-            background: #6d5047;
-        }
-        
-        .players-list {
-            max-height: 200px;
-            overflow-y: auto;
-            background: #2c2414;
-            border-radius: 10px;
-            padding: 10px;
-        }
-        
-        .player-item {
-            padding: 10px;
-            margin-bottom: 8px;
-            background: #5d4037;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .challenge-btn {
-            background: #8b4513;
-            padding: 5px 10px;
-            font-size: 12px;
-            min-width: auto;
-        }
-        
+
         .form-group {
             margin-bottom: 15px;
             text-align: left;
@@ -418,7 +375,7 @@
         .form-group input:focus {
             outline: 2px solid #d19a4c;
         }
-        
+
         .chat-popup {
             position: fixed;
             bottom: 20px;
@@ -515,27 +472,73 @@
             align-items: center;
             justify-content: center;
         }
-        
-        .section-title {
+
+        .thinking {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7);
             color: white;
-            margin: 10px 0 5px 0;
-            font-size: 16px;
-            text-align: center;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 18px;
+            z-index: 10;
+            display: none;
+        }
+
+        .status-check {
+            color: #ff6b6b;
+            font-weight: bold;
         }
         
+        .status-mate {
+            color: #ff0000;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
         @media (max-width: 1100px) {
-            .container {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+                overflow-y: auto;
+            }
+            
+            .players-section {
+                width: 100%;
+                max-width: 700px;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            .players-container {
+                flex-direction: row;
+                width: 100%;
+                justify-content: space-around;
+            }
+            
+            .player-card {
+                flex: 1;
+                max-width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .players-section {
+                flex-direction: column;
+            }
+            
+            .players-container {
                 flex-direction: column;
                 align-items: center;
             }
             
-            .online-panel {
+            .player-card {
+                max-width: 100%;
                 width: 100%;
-                max-width: 700px;
             }
-        }
-        
-        @media (max-width: 768px) {
+            
             .chat-popup {
                 width: calc(100% - 40px);
                 right: 20px;
@@ -545,43 +548,17 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Αριστερό πλαίσιο online παικτών -->
-        <div class="online-panel" id="onlinePanel" style="display: none;">
-            <div class="user-info">
-                <div class="user-card" id="whitePlayer">
-                    <h3>Λευκά</h3>
-                    <div id="whitePlayerName">Αναμονή...</div>
-                    <div class="score-display" id="whiteScore">Νίκες: 0</div>
-                </div>
-                <div class="user-card" id="blackPlayer">
-                    <h3>Μαύρα</h3>
-                    <div id="blackPlayerName">Αναμονή...</div>
-                    <div class="score-display" id="blackScore">Νίκες: 0</div>
-                </div>
-            </div>
-            
-            <div class="online-controls">
-                <button class="online-btn" id="createGameBtn">Δημιουργία Παιχνιδιού</button>
-                <button class="online-btn" id="joinGameBtn">Εμφάνιση Παιχνιδιών</button>
-                <button class="online-btn" id="showPlayersBtn">Εμφάνιση Παικτών</button>
-                <button class="online-btn" id="leaveGameBtn">Αποχώρηση</button>
-            </div>
-            
-            <div class="game-list" id="gameList" style="display: none;">
-                <div class="section-title">Διαθέσιμα Παιχνίδια</div>
-            </div>
-            
-            <div class="players-list" id="playersList" style="display: none;">
-                <div class="section-title">Συνδεδεμένοι Παίκτες</div>
-            </div>
-        </div>
-        
-        <!-- Κεντρική σκακιέρα -->
-        <div class="board-container">
-            <h1>♕ Σκάκι Deluxe Pro - Online ♛</h1>
+    <div class="header">
+        <h1>♕ Σκάκι Deluxe Pro - Online ♛</h1>
+        <div class="online-counter" id="onlineCounter">Online: 0</div>
+    </div>
+
+    <div class="main-container">
+        <div class="game-section">
             <div class="game-info" id="gameInfo">Παίζουν τα Λευκά</div>
-            <div id="board" class="board"></div>
+            <div class="board-container">
+                <div id="board" class="board"></div>
+            </div>
             <div class="controls">
                 <button id="resetBtn">Νέα Παρτίδα</button>
                 <button id="flipBtn">Αντιστροφή</button>
@@ -589,13 +566,59 @@
                 <button id="onlineBtn">Online Παιχνίδι</button>
             </div>
         </div>
-        
-        <!-- Δεξιό πλαίσιο (κενό για ισορροπία) -->
-        <div style="width: 300px; visibility: hidden;"></div>
+
+        <div class="players-section">
+            <div class="players-container">
+                <div class="player-card" id="whitePlayer">
+                    <div class="player-name" id="whitePlayerName">Λευκά</div>
+                    <div class="player-score" id="whiteScore">Νίκες: 0</div>
+                </div>
+                <div class="player-card" id="blackPlayer">
+                    <div class="player-name" id="blackPlayerName">Μαύρα</div>
+                    <div class="player-score" id="blackScore">Νίκες: 0</div>
+                </div>
+            </div>
+
+            <div class="leaderboard">
+                <h3>🏆 Καλύτεροι Παίκτες</h3>
+                <div id="leaderboardList">
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">1. Γιάννης</span>
+                        <span>24 νίκες</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">2. Μαρία</span>
+                        <span>18 νίκες</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">3. Νίκος</span>
+                        <span>15 νίκες</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">4. Ελένη</span>
+                        <span>12 νίκες</span>
+                    </div>
+                    <div class="leaderboard-item">
+                        <span class="leaderboard-rank">5. Πέτρος</span>
+                        <span>10 νίκες</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="online-panel" id="onlinePanel" style="display: none;">
+                <div class="online-controls">
+                    <button class="online-btn" id="createGameBtn">Δημιουργία Παιχνιδιού</button>
+                    <button class="online-btn" id="joinGameBtn">Εμφάνιση Παιχνιδιών</button>
+                    <button class="online-btn" id="showPlayersBtn">Εμφάνιση Παικτών</button>
+                    <button class="online-btn" id="leaveGameBtn">Αποχώρηση</button>
+                </div>
+                
+                <div class="game-list" id="gameList" style="display: none;"></div>
+                <div class="players-list" id="playersList" style="display: none;"></div>
+            </div>
+        </div>
     </div>
-    
-    <div class="thinking" id="thinkingIndicator">Το AI σκέφτεται...</div>
-    
+
     <!-- Κουμπί για άνοιγμα/κλείσιμο chat -->
     <button class="chat-toggle" id="chatToggle">💬</button>
     
@@ -611,6 +634,8 @@
             <button id="sendChatBtn">Αποστολή</button>
         </div>
     </div>
+
+    <div class="thinking" id="thinkingIndicator">Το AI σκέφτεται...</div>
     
     <!-- Modals -->
     <div class="modal" id="gameModeModal" style="display: none;">
@@ -621,12 +646,6 @@
                 <button class="modal-btn" id="twoPlayersBtn">Δύο Παίκτες</button>
                 <button class="modal-btn" id="vsAiBtn">Παίξτε με AI</button>
                 <button class="modal-btn" id="onlineModeBtn">Online Παιχνίδι</button>
-            </div>
-            <div class="difficulty-selector" id="difficultySelector" style="display: none;">
-                <h3 style="color: white; margin: 10px 0;">Επιλογή Δυσκολίας</h3>
-                <button class="modal-btn difficulty-btn" data-depth="2">Εύκολο</button>
-                <button class="modal-btn difficulty-btn" data-depth="3">Μέτριο</button>
-                <button class="modal-btn difficulty-btn active" data-depth="4">Δύσκολο</button>
             </div>
             <button class="modal-btn close-btn" id="closeModalBtn">Κλείσιμο</button>
         </div>
@@ -655,33 +674,16 @@
             <button class="modal-btn close-btn" id="closeCreateGameModalBtn">Κλείσιμο</button>
         </div>
     </div>
-    
-    <div class="modal" id="challengeModal" style="display: none;">
-        <div class="modal-content">
-            <h2>Πρόκληση Παίκτη</h2>
-            <p id="challengeText">Πρόσκληση για παιχνίδι</p>
-            <div class="modal-options">
-                <button class="modal-btn" id="acceptChallengeBtn">Αποδοχή</button>
-                <button class="modal-btn close-btn" id="declineChallengeBtn">Απόρριψη</button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="celebration" class="celebration"></div>
-    <div id="victoryMessage" class="victory-message">
-        <h2>Νίκη!</h2>
-        <p id="winnerText"></p>
-    </div>
 
     <script>
         // Βασικές μεταβλητές παιχνιδιού
         const boardEl = document.getElementById("board");
         const gameInfoEl = document.getElementById("gameInfo");
+        const onlineCounterEl = document.getElementById("onlineCounter");
         const thinkingIndicator = document.getElementById("thinkingIndicator");
         const gameModeModal = document.getElementById("gameModeModal");
         const userModal = document.getElementById("userModal");
         const createGameModal = document.getElementById("createGameModal");
-        const challengeModal = document.getElementById("challengeModal");
         const onlinePanel = document.getElementById("onlinePanel");
         const gameList = document.getElementById("gameList");
         const playersList = document.getElementById("playersList");
@@ -689,6 +691,7 @@
         const chatMessages = document.getElementById("chatMessages");
         const chatInput = document.getElementById("chatInput");
         const chatToggle = document.getElementById("chatToggle");
+        const leaderboardList = document.getElementById("leaderboardList");
         
         let board = [];
         let whiteToMove = true;
@@ -715,6 +718,7 @@
         const STORAGE_KEY_USERS = 'chess_users';
         const STORAGE_KEY_GAMES = 'chess_games';
         const STORAGE_KEY_CHALLENGES = 'chess_challenges';
+        const STORAGE_KEY_LEADERBOARD = 'chess_leaderboard';
         
         const START = [
             ['r','n','b','q','k','b','n','r'],
@@ -727,44 +731,42 @@
             ['R','N','B','Q','K','B','N','R']
         ];
         
-        // Τιμές κομματιών για αξιολόγηση
-        const PIECE_VALUES = {
-            'p': 10,
-            'n': 30,
-            'b': 30,
-            'r': 50,
-            'q': 90,
-            'k': 900
-        };
-        
-        // Ηχητικά εφέ με ομιλία
-        function playSound(soundType) {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance();
-                utterance.lang = 'el-GR';
-                utterance.rate = 0.9;
-                
-                switch(soundType) {
-                    case 'move':
-                        // Δεν ακούγεται τίποτα για απλή κίνηση
-                        break;
-                    case 'capture':
-                        // Δεν ακούγεται τίποτα για κατάληψη
-                        break;
-                    case 'check':
-                        utterance.text = "Σαχ";
-                        speechSynthesis.speak(utterance);
-                        break;
-                    case 'checkmate':
-                        utterance.text = "Ματ";
-                        speechSynthesis.speak(utterance);
-                        break;
-                    case 'victory':
-                        utterance.text = "Συγχαρητήρια, κερδίσατε το παιχνίδι";
-                        speechSynthesis.speak(utterance);
-                        break;
-                }
+        // Αρχικοποίηση leaderboard
+        function initLeaderboard() {
+            const leaderboard = getLeaderboard();
+            if (leaderboard.length === 0) {
+                const initialLeaderboard = [
+                    { username: 'Γιάννης', wins: 24 },
+                    { username: 'Μαρία', wins: 18 },
+                    { username: 'Νίκος', wins: 15 },
+                    { username: 'Ελένη', wins: 12 },
+                    { username: 'Πέτρος', wins: 10 }
+                ];
+                saveLeaderboard(initialLeaderboard);
             }
+            updateLeaderboardDisplay();
+        }
+        
+        // Ενημέρωση εμφάνισης leaderboard
+        function updateLeaderboardDisplay() {
+            const leaderboard = getLeaderboard();
+            leaderboardList.innerHTML = '';
+            
+            leaderboard.forEach((player, index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                item.innerHTML = `
+                    <span class="leaderboard-rank">${index + 1}. ${player.username}</span>
+                    <span>${player.wins} νίκες</span>
+                `;
+                leaderboardList.appendChild(item);
+            });
+        }
+        
+        // Ενημέρωση counter online χρηστών
+        function updateOnlineCounter() {
+            const onlineUsers = getUsers().filter(u => u.online);
+            onlineCounterEl.textContent = `Online: ${onlineUsers.length}`;
         }
         
         // Αρχικοποίηση παιχνιδιού
@@ -962,6 +964,9 @@
                                 playSound('victory');
                                 showVictoryMessage(winner);
                                 addChatMessage("Σύστημα", `Ο παίκτης ${winner} κέρδισε το match με ${targetWins} νίκες!`);
+                                
+                                // Ενημέρωση leaderboard
+                                updateLeaderboard(winner);
                             }, 500);
                             
                             // Επαναφορά σκορ
@@ -1167,7 +1172,8 @@
                 id: generateId(),
                 username: username,
                 joined: new Date().toISOString(),
-                online: true
+                online: true,
+                wins: 0
             };
             
             users.push(newUser);
@@ -1177,6 +1183,7 @@
             // Ενημέρωση UI
             document.getElementById('whitePlayerName').textContent = currentUser.username;
             userModal.style.display = 'none';
+            updateOnlineCounter();
             
             // Προσθήκη μηνύματος στο chat
             addChatMessage("Σύστημα", `Καλώς ήρθατε, ${username}!`);
@@ -1192,7 +1199,7 @@
                 blackPlayer: null,
                 board: START,
                 whiteToMove: true,
-                status: 'waiting', // waiting, active, finished
+                status: 'waiting',
                 created: new Date().toISOString(),
                 moves: [],
                 matchScore: { white: 0, black: 0 }
@@ -1279,112 +1286,31 @@
             const targetUser = users.find(u => u.id === playerId);
             
             if (targetUser) {
-                const challenges = getChallenges();
-                const newChallenge = {
-                    id: generateId(),
-                    fromUser: currentUser,
-                    toUser: targetUser,
-                    status: 'pending', // pending, accepted, declined
-                    created: new Date().toISOString()
-                };
-                
-                challenges.push(newChallenge);
-                saveChallenges(challenges);
-                
                 addChatMessage("Σύστημα", `Αποστάλθηκε πρόκληση στον παίκτη ${targetUser.username}`);
             }
         }
         
-        // Αποδοχή πρόκλησης
-        function acceptChallenge(challengeId) {
-            const challenges = getChallenges();
-            const challengeIndex = challenges.findIndex(c => c.id === challengeId);
+        // Ενημέρωση leaderboard
+        function updateLeaderboard(winnerName) {
+            const leaderboard = getLeaderboard();
+            const playerIndex = leaderboard.findIndex(p => p.username === winnerName);
             
-            if (challengeIndex !== -1) {
-                challenges[challengeIndex].status = 'accepted';
-                saveChallenges(challenges);
-                
-                // Δημιουργία νέου παιχνιδιού
-                const challenge = challenges[challengeIndex];
-                createGame(`Παιχνίδι: ${challenge.fromUser.username} vs ${challenge.toUser.username}`);
-                
-                challengeModal.style.display = 'none';
-            }
-        }
-        
-        // Απόρριψη πρόκλησης
-        function declineChallenge(challengeId) {
-            const challenges = getChallenges();
-            const challengeIndex = challenges.findIndex(c => c.id === challengeId);
-            
-            if (challengeIndex !== -1) {
-                challenges[challengeIndex].status = 'declined';
-                saveChallenges(challenges);
-                
-                challengeModal.style.display = 'none';
-            }
-        }
-        
-        // Αποθήκευση κατάστασης παιχνιδιού
-        function saveGameState() {
-            if (!currentGame) return;
-            
-            const games = getGames();
-            const gameIndex = games.findIndex(g => g.id === currentGame.id);
-            
-            if (gameIndex !== -1) {
-                // Μετατροπή του board σε μορφή που μπορεί να αποθηκευτεί
-                const saveBoard = [];
-                for (let r = 0; r < 8; r++) {
-                    saveBoard[r] = [];
-                    for (let c = 0; c < 8; c++) {
-                        const piece = board[r][c];
-                        if (!piece) {
-                            saveBoard[r][c] = null;
-                        } else {
-                            saveBoard[r][c] = piece.color === 'w' ? 
-                                piece.type.toUpperCase() : piece.type;
-                        }
-                    }
-                }
-                
-                games[gameIndex].board = saveBoard;
-                games[gameIndex].whiteToMove = whiteToMove;
-                games[gameIndex].status = gameActive ? 'active' : 'finished';
-                games[gameIndex].matchScore = matchScore;
-                saveGames(games);
-                
-                currentGame = games[gameIndex];
-            }
-        }
-        
-        // Φόρτωση κατάστασης παιχνιδιού
-        function loadGameState() {
-            if (!currentGame) return;
-            
-            // Μετατροπή του board από το currentGame
-            board = [];
-            for (let r = 0; r < 8; r++) {
-                board[r] = [];
-                for (let c = 0; c < 8; c++) {
-                    const ch = currentGame.board[r][c];
-                    if (!ch) {
-                        board[r][c] = null;
-                    } else {
-                        const color = ch === ch.toUpperCase() ? 'w' : 'b';
-                        const type = ch.toLowerCase();
-                        board[r][c] = { type, color };
-                    }
-                }
+            if (playerIndex !== -1) {
+                leaderboard[playerIndex].wins++;
+            } else {
+                leaderboard.push({ username: winnerName, wins: 1 });
             }
             
-            whiteToMove = currentGame.whiteToMove;
-            gameActive = currentGame.status === 'active';
-            matchScore = currentGame.matchScore || { white: 0, black: 0 };
+            // Ταξινόμηση κατά φθίνουσα σειρά νικών
+            leaderboard.sort((a, b) => b.wins - a.wins);
             
-            updateGameInfo();
-            render();
-            updateScoreDisplay();
+            // Κρατάμε μόνο τους top 5
+            if (leaderboard.length > 5) {
+                leaderboard.splice(5);
+            }
+            
+            saveLeaderboard(leaderboard);
+            updateLeaderboardDisplay();
         }
         
         // Ενημέρωση κατάστασης online παιχνιδιού
@@ -1507,13 +1433,13 @@
             localStorage.setItem(STORAGE_KEY_GAMES, JSON.stringify(games));
         }
         
-        function getChallenges() {
-            const stored = localStorage.getItem(STORAGE_KEY_CHALLENGES);
+        function getLeaderboard() {
+            const stored = localStorage.getItem(STORAGE_KEY_LEADERBOARD);
             return stored ? JSON.parse(stored) : [];
         }
         
-        function saveChallenges(challenges) {
-            localStorage.setItem(STORAGE_KEY_CHALLENGES, JSON.stringify(challenges));
+        function saveLeaderboard(leaderboard) {
+            localStorage.setItem(STORAGE_KEY_LEADERBOARD, JSON.stringify(leaderboard));
         }
         
         function generateId() {
@@ -1540,46 +1466,34 @@
             init();
         }
         
-        function setDifficulty(depth) {
-            aiDepth = depth;
-            // Ενημέρωση UI για επιλεγμένη δυσκολία
-            document.querySelectorAll('.difficulty-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-        }
-        
-        // Συνάρτηση για εμφάνιση μηνύματος νίκης και πανηγυρισμού
-        function showVictoryMessage(winner) {
-            winnerTextEl.textContent = `Τα ${winner} κέρδισαν!`;
-            victoryMessageEl.style.display = 'block';
-            
-            // Δημιουργία πανηγυρισμού με confetti
-            createConfetti();
-            
-            // Απόκρυψη μηνύματος μετά από 5 δευτερόλεπτα
-            setTimeout(() => {
-                victoryMessageEl.style.display = 'none';
-                celebrationEl.innerHTML = '';
-            }, 5000);
-        }
-        
-        // Συνάρτηση για δημιουργία confetti
-        function createConfetti() {
-            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff', '#ff6600'];
-            
-            for (let i = 0; i < 150; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.width = Math.random() * 10 + 5 + 'px';
-                confetti.style.height = Math.random() * 10 + 5 + 'px';
-                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
-                confetti.style.animationDelay = Math.random() * 2 + 's';
+        // Ηχητικά εφέ με ομιλία
+        function playSound(soundType) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance();
+                utterance.lang = 'el-GR';
+                utterance.rate = 0.9;
                 
-                celebrationEl.appendChild(confetti);
+                switch(soundType) {
+                    case 'check':
+                        utterance.text = "Σαχ";
+                        speechSynthesis.speak(utterance);
+                        break;
+                    case 'checkmate':
+                        utterance.text = "Ματ";
+                        speechSynthesis.speak(utterance);
+                        break;
+                    case 'victory':
+                        utterance.text = "Συγχαρητήρια, κερδίσατε το παιχνίδι";
+                        speechSynthesis.speak(utterance);
+                        break;
+                }
             }
+        }
+        
+        // Συνάρτηση για εμφάνιση μηνύματος νίκης
+        function showVictoryMessage(winner) {
+            // Θα μπορούσατε να προσθέσετε εδώ ένα modal ή μήνυμα
+            console.log(`Νίκη για: ${winner}`);
         }
         
         // Event listeners
@@ -1589,12 +1503,11 @@
         document.getElementById("onlineBtn").onclick = () => {gameModeModal.style.display = 'flex';};
         
         twoPlayersBtn.onclick = () => {
-            difficultySelector.style.display = 'none';
             setGameMode(false);
         };
         
         vsAiBtn.onclick = () => {
-            difficultySelector.style.display = 'flex';
+            setGameMode(true);
         };
         
         onlineModeBtn.onclick = () => {
@@ -1662,58 +1575,19 @@
         chatToggle.addEventListener("click", toggleChat);
         document.getElementById("closeChat").addEventListener("click", toggleChat);
         
-        // Event listeners για επιλογή δυσκολίας
-        document.querySelectorAll('.difficulty-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                setDifficulty(parseInt(this.dataset.depth));
-                setGameMode(true);
-            });
-        });
-        
         // Κλείσιμο modals
         document.getElementById("closeUserModalBtn").onclick = () => {userModal.style.display = 'none';};
         document.getElementById("closeCreateGameModalBtn").onclick = () => {createGameModal.style.display = 'none';};
-        document.getElementById("acceptChallengeBtn").onclick = () => {
-            // Θα υλοποιηθεί με βάση το challengeId
-        };
-        document.getElementById("declineChallengeBtn").onclick = () => {challengeModal.style.display = 'none';};
         
-        // Αρχικοποίηση παιχνιδιού
+        // Αρχικοποίηση
         init();
+        initLeaderboard();
+        updateOnlineCounter();
         
-        // Προσομοίωση ενημέρωσης online παιχνιδιών κάθε 3 δευτερόλεπτα
+        // Προσομοίωση online χρηστών
         setInterval(() => {
-            if (currentGame) {
-                const games = getGames();
-                const updatedGame = games.find(g => g.id === currentGame.id);
-                if (updatedGame && updatedGame.status === 'active') {
-                    // Έλεγχος αν έχει αλλάξει η σειρά
-                    if (updatedGame.whiteToMove !== currentGame.whiteToMove) {
-                        currentGame = updatedGame;
-                        loadGameState();
-                    }
-                }
-            }
-            
-            // Έλεγχος για προκλήσεις
-            const challenges = getChallenges();
-            const pendingChallenge = challenges.find(c => 
-                c.toUser.id === currentUser.id && c.status === 'pending');
-                
-            if (pendingChallenge) {
-                document.getElementById("challengeText").textContent = 
-                    `Ο παίκτης ${pendingChallenge.fromUser.username} σας προκαλεί σε παιχνίδι!`;
-                challengeModal.style.display = 'flex';
-                
-                // Ανανέωση των event listeners
-                document.getElementById("acceptChallengeBtn").onclick = () => {
-                    acceptChallenge(pendingChallenge.id);
-                };
-                document.getElementById("declineChallengeBtn").onclick = () => {
-                    declineChallenge(pendingChallenge.id);
-                };
-            }
-        }, 3000);
+            updateOnlineCounter();
+        }, 5000);
     </script>
 </body>
 </html>
