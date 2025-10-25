@@ -2,16 +2,31 @@
 <html lang="el">
 <head>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Σκάκι Deluxe</title>
 <style>
+  :root {
+    --board-size: min(90vw, 90vh, 600px);
+    --square-size: calc(var(--board-size) / 8);
+    --piece-size: calc(var(--square-size) * 0.85);
+    --dot-size: calc(var(--square-size) * 0.25);
+  }
+  
+  * {
+    box-sizing: border-box;
+    touch-action: manipulation;
+  }
+  
   body {
     background: radial-gradient(circle at center, #d6c6a1 0%, #b29466 80%);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
+    padding: 10px;
     font-family: "Segoe UI", sans-serif;
+    overflow: hidden;
   }
 
   .board-container {
@@ -19,24 +34,26 @@
     flex-direction: column;
     align-items: center;
     background: #3a2e16;
-    padding: 20px;
+    padding: 15px;
     border-radius: 15px;
     box-shadow: 0 0 40px rgba(0,0,0,0.4);
+    width: 100%;
+    max-width: 700px;
   }
 
   .board {
-    width: 640px;
-    height: 640px;
+    width: var(--board-size);
+    height: var(--board-size);
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    border: 8px solid #3a2e16;
+    border: 6px solid #3a2e16;
     box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
   }
 
   .square {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: var(--square-size);
+    height: var(--square-size);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,10 +64,13 @@
   .sq-dark { background: #b58863; }
 
   .piece {
-    width: 90%;
-    height: auto;
+    width: var(--piece-size);
+    height: var(--piece-size);
     cursor: grab;
     transition: transform 0.1s;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
   }
   .piece:active {
     cursor: grabbing;
@@ -64,26 +84,30 @@
   .move-dot::after {
     content: '';
     position: absolute;
-    width: 20px;
-    height: 20px;
+    width: var(--dot-size);
+    height: var(--dot-size);
     border-radius: 50%;
     background: rgba(0,0,0,0.25);
   }
 
   h1 {
     color: #fff;
-    font-size: 24px;
-    margin: 10px 0;
+    font-size: clamp(18px, 5vw, 24px);
+    margin: 5px 0;
+    text-align: center;
   }
 
   .controls {
     margin-top: 10px;
     display: flex;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
   }
 
   button {
-    padding: 8px 16px;
+    padding: 10px 16px;
     border: none;
     background: #d19a4c;
     color: white;
@@ -91,27 +115,120 @@
     border-radius: 8px;
     cursor: pointer;
     box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    font-size: clamp(14px, 4vw, 16px);
+    min-width: 120px;
   }
-  button:hover { background: #e0ad61; }
+  button:hover, button:active { background: #e0ad61; }
+  
+  .game-info {
+    color: white;
+    margin: 8px 0;
+    font-size: clamp(14px, 4vw, 16px);
+    text-align: center;
+  }
+  
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+  
+  .modal-content {
+    background: #3a2e16;
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 90%;
+    width: 400px;
+    text-align: center;
+  }
+  
+  .modal h2 {
+    color: white;
+    margin-top: 0;
+  }
+  
+  .modal-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  
+  .modal-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+  
+  .close-btn {
+    background: #8b4513;
+  }
+  
+  .thinking {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-size: 18px;
+    z-index: 10;
+    display: none;
+  }
 </style>
 </head>
 <body>
   <div class="board-container">
     <h1>♕ Σκάκι Deluxe ♛</h1>
+    <div class="game-info" id="gameInfo">Παίζουν τα Λευκά</div>
     <div id="board" class="board"></div>
     <div class="controls">
       <button id="resetBtn">Νέα Παρτίδα</button>
       <button id="flipBtn">Αντιστροφή</button>
+      <button id="aiBtn">Παίξτε με AI</button>
+    </div>
+  </div>
+  
+  <div class="thinking" id="thinkingIndicator">Το AI σκέφτεται...</div>
+  
+  <div class="modal" id="gameModeModal" style="display: flex;">
+    <div class="modal-content">
+      <h2>Επιλογή Τρόπου Παιχνιδιού</h2>
+      <p>Πώς θέλετε να παίξετε;</p>
+      <div class="modal-options">
+        <button class="modal-btn" id="twoPlayersBtn">Δύο Παίκτες</button>
+        <button class="modal-btn" id="vsAiBtn">Παίξτε με AI</button>
+      </div>
+      <button class="modal-btn close-btn" id="closeModalBtn">Κλείσιμο</button>
     </div>
   </div>
 
 <script>
 const boardEl = document.getElementById("board");
+const gameInfoEl = document.getElementById("gameInfo");
+const thinkingIndicator = document.getElementById("thinkingIndicator");
+const gameModeModal = document.getElementById("gameModeModal");
+const twoPlayersBtn = document.getElementById("twoPlayersBtn");
+const vsAiBtn = document.getElementById("vsAiBtn");
+const closeModalBtn = document.getElementById("closeModalBtn");
+
 let board = [];
 let whiteToMove = true;
 let selected = null;
 let legalMoves = [];
 let flipped = false;
+let vsAI = false;
+let aiColor = 'b'; // AI plays as black by default
+let gameActive = true;
 
 const START = [
   ['r','n','b','q','k','b','n','r'],
@@ -141,6 +258,8 @@ function init() {
   whiteToMove=true;
   selected=null;
   legalMoves=[];
+  gameActive = true;
+  updateGameInfo();
   render();
 }
 
@@ -157,8 +276,18 @@ function render() {
       sq.className="square "+((row+col)%2===0?"sq-dark":"sq-light");
       sq.dataset.r=row; sq.dataset.c=col;
       sq.addEventListener("click",onSquareClick);
+      
+      // Add touch events for mobile
+      sq.addEventListener("touchstart", handleTouchStart, {passive: false});
+      sq.addEventListener("touchend", handleTouchEnd);
+      
       const move=legalMoves.find(m=>m.r===row && m.c===col);
       if(move) sq.classList.add("move-dot");
+      
+      if(selected && selected.r === row && selected.c === col) {
+        sq.classList.add("highlight");
+      }
+      
       const p=board[row][col];
       if(p){
         const img=document.createElement("img");
@@ -170,16 +299,56 @@ function render() {
           legalMoves=generateMoves(row,col);
           e.dataTransfer.setData("text/plain",JSON.stringify({r:row,c:col}));
         });
+        
+        // Add touch events for pieces
+        img.addEventListener("touchstart", (e) => {
+          e.preventDefault();
+          selected={r:row,c:col};
+          legalMoves=generateMoves(row,col);
+          render();
+        }, {passive: false});
+        
         sq.appendChild(img);
       }
       boardEl.appendChild(sq);
     }
   }
+  
+  // If it's AI's turn and game is active, make AI move
+  if (vsAI && gameActive && whiteToMove === (aiColor === 'w')) {
+    setTimeout(makeAIMove, 500);
+  }
 }
 
-function onSquareClick(e){
-  const r=parseInt(this.dataset.r);
-  const c=parseInt(this.dataset.c);
+// Touch event handlers for mobile
+let touchStartX, touchStartY;
+
+function handleTouchStart(e) {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}
+
+function handleTouchEnd(e) {
+  if (!touchStartX || !touchStartY) return;
+  
+  const touchEndX = e.changedTouches[0].clientX;
+  const touchEndY = e.changedTouches[0].clientY;
+  
+  const dx = touchEndX - touchStartX;
+  const dy = touchEndY - touchStartY;
+  
+  // If it's a tap (not a swipe)
+  if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
+    const r = parseInt(this.dataset.r);
+    const c = parseInt(this.dataset.c);
+    onSquareTap(r, c);
+  }
+  
+  touchStartX = null;
+  touchStartY = null;
+}
+
+function onSquareTap(r, c) {
   if(selected && legalMoves.find(m=>m.r===r&&m.c===c)){
     movePiece(selected.r,selected.c,r,c);
     selected=null;
@@ -197,10 +366,98 @@ function onSquareClick(e){
   render();
 }
 
+function onSquareClick(e){
+  const r=parseInt(this.dataset.r);
+  const c=parseInt(this.dataset.c);
+  onSquareTap(r, c);
+}
+
 function movePiece(sr,sc,tr,tc){
   board[tr][tc]=board[sr][sc];
   board[sr][sc]=null;
   whiteToMove=!whiteToMove;
+  updateGameInfo();
+  
+  // Check for pawn promotion
+  const piece = board[tr][tc];
+  if (piece && piece.type === 'p') {
+    if ((piece.color === 'w' && tr === 0) || (piece.color === 'b' && tr === 7)) {
+      promotePawn(tr, tc);
+    }
+  }
+  
+  // Check for checkmate or stalemate
+  checkGameEnd();
+}
+
+function promotePawn(r, c) {
+  // In a real implementation, you would show a modal to choose the piece
+  // For simplicity, we'll always promote to queen
+  board[r][c].type = 'q';
+}
+
+function checkGameEnd() {
+  // Simple check for checkmate/stalemate
+  // In a full implementation, you would check all legal moves for the current player
+  const currentColor = whiteToMove ? 'w' : 'b';
+  let hasLegalMoves = false;
+  
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const piece = board[r][c];
+      if (piece && piece.color === currentColor) {
+        const moves = generateMoves(r, c);
+        if (moves.length > 0) {
+          hasLegalMoves = true;
+          break;
+        }
+      }
+    }
+    if (hasLegalMoves) break;
+  }
+  
+  if (!hasLegalMoves) {
+    gameActive = false;
+    // Check if it's checkmate or stalemate
+    const inCheck = isKingInCheck(currentColor);
+    if (inCheck) {
+      gameInfoEl.textContent = currentColor === 'w' ? "Ματ! Νικάν τα Μαύρα" : "Ματ! Νικάν τα Λευκά";
+    } else {
+      gameInfoEl.textContent = "Πατ! Ισοπαλία";
+    }
+  }
+}
+
+function isKingInCheck(color) {
+  // Find the king
+  let kingPos = null;
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const piece = board[r][c];
+      if (piece && piece.type === 'k' && piece.color === color) {
+        kingPos = {r, c};
+        break;
+      }
+    }
+    if (kingPos) break;
+  }
+  
+  if (!kingPos) return false;
+  
+  // Check if any opponent piece can capture the king
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const piece = board[r][c];
+      if (piece && piece.color !== color) {
+        const moves = generateMoves(r, c);
+        if (moves.some(move => move.r === kingPos.r && move.c === kingPos.c)) {
+          return true;
+        }
+      }
+    }
+  }
+  
+  return false;
 }
 
 function generateMoves(r,c){
@@ -269,8 +526,66 @@ function getPieceImg(t,c){
   }[t+c]}`;
 }
 
-document.getElementById("resetBtn").onclick=init;
-document.getElementById("flipBtn").onclick=()=>{flipped=!flipped;render();};
+function updateGameInfo() {
+  if (whiteToMove) {
+    gameInfoEl.textContent = "Παίζουν τα Λευκά";
+  } else {
+    gameInfoEl.textContent = "Παίζουν τα Μαύρα";
+  }
+}
+
+function makeAIMove() {
+  if (!gameActive) return;
+  
+  thinkingIndicator.style.display = 'block';
+  
+  // Simulate AI thinking
+  setTimeout(() => {
+    // Simple AI: choose a random legal move
+    const allMoves = [];
+    
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        const piece = board[r][c];
+        if (piece && piece.color === aiColor) {
+          const moves = generateMoves(r, c);
+          moves.forEach(move => {
+            allMoves.push({
+              from: {r, c},
+              to: move
+            });
+          });
+        }
+      }
+    }
+    
+    if (allMoves.length > 0) {
+      const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
+      movePiece(randomMove.from.r, randomMove.from.c, randomMove.to.r, randomMove.to.c);
+      render();
+    }
+    
+    thinkingIndicator.style.display = 'none';
+  }, 1000);
+}
+
+function setGameMode(aiEnabled, aiPlaysAs = 'b') {
+  vsAI = aiEnabled;
+  aiColor = aiPlaysAs;
+  gameModeModal.style.display = 'none';
+  init();
+}
+
+// Event listeners
+document.getElementById("resetBtn").onclick = init;
+document.getElementById("flipBtn").onclick = () => {flipped=!flipped;render();};
+document.getElementById("aiBtn").onclick = () => {gameModeModal.style.display = 'flex';};
+
+twoPlayersBtn.onclick = () => setGameMode(false);
+vsAiBtn.onclick = () => setGameMode(true);
+closeModalBtn.onclick = () => {gameModeModal.style.display = 'none';};
+
+// Initialize the game
 init();
 </script>
 </body>
