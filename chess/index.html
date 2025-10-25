@@ -18,7 +18,7 @@
         }
         
         body {
-            background: radial-gradient(circle at center, #d6c6a1 0%, #b29466 80%);
+            background: #b29466; /* Καφέ φόντο σε όλη την οθόνη */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -449,50 +449,65 @@
         
         // Ηχητικά εφέ
         function playSound(soundType) {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance();
-                utterance.lang = 'el-GR';
-                utterance.rate = 0.9;
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
                 
                 switch(soundType) {
                     case 'move':
-                        // Δεν ακούγεται τίποτα για απλή κίνηση
+                        // Ήχος για απλή κίνηση
+                        oscillator.frequency.value = 400;
+                        oscillator.type = 'sine';
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.3);
                         break;
                     case 'capture':
-                        // Ηχητικό εφέ για κατάληψη
-                        try {
-                            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                            const oscillator = audioContext.createOscillator();
-                            const gainNode = audioContext.createGain();
-                            
-                            oscillator.connect(gainNode);
-                            gainNode.connect(audioContext.destination);
-                            
-                            oscillator.frequency.value = 300;
-                            oscillator.type = 'square';
-                            
-                            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                            
-                            oscillator.start(audioContext.currentTime);
-                            oscillator.stop(audioContext.currentTime + 0.2);
-                        } catch (e) {
-                            console.log("Αδυναμία αναπαραγωγής ήχου:", e);
-                        }
+                        // Ήχος για κατάληψη πιονιού
+                        oscillator.frequency.value = 200;
+                        oscillator.type = 'square';
+                        gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.2);
                         break;
                     case 'check':
-                        utterance.text = "Σαχ";
-                        speechSynthesis.speak(utterance);
+                        // Προφορά "Σαχ"
+                        if ('speechSynthesis' in window) {
+                            const utterance = new SpeechSynthesisUtterance();
+                            utterance.lang = 'el-GR';
+                            utterance.text = "Σάχ";
+                            utterance.rate = 0.9;
+                            speechSynthesis.speak(utterance);
+                        }
                         break;
                     case 'checkmate':
-                        utterance.text = "Ματ";
-                        speechSynthesis.speak(utterance);
+                        // Προφορά "Σάχ Ματ"
+                        if ('speechSynthesis' in window) {
+                            const utterance = new SpeechSynthesisUtterance();
+                            utterance.lang = 'el-GR';
+                            utterance.text = "Σάχ Ματ";
+                            utterance.rate = 0.9;
+                            speechSynthesis.speak(utterance);
+                        }
                         break;
                     case 'victory':
-                        utterance.text = "Συγχαρητήρια, κερδίσατε το παιχνίδι";
-                        speechSynthesis.speak(utterance);
+                        // Ήχος για νίκη
+                        oscillator.frequency.value = 600;
+                        oscillator.type = 'sine';
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 1);
                         break;
                 }
+            } catch (e) {
+                console.log("Αδυναμία αναπαραγωγής ήχου:", e);
             }
         }
         
@@ -623,13 +638,18 @@
         function movePiece(sr,sc,tr,tc){
             // Έλεγχος για κατάληψη
             const capturedPiece = board[tr][tc];
-            if (capturedPiece) {
-                playSound('capture');
-            }
             
             // Εκτέλεση της κίνησης
             board[tr][tc]=board[sr][sc];
             board[sr][sc]=null;
+            
+            // Αναπαραγωγή ήχου
+            if (capturedPiece) {
+                playSound('capture'); // Ήχος για κατάληψη
+            } else {
+                playSound('move'); // Ήχος για απλή κίνηση
+            }
+            
             whiteToMove=!whiteToMove;
             
             // Έλεγχος για προαγωγή πιονιού
@@ -687,7 +707,7 @@
                 gameActive = false;
                 if (kingInCheck) {
                     // Ματ
-                    playSound('checkmate');
+                    playSound('checkmate'); // Προφορά "Σάχ Ματ"
                     
                     setTimeout(() => {
                         playSound('victory');
@@ -701,7 +721,7 @@
                 }
             } else if (kingInCheck && !wasInCheck) {
                 // Σαχ (μόνο όταν γίνεται για πρώτη φορά)
-                playSound('check');
+                playSound('check'); // Προφορά "Σάχ"
                 gameInfoEl.innerHTML = `<span class="status-check">${currentColor === 'w' ? "Σαχ στα Λευκά!" : "Σαχ στα Μαύρα!"}</span>`;
             }
         }
