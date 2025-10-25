@@ -6,7 +6,7 @@
     <title>Σκάκι Deluxe Pro - Online</title>
     <style>
         :root {
-            --board-size: min(90vw, 90vh, 600px);
+            --board-size: min(80vw, 80vh, 600px);
             --square-size: calc(var(--board-size) / 8);
             --piece-size: calc(var(--square-size) * 0.85);
             --dot-size: calc(var(--square-size) * 0.25);
@@ -31,11 +31,11 @@
 
         .container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1400px;
             gap: 20px;
+            justify-content: center;
+            align-items: flex-start;
         }
 
         .board-container {
@@ -46,8 +46,8 @@
             padding: 15px;
             border-radius: 15px;
             box-shadow: 0 0 40px rgba(0,0,0,0.4);
-            width: 100%;
-            max-width: 700px;
+            width: var(--board-size);
+            flex-shrink: 0;
         }
 
         .board {
@@ -303,16 +303,16 @@
             padding: 15px;
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 700px;
+            width: 300px;
             color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         
         .user-info {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 10px;
         }
         
@@ -320,8 +320,6 @@
             background: #5d4037;
             padding: 10px 15px;
             border-radius: 10px;
-            flex: 1;
-            min-width: 150px;
             text-align: center;
         }
         
@@ -330,11 +328,16 @@
             box-shadow: 0 0 10px rgba(209, 154, 76, 0.5);
         }
         
+        .score-display {
+            font-size: 14px;
+            margin-top: 5px;
+            color: #ffd700;
+        }
+        
         .online-controls {
             display: flex;
+            flex-direction: column;
             gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
         }
         
         .online-btn {
@@ -347,7 +350,6 @@
         }
         
         .game-list {
-            margin-top: 15px;
             max-height: 200px;
             overflow-y: auto;
             background: #2c2414;
@@ -366,6 +368,31 @@
         
         .game-item:hover {
             background: #6d5047;
+        }
+        
+        .players-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #2c2414;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        
+        .player-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #5d4037;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .challenge-btn {
+            background: #8b4513;
+            padding: 5px 10px;
+            font-size: 12px;
+            min-width: auto;
         }
         
         .form-group {
@@ -392,21 +419,54 @@
             outline: 2px solid #d19a4c;
         }
         
-        .chat-container {
-            margin-top: 15px;
-            background: #2c2414;
+        .chat-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: #3a2e16;
             border-radius: 10px;
-            padding: 10px;
-            max-height: 200px;
-            display: flex;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            display: none;
             flex-direction: column;
+            z-index: 50;
+            max-height: 400px;
+        }
+        
+        .chat-header {
+            background: #5d4037;
+            padding: 10px 15px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-header h3 {
+            margin: 0;
+            color: white;
+        }
+        
+        .close-chat {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            min-width: auto;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            margin-bottom: 10px;
-            padding: 5px;
+            padding: 10px;
+            max-height: 300px;
         }
         
         .chat-message {
@@ -414,10 +474,12 @@
             padding: 5px 10px;
             background: #5d4037;
             border-radius: 8px;
+            word-wrap: break-word;
         }
         
         .chat-input {
             display: flex;
+            padding: 10px;
             gap: 10px;
         }
         
@@ -435,19 +497,87 @@
             padding: 8px;
         }
         
-        @media (max-width: 768px) {
+        .chat-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #d19a4c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            z-index: 49;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .section-title {
+            color: white;
+            margin: 10px 0 5px 0;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        @media (max-width: 1100px) {
             .container {
                 flex-direction: column;
+                align-items: center;
             }
             
-            .user-info {
-                flex-direction: column;
+            .online-panel {
+                width: 100%;
+                max-width: 700px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .chat-popup {
+                width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Αριστερό πλαίσιο online παικτών -->
+        <div class="online-panel" id="onlinePanel" style="display: none;">
+            <div class="user-info">
+                <div class="user-card" id="whitePlayer">
+                    <h3>Λευκά</h3>
+                    <div id="whitePlayerName">Αναμονή...</div>
+                    <div class="score-display" id="whiteScore">Νίκες: 0</div>
+                </div>
+                <div class="user-card" id="blackPlayer">
+                    <h3>Μαύρα</h3>
+                    <div id="blackPlayerName">Αναμονή...</div>
+                    <div class="score-display" id="blackScore">Νίκες: 0</div>
+                </div>
+            </div>
+            
+            <div class="online-controls">
+                <button class="online-btn" id="createGameBtn">Δημιουργία Παιχνιδιού</button>
+                <button class="online-btn" id="joinGameBtn">Εμφάνιση Παιχνιδιών</button>
+                <button class="online-btn" id="showPlayersBtn">Εμφάνιση Παικτών</button>
+                <button class="online-btn" id="leaveGameBtn">Αποχώρηση</button>
+            </div>
+            
+            <div class="game-list" id="gameList" style="display: none;">
+                <div class="section-title">Διαθέσιμα Παιχνίδια</div>
+            </div>
+            
+            <div class="players-list" id="playersList" style="display: none;">
+                <div class="section-title">Συνδεδεμένοι Παίκτες</div>
+            </div>
+        </div>
+        
+        <!-- Κεντρική σκακιέρα -->
         <div class="board-container">
             <h1>♕ Σκάκι Deluxe Pro - Online ♛</h1>
             <div class="game-info" id="gameInfo">Παίζουν τα Λευκά</div>
@@ -460,38 +590,29 @@
             </div>
         </div>
         
-        <div class="online-panel" id="onlinePanel" style="display: none;">
-            <div class="user-info">
-                <div class="user-card" id="whitePlayer">
-                    <h3>Λευκά</h3>
-                    <div id="whitePlayerName">Αναμονή...</div>
-                </div>
-                <div class="user-card" id="blackPlayer">
-                    <h3>Μαύρα</h3>
-                    <div id="blackPlayerName">Αναμονή...</div>
-                </div>
-            </div>
-            
-            <div class="online-controls">
-                <button class="online-btn" id="createGameBtn">Δημιουργία Παιχνιδιού</button>
-                <button class="online-btn" id="joinGameBtn">Εμφάνιση Παιχνιδιών</button>
-                <button class="online-btn" id="leaveGameBtn">Αποχώρηση</button>
-            </div>
-            
-            <div class="game-list" id="gameList" style="display: none;"></div>
-            
-            <div class="chat-container">
-                <div class="chat-messages" id="chatMessages"></div>
-                <div class="chat-input">
-                    <input type="text" id="chatInput" placeholder="Γράψτε το μήνυμά σας...">
-                    <button id="sendChatBtn">Αποστολή</button>
-                </div>
-            </div>
-        </div>
+        <!-- Δεξιό πλαίσιο (κενό για ισορροπία) -->
+        <div style="width: 300px; visibility: hidden;"></div>
     </div>
     
     <div class="thinking" id="thinkingIndicator">Το AI σκέφτεται...</div>
     
+    <!-- Κουμπί για άνοιγμα/κλείσιμο chat -->
+    <button class="chat-toggle" id="chatToggle">💬</button>
+    
+    <!-- Pop-up chat -->
+    <div class="chat-popup" id="chatPopup">
+        <div class="chat-header">
+            <h3>Συνομιλία</h3>
+            <button class="close-chat" id="closeChat">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Γράψτε το μήνυμά σας...">
+            <button id="sendChatBtn">Αποστολή</button>
+        </div>
+    </div>
+    
+    <!-- Modals -->
     <div class="modal" id="gameModeModal" style="display: none;">
         <div class="modal-content">
             <h2>Επιλογή Τρόπου Παιχνιδιού</h2>
@@ -535,6 +656,17 @@
         </div>
     </div>
     
+    <div class="modal" id="challengeModal" style="display: none;">
+        <div class="modal-content">
+            <h2>Πρόκληση Παίκτη</h2>
+            <p id="challengeText">Πρόσκληση για παιχνίδι</p>
+            <div class="modal-options">
+                <button class="modal-btn" id="acceptChallengeBtn">Αποδοχή</button>
+                <button class="modal-btn close-btn" id="declineChallengeBtn">Απόρριψη</button>
+            </div>
+        </div>
+    </div>
+    
     <div id="celebration" class="celebration"></div>
     <div id="victoryMessage" class="victory-message">
         <h2>Νίκη!</h2>
@@ -549,10 +681,14 @@
         const gameModeModal = document.getElementById("gameModeModal");
         const userModal = document.getElementById("userModal");
         const createGameModal = document.getElementById("createGameModal");
+        const challengeModal = document.getElementById("challengeModal");
         const onlinePanel = document.getElementById("onlinePanel");
         const gameList = document.getElementById("gameList");
+        const playersList = document.getElementById("playersList");
+        const chatPopup = document.getElementById("chatPopup");
         const chatMessages = document.getElementById("chatMessages");
         const chatInput = document.getElementById("chatInput");
+        const chatToggle = document.getElementById("chatToggle");
         
         let board = [];
         let whiteToMove = true;
@@ -571,10 +707,14 @@
         let currentPlayerColor = null;
         let games = [];
         let users = [];
+        let challenges = [];
+        let matchScore = { white: 0, black: 0 };
+        let targetWins = 2; // Παιχνίδι στις 2 νίκες
         
         // Προσομοίωση server με localStorage
         const STORAGE_KEY_USERS = 'chess_users';
         const STORAGE_KEY_GAMES = 'chess_games';
+        const STORAGE_KEY_CHALLENGES = 'chess_challenges';
         
         const START = [
             ['r','n','b','q','k','b','n','r'],
@@ -714,14 +854,6 @@
                                 e.stopPropagation();
                                 onSquareTap(row, col);
                             });
-                            
-                            // Add touch events for pieces
-                            img.addEventListener("touchstart", (e) => {
-                                e.preventDefault();
-                                selected={r:row,c:col};
-                                legalMoves=generateLegalMoves(row,col);
-                                render();
-                            }, {passive: false});
                         }
                         
                         sq.appendChild(img);
@@ -769,11 +901,6 @@
         }
         
         function movePiece(sr,sc,tr,tc){
-            // Αναπαραγωγή ήχου ανάλογα με την κίνηση
-            if (board[tr][tc]) {
-                // Δεν ακούγεται τίποτα για κατάληψη
-            }
-            
             // Εκτέλεση της κίνησης
             board[tr][tc]=board[sr][sc];
             board[sr][sc]=null;
@@ -816,10 +943,43 @@
                 if (kingInCheck) {
                     // Ματ
                     playSound('checkmate');
-                    setTimeout(() => {
-                        playSound('victory');
-                        showVictoryMessage(currentColor === 'w' ? "Μαύρα" : "Λευκά");
-                    }, 500);
+                    
+                    // Ενημέρωση σκορ για online παιχνίδι
+                    if (currentGame) {
+                        if (currentColor === 'w') {
+                            matchScore.black++;
+                        } else {
+                            matchScore.white++;
+                        }
+                        
+                        // Έλεγχος για νίκη στο match
+                        if (matchScore.white >= targetWins || matchScore.black >= targetWins) {
+                            const winner = matchScore.white >= targetWins ? 
+                                (currentGame.whitePlayer ? currentGame.whitePlayer.username : "Λευκά") : 
+                                (currentGame.blackPlayer ? currentGame.blackPlayer.username : "Μαύρα");
+                            
+                            setTimeout(() => {
+                                playSound('victory');
+                                showVictoryMessage(winner);
+                                addChatMessage("Σύστημα", `Ο παίκτης ${winner} κέρδισε το match με ${targetWins} νίκες!`);
+                            }, 500);
+                            
+                            // Επαναφορά σκορ
+                            matchScore = { white: 0, black: 0 };
+                        } else {
+                            setTimeout(() => {
+                                showVictoryMessage(currentColor === 'w' ? "Μαύρα" : "Λευκά");
+                            }, 500);
+                        }
+                        
+                        updateScoreDisplay();
+                    } else {
+                        setTimeout(() => {
+                            playSound('victory');
+                            showVictoryMessage(currentColor === 'w' ? "Μαύρα" : "Λευκά");
+                        }, 500);
+                    }
+                    
                     gameInfoEl.innerHTML = `<span class="status-mate">${currentColor === 'w' ? "Ματ! Νικάν τα Μαύρα" : "Ματ! Νικάν τα Λευκά"}</span>`;
                     
                     // Αποστολή μηνύματος νίκης σε online παιχνίδι
@@ -998,223 +1158,6 @@
             }
         }
         
-        // Βελτιωμένος AI με Minimax και Alpha-Beta Pruning
-        function makeAIMove() {
-            if (!gameActive) return;
-            
-            thinkingIndicator.style.display = 'block';
-            
-            // Χρήση Web Worker για να αποφύγουμε blocking του UI
-            setTimeout(() => {
-                const bestMove = findBestMove();
-                
-                if (bestMove) {
-                    movePiece(bestMove.from.r, bestMove.from.c, bestMove.to.r, bestMove.to.c);
-                    render();
-                }
-                
-                thinkingIndicator.style.display = 'none';
-            }, 500);
-        }
-        
-        function findBestMove() {
-            const possibleMoves = getAllLegalMoves(aiColor);
-            let bestMove = null;
-            let bestValue = -Infinity;
-            
-            // Αξιολόγηση κάθε πιθανής κίνησης
-            for (const move of possibleMoves) {
-                // Εκτέλεση προσωρινής κίνησης
-                const originalPiece = board[move.to.r][move.to.c];
-                board[move.to.r][move.to.c] = board[move.from.r][move.from.c];
-                board[move.from.r][move.from.c] = null;
-                
-                // Αξιολόγηση θέσης με Minimax
-                const moveValue = minimax(aiDepth - 1, -Infinity, Infinity, false);
-                
-                // Αναίρεση προσωρινής κίνησης
-                board[move.from.r][move.from.c] = board[move.to.r][move.to.c];
-                board[move.to.r][move.to.c] = originalPiece;
-                
-                if (moveValue > bestValue) {
-                    bestValue = moveValue;
-                    bestMove = move;
-                }
-            }
-            
-            return bestMove;
-        }
-        
-        function getAllLegalMoves(color) {
-            const moves = [];
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r][c];
-                    if (piece && piece.color === color) {
-                        const pieceMoves = generateLegalMoves(r, c);
-                        pieceMoves.forEach(move => {
-                            moves.push({
-                                from: {r, c},
-                                to: move
-                            });
-                        });
-                    }
-                }
-            }
-            return moves;
-        }
-        
-        function minimax(depth, alpha, beta, maximizingPlayer) {
-            if (depth === 0) {
-                return evaluateBoard();
-            }
-            
-            const currentColor = maximizingPlayer ? aiColor : (aiColor === 'w' ? 'b' : 'w');
-            const moves = getAllLegalMoves(currentColor);
-            
-            if (moves.length === 0) {
-                // Ματ ή πατ
-                if (isKingInCheck(currentColor)) {
-                    // Ματ
-                    return maximizingPlayer ? -1000 : 1000;
-                } else {
-                    // Πατ
-                    return 0;
-                }
-            }
-            
-            if (maximizingPlayer) {
-                let maxEval = -Infinity;
-                for (const move of moves) {
-                    // Εκτέλεση προσωρινής κίνησης
-                    const originalPiece = board[move.to.r][move.to.c];
-                    board[move.to.r][move.to.c] = board[move.from.r][move.from.c];
-                    board[move.from.r][move.from.c] = null;
-                    
-                    const evaluation = minimax(depth - 1, alpha, beta, false);
-                    
-                    // Αναίρεση προσωρινής κίνησης
-                    board[move.from.r][move.from.c] = board[move.to.r][move.to.c];
-                    board[move.to.r][move.to.c] = originalPiece;
-                    
-                    maxEval = Math.max(maxEval, evaluation);
-                    alpha = Math.max(alpha, evaluation);
-                    if (beta <= alpha) break; // Alpha-Beta Pruning
-                }
-                return maxEval;
-            } else {
-                let minEval = Infinity;
-                for (const move of moves) {
-                    // Εκτέλεση προσωρινής κίνησης
-                    const originalPiece = board[move.to.r][move.to.c];
-                    board[move.to.r][move.to.c] = board[move.from.r][move.from.c];
-                    board[move.from.r][move.from.c] = null;
-                    
-                    const evaluation = minimax(depth - 1, alpha, beta, true);
-                    
-                    // Αναίρεση προσωρινής κίνησης
-                    board[move.from.r][move.from.c] = board[move.to.r][move.to.c];
-                    board[move.to.r][move.to.c] = originalPiece;
-                    
-                    minEval = Math.min(minEval, evaluation);
-                    beta = Math.min(beta, evaluation);
-                    if (beta <= alpha) break; // Alpha-Beta Pruning
-                }
-                return minEval;
-            }
-        }
-        
-        function evaluateBoard() {
-            let score = 0;
-            
-            // Βαθμολόγηση βάσει υλικού
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r][c];
-                    if (piece) {
-                        const value = PIECE_VALUES[piece.type];
-                        // Προσθήκη μπόνους για θέση
-                        const positionBonus = getPositionBonus(piece, r, c);
-                        if (piece.color === aiColor) {
-                            score += value + positionBonus;
-                        } else {
-                            score -= value + positionBonus;
-                        }
-                    }
-                }
-            }
-            
-            return score;
-        }
-        
-        function getPositionBonus(piece, r, c) {
-            // Πίνακες αξιολόγησης θέσης για κάθε κομμάτι
-            const pawnTable = [
-                [0, 0, 0, 0, 0, 0, 0, 0],
-                [5, 5, 5, 5, 5, 5, 5, 5],
-                [1, 1, 2, 3, 3, 2, 1, 1],
-                [0, 0, 0, 2, 2, 0, 0, 0],
-                [0, 0, 0, 1, 1, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0]
-            ];
-            
-            const knightTable = [
-                [-5, -4, -3, -3, -3, -3, -4, -5],
-                [-4, -2, 0, 0, 0, 0, -2, -4],
-                [-3, 0, 1, 1, 1, 1, 0, -3],
-                [-3, 0, 1, 2, 2, 1, 0, -3],
-                [-3, 0, 1, 2, 2, 1, 0, -3],
-                [-3, 0, 1, 1, 1, 1, 0, -3],
-                [-4, -2, 0, 0, 0, 0, -2, -4],
-                [-5, -4, -3, -3, -3, -3, -4, -5]
-            ];
-            
-            // Προσαρμογή για το χρώμα (αναστροφή για μαύρα)
-            const row = piece.color === 'w' ? r : 7 - r;
-            const col = piece.color === 'w' ? c : 7 - c;
-            
-            switch (piece.type) {
-                case 'p': return pawnTable[row][col] * 0.1;
-                case 'n': return knightTable[row][col] * 0.1;
-                default: return 0;
-            }
-        }
-        
-        // Συνάρτηση για εμφάνιση μηνύματος νίκης και πανηγυρισμού
-        function showVictoryMessage(winner) {
-            winnerTextEl.textContent = `Τα ${winner} κέρδισαν!`;
-            victoryMessageEl.style.display = 'block';
-            
-            // Δημιουργία πανηγυρισμού με confetti
-            createConfetti();
-            
-            // Απόκρυψη μηνύματος μετά από 5 δευτερόλεπτα
-            setTimeout(() => {
-                victoryMessageEl.style.display = 'none';
-                celebrationEl.innerHTML = '';
-            }, 5000);
-        }
-        
-        // Συνάρτηση για δημιουργία confetti
-        function createConfetti() {
-            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff', '#ff6600'];
-            
-            for (let i = 0; i < 150; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.width = Math.random() * 10 + 5 + 'px';
-                confetti.style.height = Math.random() * 10 + 5 + 'px';
-                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
-                confetti.style.animationDelay = Math.random() * 2 + 's';
-                
-                celebrationEl.appendChild(confetti);
-            }
-        }
-        
         // ONLINE ΛΕΙΤΟΥΡΓΙΕΣ
         
         // Εγγραφή χρήστη
@@ -1223,7 +1166,8 @@
             const newUser = {
                 id: generateId(),
                 username: username,
-                joined: new Date().toISOString()
+                joined: new Date().toISOString(),
+                online: true
             };
             
             users.push(newUser);
@@ -1250,13 +1194,15 @@
                 whiteToMove: true,
                 status: 'waiting', // waiting, active, finished
                 created: new Date().toISOString(),
-                moves: []
+                moves: [],
+                matchScore: { white: 0, black: 0 }
             };
             
             games.push(newGame);
             saveGames(games);
             currentGame = newGame;
             currentPlayerColor = 'w';
+            matchScore = { white: 0, black: 0 };
             
             // Ενημέρωση UI
             updateOnlineGameStatus();
@@ -1278,6 +1224,7 @@
                 
                 currentGame = games[gameIndex];
                 currentPlayerColor = 'b';
+                matchScore = currentGame.matchScore;
                 
                 // Φόρτωση κατάστασης παιχνιδιού
                 loadGameState();
@@ -1315,6 +1262,7 @@
                 
                 currentGame = null;
                 currentPlayerColor = null;
+                matchScore = { white: 0, black: 0 };
                 
                 // Επαναφορά σε τοπικό παιχνίδι
                 init();
@@ -1322,6 +1270,58 @@
                 
                 // Εμφάνιση μηνύματος
                 addChatMessage("Σύστημα", "Επιστροφή σε τοπικό παιχνίδι.");
+            }
+        }
+        
+        // Πρόκληση παίκτη
+        function challengePlayer(playerId) {
+            const users = getUsers();
+            const targetUser = users.find(u => u.id === playerId);
+            
+            if (targetUser) {
+                const challenges = getChallenges();
+                const newChallenge = {
+                    id: generateId(),
+                    fromUser: currentUser,
+                    toUser: targetUser,
+                    status: 'pending', // pending, accepted, declined
+                    created: new Date().toISOString()
+                };
+                
+                challenges.push(newChallenge);
+                saveChallenges(challenges);
+                
+                addChatMessage("Σύστημα", `Αποστάλθηκε πρόκληση στον παίκτη ${targetUser.username}`);
+            }
+        }
+        
+        // Αποδοχή πρόκλησης
+        function acceptChallenge(challengeId) {
+            const challenges = getChallenges();
+            const challengeIndex = challenges.findIndex(c => c.id === challengeId);
+            
+            if (challengeIndex !== -1) {
+                challenges[challengeIndex].status = 'accepted';
+                saveChallenges(challenges);
+                
+                // Δημιουργία νέου παιχνιδιού
+                const challenge = challenges[challengeIndex];
+                createGame(`Παιχνίδι: ${challenge.fromUser.username} vs ${challenge.toUser.username}`);
+                
+                challengeModal.style.display = 'none';
+            }
+        }
+        
+        // Απόρριψη πρόκλησης
+        function declineChallenge(challengeId) {
+            const challenges = getChallenges();
+            const challengeIndex = challenges.findIndex(c => c.id === challengeId);
+            
+            if (challengeIndex !== -1) {
+                challenges[challengeIndex].status = 'declined';
+                saveChallenges(challenges);
+                
+                challengeModal.style.display = 'none';
             }
         }
         
@@ -1333,9 +1333,25 @@
             const gameIndex = games.findIndex(g => g.id === currentGame.id);
             
             if (gameIndex !== -1) {
-                games[gameIndex].board = board;
+                // Μετατροπή του board σε μορφή που μπορεί να αποθηκευτεί
+                const saveBoard = [];
+                for (let r = 0; r < 8; r++) {
+                    saveBoard[r] = [];
+                    for (let c = 0; c < 8; c++) {
+                        const piece = board[r][c];
+                        if (!piece) {
+                            saveBoard[r][c] = null;
+                        } else {
+                            saveBoard[r][c] = piece.color === 'w' ? 
+                                piece.type.toUpperCase() : piece.type;
+                        }
+                    }
+                }
+                
+                games[gameIndex].board = saveBoard;
                 games[gameIndex].whiteToMove = whiteToMove;
                 games[gameIndex].status = gameActive ? 'active' : 'finished';
+                games[gameIndex].matchScore = matchScore;
                 saveGames(games);
                 
                 currentGame = games[gameIndex];
@@ -1364,9 +1380,11 @@
             
             whiteToMove = currentGame.whiteToMove;
             gameActive = currentGame.status === 'active';
+            matchScore = currentGame.matchScore || { white: 0, black: 0 };
             
             updateGameInfo();
             render();
+            updateScoreDisplay();
         }
         
         // Ενημέρωση κατάστασης online παιχνιδιού
@@ -1393,6 +1411,12 @@
             }
         }
         
+        // Ενημέρωση εμφάνισης σκορ
+        function updateScoreDisplay() {
+            document.getElementById('whiteScore').textContent = `Νίκες: ${matchScore.white}`;
+            document.getElementById('blackScore').textContent = `Νίκες: ${matchScore.black}`;
+        }
+        
         // Εμφάνιση λίστας παιχνιδιών
         function showGameList() {
             const games = getGames().filter(g => g.status === 'waiting');
@@ -1414,6 +1438,36 @@
             }
             
             gameList.style.display = 'block';
+            playersList.style.display = 'none';
+        }
+        
+        // Εμφάνιση λίστας παικτών
+        function showPlayersList() {
+            const users = getUsers().filter(u => u.id !== currentUser.id && u.online);
+            playersList.innerHTML = '';
+            
+            if (users.length === 0) {
+                playersList.innerHTML = '<div class="player-item">Δεν υπάρχουν άλλοι παίκτες online</div>';
+            } else {
+                users.forEach(user => {
+                    const playerItem = document.createElement('div');
+                    playerItem.className = 'player-item';
+                    playerItem.innerHTML = `
+                        <span>${user.username}</span>
+                    `;
+                    
+                    const challengeBtn = document.createElement('button');
+                    challengeBtn.className = 'challenge-btn';
+                    challengeBtn.textContent = 'Πρόκληση';
+                    challengeBtn.addEventListener('click', () => challengePlayer(user.id));
+                    
+                    playerItem.appendChild(challengeBtn);
+                    playersList.appendChild(playerItem);
+                });
+            }
+            
+            playersList.style.display = 'block';
+            gameList.style.display = 'none';
         }
         
         // Προσθήκη μηνύματος στο chat
@@ -1423,6 +1477,15 @@
             messageEl.innerHTML = `<strong>${sender}:</strong> ${message}`;
             chatMessages.appendChild(messageEl);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Άνοιγμα/κλείσιμο chat
+        function toggleChat() {
+            if (chatPopup.style.display === 'flex') {
+                chatPopup.style.display = 'none';
+            } else {
+                chatPopup.style.display = 'flex';
+            }
         }
         
         // Βοηθητικές συναρτήσεις για διαχείριση δεδομένων
@@ -1444,6 +1507,15 @@
             localStorage.setItem(STORAGE_KEY_GAMES, JSON.stringify(games));
         }
         
+        function getChallenges() {
+            const stored = localStorage.getItem(STORAGE_KEY_CHALLENGES);
+            return stored ? JSON.parse(stored) : [];
+        }
+        
+        function saveChallenges(challenges) {
+            localStorage.setItem(STORAGE_KEY_CHALLENGES, JSON.stringify(challenges));
+        }
+        
         function generateId() {
             return Date.now().toString(36) + Math.random().toString(36).substr(2);
         }
@@ -1455,7 +1527,7 @@
             gameModeModal.style.display = 'none';
             
             if (onlineEnabled) {
-                onlinePanel.style.display = 'block';
+                onlinePanel.style.display = 'flex';
                 // Έλεγχος αν ο χρήστης είναι εγγεγραμμένος
                 if (!currentUser) {
                     userModal.style.display = 'flex';
@@ -1475,6 +1547,39 @@
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
+        }
+        
+        // Συνάρτηση για εμφάνιση μηνύματος νίκης και πανηγυρισμού
+        function showVictoryMessage(winner) {
+            winnerTextEl.textContent = `Τα ${winner} κέρδισαν!`;
+            victoryMessageEl.style.display = 'block';
+            
+            // Δημιουργία πανηγυρισμού με confetti
+            createConfetti();
+            
+            // Απόκρυψη μηνύματος μετά από 5 δευτερόλεπτα
+            setTimeout(() => {
+                victoryMessageEl.style.display = 'none';
+                celebrationEl.innerHTML = '';
+            }, 5000);
+        }
+        
+        // Συνάρτηση για δημιουργία confetti
+        function createConfetti() {
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff', '#ff6600'];
+            
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                
+                celebrationEl.appendChild(confetti);
+            }
         }
         
         // Event listeners
@@ -1515,6 +1620,14 @@
             }
         };
         
+        document.getElementById("showPlayersBtn").onclick = () => {
+            if (!currentUser) {
+                userModal.style.display = 'flex';
+            } else {
+                showPlayersList();
+            }
+        };
+        
         document.getElementById("leaveGameBtn").onclick = leaveGame;
         
         document.getElementById("registerBtn").onclick = () => {
@@ -1545,6 +1658,10 @@
             }
         });
         
+        // Event listeners για chat
+        chatToggle.addEventListener("click", toggleChat);
+        document.getElementById("closeChat").addEventListener("click", toggleChat);
+        
         // Event listeners για επιλογή δυσκολίας
         document.querySelectorAll('.difficulty-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -1556,6 +1673,10 @@
         // Κλείσιμο modals
         document.getElementById("closeUserModalBtn").onclick = () => {userModal.style.display = 'none';};
         document.getElementById("closeCreateGameModalBtn").onclick = () => {createGameModal.style.display = 'none';};
+        document.getElementById("acceptChallengeBtn").onclick = () => {
+            // Θα υλοποιηθεί με βάση το challengeId
+        };
+        document.getElementById("declineChallengeBtn").onclick = () => {challengeModal.style.display = 'none';};
         
         // Αρχικοποίηση παιχνιδιού
         init();
@@ -1572,6 +1693,25 @@
                         loadGameState();
                     }
                 }
+            }
+            
+            // Έλεγχος για προκλήσεις
+            const challenges = getChallenges();
+            const pendingChallenge = challenges.find(c => 
+                c.toUser.id === currentUser.id && c.status === 'pending');
+                
+            if (pendingChallenge) {
+                document.getElementById("challengeText").textContent = 
+                    `Ο παίκτης ${pendingChallenge.fromUser.username} σας προκαλεί σε παιχνίδι!`;
+                challengeModal.style.display = 'flex';
+                
+                // Ανανέωση των event listeners
+                document.getElementById("acceptChallengeBtn").onclick = () => {
+                    acceptChallenge(pendingChallenge.id);
+                };
+                document.getElementById("declineChallengeBtn").onclick = () => {
+                    declineChallenge(pendingChallenge.id);
+                };
             }
         }, 3000);
     </script>
