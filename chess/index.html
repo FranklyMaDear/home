@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Σκάκι Deluxe Pro - Online</title>
+    <title>Σκάκι Deluxe Pro</title>
     <style>
         :root {
-            --board-size: min(80vw, 80vh, 600px);
+            --board-size: min(95vw, 95vh, 800px);
             --square-size: calc(var(--board-size) / 8);
             --piece-size: calc(var(--square-size) * 0.85);
             --dot-size: calc(var(--square-size) * 0.25);
@@ -31,11 +31,11 @@
 
         .container {
             display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 100%;
             max-width: 1400px;
             gap: 20px;
-            justify-content: center;
-            align-items: flex-start;
         }
 
         .board-container {
@@ -297,104 +297,6 @@
             margin: 0;
         }
         
-        /* Στυλ για online παιχνίδι */
-        .online-panel {
-            background: #3a2e16;
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            width: 300px;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .user-card {
-            background: #5d4037;
-            padding: 10px 15px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        
-        .user-card.active {
-            background: #d19a4c;
-            box-shadow: 0 0 10px rgba(209, 154, 76, 0.5);
-        }
-        
-        .score-display {
-            font-size: 14px;
-            margin-top: 5px;
-            color: #ffd700;
-        }
-        
-        .online-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .online-btn {
-            background: #5d4037;
-            min-width: 140px;
-        }
-        
-        .online-btn.active {
-            background: #d19a4c;
-        }
-        
-        .game-list {
-            max-height: 200px;
-            overflow-y: auto;
-            background: #2c2414;
-            border-radius: 10px;
-            padding: 10px;
-        }
-        
-        .game-item {
-            padding: 10px;
-            margin-bottom: 8px;
-            background: #5d4037;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .game-item:hover {
-            background: #6d5047;
-        }
-        
-        .players-list {
-            max-height: 200px;
-            overflow-y: auto;
-            background: #2c2414;
-            border-radius: 10px;
-            padding: 10px;
-        }
-        
-        .player-item {
-            padding: 10px;
-            margin-bottom: 8px;
-            background: #5d4037;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .challenge-btn {
-            background: #8b4513;
-            padding: 5px 10px;
-            font-size: 12px;
-            min-width: auto;
-        }
-        
         .form-group {
             margin-bottom: 15px;
             text-align: left;
@@ -419,198 +321,58 @@
             outline: 2px solid #d19a4c;
         }
         
-        .chat-popup {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 300px;
-            background: #3a2e16;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            display: none;
+        .user-info {
+            display: flex;
             flex-direction: column;
-            z-index: 50;
-            max-height: 400px;
+            gap: 10px;
+            margin-bottom: 20px;
         }
         
-        .chat-header {
+        .user-card {
             background: #5d4037;
             padding: 10px 15px;
-            border-radius: 10px 10px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .chat-header h3 {
-            margin: 0;
-            color: white;
-        }
-        
-        .close-chat {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            min-width: auto;
-            padding: 0;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-            max-height: 300px;
-        }
-        
-        .chat-message {
-            margin-bottom: 8px;
-            padding: 5px 10px;
-            background: #5d4037;
-            border-radius: 8px;
-            word-wrap: break-word;
-        }
-        
-        .chat-input {
-            display: flex;
-            padding: 10px;
-            gap: 10px;
-        }
-        
-        .chat-input input {
-            flex: 1;
-            padding: 8px;
-            border-radius: 8px;
-            border: none;
-            background: #5d4037;
-            color: white;
-        }
-        
-        .chat-input button {
-            min-width: 60px;
-            padding: 8px;
-        }
-        
-        .chat-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #d19a4c;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-            z-index: 49;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .section-title {
-            color: white;
-            margin: 10px 0 5px 0;
-            font-size: 16px;
+            border-radius: 10px;
             text-align: center;
         }
         
-        @media (max-width: 1100px) {
-            .container {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .online-panel {
-                width: 100%;
-                max-width: 700px;
-            }
+        .user-card.active {
+            background: #d19a4c;
+            box-shadow: 0 0 10px rgba(209, 154, 76, 0.5);
         }
         
-        @media (max-width: 768px) {
-            .chat-popup {
-                width: calc(100% - 40px);
-                right: 20px;
-                left: 20px;
-            }
+        .score-display {
+            font-size: 14px;
+            margin-top: 5px;
+            color: #ffd700;
+        }
+        
+        .login-btn {
+            background: #5d4037;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            background: #6d5047;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Αριστερό πλαίσιο online παικτών -->
-        <div class="online-panel" id="onlinePanel" style="display: none;">
-            <div class="user-info">
-                <div class="user-card" id="whitePlayer">
-                    <h3>Λευκά</h3>
-                    <div id="whitePlayerName">Αναμονή...</div>
-                    <div class="score-display" id="whiteScore">Νίκες: 0</div>
-                </div>
-                <div class="user-card" id="blackPlayer">
-                    <h3>Μαύρα</h3>
-                    <div id="blackPlayerName">Αναμονή...</div>
-                    <div class="score-display" id="blackScore">Νίκες: 0</div>
-                </div>
-            </div>
-            
-            <div class="online-controls">
-                <button class="online-btn" id="createGameBtn">Δημιουργία Παιχνιδιού</button>
-                <button class="online-btn" id="joinGameBtn">Εμφάνιση Παιχνιδιών</button>
-                <button class="online-btn" id="showPlayersBtn">Εμφάνιση Παικτών</button>
-                <button class="online-btn" id="leaveGameBtn">Αποχώρηση</button>
-            </div>
-            
-            <div class="game-list" id="gameList" style="display: none;">
-                <div class="section-title">Διαθέσιμα Παιχνίδια</div>
-            </div>
-            
-            <div class="players-list" id="playersList" style="display: none;">
-                <div class="section-title">Συνδεδεμένοι Παίκτες</div>
-            </div>
-        </div>
-        
         <!-- Κεντρική σκακιέρα -->
         <div class="board-container">
-            <h1>♕ Σκάκι Deluxe Pro - Online ♛</h1>
+            <h1>♕ Σκάκι Deluxe Pro ♛</h1>
             <div class="game-info" id="gameInfo">Παίζουν τα Λευκά</div>
             <div id="board" class="board"></div>
             <div class="controls">
                 <button id="resetBtn">Νέα Παρτίδα</button>
                 <button id="flipBtn">Αντιστροφή</button>
                 <button id="aiBtn">Παίξτε με AI</button>
-                <button id="onlineBtn">Online Παιχνίδι</button>
+                <button id="loginBtn">Εγγραφή/Σύνδεση</button>
             </div>
         </div>
-        
-        <!-- Δεξιό πλαίσιο (κενό για ισορροπία) -->
-        <div style="width: 300px; visibility: hidden;"></div>
     </div>
     
     <div class="thinking" id="thinkingIndicator">Το AI σκέφτεται...</div>
-    
-    <!-- Κουμπί για άνοιγμα/κλείσιμο chat -->
-    <button class="chat-toggle" id="chatToggle">💬</button>
-    
-    <!-- Pop-up chat -->
-    <div class="chat-popup" id="chatPopup">
-        <div class="chat-header">
-            <h3>Συνομιλία</h3>
-            <button class="close-chat" id="closeChat">×</button>
-        </div>
-        <div class="chat-messages" id="chatMessages"></div>
-        <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="Γράψτε το μήνυμά σας...">
-            <button id="sendChatBtn">Αποστολή</button>
-        </div>
-    </div>
     
     <!-- Modals -->
     <div class="modal" id="gameModeModal" style="display: none;">
@@ -620,7 +382,6 @@
             <div class="modal-options">
                 <button class="modal-btn" id="twoPlayersBtn">Δύο Παίκτες</button>
                 <button class="modal-btn" id="vsAiBtn">Παίξτε με AI</button>
-                <button class="modal-btn" id="onlineModeBtn">Online Παιχνίδι</button>
             </div>
             <div class="difficulty-selector" id="difficultySelector" style="display: none;">
                 <h3 style="color: white; margin: 10px 0;">Επιλογή Δυσκολίας</h3>
@@ -634,36 +395,17 @@
     
     <div class="modal" id="userModal" style="display: none;">
         <div class="modal-content">
-            <h2>Εγγραφή Χρήστη</h2>
+            <h2>Εγγραφή/Σύνδεση Χρήστη</h2>
+            <div class="form-group">
+                <label for="emailInput">Email:</label>
+                <input type="email" id="emailInput" placeholder="Πληκτρολογήστε το email σας">
+            </div>
             <div class="form-group">
                 <label for="usernameInput">Όνομα Χρήστη:</label>
                 <input type="text" id="usernameInput" placeholder="Πληκτρολογήστε το όνομά σας">
             </div>
-            <button class="modal-btn" id="registerBtn">Εγγραφή</button>
+            <button class="modal-btn" id="registerBtn">Εγγραφή/Σύνδεση</button>
             <button class="modal-btn close-btn" id="closeUserModalBtn">Κλείσιμο</button>
-        </div>
-    </div>
-    
-    <div class="modal" id="createGameModal" style="display: none;">
-        <div class="modal-content">
-            <h2>Δημιουργία Παιχνιδιού</h2>
-            <div class="form-group">
-                <label for="gameNameInput">Όνομα Παιχνιδιού:</label>
-                <input type="text" id="gameNameInput" placeholder="Πληκτρολογήστε όνομα παιχνιδιού">
-            </div>
-            <button class="modal-btn" id="confirmCreateGameBtn">Δημιουργία</button>
-            <button class="modal-btn close-btn" id="closeCreateGameModalBtn">Κλείσιμο</button>
-        </div>
-    </div>
-    
-    <div class="modal" id="challengeModal" style="display: none;">
-        <div class="modal-content">
-            <h2>Πρόκληση Παίκτη</h2>
-            <p id="challengeText">Πρόσκληση για παιχνίδι</p>
-            <div class="modal-options">
-                <button class="modal-btn" id="acceptChallengeBtn">Αποδοχή</button>
-                <button class="modal-btn close-btn" id="declineChallengeBtn">Απόρριψη</button>
-            </div>
         </div>
     </div>
     
@@ -680,15 +422,9 @@
         const thinkingIndicator = document.getElementById("thinkingIndicator");
         const gameModeModal = document.getElementById("gameModeModal");
         const userModal = document.getElementById("userModal");
-        const createGameModal = document.getElementById("createGameModal");
-        const challengeModal = document.getElementById("challengeModal");
-        const onlinePanel = document.getElementById("onlinePanel");
-        const gameList = document.getElementById("gameList");
-        const playersList = document.getElementById("playersList");
-        const chatPopup = document.getElementById("chatPopup");
-        const chatMessages = document.getElementById("chatMessages");
-        const chatInput = document.getElementById("chatInput");
-        const chatToggle = document.getElementById("chatToggle");
+        const victoryMessageEl = document.getElementById("victoryMessage");
+        const winnerTextEl = document.getElementById("winnerText");
+        const celebrationEl = document.getElementById("celebration");
         
         let board = [];
         let whiteToMove = true;
@@ -701,20 +437,11 @@
         let aiDepth = 4;
         let kingInCheck = false;
         
-        // Μεταβλητές για online παιχνίδι
+        // Μεταβλητές για χρήστη
         let currentUser = null;
-        let currentGame = null;
-        let currentPlayerColor = null;
-        let games = [];
-        let users = [];
-        let challenges = [];
-        let matchScore = { white: 0, black: 0 };
-        let targetWins = 2; // Παιχνίδι στις 2 νίκες
         
         // Προσομοίωση server με localStorage
         const STORAGE_KEY_USERS = 'chess_users';
-        const STORAGE_KEY_GAMES = 'chess_games';
-        const STORAGE_KEY_CHALLENGES = 'chess_challenges';
         
         const START = [
             ['r','n','b','q','k','b','n','r'],
@@ -789,11 +516,6 @@
             kingInCheck = false;
             updateGameInfo();
             render();
-            
-            // Ενημέρωση κατάστασης online παιχνιδιού
-            if (currentGame) {
-                updateOnlineGameStatus();
-            }
         }
         
         // Απόδοση σκακιέρας
@@ -847,9 +569,7 @@
                         img.draggable=true;
                         
                         // Προσθήκη event listeners μόνο αν είναι η σειρά του χρήστη
-                        if (!vsAI && (!currentGame || (currentGame && 
-                            ((currentPlayerColor === 'w' && whiteToMove) || 
-                             (currentPlayerColor === 'b' && !whiteToMove))))) {
+                        if (!vsAI || (vsAI && whiteToMove !== (aiColor === 'w'))) {
                             img.addEventListener("click", (e) => {
                                 e.stopPropagation();
                                 onSquareTap(row, col);
@@ -860,9 +580,7 @@
                     }
                     
                     // Προσθήκη event listener για το τετράγωνο
-                    if (!vsAI && (!currentGame || (currentGame && 
-                        ((currentPlayerColor === 'w' && whiteToMove) || 
-                         (currentPlayerColor === 'b' && !whiteToMove))))) {
+                    if (!vsAI || (vsAI && whiteToMove !== (aiColor === 'w'))) {
                         sq.addEventListener("click", () => onSquareTap(row, col));
                     }
                     
@@ -878,8 +596,7 @@
         
         function onSquareTap(r, c) {
             // Έλεγχος αν ο χρήστης μπορεί να παίξει
-            if (currentGame && ((currentPlayerColor === 'w' && !whiteToMove) || 
-                (currentPlayerColor === 'b' && whiteToMove))) {
+            if (vsAI && whiteToMove === (aiColor === 'w')) {
                 return;
             }
             
@@ -914,11 +631,6 @@
                 }
             }
             
-            // Αποστολή κίνησης σε online παιχνίδι
-            if (currentGame) {
-                saveGameState();
-            }
-            
             // Έλεγχος για σαχ και ματ
             checkGameState();
             updateGameInfo();
@@ -944,61 +656,15 @@
                     // Ματ
                     playSound('checkmate');
                     
-                    // Ενημέρωση σκορ για online παιχνίδι
-                    if (currentGame) {
-                        if (currentColor === 'w') {
-                            matchScore.black++;
-                        } else {
-                            matchScore.white++;
-                        }
-                        
-                        // Έλεγχος για νίκη στο match
-                        if (matchScore.white >= targetWins || matchScore.black >= targetWins) {
-                            const winner = matchScore.white >= targetWins ? 
-                                (currentGame.whitePlayer ? currentGame.whitePlayer.username : "Λευκά") : 
-                                (currentGame.blackPlayer ? currentGame.blackPlayer.username : "Μαύρα");
-                            
-                            setTimeout(() => {
-                                playSound('victory');
-                                showVictoryMessage(winner);
-                                addChatMessage("Σύστημα", `Ο παίκτης ${winner} κέρδισε το match με ${targetWins} νίκες!`);
-                            }, 500);
-                            
-                            // Επαναφορά σκορ
-                            matchScore = { white: 0, black: 0 };
-                        } else {
-                            setTimeout(() => {
-                                showVictoryMessage(currentColor === 'w' ? "Μαύρα" : "Λευκά");
-                            }, 500);
-                        }
-                        
-                        updateScoreDisplay();
-                    } else {
-                        setTimeout(() => {
-                            playSound('victory');
-                            showVictoryMessage(currentColor === 'w' ? "Μαύρα" : "Λευκά");
-                        }, 500);
-                    }
+                    setTimeout(() => {
+                        playSound('victory');
+                        showVictoryMessage(currentColor === 'w' ? "Μαύρα" : "Λευκά");
+                    }, 500);
                     
                     gameInfoEl.innerHTML = `<span class="status-mate">${currentColor === 'w' ? "Ματ! Νικάν τα Μαύρα" : "Ματ! Νικάν τα Λευκά"}</span>`;
-                    
-                    // Αποστολή μηνύματος νίκης σε online παιχνίδι
-                    if (currentGame) {
-                        addChatMessage("Σύστημα", `Το παιχνίδι τελείωσε! Νικητής: ${currentColor === 'w' ? "Μαύρα" : "Λευκά"}`);
-                    }
                 } else {
                     // Πατ
                     gameInfoEl.textContent = "Πατ! Ισοπαλία";
-                    
-                    // Αποστολή μηνύματος πατ σε online παιχνίδι
-                    if (currentGame) {
-                        addChatMessage("Σύστημα", "Το παιχνίδι τελείωσε με ισοπαλία (πατ)!");
-                    }
-                }
-                
-                // Αποθήκευση τελικής κατάστασης
-                if (currentGame) {
-                    saveGameState();
                 }
             } else if (kingInCheck && !wasInCheck) {
                 // Σαχ (μόνο όταν γίνεται για πρώτη φορά)
@@ -1151,341 +817,79 @@
             } else {
                 gameInfoEl.textContent = whiteToMove ? "Παίζουν τα Λευκά" : "Παίζουν τα Μαύρα";
             }
-            
-            // Ενημέρωση online κατάστασης
-            if (currentGame) {
-                updateOnlineGameStatus();
-            }
         }
         
-        // ONLINE ΛΕΙΤΟΥΡΓΙΕΣ
-        
-        // Εγγραφή χρήστη
-        function registerUser(username) {
-            const users = getUsers();
-            const newUser = {
-                id: generateId(),
-                username: username,
-                joined: new Date().toISOString(),
-                online: true
-            };
+        // AI ΚΙΝΗΣΕΙΣ
+        function makeAIMove() {
+            thinkingIndicator.style.display = 'block';
             
-            users.push(newUser);
-            saveUsers(users);
-            currentUser = newUser;
-            
-            // Ενημέρωση UI
-            document.getElementById('whitePlayerName').textContent = currentUser.username;
-            userModal.style.display = 'none';
-            
-            // Προσθήκη μηνύματος στο chat
-            addChatMessage("Σύστημα", `Καλώς ήρθατε, ${username}!`);
-        }
-        
-        // Δημιουργία παιχνιδιού
-        function createGame(gameName) {
-            const games = getGames();
-            const newGame = {
-                id: generateId(),
-                name: gameName,
-                whitePlayer: currentUser,
-                blackPlayer: null,
-                board: START,
-                whiteToMove: true,
-                status: 'waiting', // waiting, active, finished
-                created: new Date().toISOString(),
-                moves: [],
-                matchScore: { white: 0, black: 0 }
-            };
-            
-            games.push(newGame);
-            saveGames(games);
-            currentGame = newGame;
-            currentPlayerColor = 'w';
-            matchScore = { white: 0, black: 0 };
-            
-            // Ενημέρωση UI
-            updateOnlineGameStatus();
-            createGameModal.style.display = 'none';
-            
-            // Προσθήκη μηνύματος στο chat
-            addChatMessage("Σύστημα", `Το παιχνίδι "${gameName}" δημιουργήθηκε. Αναμονή για παίκτη...`);
-        }
-        
-        // Σύνδεση σε παιχνίδι
-        function joinGame(gameId) {
-            const games = getGames();
-            const gameIndex = games.findIndex(g => g.id === gameId);
-            
-            if (gameIndex !== -1 && games[gameIndex].blackPlayer === null) {
-                games[gameIndex].blackPlayer = currentUser;
-                games[gameIndex].status = 'active';
-                saveGames(games);
-                
-                currentGame = games[gameIndex];
-                currentPlayerColor = 'b';
-                matchScore = currentGame.matchScore;
-                
-                // Φόρτωση κατάστασης παιχνιδιού
-                loadGameState();
-                
-                // Ενημέρωση UI
-                updateOnlineGameStatus();
-                gameList.style.display = 'none';
-                
-                // Προσθήκη μηνύματος στο chat
-                addChatMessage("Σύστημα", `${currentUser.username} συνδέθηκε ως Μαύρα. Το παιχνίδι ξεκινά!`);
-            }
-        }
-        
-        // Αποχώρηση από παιχνίδι
-        function leaveGame() {
-            if (currentGame) {
-                const games = getGames();
-                const gameIndex = games.findIndex(g => g.id === currentGame.id);
-                
-                if (gameIndex !== -1) {
-                    // Προσθήκη μηνύματος αποχώρησης
-                    addChatMessage("Σύστημα", `${currentUser.username} αποχώρησε από το παιχνίδι.`);
-                    
-                    // Διαγραφή παιχνιδιού αν είναι μόνο ένας παίκτης
-                    if ((currentPlayerColor === 'w' && !currentGame.blackPlayer) || 
-                        (currentPlayerColor === 'b' && currentGame.whitePlayer)) {
-                        games.splice(gameIndex, 1);
-                    } else {
-                        // Απενεργοποίηση παιχνιδιού
-                        games[gameIndex].status = 'finished';
-                    }
-                    
-                    saveGames(games);
+            setTimeout(() => {
+                const bestMove = findBestMove();
+                if (bestMove) {
+                    movePiece(bestMove.from.r, bestMove.from.c, bestMove.to.r, bestMove.to.c);
+                    render();
                 }
-                
-                currentGame = null;
-                currentPlayerColor = null;
-                matchScore = { white: 0, black: 0 };
-                
-                // Επαναφορά σε τοπικό παιχνίδι
-                init();
-                onlinePanel.style.display = 'none';
-                
-                // Εμφάνιση μηνύματος
-                addChatMessage("Σύστημα", "Επιστροφή σε τοπικό παιχνίδι.");
-            }
+                thinkingIndicator.style.display = 'none';
+            }, 800);
         }
         
-        // Πρόκληση παίκτη
-        function challengePlayer(playerId) {
-            const users = getUsers();
-            const targetUser = users.find(u => u.id === playerId);
+        function findBestMove() {
+            const possibleMoves = [];
             
-            if (targetUser) {
-                const challenges = getChallenges();
-                const newChallenge = {
+            // Βρες όλες τις πιθανές κινήσεις για το AI
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r][c];
+                    if (piece && piece.color === aiColor) {
+                        const moves = generateLegalMoves(r, c);
+                        moves.forEach(move => {
+                            possibleMoves.push({
+                                from: {r, c},
+                                to: move
+                            });
+                        });
+                    }
+                }
+            }
+            
+            // Αν δεν υπάρχουν κινήσεις, επέστρεψε null
+            if (possibleMoves.length === 0) return null;
+            
+            // Επέλεξε μια τυχαία κίνηση (απλή υλοποίηση)
+            // Σε μια πλήρη υλοποίηση, θα χρησιμοποιούσατε Minimax με Alpha-Beta Pruning
+            const randomIndex = Math.floor(Math.random() * possibleMoves.length);
+            return possibleMoves[randomIndex];
+        }
+        
+        // ΕΓΓΡΑΦΗ ΧΡΗΣΤΗ ΜΕΣΩ EMAIL
+        function registerUser(email, username) {
+            const users = getUsers();
+            
+            // Έλεγχος αν υπάρχει ήδη χρήστης με αυτό το email
+            const existingUser = users.find(u => u.email === email);
+            
+            if (existingUser) {
+                // Σύνδεση υπάρχοντος χρήστη
+                currentUser = existingUser;
+                alert(`Καλώς ήρθατε πάλι, ${existingUser.username}!`);
+            } else {
+                // Εγγραφή νέου χρήστη
+                const newUser = {
                     id: generateId(),
-                    fromUser: currentUser,
-                    toUser: targetUser,
-                    status: 'pending', // pending, accepted, declined
-                    created: new Date().toISOString()
+                    email: email,
+                    username: username,
+                    joined: new Date().toISOString(),
+                    gamesPlayed: 0,
+                    wins: 0
                 };
                 
-                challenges.push(newChallenge);
-                saveChallenges(challenges);
-                
-                addChatMessage("Σύστημα", `Αποστάλθηκε πρόκληση στον παίκτη ${targetUser.username}`);
-            }
-        }
-        
-        // Αποδοχή πρόκλησης
-        function acceptChallenge(challengeId) {
-            const challenges = getChallenges();
-            const challengeIndex = challenges.findIndex(c => c.id === challengeId);
-            
-            if (challengeIndex !== -1) {
-                challenges[challengeIndex].status = 'accepted';
-                saveChallenges(challenges);
-                
-                // Δημιουργία νέου παιχνιδιού
-                const challenge = challenges[challengeIndex];
-                createGame(`Παιχνίδι: ${challenge.fromUser.username} vs ${challenge.toUser.username}`);
-                
-                challengeModal.style.display = 'none';
-            }
-        }
-        
-        // Απόρριψη πρόκλησης
-        function declineChallenge(challengeId) {
-            const challenges = getChallenges();
-            const challengeIndex = challenges.findIndex(c => c.id === challengeId);
-            
-            if (challengeIndex !== -1) {
-                challenges[challengeIndex].status = 'declined';
-                saveChallenges(challenges);
-                
-                challengeModal.style.display = 'none';
-            }
-        }
-        
-        // Αποθήκευση κατάστασης παιχνιδιού
-        function saveGameState() {
-            if (!currentGame) return;
-            
-            const games = getGames();
-            const gameIndex = games.findIndex(g => g.id === currentGame.id);
-            
-            if (gameIndex !== -1) {
-                // Μετατροπή του board σε μορφή που μπορεί να αποθηκευτεί
-                const saveBoard = [];
-                for (let r = 0; r < 8; r++) {
-                    saveBoard[r] = [];
-                    for (let c = 0; c < 8; c++) {
-                        const piece = board[r][c];
-                        if (!piece) {
-                            saveBoard[r][c] = null;
-                        } else {
-                            saveBoard[r][c] = piece.color === 'w' ? 
-                                piece.type.toUpperCase() : piece.type;
-                        }
-                    }
-                }
-                
-                games[gameIndex].board = saveBoard;
-                games[gameIndex].whiteToMove = whiteToMove;
-                games[gameIndex].status = gameActive ? 'active' : 'finished';
-                games[gameIndex].matchScore = matchScore;
-                saveGames(games);
-                
-                currentGame = games[gameIndex];
-            }
-        }
-        
-        // Φόρτωση κατάστασης παιχνιδιού
-        function loadGameState() {
-            if (!currentGame) return;
-            
-            // Μετατροπή του board από το currentGame
-            board = [];
-            for (let r = 0; r < 8; r++) {
-                board[r] = [];
-                for (let c = 0; c < 8; c++) {
-                    const ch = currentGame.board[r][c];
-                    if (!ch) {
-                        board[r][c] = null;
-                    } else {
-                        const color = ch === ch.toUpperCase() ? 'w' : 'b';
-                        const type = ch.toLowerCase();
-                        board[r][c] = { type, color };
-                    }
-                }
+                users.push(newUser);
+                saveUsers(users);
+                currentUser = newUser;
+                alert(`Καλώς ήρθατε, ${username}! Η εγγραφή σας ολοκληρώθηκε επιτυχώς.`);
             }
             
-            whiteToMove = currentGame.whiteToMove;
-            gameActive = currentGame.status === 'active';
-            matchScore = currentGame.matchScore || { white: 0, black: 0 };
-            
-            updateGameInfo();
-            render();
-            updateScoreDisplay();
-        }
-        
-        // Ενημέρωση κατάστασης online παιχνιδιού
-        function updateOnlineGameStatus() {
-            if (!currentGame) return;
-            
-            // Ενημέρωση ονομάτων παικτών
-            document.getElementById('whitePlayerName').textContent = 
-                currentGame.whitePlayer ? currentGame.whitePlayer.username : 'Αναμονή...';
-            document.getElementById('blackPlayerName').textContent = 
-                currentGame.blackPlayer ? currentGame.blackPlayer.username : 'Αναμονή...';
-            
-            // Επισήμανση ενεργού παίκτη
-            document.getElementById('whitePlayer').classList.toggle('active', whiteToMove);
-            document.getElementById('blackPlayer').classList.toggle('active', !whiteToMove);
-            
-            // Ενημέρωση πληροφοριών παιχνιδιού
-            if (currentGame.status === 'waiting') {
-                gameInfoEl.textContent = 'Αναμονή για αντίπαλο...';
-            } else if (currentGame.status === 'active') {
-                gameInfoEl.textContent = whiteToMove ? 
-                    `Παίζουν τα Λευκά (${currentGame.whitePlayer.username})` : 
-                    `Παίζουν τα Μαύρα (${currentGame.blackPlayer.username})`;
-            }
-        }
-        
-        // Ενημέρωση εμφάνισης σκορ
-        function updateScoreDisplay() {
-            document.getElementById('whiteScore').textContent = `Νίκες: ${matchScore.white}`;
-            document.getElementById('blackScore').textContent = `Νίκες: ${matchScore.black}`;
-        }
-        
-        // Εμφάνιση λίστας παιχνιδιών
-        function showGameList() {
-            const games = getGames().filter(g => g.status === 'waiting');
-            gameList.innerHTML = '';
-            
-            if (games.length === 0) {
-                gameList.innerHTML = '<div class="game-item">Δεν υπάρχουν διαθέσιμα παιχνίδια</div>';
-            } else {
-                games.forEach(game => {
-                    const gameItem = document.createElement('div');
-                    gameItem.className = 'game-item';
-                    gameItem.innerHTML = `
-                        <strong>${game.name}</strong><br>
-                        Δημιουργός: ${game.whitePlayer.username}
-                    `;
-                    gameItem.addEventListener('click', () => joinGame(game.id));
-                    gameList.appendChild(gameItem);
-                });
-            }
-            
-            gameList.style.display = 'block';
-            playersList.style.display = 'none';
-        }
-        
-        // Εμφάνιση λίστας παικτών
-        function showPlayersList() {
-            const users = getUsers().filter(u => u.id !== currentUser.id && u.online);
-            playersList.innerHTML = '';
-            
-            if (users.length === 0) {
-                playersList.innerHTML = '<div class="player-item">Δεν υπάρχουν άλλοι παίκτες online</div>';
-            } else {
-                users.forEach(user => {
-                    const playerItem = document.createElement('div');
-                    playerItem.className = 'player-item';
-                    playerItem.innerHTML = `
-                        <span>${user.username}</span>
-                    `;
-                    
-                    const challengeBtn = document.createElement('button');
-                    challengeBtn.className = 'challenge-btn';
-                    challengeBtn.textContent = 'Πρόκληση';
-                    challengeBtn.addEventListener('click', () => challengePlayer(user.id));
-                    
-                    playerItem.appendChild(challengeBtn);
-                    playersList.appendChild(playerItem);
-                });
-            }
-            
-            playersList.style.display = 'block';
-            gameList.style.display = 'none';
-        }
-        
-        // Προσθήκη μηνύματος στο chat
-        function addChatMessage(sender, message) {
-            const messageEl = document.createElement('div');
-            messageEl.className = 'chat-message';
-            messageEl.innerHTML = `<strong>${sender}:</strong> ${message}`;
-            chatMessages.appendChild(messageEl);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-        
-        // Άνοιγμα/κλείσιμο chat
-        function toggleChat() {
-            if (chatPopup.style.display === 'flex') {
-                chatPopup.style.display = 'none';
-            } else {
-                chatPopup.style.display = 'flex';
-            }
+            userModal.style.display = 'none';
         }
         
         // Βοηθητικές συναρτήσεις για διαχείριση δεδομένων
@@ -1498,45 +902,15 @@
             localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
         }
         
-        function getGames() {
-            const stored = localStorage.getItem(STORAGE_KEY_GAMES);
-            return stored ? JSON.parse(stored) : [];
-        }
-        
-        function saveGames(games) {
-            localStorage.setItem(STORAGE_KEY_GAMES, JSON.stringify(games));
-        }
-        
-        function getChallenges() {
-            const stored = localStorage.getItem(STORAGE_KEY_CHALLENGES);
-            return stored ? JSON.parse(stored) : [];
-        }
-        
-        function saveChallenges(challenges) {
-            localStorage.setItem(STORAGE_KEY_CHALLENGES, JSON.stringify(challenges));
-        }
-        
         function generateId() {
             return Date.now().toString(36) + Math.random().toString(36).substr(2);
         }
         
         // Συναρτήσεις για διαχείριση τρόπων παιχνιδιού
-        function setGameMode(aiEnabled, onlineEnabled = false, aiPlaysAs = 'b') {
+        function setGameMode(aiEnabled, aiPlaysAs = 'b') {
             vsAI = aiEnabled;
             aiColor = aiPlaysAs;
             gameModeModal.style.display = 'none';
-            
-            if (onlineEnabled) {
-                onlinePanel.style.display = 'flex';
-                // Έλεγχος αν ο χρήστης είναι εγγεγραμμένος
-                if (!currentUser) {
-                    userModal.style.display = 'flex';
-                }
-            } else {
-                onlinePanel.style.display = 'none';
-                currentGame = null;
-            }
-            
             init();
         }
         
@@ -1577,143 +951,66 @@
                 confetti.style.height = Math.random() * 10 + 5 + 'px';
                 confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
                 confetti.style.animationDelay = Math.random() * 2 + 's';
-                
                 celebrationEl.appendChild(confetti);
             }
         }
         
-        // Event listeners
-        document.getElementById("resetBtn").onclick = init;
-        document.getElementById("flipBtn").onclick = () => {flipped=!flipped;render();};
-        document.getElementById("aiBtn").onclick = () => {gameModeModal.style.display = 'flex';};
-        document.getElementById("onlineBtn").onclick = () => {gameModeModal.style.display = 'flex';};
-        
-        twoPlayersBtn.onclick = () => {
-            difficultySelector.style.display = 'none';
-            setGameMode(false);
-        };
-        
-        vsAiBtn.onclick = () => {
-            difficultySelector.style.display = 'flex';
-        };
-        
-        onlineModeBtn.onclick = () => {
-            setGameMode(false, true);
-        };
-        
-        closeModalBtn.onclick = () => {gameModeModal.style.display = 'none';};
-        
-        // Event listeners για online παιχνίδι
-        document.getElementById("createGameBtn").onclick = () => {
-            if (!currentUser) {
-                userModal.style.display = 'flex';
-            } else {
-                createGameModal.style.display = 'flex';
-            }
-        };
-        
-        document.getElementById("joinGameBtn").onclick = () => {
-            if (!currentUser) {
-                userModal.style.display = 'flex';
-            } else {
-                showGameList();
-            }
-        };
-        
-        document.getElementById("showPlayersBtn").onclick = () => {
-            if (!currentUser) {
-                userModal.style.display = 'flex';
-            } else {
-                showPlayersList();
-            }
-        };
-        
-        document.getElementById("leaveGameBtn").onclick = leaveGame;
-        
-        document.getElementById("registerBtn").onclick = () => {
-            const username = document.getElementById("usernameInput").value.trim();
-            if (username) {
-                registerUser(username);
-            }
-        };
-        
-        document.getElementById("confirmCreateGameBtn").onclick = () => {
-            const gameName = document.getElementById("gameNameInput").value.trim();
-            if (gameName) {
-                createGame(gameName);
-            }
-        };
-        
-        document.getElementById("sendChatBtn").onclick = () => {
-            const message = chatInput.value.trim();
-            if (message && currentUser) {
-                addChatMessage(currentUser.username, message);
-                chatInput.value = '';
-            }
-        };
-        
-        chatInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                document.getElementById("sendChatBtn").click();
-            }
+        // Event Listeners
+        document.getElementById("resetBtn").addEventListener("click", () => {
+            init();
         });
         
-        // Event listeners για chat
-        chatToggle.addEventListener("click", toggleChat);
-        document.getElementById("closeChat").addEventListener("click", toggleChat);
+        document.getElementById("flipBtn").addEventListener("click", () => {
+            flipped = !flipped;
+            render();
+        });
         
-        // Event listeners για επιλογή δυσκολίας
+        document.getElementById("aiBtn").addEventListener("click", () => {
+            gameModeModal.style.display = 'flex';
+        });
+        
+        document.getElementById("loginBtn").addEventListener("click", () => {
+            userModal.style.display = 'flex';
+        });
+        
+        document.getElementById("twoPlayersBtn").addEventListener("click", () => {
+            setGameMode(false);
+        });
+        
+        document.getElementById("vsAiBtn").addEventListener("click", () => {
+            document.getElementById("difficultySelector").style.display = 'block';
+        });
+        
+        document.getElementById("closeModalBtn").addEventListener("click", () => {
+            gameModeModal.style.display = 'none';
+        });
+        
+        document.getElementById("closeUserModalBtn").addEventListener("click", () => {
+            userModal.style.display = 'none';
+        });
+        
+        document.getElementById("registerBtn").addEventListener("click", () => {
+            const email = document.getElementById("emailInput").value;
+            const username = document.getElementById("usernameInput").value;
+            
+            if (!email || !username) {
+                alert("Παρακαλώ συμπληρώστε και τα δύο πεδία.");
+                return;
+            }
+            
+            registerUser(email, username);
+        });
+        
+        // Προσθήκη event listeners για επιλογή δυσκολίας
         document.querySelectorAll('.difficulty-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                setDifficulty(parseInt(this.dataset.depth));
-                setGameMode(true);
+            btn.addEventListener('click', (e) => {
+                setDifficulty(parseInt(e.target.dataset.depth));
+                setGameMode(true, 'b');
             });
         });
         
-        // Κλείσιμο modals
-        document.getElementById("closeUserModalBtn").onclick = () => {userModal.style.display = 'none';};
-        document.getElementById("closeCreateGameModalBtn").onclick = () => {createGameModal.style.display = 'none';};
-        document.getElementById("acceptChallengeBtn").onclick = () => {
-            // Θα υλοποιηθεί με βάση το challengeId
-        };
-        document.getElementById("declineChallengeBtn").onclick = () => {challengeModal.style.display = 'none';};
-        
         // Αρχικοποίηση παιχνιδιού
         init();
-        
-        // Προσομοίωση ενημέρωσης online παιχνιδιών κάθε 3 δευτερόλεπτα
-        setInterval(() => {
-            if (currentGame) {
-                const games = getGames();
-                const updatedGame = games.find(g => g.id === currentGame.id);
-                if (updatedGame && updatedGame.status === 'active') {
-                    // Έλεγχος αν έχει αλλάξει η σειρά
-                    if (updatedGame.whiteToMove !== currentGame.whiteToMove) {
-                        currentGame = updatedGame;
-                        loadGameState();
-                    }
-                }
-            }
-            
-            // Έλεγχος για προκλήσεις
-            const challenges = getChallenges();
-            const pendingChallenge = challenges.find(c => 
-                c.toUser.id === currentUser.id && c.status === 'pending');
-                
-            if (pendingChallenge) {
-                document.getElementById("challengeText").textContent = 
-                    `Ο παίκτης ${pendingChallenge.fromUser.username} σας προκαλεί σε παιχνίδι!`;
-                challengeModal.style.display = 'flex';
-                
-                // Ανανέωση των event listeners
-                document.getElementById("acceptChallengeBtn").onclick = () => {
-                    acceptChallenge(pendingChallenge.id);
-                };
-                document.getElementById("declineChallengeBtn").onclick = () => {
-                    declineChallenge(pendingChallenge.id);
-                };
-            }
-        }, 3000);
     </script>
 </body>
 </html>
