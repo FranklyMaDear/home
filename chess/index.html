@@ -2,264 +2,117 @@
 <html lang="el">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Σκάκι — Responsive & AI</title>
+<title>Σκάκι Deluxe</title>
 <style>
-  :root{
-    --bg:#f0efe8;
-    --panel:#ffffff;
-    --accent:#2f6fb2;
-    --light:#f0d9b5;
-    --dark:#b58863;
-    --board-max:min(92vmin,720px);
-  }
-  html,body{height:100%;margin:0;background:linear-gradient(180deg,#efeae0,#d7d2c7);font-family:Inter,system-ui,Segoe UI,Arial;color:#222}
-  .app {
-    min-height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    box-sizing:border-box;
+  body {
+    background: radial-gradient(circle at center, #d6c6a1 0%, #b29466 80%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
   }
 
-  .card {
-    display:flex;
-    gap:18px;
-    align-items:flex-start;
-    background:var(--panel);
-    border-radius:14px;
-    padding:16px;
-    box-shadow: 0 18px 40px rgba(20,30,60,0.12);
-    max-width:1200px;
-    width:100%;
-    box-sizing:border-box;
-  }
-
-  /* board area */
-  .board-area {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:12px;
-  }
-
-  .board-wrapper {
-    width:var(--board-max);
-    max-width:100%;
-    aspect-ratio:1/1;
-    border-radius:12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    overflow:hidden;
-    background:linear-gradient(180deg,#7b5a32,#5a3f21); /* frame color */
-    padding:12px;
-    box-sizing:border-box;
+  .board-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #3a2e16;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.4);
   }
 
   .board {
-    width:100%;
-    height:100%;
-    display:grid;
+    width: 640px;
+    height: 640px;
+    display: grid;
     grid-template-columns: repeat(8, 1fr);
-    background:linear-gradient(180deg,#d9c6a1,#c69e6a);
-    border-radius:8px;
-    position:relative;
-    box-shadow: inset 0 4px 12px rgba(0,0,0,0.18);
+    border: 8px solid #3a2e16;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
   }
 
   .square {
-    position:relative;
-    width:100%;
-    height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .1s ease;
   }
-  .sq-light{ background: var(--light); }
-  .sq-dark{ background: var(--dark); }
-  .square.highlight { outline: 3px solid rgba(47,111,178,0.18); box-shadow: inset 0 0 0 4px rgba(255,255,255,0.02); }
-  .square.move-dot::after{
-    content:'';
-    width:18%;
-    height:18%;
-    border-radius:50%;
-    background: rgba(10,10,10,0.25);
-    display:block;
-  }
-  .square.capture-dot::after{
-    content:'';
-    width:76%;
-    height:76%;
-    border-radius:50%;
-    background: rgba(200,60,60,0.7);
-    display:block;
-  }
+
+  .sq-light { background: #f0d9b5; }
+  .sq-dark { background: #b58863; }
 
   .piece {
-    width:82%;
-    height:auto;
-    max-width:82%;
-    touch-action:none;
-    user-select:none;
-    transition: transform .08s ease;
+    width: 90%;
+    height: auto;
+    cursor: grab;
+    transition: transform 0.1s;
   }
-  .piece:active{ transform: scale(1.06); }
+  .piece:active {
+    cursor: grabbing;
+    transform: scale(1.1);
+  }
+
+  .highlight {
+    box-shadow: inset 0 0 0 4px #ffcb2e;
+  }
+
+  .move-dot::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.25);
+  }
+
+  h1 {
+    color: #fff;
+    font-size: 24px;
+    margin: 10px 0;
+  }
 
   .controls {
-    width:320px;
-    max-width:36%;
-    min-width:220px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-  }
-  .panel {
-    background:linear-gradient(180deg,#fbfcfe,#f4f7fb);
-    padding:12px;
-    border-radius:10px;
-    box-shadow: 0 6px 14px rgba(10,20,40,0.05);
-  }
-  h1 { margin:4px 0 8px 0; font-size:18px; color:#05345a }
-  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-  label { font-size:13px; color:#234; }
-  .btn {
-    background:var(--accent); color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600;
-    box-shadow: 0 6px 12px rgba(47,111,178,0.18);
-  }
-  .btn.secondary { background:#6c757d; box-shadow:none; }
-  .small { padding:6px 10px; font-size:13px; }
-
-  select,input[type=range] { padding:8px; border-radius:8px;border:1px solid #dde6f0; background:white; }
-  .status { font-size:14px; color:#114; margin-top:6px; }
-
-  .log {
-    max-height:220px; overflow:auto; font-family:monospace; background:#fff;padding:8px;border-radius:8px;border:1px solid #eef3fb; font-size:13px;
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
   }
 
-  .footer { font-size:12px; color:#456; margin-top:6px; }
-
-  /* responsive */
-  @media (max-width:900px){
-    .card { flex-direction:column; align-items:center; padding:12px; }
-    .controls { width:100%; max-width:100%; }
+  button {
+    padding: 8px 16px;
+    border: none;
+    background: #d19a4c;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
   }
+  button:hover { background: #e0ad61; }
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="card" role="application" aria-label="Παιχνίδι σκάκι">
-    <div class="board-area">
-      <div style="display:flex;gap:10px;align-items:center;">
-        <div style="font-weight:700;color:#052b44">Σκάκι — Responsive</div>
-        <div style="color:#355; font-size:13px;">(παίξε τοπικά ή εναντίον AI)</div>
-      </div>
-
-      <div class="board-wrapper" id="boardWrapper">
-        <div id="board" class="board" aria-label="σκακιέρα"></div>
-      </div>
-
-      <div class="row">
-        <button id="resetBtn" class="btn small">Νέα Παρτίδα</button>
-        <button id="flipBtn" class="btn small secondary">Αντιστροφή</button>
-        <div style="margin-left:8px; font-size:13px; color:#234;">Τελευταία κίνηση: <span id="lastMove">-</span></div>
-      </div>
-    </div>
-
+  <div class="board-container">
+    <h1>♕ Σκάκι Deluxe ♛</h1>
+    <div id="board" class="board"></div>
     <div class="controls">
-      <div class="panel">
-        <h1>Επιλογές Παιχνιδιού</h1>
-
-        <div class="row" style="align-items:center;">
-          <label for="mode">Λειτουργία:</label>
-          <select id="mode" style="flex:1;">
-            <option value="hotseat">2 Παίκτες (Τοπικά)</option>
-            <option value="ai">Εναντίον Υπολογιστή</option>
-          </select>
-        </div>
-
-        <div class="row">
-          <label for="aiLevel">AI Επίπεδο:</label>
-          <select id="aiLevel" style="flex:1;">
-            <option value="easy">Easy (τυχαίες έξυπνες κινήσεις)</option>
-            <option value="hard">Hard (Minimax αλφα-βήτα)</option>
-          </select>
-        </div>
-
-        <div class="row">
-          <label for="depth">AI Δύναμη (depth):</label>
-          <input id="depth" type="range" min="1" max="4" value="3" />
-          <span id="depthVal" style="width:28px;text-align:center;">3</span>
-        </div>
-
-        <div style="margin-top:8px;" class="row">
-          <label>Χρώμα AI:</label>
-          <select id="aiColor">
-            <option value="black">Μαύρος (ο παίκτης παίζει λευκό)</option>
-            <option value="white">Λευκό (ο παίκτης παίζει μαύρο)</option>
-          </select>
-        </div>
-
-        <div style="margin-top:10px;" class="row">
-          <button id="startBtn" class="btn">Έναρξη</button>
-          <button id="undoBtn" class="btn secondary">Undo</button>
-        </div>
-
-        <div class="status" id="turnDisplay">Τώρα παίζει: —</div>
-      </div>
-
-      <div class="panel">
-        <h1>Κινήσεις</h1>
-        <div id="movesLog" class="log">Ξεκίνα πατώντας "Έναρξη" ή "Νέα Παρτίδα".</div>
-        <div class="footer">Πατήστε σε πιόνι για να δείτε νόμιμες κινήσεις, μετά πατήστε τετράγωνο για μετακίνηση. Υποστηρίζεται promotion, castling, en-passant, check/checkmate.</div>
-      </div>
+      <button id="resetBtn">Νέα Παρτίδα</button>
+      <button id="flipBtn">Αντιστροφή</button>
     </div>
   </div>
-</div>
 
 <script>
-/* ---------- Chess Engine (lightweight, client-side) ----------
-Representation:
-- board[r][c] r=0..7 (rank 8..1), c=0..7 (file a..h)
-- piece: {type:'p','n','b','r','q','k', color:'w'|'b', hasMoved:Boolean}
-- game state: castlingRights {K,Q,k,q}, enPassant target [r,c] or null
-*/
-
-const boardEl = document.getElementById('board');
-const resetBtn = document.getElementById('resetBtn');
-const flipBtn = document.getElementById('flipBtn');
-const startBtn = document.getElementById('startBtn');
-const undoBtn = document.getElementById('undoBtn');
-const modeSel = document.getElementById('mode');
-const aiLevelSel = document.getElementById('aiLevel');
-const aiColorSel = document.getElementById('aiColor');
-const depthInput = document.getElementById('depth');
-const depthVal = document.getElementById('depthVal');
-const turnDisplay = document.getElementById('turnDisplay');
-const movesLog = document.getElementById('movesLog');
-const lastMoveEl = document.getElementById('lastMove');
-
-depthInput.addEventListener('input',()=>depthVal.textContent = depthInput.value);
-
+const boardEl = document.getElementById("board");
 let board = [];
 let whiteToMove = true;
 let selected = null;
 let legalMoves = [];
 let flipped = false;
-let moveHistory = []; // store full move objects for undo
-let simpleLog = []; // SAN-like
-let castlingRights = {K:true,Q:true,k:true,q:true};
-let enPassant = null; // [r,c] target square if available
-let halfmoveClock = 0, fullmoveNumber = 1;
 
-let gameMode = 'hotseat';
-let aiLevel = 'easy';
-let aiColor = 'black';
-let aiDepth = 3;
-let aiThinking = false;
-
-/* --- START POSITION --- */
 const START = [
   ['r','n','b','q','k','b','n','r'],
   ['p','p','p','p','p','p','p','p'],
@@ -271,66 +124,52 @@ const START = [
   ['R','N','B','Q','K','B','N','R']
 ];
 
-function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
-
-function initGame(){
+function init() {
   board = [];
-  for(let r=0;r<8;r++){
+  for (let r=0;r<8;r++) {
     board[r]=[];
-    for(let c=0;c<8;c++){
-      const ch = START[r][c];
-      if(!ch) board[r][c]=null;
-      else board[r][c] = {type: ch.toLowerCase(), color: ch===ch.toUpperCase() ? 'w' : 'b', hasMoved:false};
+    for (let c=0;c<8;c++) {
+      const ch=START[r][c];
+      if (!ch) board[r][c]=null;
+      else {
+        const color = ch===ch.toUpperCase()?'w':'b';
+        const type = ch.toLowerCase();
+        board[r][c]={type,color};
+      }
     }
   }
-  whiteToMove = true;
-  selected = null;
-  legalMoves = [];
-  flipped = false;
-  moveHistory = [];
-  simpleLog = [];
-  castlingRights = {K:true,Q:true,k:true,q:true};
-  enPassant = null;
-  halfmoveClock = 0;
-  fullmoveNumber = 1;
-  aiThinking = false;
-  renderBoard();
-  updateTurnDisplay();
-  movesLog.innerHTML = 'Περιμένει έναρξη ή κάνε κίνηση.';
-  lastMoveEl.textContent = '-';
+  whiteToMove=true;
+  selected=null;
+  legalMoves=[];
+  render();
 }
 
-function coordFromRC(r,c){
-  return 'abcdefgh'[c] + (8 - r);
-}
-
-/* ---------- Rendering ---------- */
-function renderBoard(){
-  boardEl.innerHTML = '';
-  // produce rendering order independent of flipped: squares carry their r/c
-  const rows = [...Array(8).keys()];
+function render() {
+  boardEl.innerHTML="";
+  const rows=[...Array(8).keys()];
   if(flipped) rows.reverse();
   for(let rr of rows){
-    for(let cc=0;cc<8;cc++){
-      const r = rr;
-      const c = cc;
-      const sq = document.createElement('div');
-      sq.className = 'square ' + (((r+c)%2===0)?'sq-dark':'sq-light');
-      sq.dataset.r = r; sq.dataset.c = c;
-      sq.addEventListener('click', onSquareClick);
-      // show legal moves markers
-      const mv = legalMoves.find(m => m.r===r && m.c===c);
-      if(mv){
-        if(mv.capture) sq.classList.add('capture-dot'); else sq.classList.add('move-dot');
-      }
-      // piece
-      const p = board[r][c];
+    const row=rr;
+    const cols=flipped?[7,6,5,4,3,2,1,0]:[0,1,2,3,4,5,6,7];
+    for(let cc of cols){
+      const col=cc;
+      const sq=document.createElement("div");
+      sq.className="square "+((row+col)%2===0?"sq-dark":"sq-light");
+      sq.dataset.r=row; sq.dataset.c=col;
+      sq.addEventListener("click",onSquareClick);
+      const move=legalMoves.find(m=>m.r===row && m.c===col);
+      if(move) sq.classList.add("move-dot");
+      const p=board[row][col];
       if(p){
-        const img = document.createElement('img');
-        img.draggable = false;
-        img.className = 'piece';
-        img.src = svgDataFor(p.type, p.color);
-        img.dataset.r = r; img.dataset.c = c;
+        const img=document.createElement("img");
+        img.src=getPieceImg(p.type,p.color);
+        img.className="piece";
+        img.draggable=true;
+        img.addEventListener("dragstart",e=>{
+          selected={r:row,c:col};
+          legalMoves=generateMoves(row,col);
+          e.dataTransfer.setData("text/plain",JSON.stringify({r:row,c:col}));
+        });
         sq.appendChild(img);
       }
       boardEl.appendChild(sq);
@@ -338,673 +177,101 @@ function renderBoard(){
   }
 }
 
-/* ---------- SVG (simple wooden style) ---------- */
-function svgDataFor(type,color){
-  // we encode small SVGs as data URLs to avoid remote calls; simple stylized pieces
-  const stroke = color==='w' ? '#2b1f12' : '#0b1b2b';
-  const fill = color==='w' ? '#f6efe6' : '#e8d6c0';
-  let inner='';
-  switch(type){
-    case 'k':
-      inner = `<path d="M20 60 L40 30 L80 30 L100 60 Z" fill="${fill}" stroke="${stroke}" stroke-width="4"/>
-      <rect x="45" y="8" width="10" height="18" fill="${stroke}"/>
-      <rect x="30" y="72" width="60" height="18" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="4"/>`;
-      break;
-    case 'q':
-      inner = `<path d="M18 60 L33 28 L48 60 L62 28 L78 60 L66 72 L36 72 Z" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
-      <rect x="28" y="78" width="64" height="12" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="3"/>`;
-      break;
-    case 'r':
-      inner = `<rect x="22" y="18" width="76" height="20" rx="2" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
-      <rect x="28" y="38" width="64" height="46" rx="8" fill="${fill}" stroke="${stroke}" stroke-width="3"/>`;
-      break;
-    case 'b':
-      inner = `<ellipse cx="60" cy="46" rx="22" ry="30" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
-      <rect x="34" y="74" width="52" height="12" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="3"/>`;
-      break;
-    case 'n':
-      inner = `<path d="M30 72 C36 56,54 52,62 44 C70 36,78 36,86 44 C90 48,88 56,84 62 C78 70,56 78,40 78 Z" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
-      <rect x="34" y="84" width="52" height="10" rx="4" fill="${fill}" stroke="${stroke}" stroke-width="3"/>`;
-      break;
-    case 'p':
-    default:
-      inner = `<circle cx="60" cy="36" r="12" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
-      <rect x="46" y="48" width="28" height="30" rx="8" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
-      <rect x="30" y="78" width="60" height="10" rx="4" fill="${fill}" stroke="${stroke}" stroke-width="3"/>`;
-      break;
+function onSquareClick(e){
+  const r=parseInt(this.dataset.r);
+  const c=parseInt(this.dataset.c);
+  if(selected && legalMoves.find(m=>m.r===r&&m.c===c)){
+    movePiece(selected.r,selected.c,r,c);
+    selected=null;
+    legalMoves=[];
+    render();
+    return;
   }
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'>${inner}</svg>`;
-  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  const p=board[r][c];
+  if(p && p.color===(whiteToMove?'w':'b')){
+    selected={r,c};
+    legalMoves=generateMoves(r,c);
+  } else {
+    selected=null; legalMoves=[];
+  }
+  render();
 }
 
-/* ---------- Move generation with legality (checks) ---------- */
-
-function inBounds(r,c){ return r>=0 && r<8 && c>=0 && c<8; }
-
-function isAttacked(boardState, tr, tc, byColor){
-  // simple check: iterate all opponent pieces and see if any could move to tr,tc ignoring checks
-  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
-    const p = boardState[r][c];
-    if(!p || p.color !== byColor) continue;
-    const moves = pseudoMovesFor(boardState, r, c, true);
-    if(moves.some(m=>m.r===tr && m.c===tc)) return true;
-  }
-  return false;
+function movePiece(sr,sc,tr,tc){
+  board[tr][tc]=board[sr][sc];
+  board[sr][sc]=null;
+  whiteToMove=!whiteToMove;
 }
 
-function findKing(boardState, color){
-  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
-    const p = boardState[r][c];
-    if(p && p.type==='k' && p.color===color) return [r,c];
+function generateMoves(r,c){
+  const p=board[r][c];
+  const moves=[];
+  const color=p.color;
+  const dir=color==='w'?-1:1;
+  function inB(rr,cc){return rr>=0&&rr<8&&cc>=0&&cc<8;}
+  function empty(rr,cc){return inB(rr,cc)&&!board[rr][cc];}
+  function enemy(rr,cc){return inB(rr,cc)&&board[rr][cc]&&board[rr][cc].color!==color;}
+
+  if(p.type==='p'){
+    if(empty(r+dir,c)) moves.push({r:r+dir,c});
+    if((color==='w'&&r===6||color==='b'&&r===1)&&empty(r+dir,c)&&empty(r+2*dir,c))
+      moves.push({r:r+2*dir,c});
+    [-1,1].forEach(dc=>{
+      if(enemy(r+dir,c+dc)) moves.push({r:r+dir,c:c+dc});
+    });
   }
-  return null;
-}
-
-function pseudoMovesFor(boardState, r, c, forAttack=false){
-  // generate pseudo-legal moves for piece at r,c; forAttack=true means pawns generate capture squares only
-  const p = boardState[r][c];
-  if(!p) return [];
-  const moves = [];
-  const color = p.color;
-  const dir = color==='w' ? -1 : 1;
-
-  if(p.type === 'p'){
-    // captures
-    for(const dc of [-1,1]){
-      const rr = r + dir, cc = c + dc;
-      if(inBounds(rr,cc)) {
-        if(boardState[rr][cc] && boardState[rr][cc].color !== color) moves.push({r:rr,c:cc,capture:true});
-        if(forAttack) moves.push({r:rr,c:cc,capture:true});
+  if(p.type==='n'){
+    [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]].forEach(([dr,dc])=>{
+      const rr=r+dr,cc=c+dc;
+      if(inB(rr,cc)){
+        if(!board[rr][cc]||enemy(rr,cc)) moves.push({r:rr,c:cc});
       }
-    }
-    if(forAttack) return moves;
-    // forward
-    if(inBounds(r+dir,c) && !boardState[r+dir][c]) moves.push({r:r+dir,c:c,capture:false});
-    // double
-    const startRank = (color==='w')?6:1;
-    if(r===startRank && !boardState[r+dir][c] && !boardState[r+2*dir][c]) moves.push({r:r+2*dir,c:c,capture:false,double:true});
-    // en-passant target handled in move making
-  } else if(p.type === 'n'){
-    const deltas = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-    for(const [dr,dc] of deltas){
-      const rr=r+dr, cc=c+dc;
-      if(inBounds(rr,cc) && (!boardState[rr][cc] || boardState[rr][cc].color !== color)) moves.push({r:rr,c:cc,capture: !!boardState[rr][cc]});
-    }
-  } else if(p.type === 'b' || p.type === 'r' || p.type === 'q'){
-    const dirs = [];
-    if(p.type==='b' || p.type==='q') dirs.push([-1,-1],[-1,1],[1,-1],[1,1]);
-    if(p.type==='r' || p.type==='q') dirs.push([-1,0],[1,0],[0,-1],[0,1]);
-    for(const [dr,dc] of dirs){
-      let rr=r+dr, cc=c+dc;
-      while(inBounds(rr,cc)){
-        if(!boardState[rr][cc]) moves.push({r:rr,c:cc,capture:false});
-        else { if(boardState[rr][cc].color !== color) moves.push({r:rr,c:cc,capture:true}); break; }
+    });
+  }
+  if(['b','r','q'].includes(p.type)){
+    const dirs=[];
+    if(['b','q'].includes(p.type)) dirs.push([-1,-1],[-1,1],[1,-1],[1,1]);
+    if(['r','q'].includes(p.type)) dirs.push([-1,0],[1,0],[0,-1],[0,1]);
+    dirs.forEach(([dr,dc])=>{
+      let rr=r+dr,cc=c+dc;
+      while(inB(rr,cc)){
+        if(!board[rr][cc]) moves.push({r:rr,c:cc});
+        else { if(enemy(rr,cc)) moves.push({r:rr,c:cc}); break; }
         rr+=dr; cc+=dc;
       }
-    }
-  } else if(p.type === 'k'){
-    for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){
-      if(dr===0 && dc===0) continue;
-      const rr=r+dr, cc=c+dc;
-      if(inBounds(rr,cc) && (!boardState[rr][cc] || boardState[rr][cc].color !== color)) moves.push({r:rr,c:cc,capture:!!boardState[rr][cc]});
-    }
-    // castling handled separately by caller referencing castling rights and attack squares
-  }
-  return moves;
-}
-
-function generateLegalMovesFor(r,c, boardState=null, castRights=null, enPass=null){
-  // returns array of moves with fields {r,c, capture, piece, from:{r,c}, promotion, castle, enpassant}
-  if(!boardState) boardState = board;
-  if(!castRights) castRights = castlingRights;
-  const p = boardState[r][c];
-  if(!p) return [];
-  let moves = [];
-  const pseudo = pseudoMovesFor(boardState, r, c, false);
-  for(const m of pseudo){
-    const move = {from:{r,c}, r:m.r, c:m.c, capture:m.capture || false};
-    // pawn promotion?
-    if(p.type==='p'){
-      if((p.color==='w' && m.r===0) || (p.color==='b' && m.r===7)){
-        move.promotion = 'q'; // default queen; UI will ask on move
-      }
-    }
-    moves.push(move);
-  }
-
-  // pawn captures for en-passant
-  if(p.type==='p' && enPass){
-    const ep = enPass; // e.g. [r,c] where pawn moved 2 steps; enemy can capture to that square
-    const dir = p.color==='w'? -1:1;
-    if(ep[0]===r && Math.abs(ep[1]-c)===1){
-      const targetR = r + dir;
-      const targetC = ep[1];
-      // ensure capturing the pawn behind ep square
-      moves.push({from:{r,c}, r:targetR, c:targetC, capture:true, enpassant:true});
-    }
-  }
-
-  // castling for king
-  if(p.type==='k'){
-    if(p.color==='w'){
-      if(castRights.K){ // king side
-        // squares f1 (r7,c5) and g1 (r7,c6) empty and not attacked
-        if(!boardState[7][5] && !boardState[7][6]){
-          // ensure not in check and squares not attacked
-          const tmp = clone(boardState);
-          // check squares
-          if(!isAttacked(tmp,7,4,'b') && !isAttacked(tmp,7,5,'b') && !isAttacked(tmp,7,6,'b')){
-            moves.push({from:{r,c}, r:7,c:6, castle:'K'});
-          }
-        }
-      }
-      if(castRights.Q){
-        if(!boardState[7][3] && !boardState[7][2] && !boardState[7][1]){
-          const tmp=clone(boardState);
-          if(!isAttacked(tmp,7,4,'b') && !isAttacked(tmp,7,3,'b') && !isAttacked(tmp,7,2,'b')){
-            moves.push({from:{r,c}, r:7,c:2, castle:'Q'});
-          }
-        }
-      }
-    } else {
-      if(castRights.k){
-        if(!boardState[0][5] && !boardState[0][6]){
-          const tmp=clone(boardState);
-          if(!isAttacked(tmp,0,4,'w') && !isAttacked(tmp,0,5,'w') && !isAttacked(tmp,0,6,'w')){
-            moves.push({from:{r,c}, r:0,c:6, castle:'k'});
-          }
-        }
-      }
-      if(castRights.q){
-        if(!boardState[0][3] && !boardState[0][2] && !boardState[0][1]){
-          const tmp=clone(boardState);
-          if(!isAttacked(tmp,0,4,'w') && !isAttacked(tmp,0,3,'w') && !isAttacked(tmp,0,2,'w')){
-            moves.push({from:{r,c}, r:0,c:2, castle:'q'});
-          }
-        }
-      }
-    }
-  }
-
-  // Now filter moves that leave king in check
-  const legal = [];
-  for(const mv of moves){
-    const next = makeMovePreview(boardState, mv, castRights, enPass);
-    const kingPos = findKing(next.board, p.color);
-    if(!kingPos){ continue; } // illegal
-    const inCheck = isAttacked(next.board, kingPos[0], kingPos[1], p.color==='w' ? 'b' : 'w');
-    if(!inCheck){
-      mv._resulting = next; // include for convenience
-      legal.push(mv);
-    }
-  }
-  return legal;
-}
-
-function makeMovePreview(boardState, mv, castRights, enPass){
-  // returns {board:newBoard, castling:newCastlingRights, enPassant:newEP}
-  const nb = clone(boardState);
-  const cr = clone(castRights || castlingRights);
-  let newEP = null;
-  const fromR = mv.from.r, fromC = mv.from.c, toR = mv.r, toC = mv.c;
-  const p = nb[fromR][fromC];
-  // pawn double -> set enPassant
-  if(p.type==='p' && Math.abs(toR - fromR) === 2){
-    newEP = [(fromR + toR)/2, fromC]; // square behind pawn
-  }
-  // en-passant capture
-  if(mv.enpassant){
-    nb[toR][toC] = nb[fromR][fromC];
-    nb[fromR][fromC] = null;
-    // remove the captured pawn behind toR
-    const capR = fromR;
-    const capC = toC;
-    nb[capR][capC] = null;
-  } else {
-    // normal move / capture
-    nb[toR][toC] = nb[fromR][fromC];
-    nb[fromR][fromC] = null;
-  }
-
-  // castling move: move rook too
-  if(mv.castle){
-    if(mv.castle==='K'){ // white king side
-      nb[7][5] = nb[7][7];
-      nb[7][7]=null;
-    } else if(mv.castle==='Q'){ // white queen side
-      nb[7][3] = nb[7][0];
-      nb[7][0]=null;
-    } else if(mv.castle==='k'){ // black king side
-      nb[0][5] = nb[0][7];
-      nb[0][7]=null;
-    } else if(mv.castle==='q'){
-      nb[0][3] = nb[0][0];
-      nb[0][0]=null;
-    }
-  }
-
-  // marking hasMoved
-  nb[toR][toC].hasMoved = true;
-
-  // update castling rights if moved king or rook or captured rook
-  if(nb[toR][toC].type==='k'){
-    if(nb[toR][toC].color==='w'){ cr.K=false; cr.Q=false; } else { cr.k=false; cr.q=false; }
-  }
-  if(mv.from.r===7 && mv.from.c===0) cr.Q=false;
-  if(mv.from.r===7 && mv.from.c===7) cr.K=false;
-  if(mv.from.r===0 && mv.from.c===0) cr.q=false;
-  if(mv.from.r===0 && mv.from.c===7) cr.k=false;
-  // if captured rook, update
-  if(mv.capture){
-    if(mv.r===7 && mv.c===0) cr.Q=false;
-    if(mv.r===7 && mv.c===7) cr.K=false;
-    if(mv.r===0 && mv.c===0) cr.q=false;
-    if(mv.r===0 && mv.c===7) cr.k=false;
-  }
-
-  // promotions handled by caller (this preview doesn't change type)
-  return {board:nb, castling:cr, enPassant:newEP};
-}
-
-/* ---------- Make real move (with UI prompt for promotion) ---------- */
-
-async function makeMove(mv){
-  // mv includes from,r,c, maybe promotion,castle,enpassant
-  const fromR = mv.from.r, fromC = mv.from.c, toR = mv.r, toC = mv.c;
-  const piece = board[fromR][fromC];
-  // handle promotion UI: if pawn reaches last rank and no promotion provided, ask
-  if(piece.type==='p' && ((piece.color==='w' && toR===0) || (piece.color==='b' && toR===7))){
-    let promo = mv.promotion || await askPromotion(piece.color);
-    piece.type = promo;
-  }
-  // en-passant capture
-  if(mv.enpassant){
-    board[toR][toC] = board[fromR][fromC];
-    board[fromR][fromC] = null;
-    // captured pawn is on the fromR row
-    const capR = fromR, capC = toC;
-    board[capR][capC] = null;
-  } else {
-    board[toR][toC] = board[fromR][fromC];
-    board[fromR][fromC] = null;
-  }
-
-  // castling move rook
-  if(mv.castle){
-    if(mv.castle==='K'){ board[7][5]=board[7][7]; board[7][7]=null; }
-    else if(mv.castle==='Q'){ board[7][3]=board[7][0]; board[7][0]=null; }
-    else if(mv.castle==='k'){ board[0][5]=board[0][7]; board[0][7]=null; }
-    else if(mv.castle==='q'){ board[0][3]=board[0][0]; board[0][0]=null; }
-  }
-
-  // update castling rights
-  if(piece.type==='k'){
-    if(piece.color==='w'){ castlingRights.K=false; castlingRights.Q=false; } else { castlingRights.k=false; castlingRights.q=false; }
-  }
-  if(mv.from.r===7 && mv.from.c===0) castlingRights.Q=false;
-  if(mv.from.r===7 && mv.from.c===7) castlingRights.K=false;
-  if(mv.from.r===0 && mv.from.c===0) castlingRights.q=false;
-  if(mv.from.r===0 && mv.from.c===7) castlingRights.k=false;
-  if(mv.capture){
-    if(mv.r===7 && mv.c===0) castlingRights.Q=false;
-    if(mv.r===7 && mv.c===7) castlingRights.K=false;
-    if(mv.r===0 && mv.c===0) castlingRights.q=false;
-    if(mv.r===0 && mv.c===7) castlingRights.k=false;
-  }
-
-  // set hasMoved
-  board[toR][toC].hasMoved = true;
-
-  // update enPassant: if pawn moved two squares, set ep target
-  if(piece.type==='p' && Math.abs(toR - fromR)===2){
-    enPassant = [(fromR+toR)/2, fromC];
-  } else enPassant = null;
-
-  // update clocks
-  if(piece.type==='p' || mv.capture) halfmoveClock = 0; else halfmoveClock++;
-  if(!whiteToMove) fullmoveNumber++;
-
-  // push move to history for undo (store sufficient state)
-  moveHistory.push({
-    mv: mv,
-    board: clone(board),
-    castling: clone(castlingRights),
-    enPassant: enPassant ? [...enPassant] : null,
-    halfmove: halfmoveClock,
-    fullmove: fullmoveNumber,
-    whiteToMove: whiteToMove
-  });
-
-  // log simple SAN-like
-  const san = toSAN(mv, piece);
-  simpleLog.push(san);
-  appendLog(san);
-  lastMoveEl.textContent = san;
-
-  // switch turn
-  whiteToMove = !whiteToMove;
-  selected = null;
-  legalMoves = [];
-  renderBoard();
-  updateTurnDisplay();
-
-  // check for game end
-  const result = checkGameEnd();
-  if(result){
-    const msg = result === 'stalemate' ? 'Ισοπαλία (stalemate)' : `Ματ — νικητής: ${result==='w'?'Λευκός':'Μαύρος'}`;
-    turnDisplay.textContent = msg;
-    return;
-  }
-}
-
-function toSAN(mv, piece){
-  // very simple SAN approximation
-  const from = coordFromRC(mv.from.r, mv.from.c);
-  const to = coordFromRC(mv.r, mv.c);
-  const cap = mv.capture ? 'x' : '-';
-  const prom = mv.promotion ? '='+mv.promotion.toUpperCase() : '';
-  if(piece.type==='p') return `${from}${cap}${to}${prom}`;
-  const sym = {n:'N',b:'B',r:'R',q:'Q',k:'K'}[piece.type] || '?';
-  return `${sym}${from}${cap}${to}${prom}`;
-}
-
-function appendLog(txt){
-  const el = document.createElement('div');
-  el.textContent = `${simpleLog.length}. ${txt}`;
-  movesLog.appendChild(el);
-  movesLog.scrollTop = movesLog.scrollHeight;
-}
-
-/* ---------- Promotion prompt (mobile friendly) ---------- */
-function askPromotion(color){
-  return new Promise(resolve=>{
-    const modal = document.createElement('div');
-    modal.style.position='fixed';
-    modal.style.left='50%'; modal.style.top='50%';
-    modal.style.transform='translate(-50%,-50%)';
-    modal.style.zIndex='9999';
-    modal.style.background='#fff';
-    modal.style.padding='12px';
-    modal.style.borderRadius='10px';
-    modal.style.boxShadow='0 12px 34px rgba(0,0,0,0.25)';
-    modal.innerHTML = `<div style="font-weight:700;margin-bottom:8px;">Προώθηση πιόνι — επίλεξε:</div>`;
-    const options = ['q','r','b','n'];
-    const box = document.createElement('div'); box.style.display='flex'; box.style.gap='8px';
-    options.forEach(t=>{
-      const b = document.createElement('button');
-      b.style.padding='8px';
-      b.style.borderRadius='8px';
-      b.style.border='1px solid #ddd';
-      b.style.cursor='pointer';
-      b.innerHTML = `<img src="${svgDataFor(t,color)}" style="width:48px;height:48px;" />`;
-      b.addEventListener('click',()=>{
-        document.body.removeChild(modal);
-        resolve(t);
-      });
-      box.appendChild(b);
     });
-    modal.appendChild(box);
-    document.body.appendChild(modal);
-  });
-}
-
-/* ---------- Check / Checkmate / Stalemate detection ---------- */
-
-function allLegalMovesForColor(color){
-  const moves = [];
-  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
-    const p = board[r][c];
-    if(p && p.color===color){
-      const ms = generateLegalMovesFor(r,c,board,castlingRights,enPassant);
-      moves.push(...ms);
+  }
+  if(p.type==='k'){
+    for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){
+      if(dr||dc){
+        const rr=r+dr,cc=c+dc;
+        if(inB(rr,cc)&&(!board[rr][cc]||enemy(rr,cc))) moves.push({r:rr,c:cc});
+      }
     }
   }
   return moves;
 }
 
-function checkGameEnd(){
-  const color = whiteToMove ? 'w':'b';
-  const moves = allLegalMovesForColor(color);
-  const kingPos = findKing(board, color);
-  if(!kingPos) return whiteToMove ? 'b' : 'w'; // king missing (shouldn't happen)
-  const inCheck = isAttacked(board, kingPos[0], kingPos[1], color==='w' ? 'b':'w');
-  if(moves.length===0){
-    if(inCheck) return color==='w' ? 'b' : 'w'; // checkmate — opponent wins
-    else return 'stalemate';
-  }
-  // can add fifty-move, repetition etc. (omitted)
-  return null;
+function getPieceImg(t,c){
+  return `https://upload.wikimedia.org/wikipedia/commons/${{
+    'pw':'4/45/Chess_plt45.svg',
+    'pb':'c/c7/Chess_pdt45.svg',
+    'rw':'7/72/Chess_rlt45.svg',
+    'rb':'f/ff/Chess_rdt45.svg',
+    'nw':'7/70/Chess_nlt45.svg',
+    'nb':'e/ef/Chess_ndt45.svg',
+    'bw':'b/b1/Chess_blt45.svg',
+    'bb':'9/98/Chess_bdt45.svg',
+    'qw':'1/15/Chess_qlt45.svg',
+    'qb':'4/47/Chess_qdt45.svg',
+    'kw':'4/42/Chess_klt45.svg',
+    'kb':'f/f0/Chess_kdt45.svg'
+  }[t+c]}`;
 }
 
-/* ---------- UI interactions ---------- */
-
-function onSquareClick(e){
-  if(aiThinking) return;
-  const r = parseInt(this.dataset.r), c = parseInt(this.dataset.c);
-  const p = board[r][c];
-  // if a move is already selected and clicked on legal dest -> perform
-  if(selected){
-    const mv = legalMoves.find(m=>m.r===r && m.c===c);
-    if(mv){
-      makeMove(mv).then(()=>{
-        maybeAIMove();
-      });
-      return;
-    }
-    // else clear selection
-    selected = null; legalMoves = []; renderBoard();
-    return;
-  }
-
-  // select own piece
-  if(p && p.color === (whiteToMove ? 'w' : 'b')){
-    selected = {r,c};
-    legalMoves = generateLegalMovesFor(r,c,board,castlingRights,enPassant);
-    // mark squares
-    renderBoard();
-    // highlight selected
-    const sqs = [...boardEl.querySelectorAll('.square')];
-    const s = sqs.find(sq => parseInt(sq.dataset.r)===r && parseInt(sq.dataset.c)===c);
-    if(s) s.classList.add('highlight');
-    return;
-  } else {
-    // clicked empty or enemy, do nothing
-    selected = null; legalMoves = []; renderBoard();
-  }
-}
-
-/* ---------- AI ---------- */
-
-function maybeAIMove(){
-  if(gameMode !== 'ai') return;
-  const aiPlays = (aiColor === 'white' ? 'w' : 'b');
-  if( (whiteToMove && aiPlays==='w') || (!whiteToMove && aiPlays==='b') ){
-    // AI's turn
-    setTimeout(()=>aiMove(), 150); // small delay for UX
-  }
-}
-
-function aiMove(){
-  if(aiThinking) return;
-  aiThinking = true;
-  turnDisplay.textContent = 'AI σκέφτεται…';
-  setTimeout(()=>{ // allow UI update
-    const moves = allLegalMovesForColor(whiteToMove?'w':'b');
-    if(moves.length===0){ aiThinking=false; const res=checkGameEnd(); if(res) turnDisplay.textContent = res==='stalemate'?'Ισοπαλία':'Ματ'; return; }
-    let chosen = null;
-    if(aiLevel === 'easy'){
-      // smart-random: prefer captures or promotions
-      const captures = moves.filter(m=>m.capture || m.promotion);
-      if(captures.length>0) chosen = captures[Math.floor(Math.random()*captures.length)];
-      else chosen = moves[Math.floor(Math.random()*moves.length)];
-    } else {
-      // minimax with alpha-beta
-      aiDepth = parseInt(depthInput.value);
-      const color = whiteToMove ? 'w' : 'b';
-      const best = minimaxRoot(aiDepth, color);
-      chosen = best.move;
-      if(!chosen) chosen = moves[Math.floor(Math.random()*moves.length)];
-    }
-    if(chosen){
-      makeMove(chosen).then(()=>{
-        aiThinking=false;
-      });
-    } else aiThinking=false;
-  }, 60);
-}
-
-/* ---------- Simple Evaluation & Minimax ---------- */
-
-const pieceValue = {p:100, n:320, b:330, r:500, q:900, k:20000};
-
-function evaluateBoard(boardState){
-  let score = 0;
-  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
-    const p = boardState[r][c];
-    if(!p) continue;
-    const v = pieceValue[p.type] || 0;
-    score += (p.color==='w' ? v : -v);
-  }
-  return score;
-}
-
-function minimaxRoot(depth, color){
-  const moves = allLegalMovesForColor(color);
-  let bestScore = -Infinity;
-  let bestMove = null;
-  for(const mv of moves){
-    const preview = makeMovePreview(board, mv, castlingRights, enPassant);
-    // apply promotions as queen for eval if present
-    const b2 = preview.board;
-    // choose next
-    const score = -negamax(b2, depth-1, -Infinity, Infinity, color==='w' ? 'b' : 'w', preview.castling, preview.enPassant);
-    if(score > bestScore){ bestScore = score; bestMove = mv; }
-  }
-  return {move: bestMove, score: bestScore};
-}
-
-function negamax(boardState, depth, alpha, beta, turnColor, castRightsLocal, enPassLocal){
-  // terminal or depth0
-  const gameEnd = detectTerminalForState(boardState, turnColor, castRightsLocal, enPassLocal);
-  if(gameEnd !== null){
-    // if checkmate for side to move -> very bad
-    return gameEnd;
-  }
-  if(depth===0) return evaluateBoard(boardState) * (turnColor==='w' ? 1 : -1);
-
-  let max = -Infinity;
-  // generate moves for turnColor
-  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
-    const p = boardState[r][c];
-    if(!p || p.color !== turnColor) continue;
-    const moves = generateLegalMovesFor(r,c,boardState,castRightsLocal,enPassLocal);
-    for(const mv of moves){
-      const preview = makeMovePreview(boardState, mv, castRightsLocal, enPassLocal);
-      const val = -negamax(preview.board, depth-1, -beta, -alpha, turnColor==='w' ? 'b' : 'w', preview.castling, preview.enPassant);
-      if(val > max) max = val;
-      if(val > alpha) alpha = val;
-      if(alpha >= beta) return alpha; // beta cut
-    }
-  }
-  return max===-Infinity ? 0 : max;
-}
-
-function detectTerminalForState(boardState, turnColor, castRightsLocal, enPassLocal){
-  // return large score if mate: positive means win for side NOT to move? We'll normalize at root
-  // check legal moves
-  const moves = [];
-  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
-    const p = boardState[r][c];
-    if(p && p.color===turnColor){
-      const ms = generateLegalMovesFor(r,c,boardState,castRightsLocal,enPassLocal);
-      moves.push(...ms);
-    }
-  }
-  const kingPos = findKing(boardState, turnColor);
-  if(!kingPos) return -100000; // lost
-  const inCheck = isAttacked(boardState, kingPos[0], kingPos[1], turnColor==='w' ? 'b' : 'w');
-  if(moves.length===0){
-    return inCheck ? -100000 : 0; // mate -> big negative for side to move, or stalemate 0
-  }
-  return null;
-}
-
-/* ---------- Undo ---------- */
-function undo(){
-  if(moveHistory.length<=1) { initGame(); return; }
-  // pop last move
-  moveHistory.pop(); // remove current state
-  const last = moveHistory.pop();
-  if(!last){ initGame(); return; }
-  // restore
-  board = clone(last.board);
-  castlingRights = clone(last.castling);
-  enPassant = last.enPassant ? [...last.enPassant] : null;
-  halfmoveClock = last.halfmove;
-  fullmoveNumber = last.fullmove;
-  whiteToMove = last.whiteToMove;
-  simpleLog.pop();
-  movesLog.innerHTML = '';
-  simpleLog.forEach((s,i)=>appendLog(s));
-  renderBoard();
-  updateTurnDisplay();
-}
-
-/* ---------- Helpers ---------- */
-
-function updateTurnDisplay(){
-  if(aiThinking) { turnDisplay.textContent = 'AI σκέφτεται...'; return; }
-  const player = whiteToMove ? 'Λευκός' : 'Μαύρος';
-  turnDisplay.textContent = `Τώρα παίζει: ${player}`;
-}
-
-function checkGameEndAndNotify(){
-  const res = checkGameEnd();
-  if(res){
-    if(res==='stalemate') alert('Ισοπαλία (stalemate)!');
-    else alert(`Ματ — νικητής: ${res==='w'?'Λευκός':'Μαύρος'}`);
-  }
-}
-
-async function startGame(){
-  gameMode = modeSel.value;
-  aiLevel = aiLevelSel.value;
-  aiColor = aiColorSel.value;
-  aiDepth = parseInt(depthInput.value);
-  initGame();
-  movesLog.innerHTML = '';
-  simpleLog = [];
-  // push initial position for undo
-  moveHistory = [];
-  moveHistory.push({
-    board: clone(board),
-    castling: clone(castlingRights),
-    enPassant: enPassant ? [...enPassant] : null,
-    halfmove: halfmoveClock,
-    fullmove: fullmoveNumber,
-    whiteToMove: whiteToMove,
-    mv: null
-  });
-  renderBoard();
-  updateTurnDisplay();
-  maybeAIMove();
-}
-
-/* ---------- Start / Bindings ---------- */
-
-resetBtn.addEventListener('click', ()=>{ startGame(); });
-startBtn.addEventListener('click', ()=>{ startGame(); });
-flipBtn.addEventListener('click', ()=>{ flipped = !flipped; renderBoard(); });
-undoBtn.addEventListener('click', ()=>{ undo(); });
-
-depthInput.addEventListener('input', ()=>{ depthVal.textContent = depthInput.value; });
-
-/* initialize once */
-initGame();
-
-/* expose some functions to console for debugging */
-window._chess = {board, generateLegalMovesFor, makeMovePreview};
-
+document.getElementById("resetBtn").onclick=init;
+document.getElementById("flipBtn").onclick=()=>{flipped=!flipped;render();};
+init();
 </script>
 </body>
 </html>
