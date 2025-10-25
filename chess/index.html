@@ -1,12 +1,569 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="el">
 <head>
-    <meta charset="UTF-8">
-    <title>Παιχνίδι Σκακιού</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Παιχνίδι Σκάκι — HTML/JS</title>
+<style>
+  :root{
+    --light-square:#f0d9b5;
+    --dark-square:#b58863;
+    --accent: #4a90e2;
+    --highlight: rgba(74,144,226,0.45);
+    --capture: rgba(220,80,80,0.5);
+    --board-size: min(80vmin, 720px);
+  }
+  body{
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    display:flex;
+    gap:24px;
+    align-items:flex-start;
+    justify-content:center;
+    min-height:100vh;
+    margin:20px;
+    background:linear-gradient(180deg,#fafafa,#e9eef8);
+    color:#222;
+  }
+  .container{
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+  }
+  .board-wrap{
+    width:var(--board-size);
+  }
+  .board{
+    display:grid;
+    grid-template-columns: repeat(8, 1fr);
+    border:6px solid #222;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+    aspect-ratio: 1/1;
+    user-select:none;
+  }
+  .square{
+    position:relative;
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:0;
+    transition: background .12s;
+  }
+  .sq-light{ background: var(--light-square); }
+  .sq-dark{ background: var(--dark-square); }
+
+  .square.highlight{ outline: 3px solid var(--accent); box-shadow: inset 0 0 0 4px rgba(255,255,255,0.06); }
+  .square.move-dot::after{
+    content:'';
+    width:20%;
+    height:20%;
+    border-radius:50%;
+    background: rgba(0,0,0,0.25);
+    display:block;
+  }
+  .square.capture-dot::after{
+    content:'';
+    width:70%;
+    height:70%;
+    border-radius:50%;
+    background: var(--capture);
+    display:block;
+  }
+
+  .piece{
+    width:86%;
+    height:auto;
+    max-width:86%;
+    cursor:grab;
+    touch-action:none;
+  }
+  .piece:active{ cursor:grabbing; }
+
+  .panel{
+    width:320px;
+    padding:14px;
+    border-radius:12px;
+    background:linear-gradient(180deg,#fff,#f7fbff);
+    box-shadow: 0 6px 18px rgba(15,30,60,0.08);
+  }
+  h2{ margin:0 0 8px 0; font-size:20px; }
+  .info { font-size:14px; color:#444; margin-bottom:12px; }
+  .btn{
+    display:inline-block;
+    padding:8px 12px;
+    background:var(--accent);
+    color:white;
+    border-radius:8px;
+    text-decoration:none;
+    cursor:pointer;
+    border:none;
+    font-weight:600;
+  }
+  .btn.secondary{ background:#6c757d; }
+  .moves-log{ max-height:360px; overflow:auto; margin-top:8px; font-family:monospace; background:#fff; padding:8px; border-radius:8px; border:1px solid #e6eefb; font-size:13px; }
+  .coords{
+    display:flex;
+    justify-content:space-between;
+    margin-top:10px;
+    font-size:13px;
+    color:#666;
+  }
+
+  /* promotion modal */
+  .modal{
+    position:fixed;
+    left:50%; top:50%;
+    transform:translate(-50%,-50%);
+    background:white;
+    padding:12px;
+    border-radius:10px;
+    box-shadow: 0 12px 34px rgba(10,20,40,0.25);
+    display:none;
+    z-index:9999;
+  }
+  .modal.show{ display:block; }
+  .promo-grid{ display:flex; gap:8px; }
+  .promo-grid button{ padding:10px; font-size:18px; border-radius:8px; cursor:pointer; border:1px solid #ddd; background:#fff; }
+  footer{ font-size:13px; color:#666; margin-top:6px; }
+
+  @media(max-width:900px){
+    body{ padding:12px; }
+    .container{ flex-direction:column; align-items:center; }
+    .panel{ width:100%; max-width:420px; }
+  }
+</style>
 </head>
 <body>
-    <div id="chessboard"></div>
-    <script src="script.js"></script>
+  <div class="container">
+    <div class="board-wrap">
+      <div id="board" class="board" aria-label="Σκακιέρα" ></div>
+      <div class="coords">
+        <span>Α–Η (a–h)</span>
+        <span>1–8</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Παιχνίδι Σκάκι</h2>
+      <div class="info">
+        Παίχτες: Λευκός ξεκινάει. Κάνε κλικ σε ένα πιόνι για να δεις νόμιμες κινήσεις — σύρε ή κλίκαρε για να μετακινήσεις.
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button id="resetBtn" class="btn">Νέα Παρτίδα</button>
+        <button id="flipBtn" class="btn secondary">Αντιστροφή Σκακιέρας</button>
+      </div>
+
+      <div style="margin-top:12px;">
+        <strong>Τρέχον παίχτης:</strong> <span id="turnDisplay">White</span>
+      </div>
+
+      <div class="moves-log" id="movesLog" aria-live="polite"></div>
+      <footer>Απλή έκδοση: χωρίς castling / en-passant / checkmate detection (μπορώ να τα προσθέσω).</footer>
+    </div>
+  </div>
+
+  <div id="promotionModal" class="modal" role="dialog" aria-modal="true">
+    <div style="margin-bottom:6px;"><strong>Προώθηση πιόνι — επίλεξε:</strong></div>
+    <div class="promo-grid" id="promoChoices"></div>
+  </div>
+
+<script>
+/* ---- Chess core (lightweight) ----
+Board: 8x8 matrix [rank 8..1] x [file a..h] — internal coord: row 0 = rank 8, row7 = rank1
+Pieces: {type:'p','n','b','r','q','k', color:'w'|'b', hasMoved:boolean}
+This implementation covers legal moves (excluding check detection), promotion to chosen piece, alternating turns.
+*/
+
+const boardEl = document.getElementById('board');
+const movesLog = document.getElementById('movesLog');
+const turnDisplay = document.getElementById('turnDisplay');
+const resetBtn = document.getElementById('resetBtn');
+const flipBtn = document.getElementById('flipBtn');
+const promoModal = document.getElementById('promotionModal');
+const promoChoices = document.getElementById('promoChoices');
+
+let board = []; // 8x8
+let whiteToMove = true;
+let selected = null; // {r,c}
+let legalMoves = []; // [{r,c,capture}]
+let flipped = false;
+let moveHistory = [];
+
+/* Initial FEN-like setup (standard) */
+const START_FEN = [
+  ['r','n','b','q','k','b','n','r'],
+  ['p','p','p','p','p','p','p','p'],
+  [null,null,null,null,null,null,null,null],
+  [null,null,null,null,null,null,null,null],
+  [null,null,null,null,null,null,null,null],
+  [null,null,null,null,null,null,null,null],
+  ['P','P','P','P','P','P','P','P'],
+  ['R','N','B','Q','K','B','N','R'],
+];
+
+function initBoard(){
+  board = [];
+  for(let r=0;r<8;r++){
+    board[r]=[];
+    for(let c=0;c<8;c++){
+      const ch = START_FEN[r][c];
+      if(!ch) board[r][c]=null;
+      else {
+        const color = (ch === ch.toUpperCase()) ? 'w' : 'b';
+        const type = ch.toLowerCase();
+        board[r][c] = {type,color,hasMoved:false};
+      }
+    }
+  }
+  whiteToMove = true;
+  selected = null;
+  legalMoves = [];
+  moveHistory = [];
+  renderBoard();
+  movesLog.innerHTML = '';
+  updateTurnDisplay();
+}
+
+function renderBoard(){
+  boardEl.innerHTML = '';
+  // we render rows depending on flipped
+  const rows = [...Array(8).keys()];
+  if(flipped) rows.reverse();
+  for(let rr of rows){
+    for(let cc=0;cc<8;cc++){
+      const r = rr;
+      const c = cc;
+      const square = document.createElement('div');
+      square.className = 'square ' + (((r+c)%2===0)?'sq-dark':'sq-light');
+      square.dataset.r = r; square.dataset.c = c;
+      square.addEventListener('click', onSquareClick);
+      // highlight if in legalMoves
+      const lm = legalMoves.find(m => m.r==r && m.c==c);
+      if(lm){
+        if(lm.capture) square.classList.add('capture-dot');
+        else square.classList.add('move-dot');
+      }
+      // piece
+      const p = board[r][c];
+      if(p){
+        const img = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        img.setAttribute('viewBox','0 0 120 120');
+        img.classList.add('piece');
+        img.dataset.r = r; img.dataset.c = c;
+        img.dataset.type = p.type; img.dataset.color = p.color;
+        img.setAttribute('draggable','true');
+        img.addEventListener('dragstart', onDragStart);
+        img.addEventListener('touchstart', onTouchStart,{passive:false});
+        img.innerHTML = svgForPiece(p.type,p.color);
+        square.appendChild(img);
+      }
+      boardEl.appendChild(square);
+    }
+  }
+}
+
+// SVG generator for stylized pieces
+function svgForPiece(type, color){
+  const stroke = color === 'w' ? '#111' : '#0b2540';
+  const fill  = color === 'w' ? '#ffffff' : '#f5f5f7';
+  // simple stylized shapes; more detail could be added
+  switch(type){
+    case 'k': // king
+      return `
+      <g transform="translate(6,6) scale(0.9)">
+        <rect x="14" y="80" width="92" height="20" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+        <path d="M60 20 L52 38 L68 38 Z" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+        <circle cx="60" cy="36" r="6" fill="${stroke}" />
+        <path d="M34 60 L86 60 L76 44 L44 44 Z" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+      </g>`;
+    case 'q': // queen
+      return `
+      <g transform="translate(6,6) scale(0.9)">
+        <rect x="14" y="80" width="92" height="20" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+        <path d="M24 44 L40 36 L56 46 L72 36 L88 44 L76 66 L44 66 Z" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+        <circle cx="40" cy="36" r="4" fill="${stroke}" />
+        <circle cx="60" cy="36" r="4" fill="${stroke}" />
+      </g>`;
+    case 'r': // rook
+      return `
+      <g transform="translate(6,6) scale(0.9)">
+        <rect x="14" y="80" width="92" height="20" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+        <rect x="28" y="28" width="64" height="22" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+        <rect x="36" y="18" width="48" height="10" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+      </g>`;
+    case 'b': // bishop
+      return `
+      <g transform="translate(6,6) scale(0.9)">
+        <rect x="14" y="80" width="92" height="20" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+        <ellipse cx="60" cy="56" rx="18" ry="30" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+        <circle cx="60" cy="40" r="6" fill="${stroke}" />
+      </g>`;
+    case 'n': // knight
+      return `
+      <g transform="translate(6,6) scale(0.9)">
+        <rect x="14" y="80" width="92" height="20" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+        <path d="M36 70 C36 58,54 54,58 46 C64 34,72 30,86 34 C92 36,92 44,86 50 C80 58,70 64,64 70 Z" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+        <circle cx="62" cy="44" r="3" fill="${stroke}" />
+      </g>`;
+    case 'p': // pawn
+    default:
+      return `
+      <g transform="translate(6,6) scale(0.9)">
+        <rect x="14" y="80" width="92" height="20" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+        <circle cx="60" cy="36" r="12" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+        <rect x="46" y="48" width="28" height="28" rx="8" fill="${fill}" stroke="${stroke}" stroke-width="3"/>
+      </g>`;
+  }
+}
+
+/* Event handlers */
+function onSquareClick(e){
+  const r = parseInt(this.dataset.r), c = parseInt(this.dataset.c);
+  const p = board[r][c];
+  // if selecting own piece
+  if(selected && legalMoves.find(m=>m.r==r&&m.c==c)){
+    // perform move
+    movePiece(selected.r,selected.c,r,c);
+    selected = null; legalMoves=[];
+    renderBoard();
+    return;
+  }
+
+  if(p && p.color === (whiteToMove ? 'w':'b')){
+    selected = {r,c};
+    legalMoves = generateMoves(r,c);
+    renderBoard();
+    // highlight currently selected square
+    const sqs = [...boardEl.querySelectorAll('.square')];
+    const found = sqs.find(s=>parseInt(s.dataset.r)===r && parseInt(s.dataset.c)===c);
+    if(found) found.classList.add('highlight');
+  } else {
+    // clicked empty or enemy piece -> clear selection
+    selected = null; legalMoves = [];
+    renderBoard();
+  }
+}
+
+/* Drag & drop support */
+function onDragStart(e){
+  const r = parseInt(this.dataset.r), c = parseInt(this.dataset.c);
+  // allow drag only if player's piece
+  const p = board[r][c];
+  if(!p || p.color !== (whiteToMove ? 'w':'b')) {
+    e.preventDefault(); return;
+  }
+  selected = {r,c};
+  legalMoves = generateMoves(r,c);
+  e.dataTransfer.setData('text/plain', JSON.stringify({r,c}));
+  // custom drag image
+  const crt = this.cloneNode(true);
+  crt.style.width='120px'; crt.style.opacity='0.95';
+  document.body.appendChild(crt);
+  e.dataTransfer.setDragImage(crt,60,60);
+  setTimeout(()=>document.body.removeChild(crt),0);
+  renderBoard();
+}
+
+boardEl.addEventListener('dragover', e => {
+  e.preventDefault();
+});
+
+boardEl.addEventListener('drop', e => {
+  e.preventDefault();
+  const rect = boardEl.getBoundingClientRect();
+  // find target square by mouse pos
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const size = rect.width/8;
+  const col = Math.floor(x/size);
+  const rowInGrid = Math.floor(y/size);
+  // map to board r,c according to flipped
+  const c = col;
+  const r = flipped ? rowInGrid : rowInGrid;
+  // careful mapping: we rendered rows possibly reversed; but squares have data-r/data-c so find the nearest square with those coordinates from DOM
+  const sq = document.elementFromPoint(e.clientX, e.clientY);
+  let targetSquare = sq;
+  while(targetSquare && !targetSquare.classList.contains('square')){
+    targetSquare = targetSquare.parentElement;
+  }
+  if(!targetSquare) return;
+  const tr = parseInt(targetSquare.dataset.r), tc = parseInt(targetSquare.dataset.c);
+  if(selected && legalMoves.find(m=>m.r==tr&&m.c==tc)){
+    movePiece(selected.r,selected.c,tr,tc);
+    selected=null; legalMoves=[];
+    renderBoard();
+  } else {
+    // ignore illegal drop
+    selected = null; legalMoves=[]; renderBoard();
+  }
+});
+
+/* Touch support (basic) */
+function onTouchStart(e){
+  e.preventDefault();
+  const target = e.currentTarget;
+  const r = parseInt(target.dataset.r), c = parseInt(target.dataset.c);
+  if(board[r][c].color !== (whiteToMove?'w':'b')) return;
+  // emulate select
+  selected = {r,c};
+  legalMoves = generateMoves(r,c);
+  renderBoard();
+}
+
+/* Move execution + promotion */
+function movePiece(sr,sc,tr,tc){
+  const piece = board[sr][sc];
+  if(!piece) return;
+  const target = board[tr][tc];
+  // log
+  const from = coordFromRC(sr,sc);
+  const to = coordFromRC(tr,tc);
+  const san = `${pieceSymbols(piece)}${from}-${to}${target?('x'):''}`;
+  moveHistory.push(san);
+  appendLog(san);
+  // move
+  board[tr][tc] = {...piece, hasMoved:true};
+  board[sr][sc] = null;
+
+  // pawn promotion?
+  if(piece.type === 'p'){
+    if((piece.color==='w' && tr==0) || (piece.color==='b' && tr==7)){
+      // open modal to choose promotion
+      showPromotionModal(piece.color).then(chosen=>{
+        board[tr][tc].type = chosen;
+        finishTurn();
+      });
+      return;
+    }
+  }
+  finishTurn();
+}
+
+function finishTurn(){
+  whiteToMove = !whiteToMove;
+  selected = null;
+  legalMoves = [];
+  renderBoard();
+  updateTurnDisplay();
+}
+
+function appendLog(text){
+  const el = document.createElement('div');
+  el.textContent = `${moveHistory.length}. ${text}`;
+  movesLog.appendChild(el);
+  movesLog.scrollTop = movesLog.scrollHeight;
+}
+
+function updateTurnDisplay(){
+  turnDisplay.textContent = (whiteToMove? 'White' : 'Black');
+}
+
+/* Utilities */
+function coordFromRC(r,c){
+  // r 0..7 -> rank 8..1
+  const file = 'abcdefgh'[c];
+  const rank = 8 - r;
+  return file + rank;
+}
+function pieceSymbols(p){
+  const map = {p:'', n:'N', b:'B', r:'R', q:'Q', k:'K'};
+  return map[p.type] || '';
+}
+
+/* Generate legal moves (no check detection) */
+function generateMoves(r,c){
+  const p = board[r][c];
+  if(!p) return [];
+  const moves = [];
+  const color = p.color;
+  const dir = (color==='w') ? -1 : 1;
+
+  function inBounds(rr,cc){ return rr>=0 && rr<8 && cc>=0 && cc<8; }
+  function empty(rr,cc){ return inBounds(rr,cc) && !board[rr][cc]; }
+  function enemy(rr,cc){ return inBounds(rr,cc) && board[rr][cc] && board[rr][cc].color !== color; }
+
+  if(p.type === 'p'){
+    // forward
+    const oneR = r + dir;
+    if(empty(oneR,c)) moves.push({r:oneR,c, capture:false});
+    // double
+    const startRank = (color==='w')?6:1;
+    const twoR = r + 2*dir;
+    if(r===startRank && empty(oneR,c) && empty(twoR,c)) moves.push({r:twoR,c, capture:false});
+    // captures
+    for(const dc of [-1,1]){
+      const rr = r + dir, cc = c + dc;
+      if(enemy(rr,cc)) moves.push({r:rr,c:cc, capture:true});
+    }
+    // (en-passant omitted)
+  } else if(p.type === 'n'){
+    const deltas = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+    for(const d of deltas){
+      const rr=r+d[0], cc=c+d[1];
+      if(inBounds(rr,cc)){
+        if(!board[rr][cc]) moves.push({r:rr,c:cc, capture:false});
+        else if(board[rr][cc].color !== color) moves.push({r:rr,c:cc, capture:true});
+      }
+    }
+  } else if(p.type === 'b' || p.type === 'r' || p.type === 'q'){
+    const dirs = [];
+    if(p.type==='b' || p.type==='q') dirs.push([-1,-1],[-1,1],[1,-1],[1,1]);
+    if(p.type==='r' || p.type==='q') dirs.push([-1,0],[1,0],[0,-1],[0,1]);
+    for(const d of dirs){
+      let rr = r + d[0], cc = c + d[1];
+      while(inBounds(rr,cc)){
+        if(!board[rr][cc]) { moves.push({r:rr,c:cc, capture:false}); }
+        else {
+          if(board[rr][cc].color !== color) moves.push({r:rr,c:cc, capture:true});
+          break;
+        }
+        rr += d[0]; cc += d[1];
+      }
+    }
+  } else if(p.type === 'k'){
+    for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){
+      if(dr===0 && dc===0) continue;
+      const rr=r+dr, cc=c+dc;
+      if(inBounds(rr,cc)){
+        if(!board[rr][cc]) moves.push({r:rr,c:cc, capture:false});
+        else if(board[rr][cc].color !== color) moves.push({r:rr,c:cc, capture:true});
+      }
+    }
+    // castling omitted
+  }
+
+  return moves;
+}
+
+/* Promotion modal */
+function showPromotionModal(color){
+  return new Promise(resolve=>{
+    promoChoices.innerHTML = '';
+    const pieces = ['q','r','b','n'];
+    pieces.forEach(t=>{
+      const b = document.createElement('button');
+      b.innerHTML = `<svg viewBox="0 0 120 120" style="width:36px;height:36px">${svgForPiece(t,color)}</svg>`;
+      b.addEventListener('click', ()=>{
+        promoModal.classList.remove('show');
+        resolve(t);
+      });
+      promoChoices.appendChild(b);
+    });
+    promoModal.classList.add('show');
+  });
+}
+
+/* Buttons */
+resetBtn.addEventListener('click', initBoard);
+flipBtn.addEventListener('click', ()=>{
+  flipped = !flipped;
+  renderBoard();
+});
+
+/* init */
+initBoard();
+
+</script>
 </body>
 </html>
