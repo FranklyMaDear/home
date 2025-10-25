@@ -6,7 +6,7 @@
 <title>Σκάκι Deluxe Pro</title>
 <style>
   :root {
-    --board-size: min(85vw, 85vh, 550px);
+    --board-size: min(90vw, 90vh, 600px);
     --square-size: calc(var(--board-size) / 8);
     --piece-size: calc(var(--square-size) * 0.85);
     --dot-size: calc(var(--square-size) * 0.25);
@@ -109,45 +109,37 @@
   }
 
   .controls {
-    margin-top: 15px;
+    margin-top: 10px;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
     justify-content: center;
     width: 100%;
   }
 
   button {
-    padding: 12px 18px;
+    padding: 10px 16px;
     border: none;
     background: #d19a4c;
     color: white;
     font-weight: bold;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     box-shadow: 0 3px 6px rgba(0,0,0,0.3);
     font-size: clamp(14px, 4vw, 16px);
-    min-width: 140px;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    min-width: 120px;
+    transition: all 0.15s ease;
+    position: relative;
+    overflow: hidden;
   }
   
-  button i {
-    font-size: 1.2em;
+  button:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
   }
   
   button:hover, button:active { 
     background: #e0ad61; 
-    transform: translateY(-2px);
-    box-shadow: 0 5px 8px rgba(0,0,0,0.4);
-  }
-  
-  button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
   
   .game-info {
@@ -156,11 +148,6 @@
     font-size: clamp(14px, 4vw, 16px);
     text-align: center;
     min-height: 24px;
-    background: rgba(0,0,0,0.2);
-    padding: 8px 15px;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 300px;
   }
   
   .modal {
@@ -178,32 +165,29 @@
   
   .modal-content {
     background: #3a2e16;
-    padding: 25px;
+    padding: 20px;
     border-radius: 15px;
     max-width: 90%;
-    width: 420px;
+    width: 400px;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
   }
   
   .modal h2 {
     color: white;
     margin-top: 0;
-    font-size: 1.5em;
   }
   
   .modal-options {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     margin: 20px 0;
   }
   
   .modal-btn {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     font-size: 16px;
-    border-radius: 10px;
   }
   
   .close-btn {
@@ -215,31 +199,28 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.7);
     color: white;
-    padding: 18px 30px;
-    border-radius: 12px;
+    padding: 15px 25px;
+    border-radius: 10px;
     font-size: 18px;
     z-index: 10;
     display: none;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
   }
   
   .difficulty-selector {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin: 20px 0;
+    gap: 10px;
+    margin: 15px 0;
   }
   
   .difficulty-btn {
     background: #5d4037;
-    transition: all 0.2s ease;
   }
   
   .difficulty-btn.active {
     background: #d19a4c;
-    transform: scale(1.02);
   }
   
   .status-check {
@@ -253,94 +234,58 @@
     font-size: 1.2em;
   }
   
-  .mobile-controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin-top: 15px;
-    width: 100%;
-    max-width: 300px;
-  }
-  
-  .direction-btn {
-    min-width: 60px;
-    height: 50px;
-    padding: 8px;
-    font-size: 20px;
-    background: #8b4513;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .direction-btn:hover {
-    background: #a0522d;
-  }
-  
-  .control-row {
-    display: flex;
-    gap: 8px;
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .promotion-modal {
+  /* Στυλ για πανηγυρισμούς */
+  .celebration {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.7);
-    display: none;
-    justify-content: center;
-    align-items: center;
+    pointer-events: none;
     z-index: 200;
   }
   
-  .promotion-options {
-    display: flex;
-    background: #3a2e16;
-    padding: 15px;
+  .confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #f00;
+    opacity: 0.8;
+    animation: fall linear forwards;
+  }
+  
+  @keyframes fall {
+    to {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+  
+  .victory-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 20px 40px;
     border-radius: 15px;
-    gap: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    z-index: 201;
+    text-align: center;
+    display: none;
+    box-shadow: 0 0 30px rgba(255,215,0,0.5);
+    border: 2px solid gold;
   }
   
-  .promotion-piece {
-    width: 60px;
-    height: 60px;
-    cursor: pointer;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+  .victory-message h2 {
+    margin: 0 0 10px 0;
+    color: gold;
   }
   
-  .promotion-piece:hover {
-    background: #d19a4c;
-    transform: scale(1.1);
-  }
-  
-  @media (max-width: 480px) {
-    .controls {
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    button {
-      width: 100%;
-      max-width: 250px;
-    }
-    
-    .mobile-controls {
-      max-width: 250px;
-    }
-    
-    .direction-btn {
-      min-width: 50px;
-      height: 45px;
-    }
+  .victory-message p {
+    margin: 0;
   }
 </style>
 </head>
@@ -349,35 +294,10 @@
     <h1>♕ Σκάκι Deluxe Pro ♛</h1>
     <div class="game-info" id="gameInfo">Παίζουν τα Λευκά</div>
     <div id="board" class="board"></div>
-    
-    <div class="mobile-controls" id="mobileControls">
-      <div class="control-row">
-        <button class="direction-btn" id="btnUpLeft">↖</button>
-        <button class="direction-btn" id="btnUp">↑</button>
-        <button class="direction-btn" id="btnUpRight">↗</button>
-      </div>
-      <div class="control-row">
-        <button class="direction-btn" id="btnLeft">←</button>
-        <button class="direction-btn" id="btnDeselect">✕</button>
-        <button class="direction-btn" id="btnRight">→</button>
-      </div>
-      <div class="control-row">
-        <button class="direction-btn" id="btnDownLeft">↙</button>
-        <button class="direction-btn" id="btnDown">↓</button>
-        <button class="direction-btn" id="btnDownRight">↘</button>
-      </div>
-    </div>
-    
     <div class="controls">
-      <button id="resetBtn">
-        <i>🔄</i> Νέα Παρτίδα
-      </button>
-      <button id="flipBtn">
-        <i>↻</i> Αντιστροφή
-      </button>
-      <button id="aiBtn">
-        <i>🤖</i> Παίξτε με AI
-      </button>
+      <button id="resetBtn">Νέα Παρτίδα</button>
+      <button id="flipBtn">Αντιστροφή</button>
+      <button id="aiBtn">Παίξτε με AI</button>
     </div>
   </div>
   
@@ -388,33 +308,23 @@
       <h2>Επιλογή Τρόπου Παιχνιδιού</h2>
       <p>Πώς θέλετε να παίξετε;</p>
       <div class="modal-options">
-        <button class="modal-btn" id="twoPlayersBtn">
-          <i>👥</i> Δύο Παίκτες
-        </button>
-        <button class="modal-btn" id="vsAiBtn">
-          <i>🤖</i> Παίξτε με AI
-        </button>
+        <button class="modal-btn" id="twoPlayersBtn">Δύο Παίκτες</button>
+        <button class="modal-btn" id="vsAiBtn">Παίξτε με AI</button>
       </div>
       <div class="difficulty-selector" id="difficultySelector" style="display: none;">
         <h3 style="color: white; margin: 10px 0;">Επιλογή Δυσκολίας</h3>
-        <button class="modal-btn difficulty-btn" data-depth="2">
-          <i>😊</i> Εύκολο
-        </button>
-        <button class="modal-btn difficulty-btn" data-depth="3">
-          <i>😐</i> Μέτριο
-        </button>
-        <button class="modal-btn difficulty-btn active" data-depth="4">
-          <i>😠</i> Δύσκολο
-        </button>
+        <button class="modal-btn difficulty-btn" data-depth="2">Εύκολο</button>
+        <button class="modal-btn difficulty-btn" data-depth="3">Μέτριο</button>
+        <button class="modal-btn difficulty-btn active" data-depth="4">Δύσκολο</button>
       </div>
-      <button class="modal-btn close-btn" id="closeModalBtn">
-        <i>✕</i> Κλείσιμο
-      </button>
+      <button class="modal-btn close-btn" id="closeModalBtn">Κλείσιμο</button>
     </div>
   </div>
   
-  <div class="promotion-modal" id="promotionModal">
-    <div class="promotion-options" id="promotionOptions"></div>
+  <div id="celebration" class="celebration"></div>
+  <div id="victoryMessage" class="victory-message">
+    <h2>Νίκη!</h2>
+    <p id="winnerText"></p>
   </div>
 
 <script>
@@ -426,9 +336,9 @@ const twoPlayersBtn = document.getElementById("twoPlayersBtn");
 const vsAiBtn = document.getElementById("vsAiBtn");
 const closeModalBtn = document.getElementById("closeModalBtn");
 const difficultySelector = document.getElementById("difficultySelector");
-const promotionModal = document.getElementById("promotionModal");
-const promotionOptions = document.getElementById("promotionOptions");
-const mobileControls = document.getElementById("mobileControls");
+const celebrationEl = document.getElementById("celebration");
+const victoryMessageEl = document.getElementById("victoryMessage");
+const winnerTextEl = document.getElementById("winnerText");
 
 let board = [];
 let whiteToMove = true;
@@ -438,9 +348,8 @@ let flipped = false;
 let vsAI = false;
 let aiColor = 'b';
 let gameActive = true;
-let aiDepth = 4;
+let aiDepth = 4; // Βάθος αναζήτησης για AI
 let kingInCheck = false;
-let promotionPending = null;
 
 const START = [
   ['r','n','b','q','k','b','n','r'],
@@ -463,6 +372,69 @@ const PIECE_VALUES = {
   'k': 900
 };
 
+// Ηχητικά εφέ
+const sounds = {
+  move: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='),
+  capture: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='),
+  check: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='),
+  checkmate: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='),
+  victory: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==')
+};
+
+// Προσομοίωση ήχων (θα χρησιμοποιήσουμε Web Audio API για πραγματικούς ήχους)
+function playSound(soundType) {
+  try {
+    // Δημιουργία απλού ήχου με Web Audio API
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Ρύθμιση παραμέτρων βάσει τύπου ήχου
+    switch(soundType) {
+      case 'move':
+        oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        oscillator.type = 'sine';
+        break;
+      case 'capture':
+        oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        oscillator.type = 'square';
+        break;
+      case 'check':
+        oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        oscillator.type = 'sawtooth';
+        break;
+      case 'checkmate':
+        oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+        oscillator.type = 'triangle';
+        break;
+      case 'victory':
+        // Fanfare ήχος
+        oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C
+        gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+        oscillator.type = 'sine';
+        break;
+    }
+    
+    oscillator.start();
+    
+    // Ρύθμιση διάρκειας
+    let duration = 0.2;
+    if (soundType === 'victory') duration = 1.0;
+    
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+    oscillator.stop(audioContext.currentTime + duration);
+  } catch (e) {
+    console.log("Αδυναμία αναπαραγωγής ήχου: ", e);
+  }
+}
+
 function init() {
   board = [];
   for (let r=0;r<8;r++) {
@@ -482,7 +454,6 @@ function init() {
   legalMoves=[];
   gameActive = true;
   kingInCheck = false;
-  promotionPending = null;
   updateGameInfo();
   render();
 }
@@ -619,6 +590,13 @@ function onSquareClick(e){
 }
 
 function movePiece(sr,sc,tr,tc){
+  // Αναπαραγωγή ήχου ανάλογα με την κίνηση
+  if (board[tr][tc]) {
+    playSound('capture'); // Ήχος κατάληψης
+  } else {
+    playSound('move'); // Ήχος απλής κίνησης
+  }
+  
   // Εκτέλεση της κίνησης
   board[tr][tc]=board[sr][sc];
   board[sr][sc]=null;
@@ -628,9 +606,7 @@ function movePiece(sr,sc,tr,tc){
   const piece = board[tr][tc];
   if (piece && piece.type === 'p') {
     if ((piece.color === 'w' && tr === 0) || (piece.color === 'b' && tr === 7)) {
-      promotionPending = {r: tr, c: tc};
-      showPromotionModal(piece.color);
-      return; // Μην προχωρήσεις παρακάτω μέχρι να επιλεγεί κομμάτι
+      promotePawn(tr, tc);
     }
   }
   
@@ -639,34 +615,10 @@ function movePiece(sr,sc,tr,tc){
   updateGameInfo();
 }
 
-function showPromotionModal(color) {
-  promotionOptions.innerHTML = '';
-  const pieces = ['q', 'r', 'b', 'n'];
-  
-  pieces.forEach(pieceType => {
-    const option = document.createElement('div');
-    option.className = 'promotion-piece';
-    const img = document.createElement('img');
-    img.src = getPieceImg(pieceType, color);
-    img.style.width = '80%';
-    img.style.height = '80%';
-    option.appendChild(img);
-    option.addEventListener('click', () => {
-      promotePawn(promotionPending.r, promotionPending.c, pieceType);
-      promotionModal.style.display = 'none';
-      promotionPending = null;
-      checkGameState();
-      updateGameInfo();
-      render();
-    });
-    promotionOptions.appendChild(option);
-  });
-  
-  promotionModal.style.display = 'flex';
-}
-
-function promotePawn(r, c, pieceType) {
-  board[r][c].type = pieceType;
+function promotePawn(r, c) {
+  // Σε μια πλήρη υλοποίηση, θα εμφανίζατε modal για επιλογή κομματιού
+  // Για απλότητα, προάγουμε πάντα σε βασίλισσα
+  board[r][c].type = 'q';
 }
 
 function checkGameState() {
@@ -680,6 +632,11 @@ function checkGameState() {
     gameActive = false;
     if (kingInCheck) {
       // Ματ
+      playSound('checkmate');
+      setTimeout(() => {
+        playSound('victory');
+        showVictoryMessage(currentColor === 'w' ? "Μαύρα" : "Λευκά");
+      }, 500);
       gameInfoEl.innerHTML = `<span class="status-mate">${currentColor === 'w' ? "Ματ! Νικάν τα Μαύρα" : "Ματ! Νικάν τα Λευκά"}</span>`;
     } else {
       // Πατ
@@ -687,6 +644,7 @@ function checkGameState() {
     }
   } else if (kingInCheck) {
     // Σαχ
+    playSound('check');
     gameInfoEl.innerHTML = `<span class="status-check">${currentColor === 'w' ? "Σαχ στα Λευκά!" : "Σαχ στα Μαύρα!"}</span>`;
   }
 }
@@ -1021,48 +979,37 @@ function getPositionBonus(piece, r, c) {
   }
 }
 
-// Συναρτήσεις για τα κουμπιά κατεύθυνσης
-function setupDirectionButtons() {
-  document.getElementById('btnUpLeft').addEventListener('click', () => moveSelectedPiece(-1, -1));
-  document.getElementById('btnUp').addEventListener('click', () => moveSelectedPiece(-1, 0));
-  document.getElementById('btnUpRight').addEventListener('click', () => moveSelectedPiece(-1, 1));
-  document.getElementById('btnLeft').addEventListener('click', () => moveSelectedPiece(0, -1));
-  document.getElementById('btnRight').addEventListener('click', () => moveSelectedPiece(0, 1));
-  document.getElementById('btnDownLeft').addEventListener('click', () => moveSelectedPiece(1, -1));
-  document.getElementById('btnDown').addEventListener('click', () => moveSelectedPiece(1, 0));
-  document.getElementById('btnDownRight').addEventListener('click', () => moveSelectedPiece(1, 1));
-  document.getElementById('btnDeselect').addEventListener('click', deselectPiece);
+// Συνάρτηση για εμφάνιση μηνύματος νίκης και πανηγυρισμού
+function showVictoryMessage(winner) {
+  winnerTextEl.textContent = `Τα ${winner} κέρδισαν!`;
+  victoryMessageEl.style.display = 'block';
+  
+  // Δημιουργία πανηγυρισμού με confetti
+  createConfetti();
+  
+  // Απόκρυψη μηνύματος μετά από 5 δευτερόλεπτα
+  setTimeout(() => {
+    victoryMessageEl.style.display = 'none';
+    celebrationEl.innerHTML = '';
+  }, 5000);
 }
 
-function moveSelectedPiece(dr, dc) {
-  if (!selected) return;
+// Συνάρτηση για δημιουργία confetti
+function createConfetti() {
+  const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff', '#ff6600'];
   
-  const newR = selected.r + dr;
-  const newC = selected.c + dc;
-  
-  // Έλεγχος εάν η νέα θέση είναι εντός σκακιέρας
-  if (newR >= 0 && newR < 8 && newC >= 0 && newC < 8) {
-    // Έλεγχος εάν η κίνηση είναι νόμιμη
-    const isLegalMove = legalMoves.some(move => move.r === newR && move.c === newC);
+  for (let i = 0; i < 150; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + 'vw';
+    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.width = Math.random() * 10 + 5 + 'px';
+    confetti.style.height = Math.random() * 10 + 5 + 'px';
+    confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+    confetti.style.animationDelay = Math.random() * 2 + 's';
     
-    if (isLegalMove) {
-      movePiece(selected.r, selected.c, newR, newC);
-      selected = null;
-      legalMoves = [];
-      render();
-    } else {
-      // Αν δεν είναι νόμιμη κίνηση, απλά μετακίνησε την επιλογή
-      selected = {r: newR, c: newC};
-      legalMoves = generateLegalMoves(newR, newC);
-      render();
-    }
+    celebrationEl.appendChild(confetti);
   }
-}
-
-function deselectPiece() {
-  selected = null;
-  legalMoves = [];
-  render();
 }
 
 function setGameMode(aiEnabled, aiPlaysAs = 'b') {
@@ -1105,9 +1052,8 @@ document.querySelectorAll('.difficulty-btn').forEach(btn => {
   });
 });
 
-// Αρχικοποίηση
+// Αρχικοποίηση παιχνιδιού
 init();
-setupDirectionButtons();
 </script>
 </body>
 </html>
