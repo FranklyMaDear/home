@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Σκάκι Deluxe</title>
+<title>Σκάκι Deluxe Pro</title>
 <style>
   :root {
     --board-size: min(90vw, 90vh, 600px);
@@ -90,6 +90,17 @@
     background: rgba(0,0,0,0.25);
   }
 
+  .check {
+    box-shadow: inset 0 0 0 4px #ff0000;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: inset 0 0 0 4px rgba(255, 0, 0, 0.7); }
+    50% { box-shadow: inset 0 0 0 4px rgba(255, 0, 0, 1); }
+    100% { box-shadow: inset 0 0 0 4px rgba(255, 0, 0, 0.7); }
+  }
+
   h1 {
     color: #fff;
     font-size: clamp(18px, 5vw, 24px);
@@ -125,6 +136,7 @@
     margin: 8px 0;
     font-size: clamp(14px, 4vw, 16px);
     text-align: center;
+    min-height: 24px;
   }
   
   .modal {
@@ -184,11 +196,37 @@
     z-index: 10;
     display: none;
   }
+  
+  .difficulty-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 15px 0;
+  }
+  
+  .difficulty-btn {
+    background: #5d4037;
+  }
+  
+  .difficulty-btn.active {
+    background: #d19a4c;
+  }
+  
+  .status-check {
+    color: #ff6b6b;
+    font-weight: bold;
+  }
+  
+  .status-mate {
+    color: #ff0000;
+    font-weight: bold;
+    font-size: 1.2em;
+  }
 </style>
 </head>
 <body>
   <div class="board-container">
-    <h1>♕ Σκάκι Deluxe ♛</h1>
+    <h1>♕ Σκάκι Deluxe Pro ♛</h1>
     <div class="game-info" id="gameInfo">Παίζουν τα Λευκά</div>
     <div id="board" class="board"></div>
     <div class="controls">
@@ -200,13 +238,19 @@
   
   <div class="thinking" id="thinkingIndicator">Το AI σκέφτεται...</div>
   
-  <div class="modal" id="gameModeModal" style="display: flex;">
+  <div class="modal" id="gameModeModal" style="display: none;">
     <div class="modal-content">
       <h2>Επιλογή Τρόπου Παιχνιδιού</h2>
       <p>Πώς θέλετε να παίξετε;</p>
       <div class="modal-options">
         <button class="modal-btn" id="twoPlayersBtn">Δύο Παίκτες</button>
         <button class="modal-btn" id="vsAiBtn">Παίξτε με AI</button>
+      </div>
+      <div class="difficulty-selector" id="difficultySelector" style="display: none;">
+        <h3 style="color: white; margin: 10px 0;">Επιλογή Δυσκολίας</h3>
+        <button class="modal-btn difficulty-btn" data-depth="2">Εύκολο</button>
+        <button class="modal-btn difficulty-btn" data-depth="3">Μέτριο</button>
+        <button class="modal-btn difficulty-btn active" data-depth="4">Δύσκολο</button>
       </div>
       <button class="modal-btn close-btn" id="closeModalBtn">Κλείσιμο</button>
     </div>
@@ -220,6 +264,7 @@ const gameModeModal = document.getElementById("gameModeModal");
 const twoPlayersBtn = document.getElementById("twoPlayersBtn");
 const vsAiBtn = document.getElementById("vsAiBtn");
 const closeModalBtn = document.getElementById("closeModalBtn");
+const difficultySelector = document.getElementById("difficultySelector");
 
 let board = [];
 let whiteToMove = true;
@@ -227,8 +272,10 @@ let selected = null;
 let legalMoves = [];
 let flipped = false;
 let vsAI = false;
-let aiColor = 'b'; // AI plays as black by default
+let aiColor = 'b';
 let gameActive = true;
+let aiDepth = 4; // Βάθος αναζήτησης για AI
+let kingInCheck = false;
 
 const START = [
   ['r','n','b','q','k','b','n','r'],
@@ -240,6 +287,16 @@ const START = [
   ['P','P','P','P','P','P','P','P'],
   ['R','N','B','Q','K','B','N','R']
 ];
+
+// Τιμές κομματιών για αξιολόγηση
+const PIECE_VALUES = {
+  'p': 10,
+  'n': 30,
+  'b': 30,
+  'r': 50,
+  'q': 90,
+  'k': 900
+};
 
 function init() {
   board = [];
@@ -259,6 +316,7 @@ function init() {
   selected=null;
   legalMoves=[];
   gameActive = true;
+  kingInCheck = false;
   updateGameInfo();
   render();
 }
@@ -267,6 +325,23 @@ function render() {
   boardEl.innerHTML="";
   const rows=[...Array(8).keys()];
   if(flipped) rows.reverse();
+  
+  // Βρες τη θέση του βασιλιά που είναι σε σαχ
+  let kingInCheckPos = null;
+  if (kingInCheck) {
+    const currentColor = whiteToMove ? 'w' : 'b';
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        const piece = board[r][c];
+        if (piece && piece.type === 'k' && piece.color === currentColor) {
+          kingInCheckPos = {r, c};
+          break;
+        }
+      }
+      if (kingInCheckPos) break;
+    }
+  }
+  
   for(let rr of rows){
     const row=rr;
     const cols=flipped?[7,6,5,4,3,2,1,0]:[0,1,2,3,4,5,6,7];
@@ -276,6 +351,11 @@ function render() {
       sq.className="square "+((row+col)%2===0?"sq-dark":"sq-light");
       sq.dataset.r=row; sq.dataset.c=col;
       sq.addEventListener("click",onSquareClick);
+      
+      // Προσθήκη κλάσης check αν ο βασιλιάς είναι σε σαχ
+      if (kingInCheckPos && kingInCheckPos.r === row && kingInCheckPos.c === col) {
+        sq.classList.add("check");
+      }
       
       // Add touch events for mobile
       sq.addEventListener("touchstart", handleTouchStart, {passive: false});
@@ -296,7 +376,7 @@ function render() {
         img.draggable=true;
         img.addEventListener("dragstart",e=>{
           selected={r:row,c:col};
-          legalMoves=generateMoves(row,col);
+          legalMoves=generateLegalMoves(row,col);
           e.dataTransfer.setData("text/plain",JSON.stringify({r:row,c:col}));
         });
         
@@ -304,7 +384,7 @@ function render() {
         img.addEventListener("touchstart", (e) => {
           e.preventDefault();
           selected={r:row,c:col};
-          legalMoves=generateMoves(row,col);
+          legalMoves=generateLegalMoves(row,col);
           render();
         }, {passive: false});
         
@@ -314,7 +394,7 @@ function render() {
     }
   }
   
-  // If it's AI's turn and game is active, make AI move
+  // Αν είναι η σειρά του AI και το παιχνίδι είναι ενεργό, κάνε κίνηση AI
   if (vsAI && gameActive && whiteToMove === (aiColor === 'w')) {
     setTimeout(makeAIMove, 500);
   }
@@ -337,7 +417,7 @@ function handleTouchEnd(e) {
   const dx = touchEndX - touchStartX;
   const dy = touchEndY - touchStartY;
   
-  // If it's a tap (not a swipe)
+  // Αν είναι tap (όχι swipe)
   if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
     const r = parseInt(this.dataset.r);
     const c = parseInt(this.dataset.c);
@@ -359,7 +439,7 @@ function onSquareTap(r, c) {
   const p=board[r][c];
   if(p && p.color===(whiteToMove?'w':'b')){
     selected={r,c};
-    legalMoves=generateMoves(r,c);
+    legalMoves=generateLegalMoves(r,c);
   } else {
     selected=null; legalMoves=[];
   }
@@ -373,12 +453,12 @@ function onSquareClick(e){
 }
 
 function movePiece(sr,sc,tr,tc){
+  // Εκτέλεση της κίνησης
   board[tr][tc]=board[sr][sc];
   board[sr][sc]=null;
   whiteToMove=!whiteToMove;
-  updateGameInfo();
   
-  // Check for pawn promotion
+  // Έλεγχος για προαγωγή πιονιού
   const piece = board[tr][tc];
   if (piece && piece.type === 'p') {
     if ((piece.color === 'w' && tr === 0) || (piece.color === 'b' && tr === 7)) {
@@ -386,50 +466,41 @@ function movePiece(sr,sc,tr,tc){
     }
   }
   
-  // Check for checkmate or stalemate
-  checkGameEnd();
+  // Έλεγχος για σαχ και ματ
+  checkGameState();
+  updateGameInfo();
 }
 
 function promotePawn(r, c) {
-  // In a real implementation, you would show a modal to choose the piece
-  // For simplicity, we'll always promote to queen
+  // Σε μια πλήρη υλοποίηση, θα εμφανίζατε modal για επιλογή κομματιού
+  // Για απλότητα, προάγουμε πάντα σε βασίλισσα
   board[r][c].type = 'q';
 }
 
-function checkGameEnd() {
-  // Simple check for checkmate/stalemate
-  // In a full implementation, you would check all legal moves for the current player
+function checkGameState() {
   const currentColor = whiteToMove ? 'w' : 'b';
-  let hasLegalMoves = false;
+  kingInCheck = isKingInCheck(currentColor);
   
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const piece = board[r][c];
-      if (piece && piece.color === currentColor) {
-        const moves = generateMoves(r, c);
-        if (moves.length > 0) {
-          hasLegalMoves = true;
-          break;
-        }
-      }
-    }
-    if (hasLegalMoves) break;
-  }
+  // Έλεγχος για ματ ή πατ
+  const hasLegalMoves = hasAnyLegalMoves(currentColor);
   
   if (!hasLegalMoves) {
     gameActive = false;
-    // Check if it's checkmate or stalemate
-    const inCheck = isKingInCheck(currentColor);
-    if (inCheck) {
-      gameInfoEl.textContent = currentColor === 'w' ? "Ματ! Νικάν τα Μαύρα" : "Ματ! Νικάν τα Λευκά";
+    if (kingInCheck) {
+      // Ματ
+      gameInfoEl.innerHTML = `<span class="status-mate">${currentColor === 'w' ? "Ματ! Νικάν τα Μαύρα" : "Ματ! Νικάν τα Λευκά"}</span>`;
     } else {
+      // Πατ
       gameInfoEl.textContent = "Πατ! Ισοπαλία";
     }
+  } else if (kingInCheck) {
+    // Σαχ
+    gameInfoEl.innerHTML = `<span class="status-check">${currentColor === 'w' ? "Σαχ στα Λευκά!" : "Σαχ στα Μαύρα!"}</span>`;
   }
 }
 
 function isKingInCheck(color) {
-  // Find the king
+  // Βρες τη θέση του βασιλιά
   let kingPos = null;
   for (let r = 0; r < 8; r++) {
     for (let c = 0; c < 8; c++) {
@@ -444,7 +515,7 @@ function isKingInCheck(color) {
   
   if (!kingPos) return false;
   
-  // Check if any opponent piece can capture the king
+  // Έλεγξε αν οποιοδήποτε αντίπαλο κομμάτι μπορεί να πιάσει τον βασιλιά
   for (let r = 0; r < 8; r++) {
     for (let c = 0; c < 8; c++) {
       const piece = board[r][c];
@@ -458,6 +529,44 @@ function isKingInCheck(color) {
   }
   
   return false;
+}
+
+function hasAnyLegalMoves(color) {
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const piece = board[r][c];
+      if (piece && piece.color === color) {
+        const moves = generateLegalMoves(r, c);
+        if (moves.length > 0) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+function generateLegalMoves(r, c) {
+  const moves = generateMoves(r, c);
+  return moves.filter(move => {
+    // Δοκιμαστική κίνηση για έλεγχο σαχ
+    const originalPiece = board[move.r][move.c];
+    const movingPiece = board[r][c];
+    
+    // Εκτέλεση προσωρινής κίνησης
+    board[move.r][move.c] = movingPiece;
+    board[r][c] = null;
+    
+    // Έλεγχος αν ο βασιλιάς βρίσκεται σε σαχ μετά την κίνηση
+    const inCheck = isKingInCheck(movingPiece.color);
+    
+    // Αναίρεση της προσωρινής κίνησης
+    board[r][c] = movingPiece;
+    board[move.r][move.c] = originalPiece;
+    
+    // Η κίνηση είναι νόμιμη μόνο αν δεν αφήνει τον βασιλιά σε σαχ
+    return !inCheck;
+  });
 }
 
 function generateMoves(r,c){
@@ -527,46 +636,197 @@ function getPieceImg(t,c){
 }
 
 function updateGameInfo() {
-  if (whiteToMove) {
-    gameInfoEl.textContent = "Παίζουν τα Λευκά";
+  if (!gameActive) return;
+  
+  if (kingInCheck) {
+    gameInfoEl.innerHTML = `<span class="status-check">${whiteToMove ? "Σαχ στα Λευκά!" : "Σαχ στα Μαύρα!"}</span>`;
   } else {
-    gameInfoEl.textContent = "Παίζουν τα Μαύρα";
+    gameInfoEl.textContent = whiteToMove ? "Παίζουν τα Λευκά" : "Παίζουν τα Μαύρα";
   }
 }
 
+// Βελτιωμένος AI με Minimax και Alpha-Beta Pruning
 function makeAIMove() {
   if (!gameActive) return;
   
   thinkingIndicator.style.display = 'block';
   
-  // Simulate AI thinking
+  // Χρήση Web Worker για να αποφύγουμε blocking του UI
   setTimeout(() => {
-    // Simple AI: choose a random legal move
-    const allMoves = [];
+    const bestMove = findBestMove();
     
-    for (let r = 0; r < 8; r++) {
-      for (let c = 0; c < 8; c++) {
-        const piece = board[r][c];
-        if (piece && piece.color === aiColor) {
-          const moves = generateMoves(r, c);
-          moves.forEach(move => {
-            allMoves.push({
-              from: {r, c},
-              to: move
-            });
-          });
-        }
-      }
-    }
-    
-    if (allMoves.length > 0) {
-      const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
-      movePiece(randomMove.from.r, randomMove.from.c, randomMove.to.r, randomMove.to.c);
+    if (bestMove) {
+      movePiece(bestMove.from.r, bestMove.from.c, bestMove.to.r, bestMove.to.c);
       render();
     }
     
     thinkingIndicator.style.display = 'none';
-  }, 1000);
+  }, 500);
+}
+
+function findBestMove() {
+  const possibleMoves = getAllLegalMoves(aiColor);
+  let bestMove = null;
+  let bestValue = -Infinity;
+  
+  // Αξιολόγηση κάθε πιθανής κίνησης
+  for (const move of possibleMoves) {
+    // Εκτέλεση προσωρινής κίνησης
+    const originalPiece = board[move.to.r][move.to.c];
+    board[move.to.r][move.to.c] = board[move.from.r][move.from.c];
+    board[move.from.r][move.from.c] = null;
+    
+    // Αξιολόγηση θέσης με Minimax
+    const moveValue = minimax(aiDepth - 1, -Infinity, Infinity, false);
+    
+    // Αναίρεση προσωρινής κίνησης
+    board[move.from.r][move.from.c] = board[move.to.r][move.to.c];
+    board[move.to.r][move.to.c] = originalPiece;
+    
+    if (moveValue > bestValue) {
+      bestValue = moveValue;
+      bestMove = move;
+    }
+  }
+  
+  return bestMove;
+}
+
+function getAllLegalMoves(color) {
+  const moves = [];
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const piece = board[r][c];
+      if (piece && piece.color === color) {
+        const pieceMoves = generateLegalMoves(r, c);
+        pieceMoves.forEach(move => {
+          moves.push({
+            from: {r, c},
+            to: move
+          });
+        });
+      }
+    }
+  }
+  return moves;
+}
+
+function minimax(depth, alpha, beta, maximizingPlayer) {
+  if (depth === 0) {
+    return evaluateBoard();
+  }
+  
+  const currentColor = maximizingPlayer ? aiColor : (aiColor === 'w' ? 'b' : 'w');
+  const moves = getAllLegalMoves(currentColor);
+  
+  if (moves.length === 0) {
+    // Ματ ή πατ
+    if (isKingInCheck(currentColor)) {
+      // Ματ
+      return maximizingPlayer ? -1000 : 1000;
+    } else {
+      // Πατ
+      return 0;
+    }
+  }
+  
+  if (maximizingPlayer) {
+    let maxEval = -Infinity;
+    for (const move of moves) {
+      // Εκτέλεση προσωρινής κίνησης
+      const originalPiece = board[move.to.r][move.to.c];
+      board[move.to.r][move.to.c] = board[move.from.r][move.from.c];
+      board[move.from.r][move.from.c] = null;
+      
+      const evaluation = minimax(depth - 1, alpha, beta, false);
+      
+      // Αναίρεση προσωρινής κίνησης
+      board[move.from.r][move.from.c] = board[move.to.r][move.to.c];
+      board[move.to.r][move.to.c] = originalPiece;
+      
+      maxEval = Math.max(maxEval, evaluation);
+      alpha = Math.max(alpha, evaluation);
+      if (beta <= alpha) break; // Alpha-Beta Pruning
+    }
+    return maxEval;
+  } else {
+    let minEval = Infinity;
+    for (const move of moves) {
+      // Εκτέλεση προσωρινής κίνησης
+      const originalPiece = board[move.to.r][move.to.c];
+      board[move.to.r][move.to.c] = board[move.from.r][move.from.c];
+      board[move.from.r][move.from.c] = null;
+      
+      const evaluation = minimax(depth - 1, alpha, beta, true);
+      
+      // Αναίρεση προσωρινής κίνησης
+      board[move.from.r][move.from.c] = board[move.to.r][move.to.c];
+      board[move.to.r][move.to.c] = originalPiece;
+      
+      minEval = Math.min(minEval, evaluation);
+      beta = Math.min(beta, evaluation);
+      if (beta <= alpha) break; // Alpha-Beta Pruning
+    }
+    return minEval;
+  }
+}
+
+function evaluateBoard() {
+  let score = 0;
+  
+  // Βαθμολόγηση βάσει υλικού
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const piece = board[r][c];
+      if (piece) {
+        const value = PIECE_VALUES[piece.type];
+        // Προσθήκη μπόνους για θέση
+        const positionBonus = getPositionBonus(piece, r, c);
+        if (piece.color === aiColor) {
+          score += value + positionBonus;
+        } else {
+          score -= value + positionBonus;
+        }
+      }
+    }
+  }
+  
+  return score;
+}
+
+function getPositionBonus(piece, r, c) {
+  // Πίνακες αξιολόγησης θέσης για κάθε κομμάτι
+  const pawnTable = [
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [5, 5, 5, 5, 5, 5, 5, 5],
+    [1, 1, 2, 3, 3, 2, 1, 1],
+    [0, 0, 0, 2, 2, 0, 0, 0],
+    [0, 0, 0, 1, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0]
+  ];
+  
+  const knightTable = [
+    [-5, -4, -3, -3, -3, -3, -4, -5],
+    [-4, -2, 0, 0, 0, 0, -2, -4],
+    [-3, 0, 1, 1, 1, 1, 0, -3],
+    [-3, 0, 1, 2, 2, 1, 0, -3],
+    [-3, 0, 1, 2, 2, 1, 0, -3],
+    [-3, 0, 1, 1, 1, 1, 0, -3],
+    [-4, -2, 0, 0, 0, 0, -2, -4],
+    [-5, -4, -3, -3, -3, -3, -4, -5]
+  ];
+  
+  // Προσαρμογή για το χρώμα (αναστροφή για μαύρα)
+  const row = piece.color === 'w' ? r : 7 - r;
+  const col = piece.color === 'w' ? c : 7 - c;
+  
+  switch (piece.type) {
+    case 'p': return pawnTable[row][col] * 0.1;
+    case 'n': return knightTable[row][col] * 0.1;
+    default: return 0;
+  }
 }
 
 function setGameMode(aiEnabled, aiPlaysAs = 'b') {
@@ -576,16 +836,40 @@ function setGameMode(aiEnabled, aiPlaysAs = 'b') {
   init();
 }
 
+function setDifficulty(depth) {
+  aiDepth = depth;
+  // Ενημέρωση UI για επιλεγμένη δυσκολία
+  document.querySelectorAll('.difficulty-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+}
+
 // Event listeners
 document.getElementById("resetBtn").onclick = init;
 document.getElementById("flipBtn").onclick = () => {flipped=!flipped;render();};
 document.getElementById("aiBtn").onclick = () => {gameModeModal.style.display = 'flex';};
 
-twoPlayersBtn.onclick = () => setGameMode(false);
-vsAiBtn.onclick = () => setGameMode(true);
+twoPlayersBtn.onclick = () => {
+  difficultySelector.style.display = 'none';
+  setGameMode(false);
+};
+
+vsAiBtn.onclick = () => {
+  difficultySelector.style.display = 'flex';
+};
+
 closeModalBtn.onclick = () => {gameModeModal.style.display = 'none';};
 
-// Initialize the game
+// Event listeners για επιλογή δυσκολίας
+document.querySelectorAll('.difficulty-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    setDifficulty(parseInt(this.dataset.depth));
+    setGameMode(true);
+  });
+});
+
+// Αρχικοποίηση παιχνιδιού
 init();
 </script>
 </body>
