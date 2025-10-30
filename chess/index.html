@@ -18,7 +18,7 @@
         }
         
         body {
-            background: #b29466; /* Καφέ φόντο σε όλη την οθόνη */
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); /* Νέα βαθιά μπλε κλίση */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -592,7 +592,7 @@
                                 e.stopPropagation();
                                 onSquareTap(row, col);
                             });
-                        }
+                            }
                         
                         sq.appendChild(img);
                     }
@@ -946,7 +946,7 @@
                 }
                 whiteToMove = tempWhiteToMove;
                 
-                // Ανάκληση κίνησης
+                // Ανάκτηση προηγούμενης κατάστασης
                 board[move.from.r][move.from.c] = movingPiece;
                 board[move.to.r][move.to.c] = originalPiece;
                 
@@ -960,27 +960,25 @@
             }
             
             // Επέλεξε τυχαία από τις καλύτερες κινήσεις
-            const randomIndex = Math.floor(Math.random() * bestMoves.length);
-            return bestMoves[randomIndex];
+            return bestMoves[Math.floor(Math.random() * bestMoves.length)];
         }
         
         function evaluatePosition() {
             let score = 0;
             
-            // Αξιολόγηση βάσει υλικού
+            // Βασική αξιολόγηση βάσει υλικού
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const piece = board[r][c];
                     if (piece) {
                         const value = PIECE_VALUES[piece.type];
-                        if (piece.color === aiColor) {
-                            score += value;
-                        } else {
-                            score -= value;
-                        }
+                        score += piece.color === aiColor ? value : -value;
                     }
                 }
             }
+            
+            // Προσθήκη τυχαίας διακύμανσης για λιγότερο προβλέψιμο AI
+            score += Math.random() * 10 - 5;
             
             return score;
         }
@@ -997,56 +995,7 @@
             return false;
         }
         
-        // Συναρτήσεις για διαχείριση τρόπων παιχνιδιού
-        function setGameMode(aiEnabled, aiPlaysAs = 'b') {
-            vsAI = aiEnabled;
-            aiColor = aiPlaysAs;
-            gameModeModal.style.display = 'none';
-            init();
-        }
-        
-        function setDifficulty(depth) {
-            aiDepth = depth;
-            // Ενημέρωση UI για επιλεγμένη δυσκολία
-            document.querySelectorAll('.difficulty-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-        }
-        
-        // Συνάρτηση για εμφάνιση μηνύματος νίκης και πανηγυρισμού
-        function showVictoryMessage(winner) {
-            winnerTextEl.textContent = `Τα ${winner} κέρδισαν!`;
-            victoryMessageEl.style.display = 'block';
-            
-            // Δημιουργία πανηγυρισμού με confetti
-            createConfetti();
-            
-            // Απόκρυψη μηνύματος μετά από 5 δευτερόλεπτα
-            setTimeout(() => {
-                victoryMessageEl.style.display = 'none';
-                celebrationEl.innerHTML = '';
-            }, 5000);
-        }
-        
-        // Συνάρτηση για δημιουργία confetti
-        function createConfetti() {
-            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff', '#ff6600'];
-            
-            for (let i = 0; i < 150; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.width = Math.random() * 10 + 5 + 'px';
-                confetti.style.height = Math.random() * 10 + 5 + 'px';
-                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
-                confetti.style.animationDelay = Math.random() * 2 + 's';
-                celebrationEl.appendChild(confetti);
-            }
-        }
-        
-        // Event Listeners
+        // Συναρτήσεις UI
         document.getElementById("resetBtn").addEventListener("click", () => {
             init();
         });
@@ -1061,24 +1010,66 @@
         });
         
         document.getElementById("twoPlayersBtn").addEventListener("click", () => {
-            setGameMode(false);
+            vsAI = false;
+            gameModeModal.style.display = 'none';
+            init();
         });
         
         document.getElementById("vsAiBtn").addEventListener("click", () => {
-            document.getElementById("difficultySelector").style.display = 'block';
+            document.getElementById("difficultySelector").style.display = 'flex';
         });
         
         document.getElementById("closeModalBtn").addEventListener("click", () => {
             gameModeModal.style.display = 'none';
+            document.getElementById("difficultySelector").style.display = 'none';
         });
         
-        // Προσθήκη event listeners για επιλογή δυσκολίας
-        document.querySelectorAll('.difficulty-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                setDifficulty(parseInt(e.target.dataset.depth));
-                setGameMode(true, 'b');
+        // Επιλογή δυσκολίας
+        document.querySelectorAll(".difficulty-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".difficulty-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                aiDepth = parseInt(btn.dataset.depth);
+                
+                // Επιλογή χρώματος για AI
+                aiColor = Math.random() > 0.5 ? 'b' : 'w';
+                vsAI = true;
+                gameModeModal.style.display = 'none';
+                document.getElementById("difficultySelector").style.display = 'none';
+                init();
             });
         });
+        
+        function showVictoryMessage(winner) {
+            winnerTextEl.textContent = `Νίκη για τα ${winner}!`;
+            victoryMessageEl.style.display = 'block';
+            
+            // Δημιουργία πανηγυρισμών
+            createConfetti();
+            
+            // Απόκρυψη μηνύματος μετά από 5 δευτερόλεπτα
+            setTimeout(() => {
+                victoryMessageEl.style.display = 'none';
+            }, 5000);
+        }
+        
+        function createConfetti() {
+            celebrationEl.innerHTML = '';
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff'];
+            
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement("div");
+                confetti.className = "confetti";
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = `${-Math.random() * 20}%`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = `${Math.random() * 10 + 5}px`;
+                confetti.style.height = `${Math.random() * 10 + 5}px`;
+                confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                confetti.style.animationDelay = `${Math.random() * 2}s`;
+                celebrationEl.appendChild(confetti);
+            }
+        }
         
         // Αρχικοποίηση παιχνιδιού
         init();
