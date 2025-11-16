@@ -5,6 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Κafedium - Αποστολή Φωτογραφιών & Επικοινωνία</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyD8pn4ZfzXIEmk7lD0f6pPuDcPOJFatnAc",
+          authDomain: "franklymadear-a5751.firebaseapp.com",
+          projectId: "franklymadear-a5751",
+          storageBucket: "franklymadear-a5751.firebasestorage.app",
+          messagingSenderId: "487154731862",
+          appId: "1:487154731862:web:40f86afee24ef06dad64f7",
+          measurementId: "G-SFT8BPMLFS"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        
+        // Make Firebase available globally
+        window.firebaseApp = app;
+        window.firebaseAnalytics = analytics;
+    </script>
+    
     <style>
         * {
             box-sizing: border-box;
