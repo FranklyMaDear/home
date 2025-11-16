@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Διαχειριστής Καφεμαντείας - Πίνακας Ελέγχου</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon για όλες τις συσκευές -->
+    <link rel="icon" type="image/png" href="coffeetime.png">
+    <link rel="apple-touch-icon" href="coffeetime.png">
+    <link rel="shortcut icon" href="coffeetime.png" type="image/x-icon">
+    <meta name="msapplication-TileImage" content="coffeetime.png">
+    <meta name="msapplication-TileColor" content="#8B4513">
+    <meta name="theme-color" content="#8B4513">
+    
     <style>
         :root {
             --primary: #8B4513;
@@ -115,6 +124,28 @@
         
         .logout-btn:hover {
             background: #0b7dda;
+        }
+
+        .main-app-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+            font-size: 0.85rem;
+            margin-right: 8px;
+        }
+        
+        .main-app-btn:hover {
+            background: #388e3c;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 8px;
         }
         
         .stats-cards {
@@ -830,6 +861,11 @@
                 gap: 12px;
                 text-align: center;
             }
+
+            .admin-actions {
+                justify-content: center;
+                width: 100%;
+            }
             
             .stats-cards {
                 grid-template-columns: repeat(2, 1fr);
@@ -930,9 +966,14 @@
             <div class="admin-welcome">
                 <i class="fas fa-user-shield"></i> Καλώς ήρθες, Διαχειριστή!
             </div>
-            <button class="logout-btn" id="refreshBtn">
-                <i class="fas fa-sync-alt"></i> Ανανέωση
-            </button>
+            <div class="admin-actions">
+                <button class="main-app-btn" id="mainAppBtn">
+                    <i class="fas fa-home"></i> Κύρια Εφαρμογή
+                </button>
+                <button class="logout-btn" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i> Ανανέωση
+                </button>
+            </div>
         </div>
         
         <div class="stats-cards">
@@ -1223,6 +1264,11 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Σύνδεση με την κύρια εφαρμογή
+            document.getElementById('mainAppBtn').addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+
             // Σύστημα καρτελών
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');
