@@ -6,6 +6,14 @@
     <title>Κafedium - Αποστολή Φωτογραφιών & Επικοινωνία</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Favicon για όλες τις συσκευές -->
+    <link rel="icon" type="image/png" href="coffeetime.png">
+    <link rel="apple-touch-icon" href="coffeetime.png">
+    <link rel="shortcut icon" href="coffeetime.png" type="image/x-icon">
+    <meta name="msapplication-TileImage" content="coffeetime.png">
+    <meta name="msapplication-TileColor" content="#8B4513">
+    <meta name="theme-color" content="#8B4513">
+    
     <!-- Firebase SDK -->
     <script type="module">
         // Import the functions you need from the SDKs you need
@@ -137,6 +145,22 @@
         
         .logout-btn:hover {
             background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .admin-panel-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 10px;
+            transition: background 0.3s;
+            margin-left: 8px;
+        }
+        
+        .admin-panel-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
         }
         
         .tabs {
@@ -1062,6 +1086,9 @@
                 <i class="fas fa-user"></i>
                 <span id="userEmail"></span>
                 <button class="logout-btn" id="logoutBtn">Αποσύνδεση</button>
+                <button class="admin-panel-btn" id="adminPanelBtn" style="display: none;">
+                    <i class="fas fa-cog"></i> Panel
+                </button>
             </div>
         </header>
         
@@ -1633,6 +1660,7 @@
             const userInfo = document.getElementById('userInfo');
             const userEmailSpan = document.getElementById('userEmail');
             const logoutBtn = document.getElementById('logoutBtn');
+            const adminPanelBtn = document.getElementById('adminPanelBtn');
             
             if (currentUser) {
                 // Ο χρήστης είναι συνδεδεμένος
@@ -1640,6 +1668,11 @@
                 mainApp.style.display = 'block';
                 userInfo.style.display = 'flex';
                 userEmailSpan.textContent = currentUser.email;
+                
+                // Εμφάνιση κουμπιού διαχειριστή αν είναι διαχειριστής
+                if (currentUser.email === 'admin@kafedium.gr' || currentUser.email === 'franklymadear@gmail.com') {
+                    adminPanelBtn.style.display = 'inline-block';
+                }
                 
                 // Συμπλήρωση του email στις φόρμες
                 document.getElementById('email').value = currentUser.email;
@@ -1663,6 +1696,11 @@
                 mainApp.style.display = 'none';
                 userInfo.style.display = 'none';
             }
+
+            // Σύνδεση με το panel διαχειριστή
+            adminPanelBtn.addEventListener('click', function() {
+                window.open('panel.html', '_blank');
+            });
 
             // ΣΥΓΚΑΤΑΘΕΣΗ - Links για τους όρους
             document.getElementById('showTermsAuth').addEventListener('click', function(e) {
@@ -1761,7 +1799,7 @@
                             <p>Οι υπηρεσίες καφεμαντείας παρέχονται για ψυχαγωγικούς σκοπούς. Δεν αποτελούν επαγγελματική συμβουλή ή πρόβλεψη του μέλλοντος.Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας. Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση· οποιαδήποτε χρήση κάνετε από τέτοιες απαντήσεις, συμβουλές ή υπηρεσίες γίνεται με δικό σας κίνδυνο και η FranklyMaDear - Kafedium δεν μπορεί να θεωρηθεί υπεύθυνη ή να φέρει ευθύνη για οποιεσδήποτε ζημίες ή απώλειες που προκύπτουν από την επαφή σας με τέτοιες απαντήσεις ή συμβουλές. Ο Ιστότοπος και οι υπηρεσίες που παρέχονται από την Εφαρμογή παρέχονται «ως έχει» χωρίς καμία εγγύηση. Οι Σύμβουλοί μας και η Υπηρεσία καταβάλλουν κάθε δυνατή προσπάθεια να σας παράσχουν χρήσιμες, διορατικές πληροφορίες. Ωστόσο, οι πληροφορίες που σας παρέχονται δεν πρέπει να χρησιμοποιούνται αντί για συστάσεις από ιατρικούς επαγγελματίες ή άλλους επαγγελματίες συμβούλους.</p>
                             
                             <h4>3. Ηλικιακός Περιορισμός</h4>
-                            <p>Η εγγραφή και η συμμετοχή στην Υπηρεσία και στον Ιστότοπο περιορίζεται σε άτονα άνω των 18 ετών, σε χρήστες που έχουν απελευθερωθεί από την γονική μέριμνα, ή σε αυτά που διαθέτουν συγκατάθεση νόμιμου γονέα ή κηδεμόνα, και είναι πλήρως ικανά και αρμόδια να δεσμευτούν από τους όρους, τις προϋποθέσεις, τις υποχρεώσεις, τις βεβαιώσεις, τις δηλώσεις και τις εγγυήσεις που περιλαμβάνονται εδώ. Με την εγγραφή ή συμμετοχή σε υπηρεσίες ή λειτουργίες στην Υπηρεσία ή/και τον Ιστότοπο, δηλώνετε ρητά ότι είστε άνω των 18 ετών, έχετε απελευθερωθεί από τη γονική μέριμνα ή διαθέτετε συγκατάθεση νόμιμου γονέα ή κηδεμόνα και έχετε την εξουσία να δεσμευτείτε από τους όρους εδώ. Σε κάθε περίπτωση, βεβαιώνετε ότι είστε άνω των 13 ετών, καθώς η Υπηρεσία δεν προορίζεται για παιδιά κάτω των 18. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία ή/και τον Ιστότοπο.</p>
+                            <p>Η εγγραφή και η συμμετοχή στην Υπηρεσία και στον Ιστότοπος περιορίζεται σε άτονα άνω των 18 ετών, σε χρήστες που έχουν απελευθερωθεί από την γονική μέριμνα, ή σε αυτά που διαθέτουν συγκατάθεση νόμιμου γονέα ή κηδεμόνα, και είναι πλήρως ικανά και αρμόδια να δεσμευτούν από τους όρους, τις προϋποθέσεις, τις υποχρεώσεις, τις βεβαιώσεις, τις δηλώσεις και τις εγγυήσεις που περιλαμβάνονται εδώ. Με την εγγραφή ή συμμετοχή σε υπηρεσίες ή λειτουργίες στην Υπηρεσία ή/και τον Ιστότοπο, δηλώνετε ρητά ότι είστε άνω των 18 ετών, έχετε απελευθερωθεί από τη γονική μέριμνα ή διαθέτετε συγκατάθεση νόμιμου γονέα ή κηδεμόνα και έχετε την εξουσία να δεσμευτείτε από τους όρους εδώ. Σε κάθε περίπτωση, βεβαιώνετε ότι είστε άνω των 13 ετών, καθώς η Υπηρεσία δεν προορίζεται για παιδιά κάτω των 18. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία ή/και τον Ιστότοπο.</p>
                             
                             <h4>4. Πνευματική Ιδιοκτησία</h4>
                             <p>Όλο το περιεχόμενο της ιστοσελίδας προστατεύεται από πνευματικά δικαιώματα.</p>
