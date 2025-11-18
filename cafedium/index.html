@@ -15,6 +15,76 @@
                 layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
                 autoDisplay: false
             }, 'google_translate_element');
+            
+            // Initialize our custom functionality after Google Translate loads
+            setTimeout(enhancedGoogleTranslateInit, 1000);
+        }
+        
+        function enhancedGoogleTranslateInit() {
+            // Wait for Google Translate to load
+            const checkTranslateLoaded = setInterval(() => {
+                const translateElement = document.querySelector('.goog-te-menu-value');
+                if (translateElement) {
+                    clearInterval(checkTranslateLoaded);
+                    
+                    // Hide the original Google Translate button
+                    translateElement.style.display = 'none';
+                    
+                    // Initialize our custom button
+                    initializeCustomTranslate();
+                }
+            }, 100);
+            
+            // Timeout after 5 seconds
+            setTimeout(() => {
+                clearInterval(checkTranslateLoaded);
+            }, 5000);
+        }
+        
+        function initializeCustomTranslate() {
+            const customTranslateBtn = document.getElementById('customTranslateBtn');
+            const translateDiv = document.getElementById('google_translate_element');
+            
+            if (customTranslateBtn && translateDiv) {
+                customTranslateBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Find the Google Translate dropdown element
+                    const googleTranslateDropdown = document.querySelector('.goog-te-menu-frame');
+                    const googleTranslateValue = document.querySelector('.goog-te-menu-value');
+                    
+                    if (googleTranslateDropdown) {
+                        // Toggle dropdown visibility
+                        const isVisible = googleTranslateDropdown.style.display !== 'none';
+                        googleTranslateDropdown.style.display = isVisible ? 'none' : 'block';
+                    } else if (googleTranslateValue) {
+                        // Trigger the original Google Translate dropdown
+                        googleTranslateValue.click();
+                    } else {
+                        // Fallback: show the hidden translate div temporarily
+                        translateDiv.style.display = 'block';
+                        setTimeout(() => {
+                            const googleElement = translateDiv.querySelector('.goog-te-menu-value');
+                            if (googleElement) {
+                                googleElement.click();
+                            }
+                            translateDiv.style.display = 'none';
+                        }, 100);
+                    }
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    const translateDropdown = document.querySelector('.goog-te-menu-frame');
+                    const isClickInside = customTranslateBtn.contains(e.target) || 
+                                         (translateDropdown && translateDropdown.contains(e.target));
+                    
+                    if (!isClickInside && translateDropdown) {
+                        translateDropdown.style.display = 'none';
+                    }
+                });
+            }
         }
     </script>
     <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
@@ -192,7 +262,7 @@
             background: rgba(255, 255, 255, 0.4);
         }
         
-        /* Google Translate Widget Styles */
+        /* Custom Google Translate Button Styles */
         .translate-container {
             position: absolute;
             top: 15px;
@@ -200,6 +270,34 @@
             z-index: 1000;
         }
         
+        .custom-translate-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .custom-translate-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .custom-translate-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Google Translate Styles */
         .goog-te-banner-frame {
             display: none !important;
         }
@@ -210,58 +308,27 @@
         
         .goog-te-gadget {
             font-family: inherit !important;
-            font-size: 0.9rem !important;
-        }
-        
-        .goog-te-gadget-simple {
-            background: rgba(255, 255, 255, 0.2) !important;
-            border: none !important;
-            padding: 8px 15px !important;
-            border-radius: 20px !important;
-            font-size: 0.9rem !important;
-            color: white !important;
-        }
-        
-        .goog-te-menu-value span {
-            color: white !important;
         }
         
         .goog-te-menu-value {
-            color: white !important;
-        }
-        
-        .goog-te-gadget-simple .goog-te-menu-value span:first-child {
-            color: white !important;
-        }
-        
-        .goog-te-gadget-icon {
             display: none !important;
         }
         
-        .goog-te-gadget-simple .goog-te-menu-value:before {
-            content: "🌐 " !important;
-            color: white !important;
+        .goog-te-menu-frame {
+            z-index: 10000 !important;
+            border-radius: 10px !important;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3) !important;
+            border: none !important;
         }
         
         /* Hide Google branding */
-        .goog-logo-link {
-            display: none !important;
-        }
-        
+        .goog-logo-link,
         .goog-te-gadget span a[href] {
             display: none !important;
         }
         
         .skiptranslate iframe {
             display: none !important;
-        }
-        
-        .goog-te-gadget img {
-            display: none !important;
-        }
-        
-        .goog-te-spinner-pos {
-            z-index: 1000 !important;
         }
         
         .tabs {
@@ -1115,6 +1182,11 @@
                 justify-content: center;
             }
             
+            .custom-translate-btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+            
             .tabs {
                 flex-direction: column;
             }
@@ -1188,9 +1260,12 @@
 <body>
     <div class="container">
         <header>
-            <!-- Google Translate Widget -->
+            <!-- Custom Google Translate Widget -->
             <div class="translate-container">
-                <div id="google_translate_element"></div>
+                <button id="customTranslateBtn" class="custom-translate-btn">
+                    <i class="fas fa-language"></i> Μετάφραση
+                </button>
+                <div id="google_translate_element" style="display: none;"></div>
             </div>
             
             <i class="fas fa-mug-hot logo"></i>
