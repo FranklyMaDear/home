@@ -11,8 +11,9 @@
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
                 pageLanguage: 'el',
-                includedLanguages: 'en,es,fr,de,it,tr,ar,hi,zh-CN,sq,ru',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+                includedLanguages: 'en,es,fr,de,it,tr,ar,hi,zh-CN,sq',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
             }, 'google_translate_element');
         }
     </script>
@@ -191,7 +192,7 @@
             background: rgba(255, 255, 255, 0.4);
         }
         
-        /* Βελτιωμένο Google Translate Widget */
+        /* Google Translate Widget Styles */
         .translate-container {
             position: absolute;
             top: 15px;
@@ -199,92 +200,55 @@
             z-index: 1000;
         }
         
-        .custom-translate {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .translate-trigger {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-        
-        .translate-trigger:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .translate-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            margin-top: 5px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            width: 200px;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1001;
-        }
-        
-        .translate-dropdown.active {
-            display: block;
-        }
-        
-        .translate-option {
-            padding: 12px 15px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: background 0.2s;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .translate-option:last-child {
-            border-bottom: none;
-        }
-        
-        .translate-option:hover {
-            background: #f5f5f5;
-        }
-        
-        .translate-option.selected {
-            background: #f0e6d3;
-            color: var(--primary);
-        }
-        
-        .language-flag {
-            width: 20px;
-            height: 15px;
-            border-radius: 2px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-        }
-        
-        .language-name {
-            flex: 1;
-        }
-        
-        /* Hide default Google Translate */
-        #google_translate_element {
-            display: none;
-        }
-        
         .goog-te-banner-frame {
+            display: none !important;
+        }
+        
+        body {
+            top: 0 !important;
+        }
+        
+        .goog-te-gadget {
+            font-family: inherit !important;
+            font-size: 0.9rem !important;
+        }
+        
+        .goog-te-gadget-simple {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: none !important;
+            padding: 8px 15px !important;
+            border-radius: 20px !important;
+            font-size: 0.9rem !important;
+            color: white !important;
+        }
+        
+        .goog-te-menu-value span {
+            color: white !important;
+        }
+        
+        .goog-te-menu-value {
+            color: white !important;
+        }
+        
+        .goog-te-gadget-simple .goog-te-menu-value span:first-child {
+            color: white !important;
+        }
+        
+        .goog-te-gadget-icon {
+            display: none !important;
+        }
+        
+        .goog-te-gadget-simple .goog-te-menu-value:before {
+            content: "🌐 " !important;
+            color: white !important;
+        }
+        
+        /* Hide Google branding */
+        .goog-logo-link {
+            display: none !important;
+        }
+        
+        .goog-te-gadget span a[href] {
             display: none !important;
         }
         
@@ -292,7 +256,14 @@
             display: none !important;
         }
         
-        /* Rest of the CSS remains the same */
+        .goog-te-gadget img {
+            display: none !important;
+        }
+        
+        .goog-te-spinner-pos {
+            z-index: 1000 !important;
+        }
+        
         .tabs {
             display: flex;
             margin-bottom: 20px;
@@ -1217,73 +1188,9 @@
 <body>
     <div class="container">
         <header>
-            <!-- Βελτιωμένο Google Translate Widget -->
+            <!-- Google Translate Widget -->
             <div class="translate-container">
                 <div id="google_translate_element"></div>
-                <div class="custom-translate">
-                    <button class="translate-trigger">
-                        <i class="fas fa-language"></i> Google Translate
-                    </button>
-                    <div class="translate-dropdown" id="translateDropdown">
-                        <div class="translate-option" data-lang="el">
-                            <div class="language-flag" style="background: linear-gradient(to bottom, #0D5EAF 33%, white 33%, white 66%, #0D5EAF 66%);"></div>
-                            <div class="language-name">Ελληνικά</div>
-                        </div>
-                        <div class="translate-option" data-lang="en">
-                            <div class="language-flag" style="background: linear-gradient(to right, #012169 33%, white 33%, white 66%, #C8102E 66%);"></div>
-                            <div class="language-name">English</div>
-                        </div>
-                        <div class="translate-option" data-lang="de">
-                            <div class="language-flag" style="background: linear-gradient(to bottom, #000000 33%, #DD0000 33%, #DD0000 66%, #FFCE00 66%);"></div>
-                            <div class="language-name">Deutsch</div>
-                        </div>
-                        <div class="translate-option" data-lang="tr">
-                            <div class="language-flag" style="background: linear-gradient(to right, #E30A17 0%, #E30A17 100%); position: relative;">
-                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 10px; height: 10px; background: white; border-radius: 50%;"></div>
-                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 6px; height: 6px; background: #E30A17; border-radius: 50%;"></div>
-                            </div>
-                            <div class="language-name">Türkçe</div>
-                        </div>
-                        <div class="translate-option" data-lang="ar">
-                            <div class="language-flag" style="background: linear-gradient(to bottom, #000000 33%, #FFFFFF 33%, #FFFFFF 66%, #007A3D 66%); position: relative;">
-                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 12px; height: 12px; background: #CE1126; border-radius: 50%;"></div>
-                            </div>
-                            <div class="language-name">العربية</div>
-                        </div>
-                        <div class="translate-option" data-lang="zh-CN">
-                            <div class="language-flag" style="background: #DE2910; position: relative;">
-                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 12px; height: 12px; background: #FFDE00; border-radius: 50%;"></div>
-                            </div>
-                            <div class="language-name">中文</div>
-                        </div>
-                        <div class="translate-option" data-lang="ru">
-                            <div class="language-flag" style="background: linear-gradient(to bottom, #FFFFFF 33%, #0039A6 33%, #0039A6 66%, #D52B1E 66%);"></div>
-                            <div class="language-name">Русский</div>
-                        </div>
-                        <div class="translate-option" data-lang="fr">
-                            <div class="language-flag" style="background: linear-gradient(to right, #002395 33%, #FFFFFF 33%, #FFFFFF 66%, #ED2939 66%);"></div>
-                            <div class="language-name">Français</div>
-                        </div>
-                        <div class="translate-option" data-lang="es">
-                            <div class="language-flag" style="background: linear-gradient(to right, #AA151B 25%, #F1BF00 25%, #F1BF00 75%, #AA151B 75%);"></div>
-                            <div class="language-name">Español</div>
-                        </div>
-                        <div class="translate-option" data-lang="it">
-                            <div class="language-flag" style="background: linear-gradient(to right, #009246 33%, #FFFFFF 33%, #FFFFFF 66%, #CE2B37 66%);"></div>
-                            <div class="language-name">Italiano</div>
-                        </div>
-                        <div class="translate-option" data-lang="sq">
-                            <div class="language-flag" style="background: linear-gradient(to bottom, #E41E20 0%, #E41E20 100%);"></div>
-                            <div class="language-name">Shqip</div>
-                        </div>
-                        <div class="translate-option" data-lang="hi">
-                            <div class="language-flag" style="background: linear-gradient(to bottom, #FF9933 33%, #FFFFFF 33%, #FFFFFF 66%, #138808 66%); position: relative;">
-                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 10px; height: 10px; background: #000080; border-radius: 50%;"></div>
-                            </div>
-                            <div class="language-name">हिन्दी</div>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <i class="fas fa-mug-hot logo"></i>
@@ -1814,52 +1721,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Βελτιωμένο Google Translate Widget
-            const translateTrigger = document.querySelector('.translate-trigger');
-            const translateDropdown = document.getElementById('translateDropdown');
-            const translateOptions = document.querySelectorAll('.translate-option');
-            
-            // Άνοιγμα/κλείσιμο dropdown
-            translateTrigger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                translateDropdown.classList.toggle('active');
-            });
-            
-            // Επιλογή γλώσσας
-            translateOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    const lang = this.getAttribute('data-lang');
-                    
-                    // Ενημέρωση του Google Translate widget
-                    const select = document.querySelector('.goog-te-combo');
-                    if (select) {
-                        select.value = lang;
-                        select.dispatchEvent(new Event('change'));
-                    }
-                    
-                    // Ενημέρωση του UI
-                    translateOptions.forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                    
-                    // Κλείσιμο dropdown
-                    translateDropdown.classList.remove('active');
-                    
-                    // Ενημέρωση του trigger
-                    const languageName = this.querySelector('.language-name').textContent;
-                    translateTrigger.innerHTML = `<i class="fas fa-language"></i> ${languageName}`;
-                });
-            });
-            
-            // Κλείσιμο dropdown όταν κάνουμε κλικ έξω
-            document.addEventListener('click', function() {
-                translateDropdown.classList.remove('active');
-            });
-            
-            // Αποτροπή κλεισίματος όταν κάνουμε κλικ στο dropdown
-            translateDropdown.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-            
             // Firebase Auth functions
             const auth = window.firebaseAuth;
             const { 
