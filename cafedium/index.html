@@ -3,2658 +3,705 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cafedium</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Favicon για όλες τις συσκευές -->
-    <link rel="icon" type="image/png" href="coffeetime.png">
-    <link rel="apple-touch-icon" href="coffeetime.png">
-    <link rel="shortcut icon" href="coffeetime.png" type="image/x-icon">
-    <meta name="msapplication-TileImage" content="coffeetime.png">
-    <meta name="msapplication-TileColor" content="#8B4513">
-    <meta name="theme-color" content="#8B4513">
-    
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            signOut, 
-            onAuthStateChanged,
-            sendPasswordResetEmail,
-            updateProfile
-        } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-          apiKey: "AIzaSyD8pn4ZfzXIEmk7lD0f6pPuDcPOJFatnAc",
-          authDomain: "franklymadear-a5751.firebaseapp.com",
-          projectId: "franklymadear-a5751",
-          storageBucket: "franklymadear-a5751.firebasestorage.app",
-          messagingSenderId: "487154731862",
-          appId: "1:487154731862:web:40f86afee24ef06dad64f7",
-          measurementId: "G-SFT8BPMLFS"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const auth = getAuth(app);
-        
-        // Make Firebase available globally
-        window.firebaseApp = app;
-        window.firebaseAnalytics = analytics;
-        window.firebaseAuth = auth;
-        window.firebaseAuthFunctions = {
-            createUserWithEmailAndPassword,
-            signInWithEmailAndPassword,
-            signOut,
-            onAuthStateChanged,
-            sendPasswordResetEmail,
-            updateProfile
-        };
-    </script>
-    
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        :root {
-            --primary: #8B4513;
-            --primary-light: #A0522D;
-            --secondary: #D2691E;
-            --accent: #F4A460;
-            --light: #F5F5DC;
-            --dark: #3E2723;
-            --text: #5D4037;
-            --success: #4CAF50;
-            --error: #f44336;
-            --info: #2196F3;
-        }
-        
-        body {
-            background: linear-gradient(135deg, var(--light) 0%, #f8f4e9 100%);
-            color: var(--text);
-            line-height: 1.6;
-            min-height: 100vh;
-            padding: 10px;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding: 25px 20px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(139, 69, 19, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        header::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            transform: rotate(30deg);
-        }
-        
-        .logo {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            display: block;
-        }
-        
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-        }
-        
-        .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .user-info {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .logout-btn {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 0.8rem;
-            padding: 3px 8px;
-            border-radius: 10px;
-            transition: background 0.3s;
-        }
-        
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .admin-panel-btn {
-            background: rgba(255, 255, 255, 0.3);
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 0.8rem;
-            padding: 5px 10px;
-            border-radius: 10px;
-            transition: background 0.3s;
-            margin-left: 8px;
-        }
-        
-        .admin-panel-btn:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
-        
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            background: #f8f4e9;
-            border: none;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text);
-            cursor: pointer;
-            transition: all 0.3s;
-            border-bottom: 3px solid transparent;
-        }
-        
-        .tab.active {
-            background: white;
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-        }
-        
-        .tab:hover:not(.active) {
-            background: #f0e6d3;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .form-section {
-            background-color: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.15);
-            margin-bottom: 25px;
-            border: 1px solid rgba(210, 105, 30, 0.2);
-        }
-        
-        h2 {
-            color: var(--primary);
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        h2 i {
-            color: var(--secondary);
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        input[type="email"], input[type="text"], input[type="password"], textarea {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0d6c9;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            background-color: #fcfaf7;
-        }
-        
-        input:focus, textarea:focus {
-            border-color: var(--secondary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(210, 105, 30, 0.2);
-            background-color: white;
-        }
-        
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-            font-family: inherit;
-        }
-        
-        .file-input-container {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            width: 100%;
-        }
-        
-        .file-input {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-        
-        .file-input-label {
-            display: block;
-            padding: 20px 15px;
-            background: linear-gradient(to right, #f9f3ec, #f5e9d8);
-            border: 2px dashed var(--accent);
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: var(--primary-light);
-            font-weight: 600;
-        }
-        
-        .file-input-label:hover {
-            background: linear-gradient(to right, #f5e9d8, #f0dfc8);
-            border-color: var(--secondary);
-            transform: translateY(-2px);
-        }
-        
-        .file-input-label i {
-            margin-right: 8px;
-            font-size: 1.2rem;
-        }
-        
-        .preview-container {
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-        
-        .preview-title {
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 12px;
-            margin-top: 10px;
-        }
-        
-        .preview-item {
-            position: relative;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        
-        .preview-item:hover {
-            transform: scale(1.05);
-        }
-        
-        .preview-image {
-            width: 100%;
-            height: 100px;
-            object-fit: cover;
-            display: block;
-        }
-        
-        .remove-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background-color: rgba(244, 67, 54, 0.8);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 26px;
-            height: 26px;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        
-        .remove-btn:hover {
-            background-color: rgba(244, 67, 54, 1);
-            transform: scale(1.1);
-        }
-        
-        .submit-btn {
-            background: linear-gradient(to right, var(--primary), var(--primary-light));
-            color: white;
-            border: none;
-            padding: 16px 25px;
-            font-size: 1.1rem;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .submit-btn:hover {
-            background: linear-gradient(to right, var(--primary-light), var(--secondary));
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
-        }
-        
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-        
-        .submit-btn:disabled {
-            background: linear-gradient(to right, #cccccc, #aaaaaa);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .message {
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            text-align: center;
-            display: none;
-            font-weight: 500;
-        }
-        
-        .success {
-            background-color: #e8f5e9;
-            color: var(--success);
-            border: 1px solid #c8e6c9;
-        }
-        
-        .error {
-            background-color: #ffebee;
-            color: var(--error);
-            border: 1px solid #ffcdd2;
-        }
-        
-        .info {
-            background-color: #e3f2fd;
-            color: var(--info);
-            border: 1px solid #bbdefb;
-        }
-        
-        .info-box {
-            background: linear-gradient(to right, #f9f3ec, #f5e9d8);
-            border-left: 4px solid var(--accent);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            font-size: 0.95rem;
-        }
-        
-        .info-box ul {
-            padding-left: 20px;
-            margin-top: 10px;
-        }
-        
-        .info-box li {
-            margin-bottom: 8px;
-        }
-        
-        /* Νέο CSS για απαντήσεις */
-        .responses-list {
-            display: grid;
-            gap: 20px;
-        }
-
-        .response-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            border-left: 4px solid var(--success);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .response-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .response-subject {
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 1.1rem;
-        }
-
-        .response-date {
-            color: var(--text);
-            font-size: 0.9rem;
-        }
-
-        .response-content {
-            line-height: 1.6;
-        }
-
-        .response-original {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            border-left: 3px solid var(--accent);
-        }
-
-        .original-label {
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 8px;
-            display: block;
-        }
-        
-        /* Στυλ για φόρμες εγγραφής/σύνδεσης */
-        .auth-form {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
-        .auth-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .auth-tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            background: #f8f4e9;
-            border: none;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text);
-            cursor: pointer;
-            transition: all 0.3s;
-            border-bottom: 3px solid transparent;
-        }
-        
-        .auth-tab.active {
-            background: white;
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-        }
-        
-        .auth-content {
-            display: none;
-        }
-        
-        .auth-content.active {
-            display: block;
-        }
-        
-        .login-required {
-            text-align: center;
-            padding: 40px 20px;
-        }
-        
-        .login-required i {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-
-        /* Στυλ για επαναφορά κωδικού */
-        .forgot-password {
-            text-align: center;
-            margin-top: 15px;
-        }
-
-        .forgot-password a {
-            color: var(--primary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .forgot-password a:hover {
-            color: var(--primary-light);
-            text-decoration: underline;
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            color: var(--primary-light);
-            font-size: 0.9rem;
-        }
-        
-        .coffee-icon {
-            display: inline-block;
-            margin: 0 5px;
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-            100% { transform: translateY(0px); }
-        }
-
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--text);
-            cursor: pointer;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.3s;
-        }
-
-        .close-modal:hover {
-            background: #f0f0f0;
-        }
-
-        .reset-steps {
-            display: none;
-        }
-
-        .reset-steps.active {
-            display: block;
-        }
-        
-        /* Στυλ για επιλογές καφεμαντείας */
-        .coffee-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .coffee-option {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border: 2px solid #e0d6c9;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background-color: #fcfaf7;
-        }
-        
-        .coffee-option:hover {
-            border-color: var(--accent);
-            background-color: #f9f3ec;
-        }
-        
-        .coffee-option.selected {
-            border-color: var(--primary);
-            background-color: #f5e9d8;
-        }
-        
-        .coffee-option input[type="radio"] {
-            margin-right: 12px;
-            transform: scale(1.2);
-        }
-        
-        .option-content {
-            flex: 1;
-        }
-        
-        .option-title {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 5px;
-        }
-        
-        .option-description {
-            color: var(--text);
-            font-size: 0.9rem;
-        }
-        
-        .option-price {
-            font-weight: 600;
-            color: var(--primary);
-            margin-left: 10px;
-            white-space: nowrap;
-        }
-        
-        .special-offer {
-            border: 2px solid var(--success);
-            background: linear-gradient(to right, #f0f9f0, #e8f5e8);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .special-offer::before {
-            content: "ΠΡΟΣΦΟΡΑ";
-            position: absolute;
-            top: 10px;
-            right: -30px;
-            background: var(--success);
-            color: white;
-            padding: 5px 30px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            transform: rotate(45deg);
-        }
-        
-        /* Στυλ για σύστημα πόντων */
-        .points-section {
-            background: linear-gradient(135deg, #fff9e6 0%, #fff0cc 100%);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 2px solid #ffd700;
-        }
-        
-        .points-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .points-count {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .points-count i {
-            color: #ffd700;
-        }
-        
-        .points-level {
-            font-weight: 600;
-            color: var(--dark);
-            background: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: 1px solid #ffd700;
-        }
-        
-        .points-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .points-btn {
-            flex: 1;
-            min-width: 120px;
-            padding: 10px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .points-btn:hover {
-            background: var(--primary-light);
-            transform: translateY(-2px);
-        }
-        
-        /* Στυλ για το consent modal */
-        .terms-container {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #e0d6c9;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-            background: #fcfaf7;
-        }
-
-        .terms-section, .privacy-section {
-            margin-bottom: 20px;
-        }
-
-        .terms-section h3, .privacy-section h3 {
-            color: var(--primary);
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-
-        .terms-container h4 {
-            color: var(--dark);
-            margin: 15px 0 8px 0;
-            font-size: 1rem;
-        }
-
-        .terms-container p {
-            margin-bottom: 10px;
-            line-height: 1.5;
-            font-size: 0.9rem;
-        }
-
-        .terms-container ul {
-            padding-left: 20px;
-            margin-bottom: 15px;
-        }
-
-        .terms-container li {
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-
-        .checkbox-label input[type="checkbox"] {
-            margin-top: 3px;
-        }
-
-        .consent-version {
-            font-size: 0.8rem;
-            color: var(--primary-light);
-            text-align: right;
-            margin-top: 10px;
-            font-style: italic;
-        }
-
-        /* Scrollbar styling for terms container */
-        .terms-container::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .terms-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        .terms-container::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 4px;
-        }
-
-        .terms-container::-webkit-scrollbar-thumb:hover {
-            background: var(--secondary);
-        }
-
-        /* Στυλ για διαχειριστή */
-        .admin-section {
-            background: #f0f0f0;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-
-        .admin-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        /* Στυλ για προσφορά μέσα στη φόρμα */
-        .offer-in-form {
-            background: linear-gradient(135deg, #e8f5e8 0%, #d0e9d0 100%);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 2px solid var(--success);
-        }
-        
-        .offer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .offer-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .offer-title i {
-            color: var(--success);
-        }
-        
-        .offer-cost {
-            font-weight: 600;
-            color: var(--primary);
-            background: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: 1px solid var(--success);
-        }
-        
-        .offer-description {
-            color: var(--text);
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-        
-        .redeem-btn {
-            width: 100%;
-            padding: 12px;
-            background: var(--success);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .redeem-btn:hover:not(:disabled) {
-            background: #388e3c;
-            transform: translateY(-2px);
-        }
-        
-        .redeem-btn:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Στυλ για links όρων */
-        .terms-links {
-            text-align: center;
-            margin: 15px 0;
-            padding: 10px;
-        }
-
-        .terms-links a {
-            color: var(--primary);
-            text-decoration: none;
-            margin: 0 10px;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .terms-links a:hover {
-            color: var(--primary-light);
-            text-decoration: underline;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .container {
-                padding: 5px;
-            }
-            
-            header {
-                padding: 20px 15px;
-                margin-bottom: 20px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .logo {
-                font-size: 2.2rem;
-            }
-            
-            .user-info {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin-top: 15px;
-                justify-content: center;
-            }
-            
-            .tabs {
-                flex-direction: column;
-            }
-            
-            .form-section {
-                padding: 20px 15px;
-            }
-            
-            .preview-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                gap: 10px;
-            }
-            
-            .preview-image {
-                height: 90px;
-            }
-            
-            .file-input-label {
-                padding: 15px 10px;
-                font-size: 0.95rem;
-            }
-            
-            .submit-btn {
-                padding: 14px 20px;
-                font-size: 1rem;
-            }
-            
-            .modal-content {
-                padding: 20px 15px;
-                width: 95%;
-            }
-            
-            .coffee-option {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .option-price {
-                margin-left: 0;
-                margin-top: 8px;
-            }
-            
-            .points-display {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-            
-            .points-actions {
-                flex-direction: column;
-            }
-            
-            .offer-header {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-            
-            .admin-buttons {
-                flex-direction: column;
-            }
-        }
-        
-        @media (max-width: 400px) {
-            .preview-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+    <title>FranklyMaDear</title>
+    <!-- Favicon & Mobile Icon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <i class="fas fa-mug-hot logo"></i>
-            <h1>Cafedium</h1>
-            <p class="subtitle">·«Καλώς ήρθες στο Cafedium, όπου ο καφές διηγείται ιστορίες»!</p>
-            
-            <div class="user-info" id="userInfo" style="display: none;">
-                <i class="fas fa-user"></i>
-                <span id="userEmail"></span>
-                <button class="logout-btn" id="logoutBtn">Αποσύνδεση</button>
-                <button class="admin-panel-btn" id="adminPanelBtn" style="display: none;">
-                    <i class="fas fa-cog"></i> Panel
-                </button>
-            </div>
-        </header>
-        
-        <div id="authSection">
-            <div class="form-section">
-                <h2><i class="fas fa-user-circle"></i> Εγγραφή / Σύνδεση</h2>
-                
-                <!-- Links για τους όρους χρήσης -->
-                <div class="terms-links">
-                    <a href="#" id="showTermsAuth"><i class="fas fa-file-contract"></i> Όροι Χρήσης</a>
-                    <a href="#" id="showPrivacyAuth"><i class="fas fa-shield-alt"></i> Πολιτική Απορρήτου</a>
-                </div>
-                
-                <div class="auth-tabs">
-                    <button class="auth-tab active" data-auth-tab="login-tab">
-                        <i class="fas fa-sign-in-alt"></i> Σύνδεση
-                    </button>
-                    <button class="auth-tab" data-auth-tab="register-tab">
-                        <i class="fas fa-user-plus"></i> Εγγραφή
-                    </button>
-                </div>
-                
-                <div id="login-tab" class="auth-content active">
-                    <form id="loginForm" class="auth-form">
-                        <div class="form-group">
-                            <label for="login-email"><i class="fas fa-envelope"></i> Διεύθυνση E-mail:</label>
-                            <input type="email" id="login-email" name="email" placeholder="π.χ. onoma@example.com" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="login-password"><i class="fas fa-lock"></i> Κωδικός Πρόσβασης:</label>
-                            <input type="password" id="login-password" name="password" placeholder="Ο κωδικός πρόσβασής σας" required>
-                        </div>
-                        
-                        <button type="submit" class="submit-btn">
-                            <i class="fas fa-sign-in-alt"></i> Σύνδεση
-                        </button>
-                        
-                        <div class="forgot-password">
-                            <a href="#" id="forgotPasswordLink">Ξεχάσατε τον κωδικό σας;</a>
-                        </div>
-                        
-                        <div class="message" id="loginMessage"></div>
-                    </form>
-                </div>
-                
-                <div id="register-tab" class="auth-content">
-                    <form id="registerForm" class="auth-form">
-                        <div class="form-group">
-                            <label for="register-name"><i class="fas fa-user"></i> Ονοματεπώνυμο:</label>
-                            <input type="text" id="register-name" name="name" placeholder="Το ονοματεπώνυμό σας" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="register-email"><i class="fas fa-envelope"></i> Διεύθυνση E-mail:</label>
-                            <input type="email" id="register-email" name="email" placeholder="π.χ. onoma@example.com" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="register-password"><i class="fas fa-lock"></i> Κωδικός Πρόσβασης:</label>
-                            <input type="password" id="register-password" name="password" placeholder="Δημιουργήστε έναν κωδικό πρόσβασης" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="register-confirm-password"><i class="fas fa-lock"></i> Επιβεβαίωση Κωδικού:</label>
-                            <input type="password" id="register-confirm-password" name="confirmPassword" placeholder="Εισάγετε ξανά τον κωδικό πρόσβασης" required>
-                        </div>
-
-                        <!-- Προσθήκη συγκατάθεσης στην εγγραφή -->
-                        <div class="form-group">
-                            <div class="info-box">
-                                <p><strong>Προϋποθέσεις χρήσης:</strong></p>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="register-age" name="ageConsent" required>
-                                    <span>Δηλώνω ότι είμαι άνω των 18 ετών</span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="register-terms" name="termsConsent" required>
-                                    <span>Αποδέχομαι τους <a href="#" id="showTermsRegister">Όρους Χρήσης</a></span>
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="register-privacy" name="privacyConsent" required>
-                                    <span>Αποδέχομαι την <a href="#" id="showPrivacyRegister">Πολιτική Απορρήτου</a></span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="submit-btn">
-                            <i class="fas fa-user-plus"></i> Εγγραφή
-                        </button>
-                        
-                        <div class="message" id="registerMessage"></div>
-                    </form>
-                </div>
-            </div>
+    <!-- Roll-up Banner -->
+    <div class="roll-up-banner" id="rollUpBanner">
+        <div class="banner-content">
+            <span class="banner-icon">👉</span>
+            <span class="banner-text">Ένα κλικ αρκεί! Στηρίξτε μας να συνεχίσουμε!</span>
         </div>
-        
-        <div id="mainApp" style="display: none;">
-            <!-- Πληροφορίες Πόντων -->
-            <div class="points-section" id="pointsSection">
-                <div class="points-display">
-                    <div class="points-count">
-                        <i class="fas fa-coins"></i>
-                        <span id="currentPoints">50</span> Πόντοι
-                    </div>
-                    <div class="points-level">
-                        Επίπεδο: <span id="userLevel">Αρχάριος</span>
-                    </div>
-                </div>
-                <div class="points-actions">
-                    <button class="points-btn" id="pointsInfoBtn">
-                        <i class="fas fa-info-circle"></i> Πληροφορίες & Προσφορές
-                    </button>
-                </div>
-            </div>
-            
-            <div class="tabs">
-                <button class="tab active" data-tab="photos-tab">
-                    <i class="fas fa-camera"></i> Αποστολή Φωτογραφιών
-                </button>
-                <button class="tab" data-tab="calendar-tab">
-                    <i class="fas fa-calendar"></i> Κλείσιμο Ραντεβού
-                </button>
-                <button class="tab" data-tab="contact-tab">
-                    <i class="fas fa-envelope"></i> Επικοινωνία
-                </button>
-                <button class="tab" data-tab="responses-tab">
-                    <i class="fas fa-reply"></i> Οι Απαντήσεις Μου
-                </button>
-            </div>
-            
-            <main>
-                <!-- Καρτέλα Αποστολής Φωτογραφιών -->
-                <section id="photos-tab" class="tab-content active">
-                    <div class="form-section">
-                        <h2><i class="fas fa-user"></i> Στοιχεία Επισκέπτη</h2>
-                        
-                        <div class="info-box">
-                            <p><strong>Οδηγίες υποβολής:</strong></p>
-                            <p>1. <strong>Πρώτα, εξαργυρώστε την προσφορά "Το φλιτζάνι σου μιλά" παρακάτω</strong></p>
-                            <p>2. Μετά, κλείστε το ραντεβού σας από την καρτέλα "Κλείσιμο Ραντεβού"</p>
-                            <p>3. Επιστρέψτε εδώ και συμπληρώστε τα στοιχεία σας</p>
-                            <p>4. Επιλέξτε το τύπο ερμηνείας και ανεβάστε τις φωτογραφίες σας</p>
-                            <p><strong>Βεβαιωθείτε ότι χρησιμοποιείτε το ίδιο email στην σελίδα ραντεβού κ στην Εφαρμογή!</strong></p>
-                        </div>
-
-                        <!-- ΠΡΟΣΦΟΡΑ ΜΕΣΑ ΣΤΗ ΦΟΡΜΑ -->
-                        <div class="offer-in-form" id="offerInForm">
-                            <div class="offer-header">
-                                <div class="offer-title">
-                                    <i class="fas fa-gift"></i>
-                                    Το Φλιτζάνι σου μιλάει
-                                </div>
-                                <div class="offer-cost">
-                                    50 Πόντοι
-                                </div>
-                            </div>
-                            <div class="offer-description">
-                                <strong>Απαραίτητη προϋπόθεση:</strong> Πρέπει πρώτα να εξαργυρώσετε αυτή την προσφορά για να μπορέσετε να υποβάλετε φωτογραφίες καφέ στους διαχειριστές.
-                            </div>
-                            <button class="redeem-btn" id="redeemInFormBtn">
-                                <i class="fas fa-shopping-cart"></i> Ανταλλαγή
-                            </button>
-                        </div>
-
-                        <!-- Έλεγχος αν έχει γίνει εξαργύρωση -->
-                        <div id="offerCheckSection" class="info-box" style="display: none; background: linear-gradient(to right, #e8f5e8, #d0e9d0); border-left: 4px solid var(--success);">
-                            <p><i class="fas fa-check-circle" style="color: var(--success);"></i> <strong>Έχετε εξαργυρώσει την προσφορά! Μπορείτε τώρα να υποβάλετε φωτογραφίες.</strong></p>
-                        </div>
-                        
-                        <form id="visitorForm">
-                            <div class="form-group">
-                                <label for="email"><i class="fas fa-envelope"></i> Διεύθυνση E-mail:</label>
-                                <input type="email" id="email" name="email" placeholder="π.χ. onoma@example.com" required readonly>
-                            </div>
-                            
-                            <!-- Επιλογές καφεμαντείας -->
-                            <div class="form-group">
-                                <label><i class="fas fa-coffee"></i> Το μονοπάτι του φλιτζανιού </label>
-                                <div class="coffee-options">
-                                    <label class="coffee-option">
-                                        <input type="radio" name="coffeeType" value="written" required>
-                                        <div class="option-content">
-                                            <div class="option-title">Γραπτή Ερμηνεία</div>
-                                            <div class="option-description">Επιθυμώ γραπτώς.Το αρχείο θα σταλεί σε pdf μορφή </div>
-                                        </div>
-                                        <div class="option-price">Κερδίζω 10 Πόντους</div>
-                                    </label>
-                                    
-                                    <label class="coffee-option">
-                                        <input type="radio" name="coffeeType" value="verbal" required>
-                                        <div class="option-content">
-                                            <div class="option-title">Προφορική Ερμηνεία</div>
-                                            <div class="option-description">Επιθυμώ προφορικά.Το αρχείο θα σταλεί σε mp3 μορφή.</div>
-                                        </div>
-                                        <div class="option-price">Κερδίζω 10 πόντους</div>
-                                    </label>
-                                    
-                                    <label class="coffee-option special-offer" id="offer-1plus1">
-                                        <input type="radio" name="coffeeType" value="1plus1" required>
-                                        <div class="option-content">
-                                            <div class="option-title">Προσφορά 1+1 Δώρο</div>
-                                            <div class="option-description">Δώρο:Η 2η ερμηνεία δωρεάν!</div>
-                                        </div>
-                                        <div class="option-price" id="1plus1-price">Χωρίς Πόντο</div>
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <!-- ΝΕΟ ΠΛΑΙΣΙΟ ΓΙΑ ΤΗΝ ΕΠΙΘΥΜΙΑ ΤΟΥ ΧΡΗΣΤΗ -->
-                            <div class="form-group">
-                                <label for="user-desire"><i class="fas fa-star"></i> Η Επιθυμία σας:</label>
-                                <textarea id="user-desire" name="desire" placeholder="Γράψτε εδώ την επιθυμία σας 
-                                    ..." rows="3"></textarea>
-                                <div class="info-box" style="margin-top: 10px;">
-                                    <p><strong>Προαιρετικό:</strong> Μοιραστείτε το πρώτο γράμμα του ονόματός σας και την επιθυμία σας, και αφήστε τη μαγεία του καφέ να δράσει..</p>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label><i class="fas fa-camera"></i> Επιλογή Φωτογραφιών Καφέ:</label>
-                                <div class="file-input-container">
-                                    <input type="file" id="photos" class="file-input" multiple accept="image/*">
-                                    <label for="photos" class="file-input-label">
-                                        <i class="fas fa-cloud-upload-alt"></i> Επιλέξτε φωτογραφίες καφέ (μέχρι 5)
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div class="preview-container">
-                                <div class="preview-title">
-                                    <i class="fas fa-images"></i> Προεπισκόπηση φωτογραφιών:
-                                </div>
-                                <div class="preview-grid" id="previewGrid">
-                                    <!-- Εδώ θα προστεθούν οι προεπισκοπήσεις των φωτογραφιών -->
-                                </div>
-                            </div>
-                            
-                            <button type="submit" class="submit-btn" id="submitBtn">
-                                <i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών
-                            </button>
-                            
-                            <div class="message" id="message"></div>
-                        </form>
-                    </div>
-                </section>
-                
-                <!-- Καρτέλα Κλεισίματος Ραντεβού -->
-                <section id="calendar-tab" class="tab-content">
-                    <div class="form-section">
-                        <h2><i class="fas fa-calendar-alt"></i> Κλείσιμο Ραντεβού</h2>
-                        
-                        <div class="info-box">
-                            <p><strong>Οδηγίες κλεισίματος ραντεβού:</strong></p>
-                            <p>Παρακαλώ κλείστε το ραντεβού σας μέσω του Google Calendar. Βεβαιωθείτε ότι χρησιμοποιείτε το ίδιο email με αυτό που χρησιμοποιείτε στην εφαρμογή.</p>
-                            <p>Μετά το κλείσιμο του ραντεβού, παρακαλώ επιστρέψτε στην καρτέλα "Αποστολή Φωτογραφιών" για να υποβάλετε τις φωτογραφίες σας.</p>
-                        </div>
-                        
-                        <!-- Google Calendar Appointment Scheduling begin -->
-                        <iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2W749ziDodCAof-hd2VaHeolH7c8qhF8eR4LGAAOG2FLZsK35mV1Eq48qR4z166rTvhiDfPwn-?gv=true" style="border: 0" width="100%" height="600" frameborder="0"></iframe>
-                        <!-- end Google Calendar Appointment Scheduling -->
-                    </div>
-                </section>
-                
-                <!-- Καρτέλα Επικοινωνίας -->
-                <section id="contact-tab" class="tab-content">
-                    <div class="form-section">
-                        <h2><i class="fas fa-comments"></i> Επικοινωνία με τον Διαχειριστή</h2>
-                        
-                        <div class="info-box">
-                            <p><strong>Στείλτε μήνυμα στον διαχειριστή:</strong></p>
-                            <p>Εάν έχετε οποιαδήποτε ερώτηση, πρόβλημα ή σχόλιο, μπορείτε να επικοινωνήσετε απευθείας μαζί μας συμπληρώνοντας την παρακάτω φόρμα.</p>
-                        </div>
-                        
-                        <form id="contactForm">
-                            <div class="form-group">
-                                <label for="contact-name"><i class="fas fa-user"></i> Ονοματεπώνυμο:</label>
-                                <input type="text" id="contact-name" name="name" placeholder="Το ονοματεπώνυμό σας" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="contact-email"><i class="fas fa-envelope"></i> Διεύθυνση E-mail:</label>
-                                <input type="email" id="contact-email" name="email" placeholder="π.χ. onoma@example.com" required readonly>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="contact-subject"><i class="fas fa-tag"></i> Θέμα:</label>
-                                <input type="text" id="contact-subject" name="subject" placeholder="Το θέμα του μηνύματός σας" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="contact-message"><i class="fas fa-comment"></i> Μήνυμα:</label>
-                                <textarea id="contact-message" name="message" placeholder="Γράψτε το μήνυμά σας εδώ..." required></textarea>
-                            </div>
-                            
-                            <button type="submit" class="submit-btn" id="contactSubmitBtn">
-                                <i class="fas fa-paper-plane"></i> Αποστολή Μηνύματος
-                            </button>
-                            
-                            <div class="message" id="contactMessage"></div>
-                        </form>
-                    </div>
-                </section>
-
-                <!-- Καρτέλα Απαντήσεων -->
-                <section id="responses-tab" class="tab-content">
-                    <div class="form-section">
-                        <h2><i class="fas fa-reply"></i> Απαντήσεις από τον Διαχειριστή</h2>
-                        
-                        <div class="info-box">
-                            <p><strong>Εδώ μπορείτε να δείτε τις απαντήσεις στις υποβολές σας:</strong></p>
-                            <p>Οι απαντήσεις εμφανίζονται αυτόματα μόλις ο διαχειριστής απαντήσει στις υποβολές σας.</p>
-                        </div>
-                        
-                        <div class="responses-list" id="responses-list">
-                            <!-- Εδώ θα προστεθούν οι απαντήσεις -->
-                        </div>
-                        
-                        <div class="empty-state" id="no-responses" style="display: none;">
-                            <div class="login-required">
-                                <i class="fas fa-inbox"></i>
-                                <h3>Δεν υπάρχουν απαντήσεις ακόμα</h3>
-                                <p>Οι απαντήσεις από τον διαχειριστή θα εμφανιστούν εδώ μόλις απαντηθούν οι υποβολές σας.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </main>
-        </div>
-        
-        <!-- Modal για επαναφορά κωδικού -->
-        <div id="forgotPasswordModal" class="modal">
-            <div class="modal-content">
-                <button class="close-modal" id="closeForgotPasswordModal">×</button>
-                <h2><i class="fas fa-key"></i> Επαναφορά Κωδικού</h2>
-                
-                <!-- Βήμα 1: Εισαγωγή email -->
-                <div id="resetStep1" class="reset-steps active">
-                    <div class="info-box">
-                        <p><strong>Οδηγίες:</strong></p>
-                        <p>Εισάγετε το email σας για να λάβετε email επαναφοράς κωδικού.</p>
-                    </div>
-                    
-                    <form id="forgotPasswordForm">
-                        <div class="form-group">
-                            <label for="forgot-email"><i class="fas fa-envelope"></i> Διεύθυνση E-mail:</label>
-                            <input type="email" id="forgot-email" name="email" placeholder="π.χ. onoma@example.com" required>
-                        </div>
-                        
-                        <button type="submit" class="submit-btn">
-                            <i class="fas fa-paper-plane"></i> Αποστολή Email Επαναφοράς
-                        </button>
-                        
-                        <div class="message" id="forgotPasswordMessage"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Modal για σύστημα πόντων -->
-        <div id="pointsModal" class="modal">
-            <div class="modal-content">
-                <button class="close-modal" id="closePointsModal">×</button>
-                <h2><i class="fas fa-trophy"></i> Πληροφορίες & Πόντοι</h2>
-                
-                <div class="info-box">
-                    <p><strong>Διαδικασία :</strong></p>
-                    <ul><li>Στην κεντρική οθόνη πηγαίνετε στο πλαίσιο "Το Φλυτζάνι σου Μιλά".</li>
-                    <li>Επιλέξτε το Μονοπάτι του Φλυντζανιού "Γραπτή η Προφορική" ερμηνεία .</li>
-                    <li>Κλείστε Ραντεβου μέσω Google Calendar.</li>
-                    <li>Προσοχή να χρησιμοποιείτε το ίδιο Email κατά την εγγραφή στην εφαρμογή όπως στην εξαργύρωση Πόντων κ στο κλείσιμο Ραντεβού.</li>
-                    <p><strong>Πώς λειτουργεί το σύστημα πόντων:</strong></p>
-                    <ul> <li>Για κάθε εγγραφή στην εφαρμογή μας κερδίστε 20 πόντους.</li>
-                        <li>Για κάθε Γραπτή η Προφορική Ερμηνεία κερδίστε 10 πόντους.</li>
-                        <li><strong>Κερδίστε Πόντους <strong>.</li>
-                        <li>Κερδίστε 70 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478228" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
-                        <li>Κερδίστε 100+10 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478229" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
-                        <li>Κερδίστε 200+20 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478517" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li> 
-                        <li>Να γραφτείτε με το ίδιο email. Οι πόντοι θα καταχωρηθούν από τους Διαχειριστές </li>
-                    </ul>
-                </div>
-                
-                <div class="user-points-section">
-                    <div class="points-display">
-                        <div class="points-count">
-                            <i class="fas fa-coins"></i>
-                            <span id="modalPoints">0</span> Πόντοι
-                        </div>
-                        <div class="points-level">
-                            <i class="fas fa-star"></i>
-                            Επίπεδο: <span id="modalLevel">Αρχάριος</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="offers-section">
-                    <h3><i class="fas fa-gift"></i> Διαθέσιμες Προσφορές</h3>
-                    <div class="offers-list" id="offersList">
-                        <!-- Θα προστεθούν δυναμικά οι προσφορές -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal για συγκατάθεση -->
-        <div id="consentModal" class="modal">
-            <div class="modal-content">
-                <button class="close-modal" id="closeConsentModal">×</button>
-                <h2><i class="fas fa-exclamation-circle"></i> Απαιτούμενη Συγκατάθεση</h2>
-                
-                <div class="info-box">
-                    <p><strong>Πριν συνεχίσετε, παρακαλούμε διαβάστε και αποδεχτείτε τους ακόλουθους όρους:</strong></p>
-                </div>
-
-                <div class="terms-container">
-                    <!-- Όροι Χρήσης -->
-                    <div class="terms-section">
-                        <h3>Όροι Χρήσης</h3>
-                        <div id="termsContent">
-                            <!-- Οι όροι θα φορτώνονται δυναμικά -->
-                        </div>
-                    </div>
-
-                    <!-- Πολιτική Απορρήτου -->
-                    <div class="privacy-section">
-                        <h3>Πολιτική Απορρήτου</h3>
-                        <div id="privacyContent">
-                            <!-- Η πολιτική θα φορτώνεται δυναμικά -->
-                        </div>
-                    </div>
-                </div>
-
-                <form id="consentForm">
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="ageConsent" name="ageConsent" required>
-                            <span>Δηλώνω υπόσχεση ότι είμαι άνω των 18 ετών</span>
-                        </label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="termsConsent" name="termsConsent" required>
-                            <span>Αποδέχομαι τους <strong>Όρους Χρήσης</strong></span>
-                        </label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="privacyConsent" name="privacyConsent" required>
-                            <span>Αποδέχομαι την <strong>Πολιτική Απορρήτου</strong></span>
-                        </label>
-                    </div>
-
-                    <button type="submit" class="submit-btn">
-                        <i class="fas fa-check"></i> Αποδοχή και Συνέχεια
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Modal για μη επαρκείς πόντους -->
-        <div id="pointsWarningModal" class="modal">
-            <div class="modal-content">
-                <button class="close-modal" id="closePointsWarningModal">×</button>
-                <h2><i class="fas fa-exclamation-triangle" style="color: var(--error);"></i> Μη Επαρκείς Πόντοι</h2>
-                
-                <div class="info-box" style="background: #ffebee; border-left: 4px solid var(--error);">
-                    <p><strong>Δεν έχετε αρκετούς πόντους για να υποβάλετε φωτογραφίες!</strong></p>
-                    <p>Για να υποβάλετε φωτογραφίες καφέ, πρέπει πρώτα να εξαργυρώσετε την προσφορά <strong>"Το φλιτζάνι σου μιλά"</strong> που κοστίζει 50 πόντους.</p>
-                </div>
-
-                <div class="points-display" style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                    <div class="points-count">
-                        <i class="fas fa-coins"></i>
-                        <span id="warningPoints">0</span> Πόντοι
-                    </div>
-                    <div class="points-level">
-                        Απαιτούνται: <strong>50 Πόντοι</strong>
-                    </div>
-                </div>
-
-                <div class="info-box">
-                    <p><strong>Τρόποι απόκτησης πόντων:</strong></p>
-                    <ul>
-                        <li>Εγγραφή: <strong>20 πόντοι</strong></li>
-                        <li>Υποβολή φωτογραφιών: <strong>10 πόντοι ανά υποβολή</strong></li>
-                        <li><strong>Κερδίστε Πόντους <strong>.</li>
-                        <li>Κερδίστε 70 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478228" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
-                        <li>Κερδίστε 100+10 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478229" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
-                        <li>Κερδίστε 200+20 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478517" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li> 
-                        <li>Να γραφτείτε με το ίδιο email. Οι πόντοι θα καταχωρηθούν από τους Διαχειριστές </li>
-                        <li>Φιλοδωρήματα: <strong>από τους Διαχειριστές αναλόγος την Συμμετοχή σας.</strong></li>
-                    </ul>
-                </div>
-
-                <button class="submit-btn" onclick="document.getElementById('pointsWarningModal').style.display = 'none';">
-                    <i class="fas fa-times"></i> Κλείσιμο
-                </button>
-            </div>
-        </div>
-        
-        <footer>
-            <div class="terms-links">
-                <a href="#" id="showTermsFooter"><i class="fas fa-file-contract"></i> Όροι Χρήσης</a>
-                <a href="#" id="showPrivacyFooter"><i class="fas fa-shield-alt"></i> Πολιτική Απορρήτου</a>
-            </div>
-            <p>
-                Cafedium by FmD<span class="coffee-icon">☕</span> 
-                «Το Φλυτζάνι σου μιλάει» εδώ ξεκινά το ταξίδι σας στο μυστήριο του φλιτζανιού.
-            </p>
-            <p>© 2026 - Όλα τα δικαιώματα διατηρούνται</p>
-        </footer>
+        <button class="close-banner" id="closeBanner">×</button>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Firebase Auth functions
-            const auth = window.firebaseAuth;
-            const { 
-                createUserWithEmailAndPassword, 
-                signInWithEmailAndPassword, 
-                signOut, 
-                onAuthStateChanged,
-                sendPasswordResetEmail,
-                updateProfile
-            } = window.firebaseAuthFunctions;
+    <!-- Pop-up Modal -->
+    <div class="popup-modal" id="popupModal">
+        <div class="popup-content">
+            <button class="close-popup" id="closePopup">×</button>
+            <h2 class="popup-title">Βοήθησέ μας να συνεχίσουμε!</h2>
+            <p class="popup-text">Η υποστήριξή σας μας βοηθά να προσφέρουμε δωρεάν παιχνίδια για όλους. Κάντε κλικ σε μία από τις διαφημίσεις. Είναι ο καλύτερος τρόπος να μας ενισχύσετε, χωρίς κανένα κόστος για εσάς! </p>
+            <div class="popup-buttons">
+                <button class="btn btn-primary" id="supportBtn">Βοήθησε τώρα</button>
+                <button class="btn btn-secondary" id="closePopupBtn">Όχι τώρα</button>
+            </div>
+        </div>
+    </div>
 
-            // UI Elements
-            const authSection = document.getElementById('authSection');
-            const mainApp = document.getElementById('mainApp');
-            const userInfo = document.getElementById('userInfo');
-            const userEmailSpan = document.getElementById('userEmail');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const adminPanelBtn = document.getElementById('adminPanelBtn');
+    <!-- Header -->
+    <header class="header" id="mainHeader">
+        <nav class="nav">
+            <div class="logo">
+                <a href="/">FranklyMaDear</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/" data-key="home">Αρχική</a></li>
+                <li><a href="#games" data-key="games">Παιχνίδια</a></li>
+                <li><a href="#features" data-key="features">Πλεονεκτήματα</a></li>
+                <!-- ΒLOG LINK ΠΡΟΣΤΕΘΗΚΕ -->
+                <li><a href="http://blog.franklymadear.com/" data-key="blog">Blog</a></li>
+                <!-- SUPPORT LINK ΠΡΟΣΤΕΘΗΚΕ -->
+                <li><a href="https://blog.franklymadear.com/support.html" data-key="support">Υποστήριξη</a></li>
+                <li class="language-selector">
+                    <select id="language-select" class="language-dropdown">
+                        <option value="el">Ελληνικά</option>
+                        <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                        <option value="es">Español</option>
+                        <option value="it">Italiano</option>
+                        <option value="ar">العربية</option>
+                        <option value="ru">Русский</option>
+                        <option value="hi">हिन्दी</option>
+                    </select>
+                </li>
+            </ul>
+        </nav>
+    </header>
 
-            // Monitor authentication state
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    // User is signed in
-                    authSection.style.display = 'none';
-                    mainApp.style.display = 'block';
-                    userInfo.style.display = 'flex';
-                    userEmailSpan.textContent = user.email;
-                    
-                    // Fill email in forms
-                    document.getElementById('email').value = user.email;
-                    document.getElementById('contact-email').value = user.email;
-                    document.getElementById('contact-name').value = user.displayName || '';
-                    
-                    // Show admin panel button for admin users
-                    if (user.email === 'admin@kafedium.gr' || user.email === 'franklymadear@gmail.com') {
-                        adminPanelBtn.style.display = 'inline-block';
-                    }
-                    
-                    // Load user data
-                    loadUserPoints();
-                    checkOffersStatus();
-                    checkOfferRedemption();
-                    checkUserConsent();
-                    
-                } else {
-                    // User is signed out
-                    authSection.style.display = 'block';
-                    mainApp.style.display = 'none';
-                    userInfo.style.display = 'none';
-                }
-            });
+    <!-- Hero Section -->
+    <section class="hero" id="mainHero">
+        <div class="container">
+            <h1 data-key="welcome">Καλώς Ηρθες στο FranklyMaDear</h1>
+            <p data-key="subtitle">Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!</p>
+            <div class="cta-buttons">
+                <a href="sudoku/sudoku.html" class="btn btn-primary" data-key="playSudoku">Παίξε Sudoku</a>
+                <a href="#games" class="btn btn-secondary" data-key="viewAllGames">Δες Όλα τα Παιχνίδια</a>
+            </div>
+        </div>
+    </section>
 
-            // Admin panel button
-            adminPanelBtn.addEventListener('click', function() {
-                window.open('panel.html', '_blank');
-            });
-
-            // TERMS AND CONSENT FUNCTIONS
-            document.getElementById('showTermsAuth').addEventListener('click', function(e) {
-                e.preventDefault();
-                showTermsModal();
-            });
-
-            document.getElementById('showPrivacyAuth').addEventListener('click', function(e) {
-                e.preventDefault();
-                showPrivacyModal();
-            });
-
-            document.getElementById('showTermsRegister').addEventListener('click', function(e) {
-                e.preventDefault();
-                showTermsModal();
-            });
-
-            document.getElementById('showPrivacyRegister').addEventListener('click', function(e) {
-                e.preventDefault();
-                showPrivacyModal();
-            });
-
-            document.getElementById('showTermsFooter').addEventListener('click', function(e) {
-                e.preventDefault();
-                showTermsModal();
-            });
-
-            document.getElementById('showPrivacyFooter').addEventListener('click', function(e) {
-                e.preventDefault();
-                showPrivacyModal();
-            });
-
-            function showTermsModal() {
-                loadTermsContent();
-                document.getElementById('consentModal').style.display = 'flex';
-                setTimeout(() => {
-                    document.querySelector('.terms-section').scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-            }
-
-            function showPrivacyModal() {
-                loadTermsContent();
-                document.getElementById('consentModal').style.display = 'flex';
-                setTimeout(() => {
-                    document.querySelector('.privacy-section').scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-            }
-
-            function checkUserConsent() {
-                const user = auth.currentUser;
-                if (!user) return;
-                
-                const userConsent = JSON.parse(localStorage.getItem('userConsent') || '{}');
-                const userAccepted = userConsent[user.email];
-                
-                if (!userAccepted || userAccepted.version !== getCurrentTermsVersion()) {
-                    showConsentModal();
-                }
-            }
-
-            function getCurrentTermsVersion() {
-                return "1.0";
-            }
-
-            function showConsentModal() {
-                loadTermsContent();
-                document.getElementById('consentModal').style.display = 'flex';
-            }
-
-            function loadTermsContent() {
-                const terms = getTermsAndPrivacy();
-                document.getElementById('termsContent').innerHTML = terms.terms;
-                document.getElementById('privacyContent').innerHTML = terms.privacy;
-            }
-
-            function getTermsAndPrivacy() {
-                const storedTerms = JSON.parse(localStorage.getItem('siteTerms') || '{}');
-                
-                if (Object.keys(storedTerms).length === 0) {
-                    return {
-                        version: getCurrentTermsVersion(),
-                        terms: `
-                            <h4>1. Αποδοχή Ορων</h4>
-                            <p>Χρησιμοποιώντας την Kafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις (αυτήν την «Συμφωνία»). Η Συμφωνία ισχύει για όλους τους χρήστες («εσάς» ή «Χρήστη») που έχουν πρόσβαση ή/και χρησιμοποιούν την Υπηρεσία ή/και τον σχετικό ιστότοπο www.kafedium.com («Ιστότοπος»). Εκτός εάν τροποποιηθεί, η Συμφωνία θα παραμένει σε ισχύ για όσο διάστημα είστε Χρήστης. Εάν δεν συμφωνείτε με τους παρόντες Όρους και Προϋποθέσεις, παρακαλούμε μην χρησιμοποιήσετε την Υπηρεσία.</p>
-                            
-                            <h4>2. Υπηρεσίες Καφεμαντείας</h4>
-                            <p>Οι υπηρεσίες καφεμαντείας παρέχονται για ψυχαγωγικούς σκοπούς. Δεν αποτελούν επαγγελματική συμβουλή ή πρόβλεψη του μέλλοντος.</p>
-                            
-                            <h4>3. Ηλικιακός Περιορισμός</h4>
-                            <p>Η εγγραφή και η συμμετοχή στην Υπηρεσία και στον Ιστότοπος περιορίζεται σε άτονα άνω των 18 ετών.</p>
-                        `,
-                        privacy: `
-                            <h4>1. Συλλογή Πληροφοριών</h4>
-                            <p>Συλλέγουμε πληροφορίες από εσάς όταν χρησιμοποιείτε υπηρεσίες που παρέχονται από τον ιστότοπο και/ή την εφαρμογή μας.</p>
-                            
-                            <h4>2. Χρήση Πληροφοριών</h4>
-                            <p>Οι πληροφορίες σας χρησιμοποιούνται αποκλειστικά για την παροχή των υπηρεσιών καφεμαντείας.</p>
-                            
-                            <h4>3. Προστασία Δεδομένων</h4>
-                            <p>Εφαρμόζουμε μέτρα ασφαλείας για την προστασία των προσωπικών σας δεδομένων.</p>
-                        `
-                    };
-                }
-                
-                return storedTerms;
-            }
-
-            // Consent form submission
-            document.getElementById('consentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const ageConsent = document.getElementById('ageConsent').checked;
-                const termsConsent = document.getElementById('termsConsent').checked;
-                const privacyConsent = document.getElementById('privacyConsent').checked;
-                
-                if (!ageConsent || !termsConsent || !privacyConsent) {
-                    alert('Παρακαλώ αποδεχτείτε όλους τους όρους για να συνεχίσετε.');
-                    return;
-                }
-                
-                const user = auth.currentUser;
-                if (user) {
-                    const userConsent = JSON.parse(localStorage.getItem('userConsent') || '{}');
-                    userConsent[user.email] = {
-                        accepted: true,
-                        version: getCurrentTermsVersion(),
-                        date: new Date().toISOString(),
-                        ageVerified: true
-                    };
-                    localStorage.setItem('userConsent', JSON.stringify(userConsent));
-                }
-                
-                document.getElementById('consentModal').style.display = 'none';
-            });
-
-            document.getElementById('closeConsentModal').addEventListener('click', function() {
-                document.getElementById('consentModal').style.display = 'none';
-            });
-
-            // OFFER REDEMPTION CHECK
-            function checkOfferRedemption() {
-                const user = auth.currentUser;
-                if (!user) return;
-
-                const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
-                const userRedemption = redemptions.find(r => 
-                    r.email === user.email && 
-                    r.offerTitle === 'Εξαργύρωσε την Καφεμαντεία'
-                );
-
-                const offerCheckSection = document.getElementById('offerCheckSection');
-                const offerInForm = document.getElementById('offerInForm');
-                const visitorForm = document.getElementById('visitorForm');
-
-                if (userRedemption) {
-                    offerCheckSection.style.display = 'block';
-                    offerInForm.style.display = 'none';
-                    visitorForm.style.display = 'block';
-                } else {
-                    offerCheckSection.style.display = 'none';
-                    offerInForm.style.display = 'block';
-                    visitorForm.style.display = 'block';
-                }
-            }
-
-            // Redeem button in form
-            document.getElementById('redeemInFormBtn').addEventListener('click', function() {
-                redeemMainOffer();
-            });
-
-            // Points warning modal
-            document.getElementById('closePointsWarningModal').addEventListener('click', function() {
-                document.getElementById('pointsWarningModal').style.display = 'none';
-            });
-
-            // Check offers status
-            function checkOffersStatus() {
-                const offersStatus = JSON.parse(localStorage.getItem('offersStatus') || '{"1plus1": false}');
-                const offerExpiry = JSON.parse(localStorage.getItem('offerExpiry') || '{}');
-                
-                const offer1plus1 = document.querySelector('input[value="1plus1"]');
-                const priceElement = document.getElementById('1plus1-price');
-                
-                if (offerExpiry['1plus1'] && new Date() > new Date(offerExpiry['1plus1'])) {
-                    offersStatus['1plus1'] = false;
-                    localStorage.setItem('offersStatus', JSON.stringify(offersStatus));
-                }
-                
-                if (offer1plus1) {
-                    if (offersStatus['1plus1']) {
-                        offer1plus1.parentElement.style.display = 'flex';
-                        priceElement.textContent = 'Ενεργή Προσφορά!';
-                        priceElement.style.color = 'var(--success)';
-                        priceElement.style.fontWeight = 'bold';
-                    } else {
-                        offer1plus1.parentElement.style.display = 'none';
-                    }
-                }
-            }
-            
-            // AUTH TABS SYSTEM
-            const authTabs = document.querySelectorAll('.auth-tab');
-            const authContents = document.querySelectorAll('.auth-content');
-            
-            authTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const authTabId = tab.getAttribute('data-auth-tab');
-                    
-                    authTabs.forEach(t => t.classList.remove('active'));
-                    authContents.forEach(tc => tc.classList.remove('active'));
-                    
-                    tab.classList.add('active');
-                    document.getElementById(authTabId).classList.add('active');
-                });
-            });
-            
-            // REGISTRATION FORM
-            const registerForm = document.getElementById('registerForm');
-            const registerMessage = document.getElementById('registerMessage');
-            
-            registerForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const name = document.getElementById('register-name').value;
-                const email = document.getElementById('register-email').value;
-                const password = document.getElementById('register-password').value;
-                const confirmPassword = document.getElementById('register-confirm-password').value;
-                const ageConsent = document.getElementById('register-age').checked;
-                const termsConsent = document.getElementById('register-terms').checked;
-                const privacyConsent = document.getElementById('register-privacy').checked;
-                
-                if (!name || !email || !password || !confirmPassword) {
-                    showMessage(registerMessage, 'Παρακαλώ συμπληρώστε όλα τα πεδία.', 'error');
-                    return;
-                }
-                
-                if (!ageConsent || !termsConsent || !privacyConsent) {
-                    showMessage(registerMessage, 'Παρακαλώ αποδεχτείτε όλους τους όρους χρήσης.', 'error');
-                    return;
-                }
-                
-                if (password !== confirmPassword) {
-                    showMessage(registerMessage, 'Οι κωδικοί πρόσβασης δεν ταιριάζουν.', 'error');
-                    return;
-                }
-                
-                if (password.length < 6) {
-                    showMessage(registerMessage, 'Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες.', 'error');
-                    return;
-                }
-                
-                try {
-                    showMessage(registerMessage, 'Δημιουργία λογαριασμού...', 'info');
-                    
-                    // Create user with Firebase Auth
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    const user = userCredential.user;
-                    
-                    // Update profile with display name
-                    await updateProfile(user, {
-                        displayName: name
-                    });
-                    
-                    // Create user points record
-                    const userPoints = {
-                        userId: user.uid,
-                        email: email,
-                        points: 20, // 20 points for registration
-                        level: 'Αρχάριος',
-                        registrationDate: new Date().toISOString()
-                    };
-                    
-                    // Save consent
-                    const userConsent = JSON.parse(localStorage.getItem('userConsent') || '{}');
-                    userConsent[email] = {
-                        accepted: true,
-                        version: getCurrentTermsVersion(),
-                        date: new Date().toISOString(),
-                        ageVerified: true
-                    };
-                    
-                    // Save points to localStorage
-                    const existingPoints = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                    existingPoints.push(userPoints);
-                    localStorage.setItem('userPoints', JSON.stringify(existingPoints));
-                    
-                    localStorage.setItem('userConsent', JSON.stringify(userConsent));
-                    
-                    showMessage(registerMessage, 'Η εγγραφή ολοκληρώθηκε επιτυχώς! Κερδίσατε 20 πόντους.', 'success');
-                    
-                } catch (error) {
-                    console.error('Registration error:', error);
-                    let errorMessage = 'Προέκυψε σφάλμα κατά την εγγραφή.';
-                    
-                    if (error.code === 'auth/email-already-in-use') {
-                        errorMessage = 'Υπάρχει ήδη λογαριασμός με αυτό το email.';
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorMessage = 'Το email δεν είναι έγκυρο.';
-                    } else if (error.code === 'auth/weak-password') {
-                        errorMessage = 'Ο κωδικός είναι πολύ αδύναμος.';
-                    }
-                    
-                    showMessage(registerMessage, errorMessage, 'error');
-                }
-            });
-            
-            // LOGIN FORM
-            const loginForm = document.getElementById('loginForm');
-            const loginMessage = document.getElementById('loginMessage');
-            
-            loginForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
-                
-                if (!email || !password) {
-                    showMessage(loginMessage, 'Παρακαλώ συμπληρώστε όλα τα πεδία.', 'error');
-                    return;
-                }
-                
-                try {
-                    showMessage(loginMessage, 'Σύνδεση...', 'info');
-                    
-                    await signInWithEmailAndPassword(auth, email, password);
-                    
-                    showMessage(loginMessage, 'Σύνδεση επιτυχής!', 'success');
-                    
-                } catch (error) {
-                    console.error('Login error:', error);
-                    let errorMessage = 'Λάθος email ή κωδικός πρόσβασης.';
-                    
-                    if (error.code === 'auth/invalid-credential') {
-                        errorMessage = 'Λάθος email ή κωδικός πρόσβασης.';
-                    } else if (error.code === 'auth/user-not-found') {
-                        errorMessage = 'Δεν βρέθηκε χρήστης με αυτό το email.';
-                    } else if (error.code === 'auth/wrong-password') {
-                        errorMessage = 'Λάθος κωδικός πρόσβασης.';
-                    }
-                    
-                    showMessage(loginMessage, errorMessage, 'error');
-                }
-            });
-            
-            // LOGOUT
-            logoutBtn.addEventListener('click', async function() {
-                try {
-                    await signOut(auth);
-                } catch (error) {
-                    console.error('Logout error:', error);
-                }
-            });
-            
-            // PASSWORD RESET FUNCTIONALITY
-            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-            const forgotPasswordModal = document.getElementById('forgotPasswordModal');
-            const closeForgotPasswordModal = document.getElementById('closeForgotPasswordModal');
-            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-            const forgotPasswordMessage = document.getElementById('forgotPasswordMessage');
-            
-            forgotPasswordLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                forgotPasswordModal.style.display = 'flex';
-            });
-            
-            closeForgotPasswordModal.addEventListener('click', function() {
-                forgotPasswordModal.style.display = 'none';
-                forgotPasswordForm.reset();
-            });
-            
-            forgotPasswordModal.addEventListener('click', function(e) {
-                if (e.target === forgotPasswordModal) {
-                    forgotPasswordModal.style.display = 'none';
-                    forgotPasswordForm.reset();
-                }
-            });
-            
-            forgotPasswordForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const email = document.getElementById('forgot-email').value;
-                
-                if (!email) {
-                    showMessage(forgotPasswordMessage, 'Παρακαλώ εισάγετε το email σας.', 'error');
-                    return;
-                }
-                
-                try {
-                    await sendPasswordResetEmail(auth, email);
-                    showMessage(forgotPasswordMessage, `Email επαναφοράς κωδικού στάλθηκε στο ${email}. Ελέγξτε το inbox σας.`, 'success');
-                    
-                    setTimeout(() => {
-                        forgotPasswordModal.style.display = 'none';
-                        forgotPasswordForm.reset();
-                    }, 3000);
-                    
-                } catch (error) {
-                    console.error('Password reset error:', error);
-                    let errorMessage = 'Προέκυψε σφάλμα κατά την αποστολή του email.';
-                    
-                    if (error.code === 'auth/user-not-found') {
-                        errorMessage = 'Δεν βρέθηκε χρήστης με αυτό το email.';
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorMessage = 'Το email δεν είναι έγκυρο.';
-                    }
-                    
-                    showMessage(forgotPasswordMessage, errorMessage, 'error');
-                }
-            });
-            
-            // MAIN APP TABS SYSTEM
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabId = tab.getAttribute('data-tab');
-                    
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tabContents.forEach(tc => tc.classList.remove('active'));
-                    
-                    tab.classList.add('active');
-                    document.getElementById(tabId).classList.add('active');
-
-                    if (tabId === 'responses-tab') {
-                        loadUserResponses();
-                    }
-
-                    if (tabId === 'photos-tab') {
-                        checkOfferRedemption();
-                    }
-                });
-            });
-            
-            // PHOTO UPLOAD FUNCTIONALITY
-            const fileInput = document.getElementById('photos');
-            const previewGrid = document.getElementById('previewGrid');
-            const visitorForm = document.getElementById('visitorForm');
-            const submitBtn = document.getElementById('submitBtn');
-            const messageDiv = document.getElementById('message');
-            
-            let selectedFiles = [];
-            const MAX_FILES = 5;
-            
-            fileInput.addEventListener('change', function(e) {
-                const files = Array.from(e.target.files);
-                
-                if (selectedFiles.length + files.length > MAX_FILES) {
-                    showMessage(messageDiv, `Μπορείτε να επιλέξετε μέχρι ${MAX_FILES} φωτογραφίες συνολικά.`, 'error');
-                    return;
-                }
-                
-                selectedFiles = [...selectedFiles, ...files];
-                updatePreview();
-                
-                if (files.length > 0) {
-                    showMessage(messageDiv, `Προστέθηκαν ${files.length} φωτογραφίες. Συνολικές: ${selectedFiles.length}/${MAX_FILES}`, 'success');
-                }
-            });
-            
-            function updatePreview() {
-                previewGrid.innerHTML = '';
-                
-                selectedFiles.forEach((file, index) => {
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        const previewItem = document.createElement('div');
-                        previewItem.className = 'preview-item';
-                        
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'preview-image';
-                        img.alt = 'Προεπισκόπηση φωτογραφίας καφέ';
-                        
-                        const removeBtn = document.createElement('button');
-                        removeBtn.className = 'remove-btn';
-                        removeBtn.innerHTML = '×';
-                        removeBtn.title = 'Αφαίρεση φωτογραφίας';
-                        
-                        removeBtn.addEventListener('click', function() {
-                            selectedFiles.splice(index, 1);
-                            updatePreview();
-                            showMessage(messageDiv, 'Η φωτογραφία αφαιρέθηκε.', 'success');
-                        });
-                        
-                        previewItem.appendChild(img);
-                        previewItem.appendChild(removeBtn);
-                        previewGrid.appendChild(previewItem);
-                    };
-                    
-                    reader.readAsDataURL(file);
-                });
-                
-                submitBtn.disabled = selectedFiles.length === 0;
-            }
-            
-            // PHOTO SUBMISSION FORM
-            visitorForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const user = auth.currentUser;
-                if (!user) return;
-                
-                const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
-                const userRedemption = redemptions.find(r => 
-                    r.email === user.email && 
-                    r.offerTitle === 'Εξαργύρωσε την Καφεμαντεία'
-                );
-
-                if (!userRedemption) {
-                    document.getElementById('warningPoints').textContent = document.getElementById('currentPoints').textContent;
-                    document.getElementById('pointsWarningModal').style.display = 'flex';
-                    return;
-                }
-                
-                const email = document.getElementById('email').value;
-                const coffeeType = document.querySelector('input[name="coffeeType"]:checked');
-                const userDesire = document.getElementById('user-desire').value;
-                
-                if (!email) {
-                    showMessage(messageDiv, 'Παρακαλώ εισάγετε το e-mail σας.', 'error');
-                    return;
-                }
-                
-                if (!coffeeType) {
-                    showMessage(messageDiv, 'Παρακαλώ επιλέξτε τύπο καφεμαντείας.', 'error');
-                    return;
-                }
-                
-                if (selectedFiles.length === 0) {
-                    showMessage(messageDiv, 'Παρακαλώ επιλέξετε τουλάχιστον μία φωτογραφία.', 'error');
-                    return;
-                }
-                
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Αποστολή...';
-                
-                const photoPromises = selectedFiles.map(file => {
-                    return new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            resolve({
-                                name: file.name,
-                                data: e.target.result
-                            });
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                });
-                
-                Promise.all(photoPromises).then(photosBase64 => {
-                    const submission = {
-                        id: Date.now(),
-                        type: 'photo',
-                        userEmail: email,
-                        userId: user.uid,
-                        coffeeType: coffeeType.value,
-                        coffeeTypeText: getCoffeeTypeText(coffeeType.value),
-                        desire: userDesire,
-                        date: new Date().toISOString(),
-                        status: 'pending',
-                        message: 'Υποβολή φωτογραφιών καφέ για ερμηνεία',
-                        photos: photosBase64
-                    };
-                    
-                    saveSubmission(submission);
-                    addPointsForSubmission(email, 10);
-                    
-                    const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
-                    adminNotifications.push({
-                        type: 'coffee_reading',
-                        userEmail: submission.userEmail,
-                        userId: submission.userId,
-                        coffeeType: submission.coffeeType,
-                        coffeeTypeText: submission.coffeeTypeText,
-                        desire: submission.desire,
-                        date: new Date().toISOString(),
-                        status: 'pending'
-                    });
-                    localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
-                    
-                    showMessage(messageDiv, `Οι ${selectedFiles.length} φωτογραφίες του καφέ σας στάλθηκαν επιτυχώς! Κερδίσατε 10 πόντους.`, 'success');
-                    
-                    visitorForm.reset();
-                    selectedFiles = [];
-                    updatePreview();
-                    
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών';
-
-                    loadUserPoints();
-                });
-            });
-            
-            function getCoffeeTypeText(type) {
-                const typeMap = {
-                    'written': 'Γραπτή Ερμηνεία',
-                    'verbal': 'Προφορική Ερμηνεία',
-                    '1plus1': 'Προσφορά 1+1 Δώρο'
-                };
-                return typeMap[type] || type;
-            }
-
-            function addPointsForSubmission(email, points) {
-                const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                const userPoints = userPointsData.find(p => p.email === email);
-                
-                if (userPoints) {
-                    userPoints.points += points;
-                    localStorage.setItem('userPoints', JSON.stringify(userPointsData));
-                }
-            }
-            
-            // CONTACT FORM
-            const contactForm = document.getElementById('contactForm');
-            const contactSubmitBtn = document.getElementById('contactSubmitBtn');
-            const contactMessageDiv = document.getElementById('contactMessage');
-            
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const user = auth.currentUser;
-                if (!user) return;
-                
-                const name = document.getElementById('contact-name').value;
-                const email = document.getElementById('contact-email').value;
-                const subject = document.getElementById('contact-subject').value;
-                const message = document.getElementById('contact-message').value;
-                
-                if (!name || !email || !subject || !message) {
-                    showMessage(contactMessageDiv, 'Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία.', 'error');
-                    return;
-                }
-                
-                contactSubmitBtn.disabled = true;
-                contactSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Αποστολή...';
-                
-                const contactMessage = {
-                    id: Date.now(),
-                    type: 'message',
-                    userName: name,
-                    userEmail: email,
-                    userId: user.uid,
-                    date: new Date().toISOString(),
-                    status: 'pending',
-                    subject: subject,
-                    message: message
-                };
-                
-                saveSubmission(contactMessage);
-                
-                showMessage(contactMessageDiv, `Το μήνυμά σας στάλθηκε επιτυχώς! Θα λάβετε απάντηση στο ${email} το συντομότερο δυνατό.`, 'success');
-                
-                contactForm.reset();
-                document.getElementById('contact-name').value = user.displayName || '';
-                document.getElementById('contact-email').value = user.email;
-                
-                contactSubmitBtn.disabled = false;
-                contactSubmitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Μηνύματος';
-            });
-            
-            function saveSubmission(submission) {
-                const existingSubmissions = JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]');
-                existingSubmissions.push(submission);
-                localStorage.setItem('coffeeSubmissions', JSON.stringify(existingSubmissions));
-            }
-
-            // LOAD USER RESPONSES
-            function loadUserResponses() {
-                const user = auth.currentUser;
-                if (!user) return;
-                
-                const userEmail = user.email;
-                const responses = JSON.parse(localStorage.getItem('coffeeResponses') || '[]');
-                const userResponses = responses.filter(response => response.userEmail === userEmail);
-                const responsesList = document.getElementById('responses-list');
-                const noResponses = document.getElementById('no-responses');
-
-                if (userResponses.length === 0) {
-                    responsesList.innerHTML = '';
-                    noResponses.style.display = 'block';
-                    return;
-                }
-
-                noResponses.style.display = 'none';
-                responsesList.innerHTML = '';
-
-                userResponses.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                userResponses.forEach(response => {
-                    const responseCard = document.createElement('div');
-                    responseCard.className = 'response-card';
-                    responseCard.innerHTML = `
-                        <div class="response-header">
-                            <div class="response-subject">Απάντηση στην υποβολή σας</div>
-                            <div class="response-date">${formatDate(response.date)}</div>
-                        </div>
-                        <div class="response-content">
-                            <strong>Απάντηση διαχειριστή:</strong><br>
-                            ${response.adminMessage}
-                        </div>
-                        ${response.originalMessage ? `
-                        <div class="response-original">
-                            <span class="original-label">Το αρχικό σας μήνυμα:</span>
-                            ${response.originalMessage}
-                        </div>
-                        ` : ''}
-                    `;
-                    responsesList.appendChild(responseCard);
-                });
-            }
-
-            function formatDate(dateString) {
-                const options = { 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                };
-                return new Date(dateString).toLocaleDateString('el-GR', options);
-            }
-
-            function checkForNewResponses() {
-                const user = auth.currentUser;
-                if (!user) return;
-                
-                const userEmail = user.email;
-                const responses = JSON.parse(localStorage.getItem('coffeeResponses') || '[]');
-                const userResponses = responses.filter(response => response.userEmail === userEmail);
-                const newResponses = userResponses.filter(response => !response.viewed);
-                
-                if (newResponses.length > 0) {
-                    showNotification(`Έχετε ${newResponses.length} νέες απαντήσεις!`, 'info');
-                    
-                    newResponses.forEach(response => {
-                        response.viewed = true;
-                    });
-                    localStorage.setItem('coffeeResponses', JSON.stringify(responses));
-                }
-            }
-
-            function showNotification(message, type) {
-                const notification = document.createElement('div');
-                notification.className = `message ${type}`;
-                notification.textContent = message;
-                notification.style.position = 'fixed';
-                notification.style.top = '20px';
-                notification.style.right = '20px';
-                notification.style.zIndex = '1000';
-                notification.style.maxWidth = '300px';
-                
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.remove();
-                }, 5000);
-            }
-            
-            // POINTS SYSTEM
-            function loadUserPoints() {
-                const user = auth.currentUser;
-                if (!user) return;
-                
-                const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                const userPoints = userPointsData.find(p => p.email === user.email) || {
-                    userId: user.uid,
-                    email: user.email,
-                    points: 0,
-                    level: 'Αρχάριος',
-                    registrationDate: new Date().toISOString()
-                };
-                
-                let level = 'Αρχάριος';
-                if (userPoints.points >= 100) level = 'Ειδικός';
-                if (userPoints.points >= 300) level = 'Μάστερ';
-                if (userPoints.points >= 500) level = 'Grand Master';
-                
-                userPoints.level = level;
-                
-                const userIndex = userPointsData.findIndex(p => p.email === user.email);
-                if (userIndex !== -1) {
-                    userPointsData[userIndex] = userPoints;
-                } else {
-                    userPointsData.push(userPoints);
-                }
-                localStorage.setItem('userPoints', JSON.stringify(userPointsData));
-                
-                document.getElementById('currentPoints').textContent = userPoints.points;
-                document.getElementById('userLevel').textContent = userPoints.level;
-                document.getElementById('modalPoints').textContent = userPoints.points;
-                document.getElementById('modalLevel').textContent = userPoints.level;
-                
-                updateRedeemButton(userPoints.points);
-            }
-            
-            function updateRedeemButton(points) {
-                const redeemBtn = document.getElementById('redeemInFormBtn');
-                const canRedeem = points >= 50;
-                
-                if (canRedeem) {
-                    redeemBtn.disabled = false;
-                    redeemBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Ανταλλαγή';
-                } else {
-                    redeemBtn.disabled = true;
-                    redeemBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Ανεπαρκείς Πόντοι';
-                }
-            }
-            
-            // POINTS MODAL
-            const pointsModal = document.getElementById('pointsModal');
-            const pointsInfoBtn = document.getElementById('pointsInfoBtn');
-            const closePointsModal = document.getElementById('closePointsModal');
-            
-            pointsInfoBtn.addEventListener('click', function() {
-                loadOffers();
-                pointsModal.style.display = 'flex';
-            });
-            
-            closePointsModal.addEventListener('click', function() {
-                pointsModal.style.display = 'none';
-            });
-            
-            pointsModal.addEventListener('click', function(e) {
-                if (e.target === pointsModal) {
-                    pointsModal.style.display = 'none';
-                }
-            });
-            
-            // REDEEM MAIN OFFER
-            function redeemMainOffer() {
-                const user = auth.currentUser;
-                if (!user) return;
-                
-                const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                const userPoints = userPointsData.find(p => p.email === user.email);
-                
-                if (userPoints && userPoints.points >= 50) {
-                    userPoints.points -= 50;
-                    localStorage.setItem('userPoints', JSON.stringify(userPointsData));
-                    
-                    const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
-                    redemptions.push({
-                        userId: user.uid,
-                        email: user.email,
-                        offerId: 1,
-                        offerTitle: 'Εξαργύρωσε την Καφεμαντεία',
-                        date: new Date().toISOString(),
-                        pointsSpent: 50
-                    });
-                    localStorage.setItem('offerRedemptions', JSON.stringify(redemptions));
-                    
-                    const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
-                    adminNotifications.push({
-                        type: 'offer_redemption',
-                        userEmail: user.email,
-                        userName: user.displayName,
-                        offerTitle: 'Εξαργύρωσε την Καφεμαντεία',
-                        date: new Date().toISOString(),
-                        status: 'pending'
-                    });
-                    localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
-                    
-                    showNotification(`Ανταλλάξατε επιτυχώς την προσφορά "Εξαργύρωσε την Καφεμαντεία"! Αφαιρέθηκαν 50 πόντοι. Μπορείτε τώρα να υποβάλετε φωτογραφίες.`, 'success');
-                    
-                    loadUserPoints();
-                    checkOfferRedemption();
-                } else {
-                    document.getElementById('warningPoints').textContent = userPoints ? userPoints.points : 0;
-                    document.getElementById('pointsWarningModal').style.display = 'flex';
-                }
-            }
-            
-            function loadOffers() {
-                const offersList = document.getElementById('offersList');
-                const user = auth.currentUser;
-                if (!user) return;
-                
-                const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                const userPoints = userPointsData.find(p => p.email === user.email) || { points: 0 };
-                
-                const offers = [];
-                
-                offersList.innerHTML = '';
-                
-                if (offers.length === 0) {
-                    const noOffersMessage = document.createElement('div');
-                    noOffersMessage.className = 'info-box';
-                    noOffersMessage.innerHTML = '<p>Οι προσφορές εμφανίζονται στην κύρια οθόνη για πιο εύκολη πρόσβαση.</p>';
-                    offersList.appendChild(noOffersMessage);
-                }
-            }
-
-            // AUTO REFRESH
-            setInterval(() => {
-                checkForNewResponses();
-                if (document.getElementById('responses-tab').classList.contains('active')) {
-                    loadUserResponses();
-                }
-            }, 10000);
-            
-            setInterval(() => {
-                checkOffersStatus();
-            }, 30000);
-
-            // ADMIN FUNCTIONS
-            function adminUpdateTerms() {
-                const currentTerms = JSON.parse(localStorage.getItem('siteTerms') || '{}');
-                
-                const newTerms = prompt("Εισάγετε τους νέους Όρους Χρήσης (HTML):", 
-                    currentTerms.terms || getTermsAndPrivacy().terms);
-                const newPrivacy = prompt("Εισάγετε τη νέα Πολιτική Απορρήτου (HTML):", 
-                    currentTerms.privacy || getTermsAndPrivacy().privacy);
-                
-                if (newTerms && newPrivacy) {
-                    const termsData = {
-                        version: generateNewVersion(),
-                        terms: newTerms,
-                        privacy: newPrivacy,
-                        lastUpdated: new Date().toISOString()
-                    };
-                    
-                    localStorage.setItem('siteTerms', JSON.stringify(termsData));
-                    
-                    const userConsent = JSON.parse(localStorage.getItem('userConsent') || '{}');
-                    for (let email in userConsent) {
-                        userConsent[email].needsRenewal = true;
-                    }
-                    localStorage.setItem('userConsent', JSON.stringify(userConsent));
-                    
-                    alert("Οι όροι ενημερώθηκαν επιτυχώς! Οι χρήστες θα πρέπει να τους αποδεχτούν ξανά.");
-                }
-            }
-
-            function generateNewVersion() {
-                const now = new Date();
-                return `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}.${now.getHours()}${now.getMinutes()}`;
-            }
-
-            // Add admin buttons if user is admin
-            const user = auth.currentUser;
-            if (user && (user.email === 'admin@kafedium.gr' || user.email === 'franklymadear@gmail.com')) {
-                addAdminButtons();
-            }
-
-            function addAdminButtons() {
-                const adminSection = document.createElement('div');
-                adminSection.className = 'admin-section';
-                adminSection.innerHTML = `
-                    <h3><i class="fas fa-cog"></i> Διαχείριση Όρων</h3>
-                    <div class="admin-buttons">
-                        <button onclick="adminUpdateTerms()" class="points-btn">
-                            <i class="fas fa-edit"></i> Επεξεργασία Όρων
-                        </button>
+    <!-- Games Section -->
+    <section id="games" class="games-section">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-key="popularGames">Δημοφιλή Παιχνίδια</h2>
+                <p data-key="chooseGames">Διάλεξε από τη συλλογή μας με τα καλύτερα παιχνίδια</p>
+            </div>
+            <div class="games-grid">
+                <!-- Chess Game -->
+                <div class="game-card">
+                    <div class="game-image">
+                        ♟️
                     </div>
-                `;
+                    <div class="game-content">
+                        <h3>Chess</h3>
+                        <p data-key="chessDesc">Κλασικό παιχνίδι σκακιού για δύο παίκτες</p>
+                        <div class="game-stats">
+                            <span data-key="difficultyHard">🎯 Δύσκολο</span>
+                            <span>⭐ 4.9/5</span>
+                        </div>
+                        <a href="chess/index.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;" data-key="playNow">
+                            Παίξε Τώρα
+                        </a>
+                    </div>
+                </div>
                 
-                const container = document.querySelector('.container');
-                container.insertBefore(adminSection, container.firstChild);
-            }
-
-            // UTILITY FUNCTIONS
-            function showMessage(element, text, type) {
-                element.textContent = text;
-                element.className = `message ${type}`;
-                element.style.display = 'block';
+                <!-- Sudoku 1 Player -->
+                <div class="game-card">
+                    <div class="game-image">
+                        🧩
+                    </div>
+                    <div class="game-content">
+                        <h3>Sudoku 1 Player</h3>
+                        <p data-key="sudoku1Desc">Κλασικό Sudoku παιχνίδι για έναν παίκτη</p>
+                        <div class="game-stats">
+                            <span data-key="difficultyMedium">🎯 Μέτριο</span>
+                            <span>⭐ 4.7/5</span>
+                        </div>
+                        <a href="sudoku/sudoku-1player.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;" data-key="playNow">
+                            Παίξε Τώρα
+                        </a>
+                    </div>
+                </div>
                 
-                setTimeout(function() {
-                    element.style.display = 'none';
-                }, 5000);
-            }
+                <!-- Sudoku 2 Players -->
+                <div class="game-card">
+                    <div class="game-image">
+                        🧩
+                    </div>
+                    <div class="game-content">
+                        <h3>Sudoku 2 Players</h3>
+                        <p data-key="sudoku2Desc">Κλασικό Sudoku  παιχνίδι για δύο παίκτες</p>
+                        <div class="game-stats">
+                            <span data-key="difficultyHard">🎯 Δύσκολο</span>
+                            <span>⭐ 4.8/5</span>
+                        </div>
+                        <a href="sudoku/sudoku.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;" data-key="playNow">
+                            Παίξε Τώρα
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 4x4 Connect 4 -->
+                <div class="game-card">
+                    <div class="game-image">
+                        🔴
+                    </div>
+                    <div class="game-content">
+                        <h3>4x4 Connect 4</h3>
+                        <p data-key="connect4Desc">Κλασικό παιχνίδι Connect 4 για δύο παίκτες</p>
+                        <div class="game-stats">
+                            <span data-key="difficultyMedium">🎯 Μέτριο</span>
+                            <span>⭐ 4.5/5</span>
+                        </div>
+                        <a href="4x4/connect4.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;" data-key="playNow">
+                            Παίξε Τώρα
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Balloon Game -->
+                <div class="game-card">
+                    <div class="game-image">
+                        🎈
+                    </div>
+                    <div class="game-content">
+                        <h3>Balloon Pop</h3>
+                        <p data-key="balloonDesc">Σπάσε μπαλόνια και συγκέντρωσε πόντους!</p>
+                        <div class="game-stats">
+                            <span data-key="difficultyEasy">🎯 Εύκολο</span>
+                            <span>⭐ 4.6/5</span>
+                        </div>
+                        <a href="balloon/index.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;" data-key="playNow">
+                            Παίξε Τώρα
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Calculator -->
+                <div class="game-card">
+                    <div class="game-image">
+                        🧮
+                    </div>
+                    <div class="game-content">
+                        <h3>Calculator</h3>
+                        <p data-key="calculatorDesc">Αριθμομηχανή για την Καθημερινότητα σας. </p>
+                        <div class="game-stats">
+                            <span data-key="difficultyEasy">🎯 Εύκολο</span>
+                            <span>⭐ 4.6/5</span>
+                        </div>
+                        <a href="calculator/index.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;" data-key="playNow">
+                            Παίξε Τώρα 
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Animals -->
+                <div class="game-card">
+                    <div class="game-image">
+                        🐾
+                    </div>
+                    <div class="game-content">
+                        <h3>Animals</h3>
+                        <p data-key="animalsDesc">Μάθε τα ζώα με διασκεδαστικό τρόπο!</p>
+                        <div class="game-stats">
+                            <span data-key="difficultyEasy">🎯 Εύκολο</span>
+                            <span>⭐ 4.7/5</span>
+                        </div>
+                        <a href="animals/index.html" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;" data-key="playNow">
+                            Παίξε Τώρα
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            // Make functions globally available
-            window.adminUpdateTerms = adminUpdateTerms;
-            window.redeemMainOffer = redeemMainOffer;
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-key="whyPlay">Γιατί να παίξεις με εμάς;</h2>
+                <p data-key="advantages">Ολα τα πλεονεκτήματα των παιχνιδιών μας</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 data-key="free">Δωρεάν</h3>
+                    <p data-key="freeDesc">Όλα τα παιχνίδια είναι 100% δωρεάν</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 data-key="responsive">Responsive</h3>
+                    <p data-key="responsiveDesc">Δουλεύουν σε όλες τις συσκευές</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 data-key="fast">Γρήγορα</h3>
+                    <p data-key="fastDesc">Φορτώνονται αμέσως χωρίς εγκατάσταση</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h3 data-key="variety">Ποικιλία</h3>
+                    <p data-key="varietyDesc">Συνεχώς νέα παιχνίδια προστίθενται</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Access Section -->
+    <section class="quick-access">
+        <div class="container">
+            <div class="quick-access-content">
+                <div class="quick-access-icon">⚡</div>
+                <h2>Πρόσβαση με ένα κλικ!</h2>
+                <p class="quick-access-subtitle">Βαρέθηκες να ψάχνεις κάθε φορά; Κάνε την FranklyMaDear εφαρμογή!</p>
+                
+                <div class="quick-access-text">
+                    <p>Πρόσθεσε τη σελίδα μας στην Αρχική σου Οθόνη (Home Screen) και απόκτησε άμεση πρόσβαση στα αγαπημένα σου δωρεάν HTML5 παιχνίδια, χωρίς καθυστέρηση και χωρίς εγκατάσταση.</p>
+                    
+                    <div class="instructions">
+                        <h3>Δημιούργησε τώρα τη δική σου συντόμευση:</h3>
+                        
+                        <div class="instruction-group">
+                            <h4>📱 Για χρήστες iPhone (Safari / Chrome):</h4>
+                            <ol>
+                                <li>Άνοιξε την FranklyMaDear στον browser σου.</li>
+                                <li>Πάτησε το κουμπί Κοινοποίηση (□ με βέλος, συνήθως στο κάτω μέρος).</li>
+                                <li>Κάνε κύλιση προς τα κάτω και πάτησε "Προσθήκη στην Οθόνη Αφετηρίας".</li>
+                                <li>Πάτησε "Προσθήκη" και έτοιμο!</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="instruction-group">
+                            <h4>🤖 Για χρήστες Android (Chrome):</h4>
+                            <ol>
+                                <li>Άνοιξε την FranklyMaDear στον Chrome.</li>
+                                <li>Πάτησε το μενού με τις τρεις τελείες (⋮) πάνω δεξιά.</li>
+                                <li>Επίλεξε "Προσθήκη στην Αρχική Οθόνη".</li>
+                                <li>Πάτησε "Προσθήκη" και είσαι μέσα!</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>FranklyMaDear</h3>
+                    <p data-key="footerDesc">Η καλύτερη πλατφόρμα για δωρεάν HTML5 παιχνίδια online.</p>
+                </div>
+                <div class="footer-section">
+                    <h3 data-key="games">Παιχνίδια</h3>
+                    <ul style="list-style: none;">
+                        <li><a href="chess/index.html" style="color: #ccc; text-decoration: none;">Chess</a></li>
+                        <li><a href="sudoku/sudoku-1player.html" style="color: #ccc; text-decoration: none;">Sudoku 1 Player</a></li>
+                        <li><a href="sudoku/sudoku.html" style="color: #ccc; text-decoration: none;">Sudoku 2 Players</a></li>
+                        <li><a href="4x4/connect4.html" style="color: #ccc; text-decoration: none;">4x4 Connect 4</a></li>
+                        <li><a href="balloon/index.html" style="color: #ccc; text-decoration: none;">Balloon Pop</a></li>
+                        <li><a href="calculator/index.html" style="color: #ccc; text-decoration: none;">Calculator</a></li>
+                        <li><a href="animals/index.html" style="color: #ccc; text-decoration: none;">Animals</a></li>
+                        <!-- ΒLOG LINK ΠΡΟΣΤΕΘΗΚΕ ΣΤΟ FOOTER -->
+                        <li><a href="http://blog.franklymadear.com/" style="color: #ccc; text-decoration: none;">Blog</a></li>
+                        <!-- SUPPORT LINK ΠΡΟΣΤΕΘΗΚΕ ΣΤΟ FOOTER -->
+                        <li><a href="support/" style="color: #ccc; text-decoration: none;">Υποστήριξη</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 data-key="contact">Επικοινωνία</h3>
+                    <p>Email: info@franklymadear.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 FranklyMaDear Games. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Buy Me a Coffee Widget -->
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="franklymadear" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+
+    <script>
+        // Banner and Pop-up functionality
+        const rollUpBanner = document.getElementById('rollUpBanner');
+        const closeBanner = document.getElementById('closeBanner');
+        const popupModal = document.getElementById('popupModal');
+        const closePopup = document.getElementById('closePopup');
+        const closePopupBtn = document.getElementById('closePopupBtn');
+        const supportBtn = document.getElementById('supportBtn');
+        const mainHeader = document.getElementById('mainHeader');
+        const mainHero = document.getElementById('mainHero');
+        
+        // Show banner after a short delay
+        setTimeout(() => {
+            rollUpBanner.classList.add('show');
+            mainHeader.classList.add('with-banner');
+            mainHero.classList.add('with-banner');
+        }, 1500);
+        
+        // Close banner
+        closeBanner.addEventListener('click', (e) => {
+            e.stopPropagation();
+            rollUpBanner.classList.remove('show');
+            mainHeader.classList.remove('with-banner');
+            mainHero.classList.remove('with-banner');
         });
+        
+        // Open pop-up when banner is clicked
+        rollUpBanner.addEventListener('click', () => {
+            popupModal.style.display = 'flex';
+        });
+        
+        // Close pop-up
+        closePopup.addEventListener('click', () => {
+            popupModal.style.display = 'none';
+        });
+        
+        closePopupBtn.addEventListener('click', () => {
+            popupModal.style.display = 'none';
+        });
+        
+        // Support button - load the new script
+        supportBtn.addEventListener('click', () => {
+            // Load the new script
+            const script = document.createElement('script');
+            script.src = 'https://fpyf8.com/88/tag.min.js';
+            script.setAttribute('data-zone', '175808');
+            script.async = true;
+            script.setAttribute('data-cfasync', 'false');
+            document.head.appendChild(script);
+            
+            popupModal.style.display = 'none';
+        });
+        
+        // Close pop-up when clicking outside the content
+        popupModal.addEventListener('click', (e) => {
+            if (e.target === popupModal) {
+                popupModal.style.display = 'none';
+            }
+        });
+
+        // Language translations
+        const translations = {
+            el: {
+                home: "Αρχική",
+                games: "Παιχνίδια",
+                features: "Πλεονεκτήματα",
+                blog: "Blog",
+                support: "Υποστήριξη",
+                welcome: "Καλώς Ηρθες στο FranklyMaDear",
+                subtitle: "Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!",
+                playSudoku: "Παίξε Sudoku",
+                viewAllGames: "Δες Όλα τα Παιχνίδια",
+                popularGames: "Δημοφιλή Παιχνίδια",
+                chooseGames: "Διάλεξε από τη συλλογή μας με τα καλύτερα παιχνίδια",
+                chessDesc: "Κλασικό παιχνίδι σκακιού για δύο παίκτες",
+                sudoku1Desc: "Κλασικό puzzle παιχνίδι για έναν παίκτη",
+                sudoku2Desc: "Κλασικό puzzle παιχνίδι για δύο παίκτες",
+                connect4Desc: "Κλασικό παιχνίδι Connect 4 για δύο παίκτες",
+                balloonDesc: "Σπάσε μπαλόνια και συγκέντρωσε πόντους!",
+                calculatorDesc: "Έξυπνη αριθμομηχανή για όλες σας τις ανάγκες",
+                animalsDesc: "Μάθε τα ζώα με διασκεδαστικό τρόπο!",
+                difficultyEasy: "🎯 Εύκολο",
+                difficultyMedium: "🎯 Μέτριο",
+                difficultyHard: "🎯 Δύσκολο",
+                playNow: "Παίξε Τώρα",
+                whyPlay: "Γιατί να παίξεις με εμάς;",
+                advantages: "Ολα τα πλεονεκτήματα των παιχνιδιών μας",
+                free: "Δωρεάν",
+                freeDesc: "Όλα τα παιχνίδια είναι 100% δωρεάν",
+                responsive: "Responsive",
+                responsiveDesc: "Δουλεύουν σε όλες τις συσκευές",
+                fast: "Γρήγορα",
+                fastDesc: "Φορτώνονται αμέσως χωρίς εγκατάσταση",
+                variety: "Ποικιλία",
+                varietyDesc: "Συνεχώς νέα παιχνίδια προστίθενται",
+                footerDesc: "Η καλύτερη πλατφόρμα για δωρεάν HTML5 παιχνίδια online.",
+                contact: "Επικοινωνία"
+            },
+            en: {
+                home: "Home",
+                games: "Games",
+                features: "Features",
+                blog: "Blog",
+                support: "Support",
+                welcome: "Welcome to FranklyMaDear",
+                subtitle: "Discover the best free HTML5 games online!",
+                playSudoku: "Play Sudoku",
+                viewAllGames: "View All Games",
+                popularGames: "Popular Games",
+                chooseGames: "Choose from our collection of the best games",
+                chessDesc: "Classic chess game for two players",
+                sudoku1Desc: "Classic puzzle game for one player",
+                sudoku2Desc: "Classic puzzle game for two players",
+                connect4Desc: "Classic Connect 4 game for two players",
+                balloonDesc: "Pop balloons and collect points!",
+                calculatorDesc: "Smart calculator for all your needs",
+                animalsDesc: "Learn about animals in a fun way!",
+                difficultyEasy: "🎯 Easy",
+                difficultyMedium: "🎯 Medium",
+                difficultyHard: "🎯 Hard",
+                playNow: "Play Now",
+                whyPlay: "Why Play With Us?",
+                advantages: "All the advantages of our games",
+                free: "Free",
+                freeDesc: "All games are 100% free",
+                responsive: "Responsive",
+                responsiveDesc: "Work on all devices",
+                fast: "Fast",
+                fastDesc: "Load immediately without installation",
+                variety: "Variety",
+                varietyDesc: "New games are constantly added",
+                footerDesc: "The best platform for free HTML5 games online.",
+                contact: "Contact"
+            },
+            de: {
+                home: "Startseite",
+                games: "Spiele",
+                features: "Funktionen",
+                blog: "Blog",
+                support: "Unterstützung",
+                welcome: "Willkommen bei FranklyMaDear",
+                subtitle: "Entdecken Sie die besten kostenlosen HTML5-Spiele online!",
+                playSudoku: "Sudoku spielen",
+                viewAllGames: "Alle Spiele ansehen",
+                popularGames: "Beliebte Spiele",
+                chooseGames: "Wählen Sie aus unserer Sammlung der besten Spiele",
+                chessDesc: "Klassisches Schachspiel für zwei Spieler",
+                sudoku1Desc: "Klassisches Puzzlespiel für einen Spieler",
+                sudoku2Desc: "Klassisches Puzzlespiel für zwei Spieler",
+                connect4Desc: "Klassisches Vier gewinnt-Spiel für zwei Spieler",
+                balloonDesc: "Platze Ballons und sammle Punkte!",
+                calculatorDesc: "Intelligenter Taschenrechner für alle Ihre Bedürfnisse",
+                animalsDesc: "Lernen Sie Tiere auf unterhaltsame Weise kennen!",
+                difficultyEasy: "🎯 Einfach",
+                difficultyMedium: "🎯 Mittel",
+                difficultyHard: "🎯 Schwer",
+                playNow: "Jetzt spielen",
+                whyPlay: "Warum mit uns spielen?",
+                advantages: "Alle Vorteile unserer Spiele",
+                free: "Kostenlos",
+                freeDesc: "Alle Spiele sind 100% kostenlos",
+                responsive: "Responsive",
+                responsiveDesc: "Funktionieren auf allen Geräten",
+                fast: "Schnell",
+                fastDesc: "Laden sofort ohne Installation",
+                variety: "Vielfalt",
+                varietyDesc: "Ständig werden neue Spiele hinzugefügt",
+                footerDesc: "Die beste Plattform für kostenlose HTML5-Spiele online.",
+                contact: "Kontakt"
+            },
+            es: {
+                home: "Inicio",
+                games: "Juegos",
+                features: "Características",
+                blog: "Blog",
+                support: "Soporte",
+                welcome: "Bienvenido a FranklyMaDear",
+                subtitle: "¡Descubre los mejores juegos HTML5 gratuitos en línea!",
+                playSudoku: "Jugar Sudoku",
+                viewAllGames: "Ver Todos los Juegos",
+                popularGames: "Juegos Populares",
+                chooseGames: "Elige de nuestra colección de los mejores juegos",
+                chessDesc: "Juego clásico de ajedrez para dos jugadores",
+                sudoku1Desc: "Juego de rompecabezas clásico para un jugador",
+                sudoku2Desc: "Juego de rompecabezas clásico para dos jugadores",
+                connect4Desc: "Juego clásico Conecta 4 para dos jugadores",
+                balloonDesc: "¡Revienta globos y acumula puntos!",
+                calculatorDesc: "Calculadora inteligente para todas sus necesidades",
+                animalsDesc: "¡Aprende sobre animales de forma divertida!",
+                difficultyEasy: "🎯 Fácil",
+                difficultyMedium: "🎯 Medio",
+                difficultyHard: "🎯 Difícil",
+                playNow: "Jugar Ahora",
+                whyPlay: "¿Por qué jugar con nosotros?",
+                advantages: "Todas las ventajas de nuestros juegos",
+                free: "Gratis",
+                freeDesc: "Todos los juegos son 100% gratuitos",
+                responsive: "Responsive",
+                responsiveDesc: "Funcionan en todos los dispositivos",
+                fast: "Rápido",
+                fastDesc: "Se cargan inmediatamente sin instalación",
+                variety: "Variedad",
+                varietyDesc: "Constantemente se añaden nuevos juegos",
+                footerDesc: "La mejor plataforma para juegos HTML5 gratuitos en línea.",
+                contact: "Contacto"
+            },
+            it: {
+                home: "Home",
+                games: "Giochi",
+                features: "Caratteristiche",
+                blog: "Blog",
+                support: "Supporto",
+                welcome: "Benvenuto su FranklyMaDear",
+                subtitle: "Scopri i migliori giochi HTML5 gratuiti online!",
+                playSudoku: "Gioca a Sudoku",
+                viewAllGames: "Vedi Tutti i Giochi",
+                popularGames: "Giochi Popolari",
+                chooseGames: "Scegli dalla nostra collezione dei migliori giochi",
+                chessDesc: "Gioco classico di scacchi per due giocatori",
+                sudoku1Desc: "Gioco di puzzle classico per un giocatore",
+                sudoku2Desc: "Gioco di puzzle classico per due giocatori",
+                connect4Desc: "Gioco classico Forza 4 per due giocatori",
+                balloonDesc: "Scoppia palloncini e raccogli punti!",
+                calculatorDesc: "Calcolatrice intelligente per tutte le tue esigenze",
+                animalsDesc: "Impara gli animali in modo divertente!",
+                difficultyEasy: "🎯 Facile",
+                difficultyMedium: "🎯 Medio",
+                difficultyHard: "🎯 Difficile",
+                playNow: "Gioca Ora",
+                whyPlay: "Perché giocare con noi?",
+                advantages: "Tutti i vantaggi dei nostri giochi",
+                free: "Gratuito",
+                freeDesc: "Tutti i giochi sono 100% gratuiti",
+                responsive: "Responsive",
+                responsiveDesc: "Funzionano su tutti i dispositivi",
+                fast: "Veloce",
+                fastDesc: "Si caricano immediatamente senza installazione",
+                variety: "Varietà",
+                varietyDesc: "Nuovi giochi vengono costantemente aggiunti",
+                footerDesc: "La migliore piattaforma per giochi HTML5 gratuiti online.",
+                contact: "Contatto"
+            },
+            ar: {
+                home: "الرئيسية",
+                games: "الألعاب",
+                features: "الميزات",
+                blog: "مدونة",
+                support: "الدعم",
+                welcome: "مرحبًا بك في FranklyMaDear",
+                subtitle: "اكتشف أفضل ألعاب HTML5 المجانية عبر الإنترنت!",
+                playSudoku: "العب سودوكو",
+                viewAllGames: "عرض جميع الألعاب",
+                popularGames: "الألعاب الشعبية",
+                chooseGames: "اختر من مجموعتنا لأفضل الألعاب",
+                chessDesc: "لعبة شطرنج كلاسيكية لشخصين",
+                sudoku1Desc: "لعبة ألغاز كلاسيكية لشخص واحد",
+                sudoku2Desc: "لعبة ألغاز كلاسيكية لشخصين",
+                connect4Desc: "لعبة كونكت 4 الكلاسيكية لشخصين",
+                balloonDesc: "انفخ البالونات واجمع النقاط!",
+                calculatorDesc: "آلة حاسبة ذكية لجميع احتياجاتك",
+                animalsDesc: "تعرف على الحيوانات بطريقة ممتعة!",
+                difficultyEasy: "🎯 سهل",
+                difficultyMedium: "🎯 متوسط",
+                difficultyHard: "🎯 صعب",
+                playNow: "العب الآن",
+                whyPlay: "لماذا تلعب معنا؟",
+                advantages: "جميع مزايا ألعابنا",
+                free: "مجاني",
+                freeDesc: "جميع الألعاب مجانية 100%",
+                responsive: "متجاوب",
+                responsiveDesc: "تعمل على جميع الأجهزة",
+                fast: "سريع",
+                fastDesc: "تحمّل فورًا بدون تثبيت",
+                variety: "تنوع",
+                varietyDesc: "يتم إضافة ألعاب جديدة باستمرار",
+                footerDesc: "أفضل منصة لألعاب HTML5 المجانية عبر الإنترنت.",
+                contact: "اتصال"
+            },
+            ru: {
+                home: "Главная",
+                games: "Игры",
+                features: "Особенности",
+                blog: "Блог",
+                support: "Поддержка",
+                welcome: "Добро пожаловать в FranklyMaDear",
+                subtitle: "Откройте для себя лучшие бесплатные HTML5 игры онлайн!",
+                playSudoku: "Играть в Судоку",
+                viewAllGames: "Посмотреть Все Игры",
+                popularGames: "Популярные Игры",
+                chooseGames: "Выбирайте из нашей коллекции лучших игр",
+                chessDesc: "Классическая шахматная игра для двух игроков",
+                sudoku1Desc: "Классическая головоломка для одного игрока",
+                sudoku2Desc: "Классическая головоломка для двух игроков",
+                connect4Desc: "Классическая игра Четыре в ряд для двух игроков",
+                balloonDesc: "Лопайте шарики и собирайте очки!",
+                calculatorDesc: "Умный калькулятор для всех ваших нужд",
+                animalsDesc: "Изучайте животных веселым способом!",
+                difficultyEasy: "🎯 Легко",
+                difficultyMedium: "🎯 Средне",
+                difficultyHard: "🎯 Сложно",
+                playNow: "Играть Сейчас",
+                whyPlay: "Почему стоит играть с нами?",
+                advantages: "Все преимущества наших игр",
+                free: "Бесплатно",
+                freeDesc: "Все игры на 100% бесплатны",
+                responsive: "Адаптивный",
+                responsiveDesc: "Работают на всех устройствах",
+                fast: "Быстро",
+                fastDesc: "Загружаются мгновенно без установки",
+                variety: "Разнообразие",
+                varietyDesc: "Постоянно добавляются новые игры",
+                footerDesc: "Лучшая платформа для бесплатных HTML5 игр онлайн.",
+                contact: "Контакт"
+            },
+            hi: {
+                home: "होम",
+                games: "गेम्स",
+                features: "फीचर्स",
+                blog: "ब्लॉग",
+                support: "सहायता",
+                welcome: "FranklyMaDear में आपका स्वागत है",
+                subtitle: "ऑनलाइन सर्वश्रेष्ठ मुफ्त HTML5 गेम्स खोजें!",
+                playSudoku: "सुडोकू खेलें",
+                viewAllGames: "सभी गेम्स देखें",
+                popularGames: "लोकप्रिय गेम्स",
+                chooseGames: "हमारे सर्वश्रेष्ठ गेम्स के संग्रह से चुनें",
+                chessDesc: "दो खिलाड़ियों के लिए क्लासिक शतरंज गेम",
+                sudoku1Desc: "एक खिलाड़ी के लिए क्लासिक पज़ल गेम",
+                sudoku2Desc: "दो खिलाड़ियों के लिए क्लासिक पज़ल गेम",
+                connect4Desc: "दो खिलाड़ियों के लिए क्लासिक कनेक्ट 4 गेम",
+                balloonDesc: "बैलून फोड़ें और पॉइंट्स इकट्ठा करें!",
+                calculatorDesc: "आपकी सभी ज़रूरतों के लिए स्मार्ट कैलकुलेटर",
+                animalsDesc: "मज़ेदार तरीके से जानवरों के बारे में जानें!",
+                difficultyEasy: "🎯 आसान",
+                difficultyMedium: "🎯 मध्यम",
+                difficultyHard: "🎯 कठिन",
+                playNow: "अभी खेलें",
+                whyPlay: "हमारे साथ क्यों खेलें?",
+                advantages: "हमारे गेम्स के सभी फायदे",
+                free: "मुफ्त",
+                freeDesc: "सभी गेम्स 100% मुफ्त हैं",
+                responsive: "रिस्पॉन्सिव",
+                responsiveDesc: "सभी डिवाइस पर काम करते हैं",
+                fast: "तेज़",
+                fastDesc: "बिना इंस्टॉलेशन के तुरंत लोड होते हैं",
+                variety: "विविधता",
+                varietyDesc: "नए गेम्स लगातार जोड़े जाते हैं",
+                footerDesc: "मुफ्त HTML5 गेम्स के लिए सर्वश्रेष्ठ प्लेटफॉर्म।",
+                contact: "संपर्क"
+            }
+        };
+
+        // Language selector functionality
+        const languageSelect = document.getElementById('language-select');
+        
+        // Set initial language based on browser preference or default to Greek
+        const savedLanguage = localStorage.getItem('preferredLanguage') || 'el';
+        languageSelect.value = savedLanguage;
+        updateLanguage(savedLanguage);
+        
+        languageSelect.addEventListener('change', (e) => {
+            const selectedLanguage = e.target.value;
+            localStorage.setItem('preferredLanguage', selectedLanguage);
+            updateLanguage(selectedLanguage);
+        });
+        
+        function updateLanguage(lang) {
+            const elements = document.querySelectorAll('[data-key]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-key');
+                if (translations[lang] && translations[lang][key]) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.placeholder = translations[lang][key];
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
