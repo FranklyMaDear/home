@@ -3,9 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cafedium
-    </title>
+    <title>Cafedium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Translate Widget -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'el',
+                includedLanguages: 'en,es,fr,de,it,tr,ar,hi,zh-CN,sq',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     
     <!-- Favicon για όλες τις συσκευές -->
     <link rel="icon" type="image/png" href="coffeetime.png">
@@ -178,6 +189,66 @@
         
         .admin-panel-btn:hover {
             background: rgba(255, 255, 255, 0.4);
+        }
+        
+        /* Google Translate Widget Styles */
+        .translate-container {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+        }
+        
+        .goog-te-banner-frame {
+            display: none !important;
+        }
+        
+        .goog-te-gadget {
+            font-family: inherit !important;
+            font-size: 0.9rem !important;
+        }
+        
+        .goog-te-gadget-simple {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: none !important;
+            padding: 8px 15px !important;
+            border-radius: 20px !important;
+            font-size: 0.9rem !important;
+            color: white !important;
+        }
+        
+        .goog-te-menu-value span {
+            color: white !important;
+        }
+        
+        .goog-te-menu-value {
+            color: white !important;
+        }
+        
+        .goog-te-gadget-simple .goog-te-menu-value span:first-child {
+            color: white !important;
+        }
+        
+        .goog-te-gadget-icon {
+            display: none !important;
+        }
+        
+        .goog-te-gadget-simple .goog-te-menu-value:before {
+            content: "🌐 " !important;
+            color: white !important;
+        }
+        
+        /* Hide Google branding */
+        .goog-logo-link {
+            display: none !important;
+        }
+        
+        .goog-te-gadget span a[href] {
+            display: none !important;
+        }
+        
+        .skiptranslate iframe {
+            display: none !important;
         }
         
         .tabs {
@@ -1022,6 +1093,15 @@
                 justify-content: center;
             }
             
+            .translate-container {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin-bottom: 15px;
+                display: flex;
+                justify-content: center;
+            }
+            
             .tabs {
                 flex-direction: column;
             }
@@ -1095,6 +1175,11 @@
 <body>
     <div class="container">
         <header>
+            <!-- Google Translate Widget -->
+            <div class="translate-container">
+                <div id="google_translate_element"></div>
+            </div>
+            
             <i class="fas fa-mug-hot logo"></i>
             <h1>Κafedium</h1>
             <p class="subtitle">·«Καλώς ήρθες στο Kafedium, όπου ο καφές διηγείται ιστορίες»!</p>
