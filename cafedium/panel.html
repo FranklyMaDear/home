@@ -14,65 +14,6 @@
     <meta name="msapplication-TileColor" content="#8B4513">
     <meta name="theme-color" content="#8B4513">
     
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
-        import { 
-            getAuth, 
-            signOut, 
-            onAuthStateChanged
-        } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            setDoc, 
-            getDoc, 
-            updateDoc,
-            onSnapshot,
-            collection,
-            addDoc,
-            query,
-            where,
-            getDocs,
-            orderBy,
-            serverTimestamp
-        } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyD8pn4ZfzXIEmk7lD0f6pPuDcPOJFatnAc",
-          authDomain: "franklymadear-a5751.firebaseapp.com",
-          projectId: "franklymadear-a5751",
-          storageBucket: "franklymadear-a5751.firebasestorage.app",
-          messagingSenderId: "487154731862",
-          appId: "1:487154731862:web:40f86afee24ef06dad64f7",
-          measurementId: "G-SFT8BPMLFS"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        
-        window.firebaseApp = app;
-        window.firebaseAuth = auth;
-        window.firebaseDB = db;
-        window.firestoreFunctions = {
-            doc,
-            setDoc,
-            getDoc,
-            updateDoc,
-            onSnapshot,
-            collection,
-            addDoc,
-            query,
-            where,
-            getDocs,
-            orderBy,
-            serverTimestamp
-        };
-    </script>
-    
     <style>
         :root {
             --primary: #8B4513;
@@ -1034,7 +975,8 @@
     <div class="container">
         <header>
             <i class="fas fa-mug-hot logo"></i>
-            <h1>Πίνακας Διαχειριστή</h1>
+            <h1>Πίνακας Διαχειριστή
+            </h1>
             <p class="subtitle">Διαχείριση υποβολών και μηνυμάτων από επισκέπτες</p>
         </header>
         
@@ -1343,18 +1285,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Firebase initialization
-            const auth = window.firebaseAuth;
-            const db = window.firebaseDB;
-            const { onAuthStateChanged, signOut } = window.firebaseAuthFunctions;
-            const { 
-                doc, getDoc, updateDoc, onSnapshot, collection, 
-                query, where, getDocs, orderBy 
-            } = window.firestoreFunctions;
-
             // Σύνδεση με την κύρια εφαρμογή
             document.getElementById('mainAppBtn').addEventListener('click', function() {
-                window.location.href = 'indexxx.html';
+                window.location.href = 'index.html';
             });
 
             // Συγχρονισμός χρηστών
@@ -1362,33 +1295,71 @@
                 manualUserSync();
             });
 
-            // Σύστημα συγχρονισμού χρηστών με Firebase
-            async function manualUserSync() {
-                try {
-                    const usersSnapshot = await getDocs(collection(db, 'users'));
-                    const allUsers = [];
-                    
-                    usersSnapshot.forEach(doc => {
-                        const userData = doc.data();
+            // Σύστημα συγχρονισμού χρηστών
+            function manualUserSync() {
+                const allUsers = [];
+                
+                // Από userPoints
+                const userPoints = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                userPoints.forEach(up => {
+                    if (up.email && !allUsers.find(u => u.email === up.email)) {
                         allUsers.push({
-                            id: doc.id,
-                            name: userData.displayName || 'Χρήστης',
-                            email: userData.email,
-                            registrationDate: userData.registrationDate || new Date().toISOString(),
-                            points: userData.points || 0,
-                            level: userData.level || 'Αρχάριος'
+                            id: up.userId || Date.now(),
+                            name: up.name || 'Χρήστης',
+                            email: up.email,
+                            registrationDate: up.registrationDate || new Date().toISOString(),
+                            uid: up.userId
                         });
-                    });
+                    }
+                });
+                
+                // Από coffeeSubmissions
+                const submissions = JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]');
+                submissions.forEach(sub => {
+                    if (sub.userEmail && !allUsers.find(u => u.email === sub.userEmail)) {
+                        allUsers.push({
+                            id: sub.userId || Date.now(),
+                            name: sub.userName || 'Χρήστης',
+                            email: sub.userEmail,
+                            registrationDate: sub.date || new Date().toISOString(),
+                            uid: sub.userId
+                        });
+                    }
+                });
 
-                    // Αποθήκευση
-                    localStorage.setItem('users', JSON.stringify(allUsers));
-                    showToast(`Συγχρονίστηκαν ${allUsers.length} χρήστες από Firebase!`, 'success');
-                    loadUsers();
-                    updateStats();
-                } catch (error) {
-                    console.error('Error syncing users from Firebase:', error);
-                    showToast('Σφάλμα συγχρονισμού από Firebase', 'error');
-                }
+                // Από adminNotifications
+                const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+                notifications.forEach(notif => {
+                    if (notif.userEmail && !allUsers.find(u => u.email === notif.userEmail)) {
+                        allUsers.push({
+                            id: Date.now(),
+                            name: notif.userName || 'Χρήστης',
+                            email: notif.userEmail,
+                            registrationDate: notif.date || new Date().toISOString(),
+                            uid: notif.userId
+                        });
+                    }
+                });
+
+                // Από offerRedemptions
+                const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
+                redemptions.forEach(redemption => {
+                    if (redemption.email && !allUsers.find(u => u.email === redemption.email)) {
+                        allUsers.push({
+                            id: redemption.userId || Date.now(),
+                            name: 'Χρήστης',
+                            email: redemption.email,
+                            registrationDate: redemption.date || new Date().toISOString(),
+                            uid: redemption.userId
+                        });
+                    }
+                });
+                
+                // Αποθήκευση
+                localStorage.setItem('users', JSON.stringify(allUsers));
+                showToast(`Συγχρονίστηκαν ${allUsers.length} χρήστες!`, 'success');
+                loadUsers();
+                updateStats();
             }
 
             // Σύστημα καρτελών
@@ -1500,7 +1471,6 @@
                         
                         <div class="submission-content">
                             <div class="submission-message">
-                                <strong>Καφεμάντης:</strong> ${submission.fortuneTeller || 'Δεν επιλέχθηκε'}<br>
                                 <strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText || 'Γραπτή Ερμηνεία'}<br>
                                 ${submission.desire ? `<strong>Επιθυμία Χρήστη:</strong> ${submission.desire}<br>` : ''}
                                 ${submission.message || 'Δεν υπάρχει μήνυμα'}
@@ -1995,7 +1965,6 @@
                         
                         <div class="submission-content">
                             <div class="submission-message">
-                                <strong>Καφεμάντης:</strong> ${submission.fortuneTeller || 'Δεν επιλέχθηκε'}<br>
                                 <strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText || 'Γραπτή Ερμηνεία'}<br>
                                 ${submission.desire ? `<strong>Επιθυμία Χρήστη:</strong><br>${submission.desire}<br><br>` : ''}
                                 <strong>Μήνυμα:</strong><br>
@@ -2285,7 +2254,6 @@
                         
                         <div class="submission-content">
                             <div class="submission-message">
-                                <strong>Καφεμάντης:</strong> ${submission.fortuneTeller || 'Δεν επιλέχθηκε'}<br>
                                 <strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText || 'Γραπτή Ερμηνεία'}<br>
                                 ${submission.desire ? `<strong>Επιθυμία Χρήστη:</strong><br>${submission.desire}<br><br>` : ''}
                                 <strong>Αρχικό Μήνυμα:</strong><br>
