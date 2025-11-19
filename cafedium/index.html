@@ -1553,6 +1553,49 @@
                                 <input type="email" id="email" name="email" placeholder="π.χ. onoma@example.com" required readonly>
                             </div>
                             
+                            <!-- ΕΠΙΛΟΓΗ ΚΑΦΕΜΑΝΤΗ - ΝΕΑ ΕΝΟΤΗΤΑ -->
+                            <div class="form-group">
+                                <label><i class="fas fa-crystal-ball"></i> Επιλογή Καφεμάντη:</label>
+                                <div class="fortune-teller-options" id="fortuneTellerSelection">
+                                    <div class="fortune-teller-option zaira" data-teller="zaira">
+                                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face" alt="Ζαΐρα" class="fortune-teller-image">
+                                        <div class="fortune-teller-name">Ζαΐρα</div>
+                                        <div class="fortune-teller-title">Η Παραδοσιακή</div>
+                                        <div class="fortune-teller-description">Με 20+ χρόνια εμπειρίας στην καφεμαντεία, η Ζαΐρα χρησιμοποιεί τις παραδοσιακές τεχνικές που περνούν από γενιά σε γενιά.</div>
+                                        <div class="fortune-teller-rating">
+                                            <div class="rating-stars">★★★★★</div>
+                                            <div class="rating-value">4.8</div>
+                                            <div class="rating-count">(127 αξιολογήσεις)</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="fortune-teller-option sousou" data-teller="sousou">
+                                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face" alt="Μαντάμ Σουσού" class="fortune-teller-image">
+                                        <div class="fortune-teller-name">Μαντάμ Σουσού</div>
+                                        <div class="fortune-teller-title">Η Σύγχρονη Μάγισσα</div>
+                                        <div class="fortune-teller-description">Η Μαντάμ Σουσού συνδυάζει την αρχαία σοφία με σύγχρονες προσεγγίσεις. Οι προβλέψεις της είναι γεμάτες ενέργεια και πρακτικές συμβουλές.</div>
+                                        <div class="fortune-teller-rating">
+                                            <div class="rating-stars">★★★★★</div>
+                                            <div class="rating-value">4.9</div>
+                                            <div class="rating-count">(89 αξιολογήσεις)</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="fortune-teller-option ai" data-teller="ai">
+                                        <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=150&h=150&fit=crop&crop=face" alt="ΑΙ Oracle" class="fortune-teller-image">
+                                        <div class="fortune-teller-name">ΑΙ Oracle</div>
+                                        <div class="fortune-teller-title">Η Τεχνολογική Προφήτης</div>
+                                        <div class="fortune-teller-description">Συνδυάζοντας τεχνητή νοημοσύνη με την αρχαία τέχνη της καφεμαντείας, η ΑΙ Oracle παρέχει ακριβείς και λεπτομερείς ερμηνείες.</div>
+                                        <div class="fortune-teller-rating">
+                                            <div class="rating-stars">★★★★☆</div>
+                                            <div class="rating-value">4.7</div>
+                                            <div class="rating-count">(203 αξιολογήσεις)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="selectedFortuneTeller" name="fortuneTeller" required>
+                            </div>
+                            
                             <!-- Επιλογές καφεμαντείας -->
                             <div class="form-group">
                                 <label><i class="fas fa-coffee"></i> Το μονοπάτι του φλιτζανιού </label>
@@ -1956,27 +1999,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Check for existing session (for cross-browser sync)
-            const savedUser = localStorage.getItem('firebaseAuth_user');
-            if (savedUser) {
-                try {
-                    const userData = JSON.parse(savedUser);
-                    console.log('Found saved user session:', userData.email);
-                    
-                    // Check if session is recent (less than 1 hour old)
-                    const sessionTime = new Date(userData.timestamp);
-                    const currentTime = new Date();
-                    const hoursDiff = (currentTime - sessionTime) / (1000 * 60 * 60);
-                    
-                    if (hoursDiff < 1) {
-                        console.log('Session is recent, attempting auto-login...');
-                    }
-                } catch (e) {
-                    console.error('Error parsing saved session:', e);
-                    localStorage.removeItem('firebaseAuth_user');
-                }
-            }
-
             // Firebase Auth functions
             const auth = window.firebaseAuth;
             const db = window.firebaseDB;
@@ -2081,6 +2103,7 @@
                     checkOfferRedemption();
                     checkUserConsent();
                     loadFortuneTellers();
+                    setupFortuneTellerSelection();
                     
                 } else {
                     // User is signed out
@@ -2110,6 +2133,28 @@
             adminPanelBtn.addEventListener('click', function() {
                 window.open('panel.html', '_blank');
             });
+
+            // Επιλογή καφεμάντη στην κύρια φόρμα
+            function setupFortuneTellerSelection() {
+                const fortuneTellerOptions = document.querySelectorAll('#fortuneTellerSelection .fortune-teller-option');
+                const selectedInput = document.getElementById('selectedFortuneTeller');
+                
+                fortuneTellerOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        // Remove selected class from all options
+                        fortuneTellerOptions.forEach(opt => opt.classList.remove('selected'));
+                        
+                        // Add selected class to clicked option
+                        this.classList.add('selected');
+                        
+                        // Set the selected value
+                        const tellerId = this.getAttribute('data-teller');
+                        selectedInput.value = tellerId;
+                        
+                        console.log('Επιλέχθηκε καφεμάντης:', tellerId);
+                    });
+                });
+            }
 
             // TERMS AND CONSENT FUNCTIONS
             document.getElementById('showTermsAuth').addEventListener('click', function(e) {
@@ -2621,11 +2666,17 @@
                 }
                 
                 const email = document.getElementById('email').value;
+                const fortuneTeller = document.getElementById('selectedFortuneTeller').value;
                 const coffeeType = document.querySelector('input[name="coffeeType"]:checked');
                 const userDesire = document.getElementById('user-desire').value;
                 
                 if (!email) {
                     showMessage(messageDiv, 'Παρακαλώ εισάγετε το e-mail σας.', 'error');
+                    return;
+                }
+                
+                if (!fortuneTeller) {
+                    showMessage(messageDiv, 'Παρακαλώ επιλέξτε καφεμάντη.', 'error');
                     return;
                 }
                 
@@ -2656,11 +2707,15 @@
                 });
                 
                 Promise.all(photoPromises).then(photosBase64 => {
+                    const fortuneTellerName = getFortuneTellerName(fortuneTeller);
+                    
                     const submission = {
                         id: Date.now(),
                         type: 'photo',
                         userEmail: email,
                         userId: user.uid,
+                        fortuneTeller: fortuneTeller,
+                        fortuneTellerName: fortuneTellerName,
                         coffeeType: coffeeType.value,
                         coffeeTypeText: getCoffeeTypeText(coffeeType.value),
                         desire: userDesire,
@@ -2678,6 +2733,8 @@
                         type: 'coffee_reading',
                         userEmail: submission.userEmail,
                         userId: submission.userId,
+                        fortuneTeller: submission.fortuneTeller,
+                        fortuneTellerName: submission.fortuneTellerName,
                         coffeeType: submission.coffeeType,
                         coffeeTypeText: submission.coffeeTypeText,
                         desire: submission.desire,
@@ -2692,6 +2749,12 @@
                     selectedFiles = [];
                     updatePreview();
                     
+                    // Reset fortune teller selection
+                    document.querySelectorAll('#fortuneTellerSelection .fortune-teller-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    document.getElementById('selectedFortuneTeller').value = '';
+                    
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών';
 
@@ -2699,6 +2762,11 @@
                 });
             });
             
+            function getFortuneTellerName(tellerId) {
+                const teller = fortuneTellers.find(t => t.id === tellerId);
+                return teller ? teller.name : 'Άγνωστος Καφεμάντης';
+            }
+
             function getCoffeeTypeText(type) {
                 const typeMap = {
                     'written': 'Γραπτή Ερμηνεία',
