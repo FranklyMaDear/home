@@ -2304,7 +2304,7 @@
                 
                 // Βρες την υποβολή
                 const allSubmissions = getAllSubmissions();
-                const submission = allSubmissions.find(sub => sub.id === submissionId);
+                const submission = allSubmissions.find(sub => sub.id === id);
                 
                 if (!submission) {
                     alert('Δεν βρέθηκε η υποβολή!');
