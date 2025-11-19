@@ -142,6 +142,23 @@
         .main-app-btn:hover {
             background: #388e3c;
         }
+
+        .sync-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+            font-size: 0.85rem;
+            margin-right: 8px;
+        }
+        
+        .sync-btn:hover {
+            background: var(--primary-light);
+        }
         
         .admin-actions {
             display: flex;
@@ -970,6 +987,9 @@
                 <button class="main-app-btn" id="mainAppBtn">
                     <i class="fas fa-home"></i> Κύρια Εφαρμογή
                 </button>
+                <button class="sync-btn" id="syncUsersBtn">
+                    <i class="fas fa-sync"></i> Συγχρονισμός
+                </button>
                 <button class="logout-btn" id="refreshBtn">
                     <i class="fas fa-sync-alt"></i> Ανανέωση
                 </button>
@@ -1269,6 +1289,78 @@
                 window.location.href = 'index.html';
             });
 
+            // Συγχρονισμός χρηστών
+            document.getElementById('syncUsersBtn').addEventListener('click', function() {
+                manualUserSync();
+            });
+
+            // Σύστημα συγχρονισμού χρηστών
+            function manualUserSync() {
+                const allUsers = [];
+                
+                // Από userPoints
+                const userPoints = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                userPoints.forEach(up => {
+                    if (up.email && !allUsers.find(u => u.email === up.email)) {
+                        allUsers.push({
+                            id: up.userId || Date.now(),
+                            name: up.name || 'Χρήστης',
+                            email: up.email,
+                            registrationDate: up.registrationDate || new Date().toISOString(),
+                            uid: up.userId
+                        });
+                    }
+                });
+                
+                // Από coffeeSubmissions
+                const submissions = JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]');
+                submissions.forEach(sub => {
+                    if (sub.userEmail && !allUsers.find(u => u.email === sub.userEmail)) {
+                        allUsers.push({
+                            id: sub.userId || Date.now(),
+                            name: sub.userName || 'Χρήστης',
+                            email: sub.userEmail,
+                            registrationDate: sub.date || new Date().toISOString(),
+                            uid: sub.userId
+                        });
+                    }
+                });
+
+                // Από adminNotifications
+                const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+                notifications.forEach(notif => {
+                    if (notif.userEmail && !allUsers.find(u => u.email === notif.userEmail)) {
+                        allUsers.push({
+                            id: Date.now(),
+                            name: notif.userName || 'Χρήστης',
+                            email: notif.userEmail,
+                            registrationDate: notif.date || new Date().toISOString(),
+                            uid: notif.userId
+                        });
+                    }
+                });
+
+                // Από offerRedemptions
+                const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
+                redemptions.forEach(redemption => {
+                    if (redemption.email && !allUsers.find(u => u.email === redemption.email)) {
+                        allUsers.push({
+                            id: redemption.userId || Date.now(),
+                            name: 'Χρήστης',
+                            email: redemption.email,
+                            registrationDate: redemption.date || new Date().toISOString(),
+                            uid: redemption.userId
+                        });
+                    }
+                });
+                
+                // Αποθήκευση
+                localStorage.setItem('users', JSON.stringify(allUsers));
+                showToast(`Συγχρονίστηκαν ${allUsers.length} χρήστες!`, 'success');
+                loadUsers();
+                updateStats();
+            }
+
             // Σύστημα καρτελών
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');
@@ -1357,8 +1449,8 @@
                 photoSubmissions.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
                 photoSubmissions.forEach(submission => {
-                    const statusClass = `status-${submission.status}`;
-                    const statusText = getStatusText(submission.status);
+                    const statusClass = `status-${submission.status || 'pending'}`;
+                    const statusText = getStatusText(submission.status || 'pending');
                     
                     const photosHTML = submission.photos && submission.photos.length > 0 ? 
                         submission.photos.map(photo => `
@@ -1439,8 +1531,8 @@
                 messageSubmissions.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
                 messageSubmissions.forEach(submission => {
-                    const statusClass = `status-${submission.status}`;
-                    const statusText = getStatusText(submission.status);
+                    const statusClass = `status-${submission.status || 'pending'}`;
+                    const statusText = getStatusText(submission.status || 'pending');
                     
                     const submissionCard = document.createElement('div');
                     submissionCard.className = 'submission-card';
@@ -1500,7 +1592,7 @@
                 }
                 
                 // Ταξινόμηση από νεότερο προς παλαιότερο
-                realUsers.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
+                realUsers.sort((a, b) => new Date(b.registrationDate || b.date) - new Date(a.registrationDate || a.date));
                 
                 let usersHTML = `
                     <table class="users-table">
@@ -1527,16 +1619,16 @@
                             <td>${user.email}</td>
                             <td>${userPointData.points}</td>
                             <td>${userPointData.level} <span class="user-category ${userCategory.class}">${userCategory.name}</span></td>
-                            <td>${formatDate(user.registrationDate)}</td>
+                            <td>${formatDate(user.registrationDate || user.date)}</td>
                             <td>
                                 <div class="user-actions">
-                                    <button class="action-btn btn-view view-user" data-id="${user.id}">
+                                    <button class="action-btn btn-view view-user" data-id="${user.id}" data-email="${user.email}">
                                         <i class="fas fa-eye"></i> Προβολή
                                     </button>
                                     <button class="action-btn btn-reply manage-points" data-id="${user.id}" data-email="${user.email}">
                                         <i class="fas fa-coins"></i> Πόντοι
                                     </button>
-                                    <button class="action-btn btn-delete delete-user" data-id="${user.id}">
+                                    <button class="action-btn btn-delete delete-user" data-id="${user.id}" data-email="${user.email}">
                                         <i class="fas fa-trash"></i> Διαγραφή
                                     </button>
                                 </div>
@@ -1555,14 +1647,15 @@
                 // Προσθήκη event listeners για τα κουμπιά χρηστών
                 document.querySelectorAll('.view-user').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        const userId = parseInt(this.getAttribute('data-id'));
-                        viewUser(userId);
+                        const userId = this.getAttribute('data-id');
+                        const userEmail = this.getAttribute('data-email');
+                        viewUser(userId, userEmail);
                     });
                 });
                 
                 document.querySelectorAll('.manage-points').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        const userId = parseInt(this.getAttribute('data-id'));
+                        const userId = this.getAttribute('data-id');
                         const userEmail = this.getAttribute('data-email');
                         manageUserPoints(userId, userEmail);
                     });
@@ -1570,8 +1663,9 @@
                 
                 document.querySelectorAll('.delete-user').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        const userId = parseInt(this.getAttribute('data-id'));
-                        deleteUser(userId);
+                        const userId = this.getAttribute('data-id');
+                        const userEmail = this.getAttribute('data-email');
+                        deleteUser(userId, userEmail);
                     });
                 });
             }
@@ -1663,8 +1757,8 @@
                 realNotifications.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
                 realNotifications.forEach(notification => {
-                    const statusClass = `status-${notification.status}`;
-                    const statusText = getNotificationStatusText(notification.status);
+                    const statusClass = `status-${notification.status || 'pending'}`;
+                    const statusText = getNotificationStatusText(notification.status || 'pending');
                     
                     const notificationCard = document.createElement('div');
                     notificationCard.className = 'submission-card';
@@ -1769,6 +1863,7 @@
             
             function formatDate(dateString) {
                 try {
+                    if (!dateString) return 'Άγνωστη ημερομηνία';
                     const options = { 
                         year: 'numeric', 
                         month: 'short', 
@@ -1907,10 +2002,13 @@
             }
             
             // Προβολή χρήστη
-            function viewUser(id) {
+            function viewUser(id, email) {
                 const users = getAllUsers();
-                const user = users.find(u => u.id === id);
+                const user = users.find(u => u.email === email);
                 if (!user) return;
+                
+                const userPoints = getAllUserPoints();
+                const userPointData = userPoints.find(p => p.email === email) || { points: 0, level: 'Αρχάριος' };
                 
                 const modalBody = document.getElementById('modal-body');
                 
@@ -1922,6 +2020,8 @@
                     
                     <div class="submission-content">
                         <div><strong>Email:</strong> ${user.email}</div>
+                        <div><strong>Πόντοι:</strong> ${userPointData.points}</div>
+                        <div><strong>Επίπεδο:</strong> ${userPointData.level}</div>
                         <div><strong>Ημερομηνία Εγγραφής:</strong> ${formatDate(user.registrationDate)}</div>
                         <div><strong>ID Χρήστη:</strong> ${user.id}</div>
                     </div>
@@ -1986,7 +2086,7 @@
             // Διαχείριση πόντων χρήστη
             function manageUserPoints(userId, userEmail) {
                 const users = getAllUsers();
-                const user = users.find(u => u.id === userId);
+                const user = users.find(u => u.email === userEmail);
                 const userPoints = getAllUserPoints();
                 const userPointData = userPoints.find(p => p.email === userEmail) || { points: 0, level: 'Αρχάριος' };
                 
@@ -2077,7 +2177,19 @@
                     pointsModal.style.display = 'none';
                     loadUsers();
                 } else {
-                    alert('Προέκυψε σφάλμα. Ο χρήστης δεν βρέθηκε.');
+                    // Δημιουργία νέου χρήστη στους πόντους
+                    userPoints.push({
+                        userId: userEmail,
+                        email: userEmail,
+                        points: newPoints,
+                        level: 'Αρχάριος',
+                        registrationDate: new Date().toISOString()
+                    });
+                    localStorage.setItem('userPoints', JSON.stringify(userPoints));
+                    
+                    showToast(`Δημιουργήθηκε νέος χρήστης με ${newPoints} πόντους!`, 'success');
+                    pointsModal.style.display = 'none';
+                    loadUsers();
                 }
             });
             
@@ -2280,11 +2392,16 @@
             }
             
             // Διαγραφή χρήστη
-            function deleteUser(id) {
+            function deleteUser(id, email) {
                 if (confirm('Είστε σίγουρος ότι θέλετε να διαγράψετε αυτόν τον χρήστη;')) {
                     const allUsers = getAllUsers();
-                    const updatedUsers = allUsers.filter(user => user.id !== id);
+                    const updatedUsers = allUsers.filter(user => user.email !== email);
                     localStorage.setItem('users', JSON.stringify(updatedUsers));
+                    
+                    // Διαγραφή και από τους πόντους
+                    const userPoints = getAllUserPoints();
+                    const updatedPoints = userPoints.filter(p => p.email !== email);
+                    localStorage.setItem('userPoints', JSON.stringify(updatedPoints));
                     
                     showToast('Ο χρήστης διαγράφηκε επιτυχώς!', 'success');
                     loadAllData();
@@ -2357,46 +2474,12 @@
                 }, 5000);
             }
             
-            // Προσομοίωση νέων μηνυμάτων για επίδειξη
-            function simulateNewMessage() {
-                const messages = [
-                    "Νέα υποβολή καφεμαντείας από πραγματικό χρήστη",
-                    "Νέο μήνυμα επικοινωνίας",
-                    "Ο χρήστης ανταλλάσσει πόντους για προσφορά"
-                ];
-                
-                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                showToast(randomMessage, 'info');
-                
-                // Προσθήκη νέας ειδοποίησης (μόνο με πραγματικά δεδομένα)
-                const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
-                const realNotifications = filterRealUsers(notifications);
-                
-                // Προσθήκη νέας ειδοποίησης μόνο αν υπάρχουν πραγματικοί χρήστες
-                if (realNotifications.length > 0) {
-                    notifications.push({
-                        date: new Date().toISOString(),
-                        userEmail: 'πραγματικός@χρήστης.gr',
-                        userName: 'Πραγματικός Χρήστης',
-                        type: 'coffee_reading',
-                        status: 'pending',
-                        coffeeTypeText: 'Γραπτή Ερμηνεία'
-                    });
-                    localStorage.setItem('adminNotifications', JSON.stringify(notifications));
-                }
-                
-                // Ενημέρωση badge
-                loadNotifications();
-            }
-            
             // Αυτόματη ανανέωση κάθε 30 δευτερόλεπτα
             setInterval(loadAllData, 30000);
             
-            // Προσομοίωση νέων μηνυμάτων κάθε 60 δευτερόλεπτα (για επίδειξη)
-            setInterval(simulateNewMessage, 60000);
-            
             // Αρχική φόρτωση δεδομένων
             loadAllData();
+            manualUserSync(); // Αυτόματος συγχρονισμός κατά τη φόρτωση
         });
     </script>
 </body>
