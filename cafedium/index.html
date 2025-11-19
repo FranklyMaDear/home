@@ -179,41 +179,6 @@
             background: rgba(255, 255, 255, 0.4);
         }
         
-        /* Custom Translate Button Styles */
-        .translate-container {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            z-index: 1000;
-        }
-        
-        .custom-translate-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            padding: 10px 18px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .custom-translate-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-        
-        .custom-translate-btn:active {
-            transform: translateY(0);
-        }
-        
         .tabs {
             display: flex;
             margin-bottom: 20px;
@@ -1056,20 +1021,6 @@
                 justify-content: center;
             }
             
-            .translate-container {
-                position: relative;
-                top: auto;
-                left: auto;
-                margin-bottom: 15px;
-                display: flex;
-                justify-content: center;
-            }
-            
-            .custom-translate-btn {
-                padding: 8px 16px;
-                font-size: 0.85rem;
-            }
-            
             .tabs {
                 flex-direction: column;
             }
@@ -1143,26 +1094,9 @@
 <body>
     <div class="container">
         <header>
-            <!-- Simple Translate Widget -->
-            <div class="translate-container">
-                <select id="simpleTranslate" class="custom-translate-btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 15px; border-radius: 20px; cursor: pointer;">
-                    <option value="el">Ελληνικά</option>
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
-                    <option value="fr">Français</option>
-                    <option value="de">Deutsch</option>
-                    <option value="it">Italiano</option>
-                    <option value="tr">Türkçe</option>
-                    <option value="ar">العربية</option>
-                    <option value="hi">हिन्दी</option>
-                    <option value="zh-CN">中文</option>
-                    <option value="sq">Shqip</option>
-                </select>
-            </div>
-            
             <i class="fas fa-mug-hot logo"></i>
             <h1>Κafedium</h1>
-            <p class="subtitle">·«Καλώς ήρθες στο Kafedium, όπου ο καφές διηγείται ιστορίες»!</p>
+            <p class="subtitle">·«Καλώς ήρθες στο Cafedium, όπου ο καφές διηγείται ιστορίες»!</p>
             
             <div class="user-info" id="userInfo" style="display: none;">
                 <i class="fas fa-user"></i>
@@ -1688,18 +1622,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Simple Translate Functionality
-            const simpleTranslate = document.getElementById('simpleTranslate');
-            simpleTranslate.addEventListener('change', function() {
-                const lang = this.value;
-                if (lang !== 'el') {
-                    alert('Η μετάφραση θα ανοίξει σε νέα καρτέλα. Παρακαλώ επιλέξτε Ελληνικά για να παραμείνετε στην ελληνική έκδοση.');
-                    window.open('https://translate.google.com/translate?hl=en&sl=el&tl=' + lang + '&u=' + encodeURIComponent(window.location.href), '_blank');
-                    // Επαναφορά στην ελληνική επιλογή
-                    this.value = 'el';
-                }
-            });
-
             // Firebase Auth functions
             const auth = window.firebaseAuth;
             const { 
