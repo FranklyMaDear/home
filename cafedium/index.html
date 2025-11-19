@@ -28,7 +28,8 @@
             sendPasswordResetEmail,
             updateProfile,
             setPersistence,
-            browserLocalPersistence
+            browserLocalPersistence,
+            browserSessionPersistence
         } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
         import { 
             getFirestore, 
@@ -85,7 +86,8 @@
             sendPasswordResetEmail,
             updateProfile,
             setPersistence,
-            browserLocalPersistence
+            browserLocalPersistence,
+            browserSessionPersistence
         };
         window.firestoreFunctions = {
             getFirestore,
@@ -1172,93 +1174,6 @@
             font-size: 0.8rem;
         }
 
-        /* Στυλ για αξιολογήσεις */
-        .reviews-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #e0d6c9;
-        }
-
-        .reviews-list {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 15px;
-        }
-
-        .review-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--accent);
-        }
-
-        .review-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .review-user {
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .review-date {
-            color: var(--text);
-            font-size: 0.8rem;
-        }
-
-        .review-rating {
-            color: #ffd700;
-            margin-bottom: 5px;
-        }
-
-        .review-comment {
-            color: var(--text);
-            line-height: 1.4;
-        }
-
-        .add-review-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .add-review-btn:hover {
-            background: var(--primary-light);
-            transform: translateY(-2px);
-        }
-
-        /* Star rating system */
-        .star-rating {
-            display: flex;
-            gap: 5px;
-            margin: 10px 0;
-        }
-
-        .star {
-            font-size: 1.5rem;
-            color: #ddd;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .star:hover,
-        .star.active {
-            color: #ffd700;
-        }
-
         /* Responsive Design */
         @media (max-width: 600px) {
             .container {
@@ -1497,9 +1412,6 @@
                 <button class="tab" data-tab="calendar-tab">
                     <i class="fas fa-calendar"></i> Κλείσιμο Ραντεβού
                 </button>
-                <button class="tab" data-tab="fortune-tellers-tab">
-                    <i class="fas fa-crystal-ball"></i> Καφεμάντεις
-                </button>
                 <button class="tab" data-tab="contact-tab">
                     <i class="fas fa-envelope"></i> Επικοινωνία
                 </button>
@@ -1551,6 +1463,17 @@
                             <div class="form-group">
                                 <label for="email"><i class="fas fa-envelope"></i> Διεύθυνση E-mail:</label>
                                 <input type="email" id="email" name="email" placeholder="π.χ. onoma@example.com" required readonly>
+                            </div>
+                            
+                            <!-- Υποχρεωτική επιλογή καφεμάντη -->
+                            <div class="form-group">
+                                <label><i class="fas fa-crystal-ball"></i> Επιλογή Καφεμάντη <span style="color: var(--error);">*</span></label>
+                                <div class="fortune-teller-options" id="fortuneTellersList">
+                                    <!-- Οι καφεμάντεις θα προστεθούν δυναμικά -->
+                                </div>
+                                <div id="fortuneTellerError" class="message error" style="display: none; margin-top: 10px;">
+                                    Παρακαλώ επιλέξτε έναν καφεμάντη
+                                </div>
                             </div>
                             
                             <!-- Επιλογές καφεμαντείας -->
@@ -1638,33 +1561,6 @@
                         <!-- Google Calendar Appointment Scheduling begin -->
                         <iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2W749ziDodCAof-hd2VaHeolH7c8qhF8eR4LGAAOG2FLZsK35mV1Eq48qR4z166rTvhiDfPwn-?gv=true" style="border: 0" width="100%" height="600" frameborder="0"></iframe>
                         <!-- end Google Calendar Appointment Scheduling -->
-                    </div>
-                </section>
-
-                <!-- Καρτέλα Καφεμάντεις -->
-                <section id="fortune-tellers-tab" class="tab-content">
-                    <div class="form-section">
-                        <h2><i class="fas fa-crystal-ball"></i> Οι Καφεμάντεις Μας</h2>
-                        
-                        <div class="info-box">
-                            <p><strong>Επιλέξτε τον καφεμάντη που θα ερμηνεύσει τον καφέ σας:</strong></p>
-                            <p>Κάθε καφεμάντις έχει το δικό της στυλ και προσεγγίσεις. Διαβάστε τις αξιολογήσεις και επιλέξτε αυτήν που σας ταιριάζει περισσότερο!</p>
-                        </div>
-
-                        <div class="fortune-teller-options" id="fortuneTellersList">
-                            <!-- Οι καφεμάντεις θα προστεθούν δυναμικά -->
-                        </div>
-
-                        <!-- Αξιολογήσεις για επιλεγμένο καφεμάντη -->
-                        <div class="reviews-section" id="reviewsSection" style="display: none;">
-                            <h3><i class="fas fa-star"></i> Αξιολογήσεις</h3>
-                            <div class="reviews-list" id="reviewsList">
-                                <!-- Οι αξιολογήσεις θα προστεθούν δυναμικά -->
-                            </div>
-                            <button class="add-review-btn" id="addReviewBtn">
-                                <i class="fas fa-plus"></i> Προσθήκη Αξιολόγησης
-                            </button>
-                        </div>
                     </div>
                 </section>
                 
@@ -1905,41 +1801,6 @@
                 </button>
             </div>
         </div>
-
-        <!-- Modal για αξιολόγηση καφεμάντη -->
-        <div id="reviewModal" class="modal">
-            <div class="modal-content">
-                <button class="close-modal" id="closeReviewModal">×</button>
-                <h2><i class="fas fa-star"></i> Αξιολόγηση Καφεμάντη</h2>
-                
-                <div class="info-box">
-                    <p><strong>Βαθμολογήστε και σχολιάστε την εμπειρία σας:</strong></p>
-                </div>
-
-                <form id="reviewForm">
-                    <div class="form-group">
-                        <label>Βαθμολογία:</label>
-                        <div class="star-rating" id="starRating">
-                            <span class="star" data-rating="1">★</span>
-                            <span class="star" data-rating="2">★</span>
-                            <span class="star" data-rating="3">★</span>
-                            <span class="star" data-rating="4">★</span>
-                            <span class="star" data-rating="5">★</span>
-                        </div>
-                        <input type="hidden" id="reviewRating" name="rating" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="reviewComment"><i class="fas fa-comment"></i> Σχόλιο:</label>
-                        <textarea id="reviewComment" name="comment" placeholder="Γράψτε το σχόλιό σας εδώ..." rows="4"></textarea>
-                    </div>
-
-                    <button type="submit" class="submit-btn">
-                        <i class="fas fa-paper-plane"></i> Υποβολή Αξιολόγησης
-                    </button>
-                </form>
-            </div>
-        </div>
         
         <footer>
             <div class="terms-links">
@@ -2047,6 +1908,8 @@
                     reviewCount: 203
                 }
             ];
+
+            let selectedFortuneTeller = null;
 
             // Monitor authentication state with cross-browser sync
             onAuthStateChanged(auth, (user) => {
@@ -2531,13 +2394,54 @@
                     if (tabId === 'photos-tab') {
                         checkOfferRedemption();
                     }
-
-                    if (tabId === 'fortune-tellers-tab') {
-                        loadFortuneTellers();
-                    }
                 });
             });
             
+            // FORTUNE TELLERS SYSTEM
+            function loadFortuneTellers() {
+                const fortuneTellersList = document.getElementById('fortuneTellersList');
+                fortuneTellersList.innerHTML = '';
+
+                fortuneTellers.forEach(teller => {
+                    const tellerElement = document.createElement('div');
+                    tellerElement.className = `fortune-teller-option ${teller.color}`;
+                    tellerElement.innerHTML = `
+                        <img src="${teller.image}" alt="${teller.name}" class="fortune-teller-image">
+                        <div class="fortune-teller-name">${teller.name}</div>
+                        <div class="fortune-teller-title">${teller.title}</div>
+                        <div class="fortune-teller-description">${teller.description}</div>
+                        <div class="fortune-teller-rating">
+                            <div class="rating-stars">
+                                ${'★'.repeat(Math.floor(teller.rating))}${teller.rating % 1 >= 0.5 ? '½' : ''}
+                            </div>
+                            <div class="rating-value">${teller.rating}</div>
+                            <div class="rating-count">(${teller.reviewCount} αξιολογήσεις)</div>
+                        </div>
+                    `;
+
+                    tellerElement.addEventListener('click', () => {
+                        selectFortuneTeller(teller, tellerElement);
+                    });
+
+                    fortuneTellersList.appendChild(tellerElement);
+                });
+            }
+
+            function selectFortuneTeller(teller, element) {
+                selectedFortuneTeller = teller;
+                
+                // Remove selected class from all options
+                document.querySelectorAll('.fortune-teller-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                element.classList.add('selected');
+                
+                // Hide error message if shown
+                document.getElementById('fortuneTellerError').style.display = 'none';
+            }
+
             // PHOTO UPLOAD FUNCTIONALITY
             const fileInput = document.getElementById('photos');
             const previewGrid = document.getElementById('previewGrid');
@@ -2608,6 +2512,13 @@
                 const user = auth.currentUser;
                 if (!user) return;
                 
+                // Check if fortune teller is selected
+                if (!selectedFortuneTeller) {
+                    document.getElementById('fortuneTellerError').style.display = 'block';
+                    document.getElementById('fortuneTellerError').scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+                
                 const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
                 const userRedemption = redemptions.find(r => 
                     r.email === user.email && 
@@ -2661,6 +2572,8 @@
                         type: 'photo',
                         userEmail: email,
                         userId: user.uid,
+                        fortuneTellerId: selectedFortuneTeller.id,
+                        fortuneTellerName: selectedFortuneTeller.name,
                         coffeeType: coffeeType.value,
                         coffeeTypeText: getCoffeeTypeText(coffeeType.value),
                         desire: userDesire,
@@ -2673,11 +2586,14 @@
                     saveSubmission(submission);
                     addPointsForSubmission(email, 10);
                     
+                    // Notify admin
                     const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
                     adminNotifications.push({
                         type: 'coffee_reading',
                         userEmail: submission.userEmail,
                         userId: submission.userId,
+                        fortuneTellerId: submission.fortuneTellerId,
+                        fortuneTellerName: submission.fortuneTellerName,
                         coffeeType: submission.coffeeType,
                         coffeeTypeText: submission.coffeeTypeText,
                         desire: submission.desire,
@@ -2686,11 +2602,13 @@
                     });
                     localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
                     
-                    showMessage(messageDiv, `Οι ${selectedFiles.length} φωτογραφίες του καφέ σας στάλθηκαν επιτυχώς! Κερδίσατε 10 πόντους.`, 'success');
+                    showMessage(messageDiv, `Οι ${selectedFiles.length} φωτογραφίες του καφέ σας στάλθηκαν επιτυχώς στον ${selectedFortuneTeller.name}! Κερδίσατε 10 πόντους.`, 'success');
                     
                     visitorForm.reset();
                     selectedFiles = [];
+                    selectedFortuneTeller = null;
                     updatePreview();
+                    loadFortuneTellers(); // Reset selection
                     
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών';
@@ -2869,6 +2787,18 @@
                 
                 saveSubmission(contactMessage);
                 
+                // Notify admin
+                const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+                adminNotifications.push({
+                    type: 'contact_message',
+                    userEmail: email,
+                    userName: name,
+                    subject: subject,
+                    date: new Date().toISOString(),
+                    status: 'pending'
+                });
+                localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
+                
                 showMessage(contactMessageDiv, `Το μήνυμά σας στάλθηκε επιτυχώς! Θα λάβετε απάντηση στο ${email} το συντομότερο δυνατό.`, 'success');
                 
                 contactForm.reset();
@@ -2923,6 +2853,12 @@
                         <div class="response-original">
                             <span class="original-label">Το αρχικό σας μήνυμα:</span>
                             ${response.originalMessage}
+                        </div>
+                        ` : ''}
+                        ${response.fortuneTellerName ? `
+                        <div class="response-original">
+                            <span class="original-label">Καφεμάντης:</span>
+                            ${response.fortuneTellerName}
                         </div>
                         ` : ''}
                     `;
@@ -3045,6 +2981,7 @@
                             });
                             localStorage.setItem('offerRedemptions', JSON.stringify(redemptions));
                             
+                            // Notify admin
                             const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
                             adminNotifications.push({
                                 type: 'offer_redemption',
@@ -3057,6 +2994,8 @@
                             localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
                             
                             showNotification(`Ανταλλάξατε επιτυχώς την προσφορά "Εξαργύρωσε την Καφεμαντεία"! Αφαιρέθηκαν 50 πόντοι. Μπορείτε τώρα να υποβάλετε φωτογραφίες.`, 'success');
+                            
+                            checkOfferRedemption();
                             
                         } else {
                             document.getElementById('warningPoints').textContent = currentPoints;
@@ -3125,208 +3064,6 @@
                     noOffersMessage.innerHTML = '<p>Οι προσφορές εμφανίζονται στην κύρια οθόνη για πιο εύκολη πρόσβαση.</p>';
                     offersList.appendChild(noOffersMessage);
                 }
-            }
-
-            // FORTUNE TELLERS SYSTEM
-            let selectedFortuneTeller = null;
-
-            function loadFortuneTellers() {
-                const fortuneTellersList = document.getElementById('fortuneTellersList');
-                fortuneTellersList.innerHTML = '';
-
-                fortuneTellers.forEach(teller => {
-                    const tellerElement = document.createElement('div');
-                    tellerElement.className = `fortune-teller-option ${teller.color}`;
-                    tellerElement.innerHTML = `
-                        <img src="${teller.image}" alt="${teller.name}" class="fortune-teller-image">
-                        <div class="fortune-teller-name">${teller.name}</div>
-                        <div class="fortune-teller-title">${teller.title}</div>
-                        <div class="fortune-teller-description">${teller.description}</div>
-                        <div class="fortune-teller-rating">
-                            <div class="rating-stars">
-                                ${'★'.repeat(Math.floor(teller.rating))}${teller.rating % 1 >= 0.5 ? '½' : ''}
-                            </div>
-                            <div class="rating-value">${teller.rating}</div>
-                            <div class="rating-count">(${teller.reviewCount} αξιολογήσεις)</div>
-                        </div>
-                    `;
-
-                    tellerElement.addEventListener('click', () => {
-                        selectFortuneTeller(teller);
-                    });
-
-                    fortuneTellersList.appendChild(tellerElement);
-                });
-            }
-
-            function selectFortuneTeller(teller) {
-                selectedFortuneTeller = teller;
-                
-                // Remove selected class from all options
-                document.querySelectorAll('.fortune-teller-option').forEach(option => {
-                    option.classList.remove('selected');
-                });
-                
-                // Add selected class to clicked option
-                event.currentTarget.classList.add('selected');
-                
-                // Show reviews section
-                document.getElementById('reviewsSection').style.display = 'block';
-                
-                // Load reviews for selected fortune teller
-                loadReviews(teller.id);
-            }
-
-            async function loadReviews(fortuneTellerId) {
-                const reviewsList = document.getElementById('reviewsList');
-                reviewsList.innerHTML = '<p>Φόρτωση αξιολογήσεων...</p>';
-
-                try {
-                    const reviewsQuery = query(
-                        collection(db, 'reviews'),
-                        where('fortuneTellerId', '==', fortuneTellerId),
-                        orderBy('createdAt', 'desc')
-                    );
-                    
-                    const querySnapshot = await getDocs(reviewsQuery);
-                    const reviews = [];
-
-                    querySnapshot.forEach((doc) => {
-                        reviews.push({ id: doc.id, ...doc.data() });
-                    });
-
-                    displayReviews(reviews);
-                } catch (error) {
-                    console.error('Error loading reviews:', error);
-                    reviewsList.innerHTML = '<p>Δεν βρέθηκαν αξιολογήσεις.</p>';
-                }
-            }
-
-            function displayReviews(reviews) {
-                const reviewsList = document.getElementById('reviewsList');
-                
-                if (reviews.length === 0) {
-                    reviewsList.innerHTML = '<p>Δεν υπάρχουν αξιολογήσεις ακόμα. Γίνετε ο πρώτος που θα αξιολογήσει!</p>';
-                    return;
-                }
-
-                reviewsList.innerHTML = '';
-
-                reviews.forEach(review => {
-                    const reviewElement = document.createElement('div');
-                    reviewElement.className = 'review-item';
-                    reviewElement.innerHTML = `
-                        <div class="review-header">
-                            <div class="review-user">${review.userName || 'Ανώνυμος'}</div>
-                            <div class="review-date">${formatDate(review.createdAt?.toDate() || new Date())}</div>
-                        </div>
-                        <div class="review-rating">
-                            ${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}
-                        </div>
-                        <div class="review-comment">${review.comment || 'Χωρίς σχόλιο'}</div>
-                    `;
-                    reviewsList.appendChild(reviewElement);
-                });
-            }
-
-            // Add review functionality
-            document.getElementById('addReviewBtn').addEventListener('click', function() {
-                if (!selectedFortuneTeller) {
-                    alert('Παρακαλώ επιλέξτε πρώτα έναν καφεμάντη.');
-                    return;
-                }
-                showReviewModal();
-            });
-
-            document.getElementById('closeReviewModal').addEventListener('click', function() {
-                document.getElementById('reviewModal').style.display = 'none';
-            });
-
-            // Star rating functionality
-            const stars = document.querySelectorAll('#starRating .star');
-            let currentRating = 0;
-
-            stars.forEach(star => {
-                star.addEventListener('click', function() {
-                    currentRating = parseInt(this.getAttribute('data-rating'));
-                    updateStarRating(currentRating);
-                });
-
-                star.addEventListener('mouseover', function() {
-                    const rating = parseInt(this.getAttribute('data-rating'));
-                    updateStarRating(rating, true);
-                });
-            });
-
-            document.getElementById('starRating').addEventListener('mouseleave', function() {
-                updateStarRating(currentRating);
-            });
-
-            function updateStarRating(rating, isHover = false) {
-                stars.forEach(star => {
-                    const starRating = parseInt(star.getAttribute('data-rating'));
-                    if (starRating <= rating) {
-                        star.classList.add('active');
-                        if (isHover) {
-                            star.style.transform = 'scale(1.1)';
-                        } else {
-                            star.style.transform = 'scale(1)';
-                        }
-                    } else {
-                        star.classList.remove('active');
-                        star.style.transform = 'scale(1)';
-                    }
-                });
-                document.getElementById('reviewRating').value = rating;
-            }
-
-            // Review form submission
-            document.getElementById('reviewForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const user = auth.currentUser;
-                if (!user || !selectedFortuneTeller) return;
-
-                const rating = parseInt(document.getElementById('reviewRating').value);
-                const comment = document.getElementById('reviewComment').value;
-
-                if (rating === 0) {
-                    alert('Παρακαλώ επιλέξτε βαθμολογία.');
-                    return;
-                }
-
-                try {
-                    await addDoc(collection(db, 'reviews'), {
-                        fortuneTellerId: selectedFortuneTeller.id,
-                        fortuneTellerName: selectedFortuneTeller.name,
-                        userId: user.uid,
-                        userName: user.displayName || 'Ανώνυμος',
-                        userEmail: user.email,
-                        rating: rating,
-                        comment: comment,
-                        createdAt: serverTimestamp()
-                    });
-
-                    showNotification('Η αξιολόγησή σας υποβλήθηκε επιτυχώς!', 'success');
-                    document.getElementById('reviewModal').style.display = 'none';
-                    document.getElementById('reviewForm').reset();
-                    currentRating = 0;
-                    updateStarRating(0);
-
-                    // Reload reviews
-                    loadReviews(selectedFortuneTeller.id);
-
-                } catch (error) {
-                    console.error('Error submitting review:', error);
-                    showNotification('Προέκυψε σφάλμα κατά την υποβολή της αξιολόγησης.', 'error');
-                }
-            });
-
-            function showReviewModal() {
-                document.getElementById('reviewModal').style.display = 'flex';
-                document.getElementById('reviewForm').reset();
-                currentRating = 0;
-                updateStarRating(0);
             }
 
             // AUTO REFRESH
