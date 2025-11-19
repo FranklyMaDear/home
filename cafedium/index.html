@@ -26,7 +26,9 @@
             signOut, 
             onAuthStateChanged,
             sendPasswordResetEmail,
-            updateProfile
+            updateProfile,
+            setPersistence,
+            browserLocalPersistence
         } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
         // Your web app's Firebase configuration
@@ -45,6 +47,15 @@
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
         
+        // Enable persistence for cross-browser sync
+        setPersistence(auth, browserLocalPersistence)
+          .then(() => {
+            console.log("Firebase Auth Persistence enabled");
+          })
+          .catch((error) => {
+            console.error("Error setting persistence:", error);
+          });
+        
         // Make Firebase available globally
         window.firebaseApp = app;
         window.firebaseAnalytics = analytics;
@@ -55,7 +66,9 @@
             signOut,
             onAuthStateChanged,
             sendPasswordResetEmail,
-            updateProfile
+            updateProfile,
+            setPersistence,
+            browserLocalPersistence
         };
     </script>
     
@@ -1622,6 +1635,27 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Check for existing session (for cross-browser sync)
+            const savedUser = localStorage.getItem('firebaseAuth_user');
+            if (savedUser) {
+                try {
+                    const userData = JSON.parse(savedUser);
+                    console.log('Found saved user session:', userData.email);
+                    
+                    // Check if session is recent (less than 1 hour old)
+                    const sessionTime = new Date(userData.timestamp);
+                    const currentTime = new Date();
+                    const hoursDiff = (currentTime - sessionTime) / (1000 * 60 * 60);
+                    
+                    if (hoursDiff < 1) {
+                        console.log('Session is recent, attempting auto-login...');
+                    }
+                } catch (e) {
+                    console.error('Error parsing saved session:', e);
+                    localStorage.removeItem('firebaseAuth_user');
+                }
+            }
+
             // Firebase Auth functions
             const auth = window.firebaseAuth;
             const { 
@@ -1630,7 +1664,9 @@
                 signOut, 
                 onAuthStateChanged,
                 sendPasswordResetEmail,
-                updateProfile
+                updateProfile,
+                setPersistence,
+                browserLocalPersistence
             } = window.firebaseAuthFunctions;
 
             // UI Elements
@@ -1641,7 +1677,7 @@
             const logoutBtn = document.getElementById('logoutBtn');
             const adminPanelBtn = document.getElementById('adminPanelBtn');
 
-            // Monitor authentication state
+            // Monitor authentication state with cross-browser sync
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     // User is signed in
@@ -1654,6 +1690,14 @@
                     document.getElementById('email').value = user.email;
                     document.getElementById('contact-email').value = user.email;
                     document.getElementById('contact-name').value = user.displayName || '';
+                    
+                    // Cross-browser sync - save to localStorage
+                    localStorage.setItem('firebaseAuth_user', JSON.stringify({
+                        email: user.email,
+                        uid: user.uid,
+                        displayName: user.displayName,
+                        timestamp: new Date().toISOString()
+                    }));
                     
                     // Show admin panel button for admin users
                     if (user.email === 'admin@kafedium.gr' || user.email === 'franklymadear@gmail.com') {
@@ -1671,6 +1715,22 @@
                     authSection.style.display = 'block';
                     mainApp.style.display = 'none';
                     userInfo.style.display = 'none';
+                    localStorage.removeItem('firebaseAuth_user');
+                }
+            });
+
+            // Listen for auth changes from other tabs/browsers
+            window.addEventListener('storage', (event) => {
+                if (event.key === 'firebaseAuth_user') {
+                    if (event.newValue) {
+                        // User signed in another tab/browser
+                        console.log('User signed in another tab/browser');
+                        location.reload();
+                    } else {
+                        // User signed out another tab/browser
+                        console.log('User signed out another tab/browser');
+                        location.reload();
+                    }
                 }
             });
 
@@ -2022,10 +2082,11 @@
                 }
             });
             
-            // LOGOUT
+            // LOGOUT with cross-browser sync
             logoutBtn.addEventListener('click', async function() {
                 try {
                     await signOut(auth);
+                    localStorage.removeItem('firebaseAuth_user'); // Clear sync data
                 } catch (error) {
                     console.error('Logout error:', error);
                 }
