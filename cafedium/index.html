@@ -1174,6 +1174,106 @@
             font-size: 0.8rem;
         }
 
+        /* Στυλ για ειδοποίηση νέων μηνυμάτων */
+        .notification-modal {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1001;
+            max-width: 350px;
+            border-left: 5px solid var(--info);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .notification-title {
+            font-weight: 700;
+            color: var(--info);
+            font-size: 1.1rem;
+        }
+
+        .notification-content {
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .notification-close {
+            background: var(--info);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        /* Στυλ για αποθήκευση στην αρχική οθόνη */
+        .pwa-install {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+        }
+
+        .pwa-install h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .pwa-install p {
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .pwa-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .pwa-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pwa-btn:hover {
+            background: white;
+            color: var(--primary);
+        }
+
         /* Responsive Design */
         @media (max-width: 600px) {
             .container {
@@ -1266,6 +1366,16 @@
             .fortune-teller-options {
                 grid-template-columns: 1fr;
             }
+
+            .notification-modal {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+
+            .pwa-buttons {
+                flex-direction: column;
+            }
         }
         
         @media (max-width: 400px) {
@@ -1277,6 +1387,18 @@
 </head>
 <body>
     <div class="container">
+        <!-- Ειδοποίηση για νέα μηνύματα -->
+        <div id="notificationModal" class="notification-modal">
+            <div class="notification-header">
+                <i class="fas fa-bell"></i>
+                <div class="notification-title">Νέα Απάντηση!</div>
+            </div>
+            <div class="notification-content" id="notificationContent">
+                Έχετε λάβει μια νέα απάντηση από τον διαχειριστή.
+            </div>
+            <button class="notification-close" id="notificationClose">Κλείσιμο</button>
+        </div>
+
         <header>
             <i class="fas fa-mug-hot logo"></i>
             <h1>Cafedium</h1>
@@ -1291,6 +1413,20 @@
                 </button>
             </div>
         </header>
+
+        <!-- Πληροφορίες για αποθήκευση στην αρχική οθόνη -->
+        <div class="pwa-install" id="pwaInstall" style="display: none;">
+            <h3><i class="fas fa-home"></i> Αποθηκεύστε την εφαρμογή</h3>
+            <p>Για ευκολότερη πρόσβαση, αποθηκεύστε την εφαρμογή στην αρχική σας οθόνη</p>
+            <div class="pwa-buttons">
+                <button class="pwa-btn" id="installPWA">
+                    <i class="fas fa-download"></i> Εγκατάσταση
+                </button>
+                <button class="pwa-btn" id="hidePWA">
+                    <i class="fas fa-times"></i> Απόρριψη
+                </button>
+            </div>
+        </div>
         
         <div id="authSection">
             <div class="form-section">
@@ -1817,6 +1953,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Audio για ειδοποιήσεις
+            const notificationSound = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==');
+            
             // Check for existing session (for cross-browser sync)
             const savedUser = localStorage.getItem('firebaseAuth_user');
             if (savedUser) {
@@ -1874,6 +2013,12 @@
             const userEmailSpan = document.getElementById('userEmail');
             const logoutBtn = document.getElementById('logoutBtn');
             const adminPanelBtn = document.getElementById('adminPanelBtn');
+            const notificationModal = document.getElementById('notificationModal');
+            const notificationContent = document.getElementById('notificationContent');
+            const notificationClose = document.getElementById('notificationClose');
+            const pwaInstall = document.getElementById('pwaInstall');
+            const installPWA = document.getElementById('installPWA');
+            const hidePWA = document.getElementById('hidePWA');
 
             // Καφεμάντεις data
             const fortuneTellers = [
@@ -1945,6 +2090,9 @@
                     checkUserConsent();
                     loadFortuneTellers();
                     
+                    // Check for PWA installation
+                    checkPWAInstallation();
+                    
                 } else {
                     // User is signed out
                     authSection.style.display = 'block';
@@ -1967,7 +2115,82 @@
                         location.reload();
                     }
                 }
+                
+                // Listen for points updates from admin panel
+                if (event.key === 'pointsUpdated') {
+                    console.log('Points updated from admin panel');
+                    loadUserPoints();
+                }
+                
+                // Listen for new responses from admin
+                if (event.key === 'newResponseAdded') {
+                    console.log('New response added from admin');
+                    checkForNewResponses();
+                    if (document.getElementById('responses-tab').classList.contains('active')) {
+                        loadUserResponses();
+                    }
+                }
             });
+
+            // PWA Installation
+            let deferredPrompt;
+            
+            function checkPWAInstallation() {
+                // Check if app is already installed
+                if (window.matchMedia('(display-mode: standalone)').matches) {
+                    console.log('App is running in standalone mode');
+                    return;
+                }
+                
+                // Show install prompt for mobile devices
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                    pwaInstall.style.display = 'block';
+                }
+            }
+            
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                pwaInstall.style.display = 'block';
+            });
+            
+            installPWA.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        console.log('User accepted PWA installation');
+                    }
+                    deferredPrompt = null;
+                    pwaInstall.style.display = 'none';
+                }
+            });
+            
+            hidePWA.addEventListener('click', () => {
+                pwaInstall.style.display = 'none';
+            });
+
+            // Notification system
+            notificationClose.addEventListener('click', () => {
+                notificationModal.style.display = 'none';
+            });
+
+            function showNotification(message) {
+                notificationContent.textContent = message;
+                notificationModal.style.display = 'block';
+                
+                // Play notification sound
+                try {
+                    notificationSound.play();
+                } catch (e) {
+                    console.log('Could not play notification sound:', e);
+                }
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    notificationModal.style.display = 'none';
+                }, 5000);
+            }
 
             // Admin panel button
             adminPanelBtn.addEventListener('click', function() {
@@ -2505,7 +2728,7 @@
                 submitBtn.disabled = selectedFiles.length === 0;
             }
             
-            // PHOTO SUBMISSION FORM
+            // PHOTO SUBMISSION FORM - ΕΠΙΒΕΒΑΙΩΣΗ 50 ΠΟΝΤΩΝ
             visitorForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
@@ -2626,7 +2849,7 @@
                 return typeMap[type] || type;
             }
 
-            // POINTS SYSTEM WITH FIRESTORE
+            // POINTS SYSTEM WITH FIRESTORE - ΒΕΛΤΙΩΜΕΝΗ ΣΥΓΧΡΟΝΙΣΗ
             async function loadUserPoints() {
                 const user = auth.currentUser;
                 if (!user) return;
@@ -2815,7 +3038,7 @@
                 localStorage.setItem('coffeeSubmissions', JSON.stringify(existingSubmissions));
             }
 
-            // LOAD USER RESPONSES
+            // LOAD USER RESPONSES - ΒΕΛΤΙΩΜΕΝΗ ΕΙΔΟΠΟΙΗΣΗ
             function loadUserResponses() {
                 const user = auth.currentUser;
                 if (!user) return;
@@ -2887,7 +3110,7 @@
                 const newResponses = userResponses.filter(response => !response.viewed);
                 
                 if (newResponses.length > 0) {
-                    showNotification(`Έχετε ${newResponses.length} νέες απαντήσεις!`, 'info');
+                    showNotification(`Έχετε ${newResponses.length} νέες απαντήσεις!`);
                     
                     newResponses.forEach(response => {
                         response.viewed = true;
@@ -2896,23 +3119,6 @@
                 }
             }
 
-            function showNotification(message, type) {
-                const notification = document.createElement('div');
-                notification.className = `message ${type}`;
-                notification.textContent = message;
-                notification.style.position = 'fixed';
-                notification.style.top = '20px';
-                notification.style.right = '20px';
-                notification.style.zIndex = '1000';
-                notification.style.maxWidth = '300px';
-                
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.remove();
-                }, 5000);
-            }
-            
             function updateRedeemButton(points) {
                 const redeemBtn = document.getElementById('redeemInFormBtn');
                 const canRedeem = points >= 50;
@@ -2993,7 +3199,7 @@
                             });
                             localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
                             
-                            showNotification(`Ανταλλάξατε επιτυχώς την προσφορά "Εξαργύρωσε την Καφεμαντεία"! Αφαιρέθηκαν 50 πόντοι. Μπορείτε τώρα να υποβάλετε φωτογραφίες.`, 'success');
+                            showNotification(`Ανταλλάξατε επιτυχώς την προσφορά "Εξαργύρωσε την Καφεμαντεία"! Αφαιρέθηκαν 50 πόντοι. Μπορείτε τώρα να υποβάλετε φωτογραφίες.`);
                             
                             checkOfferRedemption();
                             
@@ -3036,7 +3242,7 @@
                     });
                     localStorage.setItem('offerRedemptions', JSON.stringify(redemptions));
                     
-                    showNotification(`Ανταλλάξατε επιτυχώς την προσφορά "Εξαργύρωσε την Καφεμαντεία"! Αφαιρέθηκαν 50 πόντοι. Μπορείτε τώρα να υποβάλετε φωτογραφίες.`, 'success');
+                    showNotification(`Ανταλλάξατε επιτυχώς την προσφορά "Εξαργύρωσε την Καφεμαντεία"! Αφαιρέθηκαν 50 πόντοι. Μπορείτε τώρα να υποβάλετε φωτογραφίες.`);
                     
                     loadUserPoints();
                     checkOfferRedemption();
@@ -3066,7 +3272,7 @@
                 }
             }
 
-            // AUTO REFRESH
+            // AUTO REFRESH - ΒΕΛΤΙΩΜΕΝΗ ΣΥΓΧΡΟΝΙΣΗ
             setInterval(() => {
                 checkForNewResponses();
                 if (document.getElementById('responses-tab').classList.contains('active')) {
