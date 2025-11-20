@@ -1845,6 +1845,7 @@
                                 ${notification.coffeeTypeText ? `<strong>Τύπος Καφεμαντείας:</strong> ${notification.coffeeTypeText}<br>` : ''}
                                 ${notification.desire ? `<strong>Επιθυμία Χρήστη:</strong> ${notification.desire}<br>` : ''}
                                 ${notification.offerTitle ? `<strong>Προσφορά:</strong> ${notification.offerTitle}<br>` : ''}
+                                ${notification.character ? `<strong>Επιλεγμένος Χαρακτήρας:</strong> ${notification.character}<br>` : ''}
                                 <strong>Χρήστης:</strong> ${notification.userEmail || 'Χωρίς email'}
                             </div>
                         </div>
@@ -1926,7 +1927,8 @@
             function getNotificationTypeText(type) {
                 const typeMap = {
                     'offer_redemption': 'Ανταλλαγή Προσφοράς',
-                    'coffee_reading': 'Υποβολή Καφεμαντείας'
+                    'coffee_reading': 'Υποβολή Καφεμαντείας',
+                    'character_selection': 'Επιλογή Χαρακτήρα'
                 };
                 return typeMap[type] || type;
             }
@@ -2133,6 +2135,7 @@
                         ${notification.coffeeTypeText ? `<div><strong>Τύπος Καφεμαντείας:</strong> ${notification.coffeeTypeText}</div>` : ''}
                         ${notification.desire ? `<div><strong>Επιθυμία Χρήστη:</strong> ${notification.desire}</div>` : ''}
                         ${notification.offerTitle ? `<div><strong>Προσφορά:</strong> ${notification.offerTitle}</div>` : ''}
+                        ${notification.character ? `<div><strong>Επιλεγμένος Χαρακτήρας:</strong> ${notification.character}</div>` : ''}
                         <div><strong>Χρήστης:</strong> ${notification.userEmail || 'Χωρίς email'}</div>
                         <div><strong>Ημερομηνία:</strong> ${formatDate(notification.date)}</div>
                         <div><strong>Κατάσταση:</strong> ${getNotificationStatusText(notification.status)}</div>
