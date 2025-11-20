@@ -1325,10 +1325,10 @@
         <!-- Πληροφορίες για αποθήκευση στην αρχική οθόνη -->
         <div class="pwa-install" id="pwaInstall" style="display: none;">
             <h3><i class="fas fa-home"></i> Αποθηκεύστε την εφαρμογή</h3>
-            <p>Για ευκολότερη πρόσβαση, αποθηκεύστε την εφαρμογή στην αρχική σας οθόνη.Safari η Chrome</p>
+            <p>Για ευκολότερη πρόσβαση, αποθηκεύστε την εφαρμογή στην αρχική σας οθόνη</p>
             <div class="pwa-buttons">
                 <button class="pwa-btn" id="installPWA">
-                    <i class="fas fa-download"></i> Προσθήκη.Επιλέξτε το κουμπί στον Περιηγητή σας Safari η Chrome. 
+                    <i class="fas fa-download"></i> Εγκατάσταση
                 </button>
                 <button class="pwa-btn" id="hidePWA">
                     <i class="fas fa-times"></i> Απόρριψη
@@ -1494,7 +1494,7 @@
                                 <strong>Απαραίτητη προϋπόθεση:</strong> Πρέπει πρώτα να εξαργυρώσετε αυτή την προσφορά για να μπορέσετε να υποβάλετε φωτογραφίες καφέ στους διαχειριστές.
                             </div>
                             <button class="redeem-btn" id="redeemInFormBtn">
-                                <i class="fas fa-shopping-cart"></i> Ανταλλαγή
+                                <i class="fas fa-shopping-cart"></i> Ανταλλαγή (50 Πόντοι)
                             </button>
                         </div>
 
@@ -1582,8 +1582,8 @@
                                 </div>
                             </div>
                             
-                            <button type="submit" class="submit-btn" id="submitBtn">
-                                <i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών
+                            <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                                <i class="fas fa-lock"></i> Απαιτείται Εξαργύρωση
                             </button>
                             
                             <div class="message" id="message"></div>
@@ -2148,7 +2148,7 @@
                 document.getElementById('consentModal').style.display = 'none';
             });
 
-            // OFFER REDEMPTION CHECK
+            // OFFER REDEMPTION CHECK - ΔΙΟΡΘΩΜΕΝΗ
             function checkOfferRedemption() {
                 if (!currentUser) return;
 
@@ -2160,16 +2160,20 @@
 
                 const offerCheckSection = document.getElementById('offerCheckSection');
                 const offerInForm = document.getElementById('offerInForm');
-                const visitorForm = document.getElementById('visitorForm');
+                const submitBtn = document.getElementById('submitBtn');
 
                 if (userRedemption) {
+                    // Ο χρήστης έχει εξαργυρώσει - επιτρέπουμε υποβολή
                     offerCheckSection.style.display = 'block';
                     offerInForm.style.display = 'none';
-                    visitorForm.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών';
                 } else {
+                    // Ο χρήστης ΔΕΝ έχει εξαργυρώσει - ΑΠΑΓΟΡΕΥΟΥΜΕ υποβολή
                     offerCheckSection.style.display = 'none';
                     offerInForm.style.display = 'block';
-                    visitorForm.style.display = 'block';
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-lock"></i> Απαιτείται Εξαργύρωση';
                 }
             }
 
@@ -2549,32 +2553,31 @@
                     
                     reader.readAsDataURL(file);
                 });
-                
-                submitBtn.disabled = selectedFiles.length === 0;
             }
             
-            // PHOTO SUBMISSION FORM - ΕΠΙΒΕΒΑΙΩΣΗ 50 ΠΟΝΤΩΝ
+            // PHOTO SUBMISSION FORM - ΕΠΙΒΕΒΑΙΩΣΗ 50 ΠΟΝΤΩΝ - ΔΙΟΡΘΩΜΕΝΗ
             visitorForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
                 if (!currentUser) return;
                 
-                // Check if fortune teller is selected
-                if (!selectedFortuneTeller) {
-                    document.getElementById('fortuneTellerError').style.display = 'block';
-                    document.getElementById('fortuneTellerError').scrollIntoView({ behavior: 'smooth' });
-                    return;
-                }
-                
+                // ΠΡΟΣΘΗΚΗ: Έλεγχος αν έχει γίνει εξαργύρωση
                 const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
                 const userRedemption = redemptions.find(r => 
                     r.email === currentUser.email && 
                     r.offerTitle === 'Εξαργύρωσε την Καφεμαντεία'
                 );
-
+                
                 if (!userRedemption) {
                     document.getElementById('warningPoints').textContent = document.getElementById('currentPoints').textContent;
                     document.getElementById('pointsWarningModal').style.display = 'flex';
+                    return;
+                }
+                
+                // Check if fortune teller is selected
+                if (!selectedFortuneTeller) {
+                    document.getElementById('fortuneTellerError').style.display = 'block';
+                    document.getElementById('fortuneTellerError').scrollIntoView({ behavior: 'smooth' });
                     return;
                 }
                 
@@ -2867,10 +2870,10 @@
                 
                 if (canRedeem) {
                     redeemBtn.disabled = false;
-                    redeemBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Ανταλλαγή';
+                    redeemBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Ανταλλαγή (50 Πόντοι)';
                 } else {
                     redeemBtn.disabled = true;
-                    redeemBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Ανεπαρκείς Πόντοι';
+                    redeemBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Ανεπαρκείς Πόντοι (Απαιτούνται 50)';
                 }
             }
             
