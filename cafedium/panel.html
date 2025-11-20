@@ -853,6 +853,44 @@
         .notification-close:hover {
             opacity: 1;
         }
+
+        /* Επιπλέον στυλ για καφεμαντεία */
+        .coffee-reading-info {
+            background: #f8f4e9;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .coffee-reading-info p {
+            margin: 4px 0;
+            font-size: 0.85rem;
+        }
+
+        /* Sound notification */
+        .sound-notification {
+            display: none;
+        }
+
+        /* Success animation */
+        .success-animation {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .success-animation i {
+            font-size: 3rem;
+            color: var(--success);
+            margin-bottom: 15px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
         
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -1269,6 +1307,23 @@
         </div>
     </div>
 
+    <!-- Modal επιτυχίας αποστολής -->
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Επιτυχία!</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-animation">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Το μήνυμα στάλθηκε επιτυχώς!</h3>
+                    <p>Ο χρήστης θα ενημερωθεί για την απάντησή σας.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Βελτιωμένη ειδοποίηση -->
     <div class="notification-toast" id="notification-toast">
         <div class="notification-icon">
@@ -1282,6 +1337,11 @@
             <i class="fas fa-times"></i>
         </button>
     </div>
+
+    <!-- Ηχητική ειδοποίηση -->
+    <audio id="notification-sound" class="sound-notification">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1460,6 +1520,15 @@
                             </div>
                         `).join('') : '<p>Δεν υπάρχουν φωτογραφίες</p>';
                     
+                    // Βελτιωμένη εμφάνιση πληροφοριών καφεμαντείας
+                    const coffeeReadingInfo = submission.coffeeTypeText ? `
+                        <div class="coffee-reading-info">
+                            <p><strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText}</p>
+                            <p><strong>Email Χρήστη:</strong> ${submission.userEmail || submission.email || 'Δεν παρέχεται'}</p>
+                            ${submission.desire ? `<p><strong>Επιθυμία Χρήστη:</strong> ${submission.desire}</p>` : ''}
+                        </div>
+                    ` : '';
+                    
                     const submissionCard = document.createElement('div');
                     submissionCard.className = 'submission-card';
                     submissionCard.innerHTML = `
@@ -1469,10 +1538,10 @@
                             <div class="submission-status ${statusClass}">${statusText}</div>
                         </div>
                         
+                        ${coffeeReadingInfo}
+                        
                         <div class="submission-content">
                             <div class="submission-message">
-                                <strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText || 'Γραπτή Ερμηνεία'}<br>
-                                ${submission.desire ? `<strong>Επιθυμία Χρήστη:</strong> ${submission.desire}<br>` : ''}
                                 ${submission.message || 'Δεν υπάρχει μήνυμα'}
                             </div>
                             
@@ -1917,6 +1986,7 @@
             const submissionModal = document.getElementById('submission-modal');
             const replyModal = document.getElementById('reply-modal');
             const pointsModal = document.getElementById('points-modal');
+            const successModal = document.getElementById('success-modal');
             const closeModalButtons = document.querySelectorAll('.close-modal');
             
             // Κλείσιμο modal
@@ -1925,6 +1995,7 @@
                     submissionModal.style.display = 'none';
                     replyModal.style.display = 'none';
                     pointsModal.style.display = 'none';
+                    successModal.style.display = 'none';
                 });
             });
             
@@ -1938,6 +2009,9 @@
                 }
                 if (event.target === pointsModal) {
                     pointsModal.style.display = 'none';
+                }
+                if (event.target === successModal) {
+                    successModal.style.display = 'none';
                 }
             });
             
@@ -1957,16 +2031,25 @@
                             </div>
                         `).join('') : '<p>Δεν υπάρχουν φωτογραφίες</p>';
                     
+                    // Βελτιωμένη εμφάνιση πληροφοριών καφεμαντείας
+                    const coffeeReadingInfo = submission.coffeeTypeText ? `
+                        <div class="coffee-reading-info">
+                            <p><strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText}</p>
+                            <p><strong>Email Χρήστη:</strong> ${submission.userEmail || submission.email || 'Δεν παρέχεται'}</p>
+                            ${submission.desire ? `<p><strong>Επιθυμία Χρήστη:</strong> ${submission.desire}</p>` : ''}
+                        </div>
+                    ` : '';
+                    
                     modalBody.innerHTML = `
                         <div class="submission-header">
                             <div class="submission-user">${submission.userEmail || submission.email || 'Άγνωστος Χρήστης'}</div>
                             <div class="submission-date">${formatDate(submission.date)}</div>
                         </div>
                         
+                        ${coffeeReadingInfo}
+                        
                         <div class="submission-content">
                             <div class="submission-message">
-                                <strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText || 'Γραπτή Ερμηνεία'}<br>
-                                ${submission.desire ? `<strong>Επιθυμία Χρήστη:</strong><br>${submission.desire}<br><br>` : ''}
                                 <strong>Μήνυμα:</strong><br>
                                 ${submission.message || 'Δεν υπάρχει μήνυμα'}
                             </div>
@@ -2304,7 +2387,7 @@
                 
                 // Βρες την υποβολή
                 const allSubmissions = getAllSubmissions();
-                const submission = allSubmissions.find(sub => sub.id === id);
+                const submission = allSubmissions.find(sub => sub.id === submissionId);
                 
                 if (!submission) {
                     alert('Δεν βρέθηκε η υποβολή!');
@@ -2333,15 +2416,36 @@
                 this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Αποστολή...';
                 
                 setTimeout(() => {
-                    alert('Η απάντηση στάλθηκε επιτυχώς στον χρήστη!');
+                    // Αναπαραγωγή ήχου
+                    playNotificationSound();
+                    
+                    // Κλείσιμο modal απάντησης
                     replyModal.style.display = 'none';
+                    
+                    // Εμφάνιση modal επιτυχίας
+                    successModal.style.display = 'flex';
+                    
+                    // Επαναφορά κουμπιού
                     this.disabled = false;
                     this.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Απάντησης';
                     
                     // Ανανέωση δεδομένων
                     loadAllData();
+                    
+                    // Αυτόματο κλείσιμο modal επιτυχίας μετά από 3 δευτερόλεπτα
+                    setTimeout(() => {
+                        successModal.style.display = 'none';
+                    }, 3000);
                 }, 1500);
             });
+            
+            // Αναπαραγωγή ήχου ειδοποίησης
+            function playNotificationSound() {
+                const sound = document.getElementById('notification-sound');
+                sound.play().catch(e => {
+                    console.log('Αποτυχία αναπαραγωγής ήχου:', e);
+                });
+            }
             
             // Αποθήκευση απάντησης στο LocalStorage
             function saveResponse(response) {
