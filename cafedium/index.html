@@ -1860,6 +1860,25 @@
     </div>
 
     <script>
+        // Συνάρτηση για αποστολή ειδοποίησης επιλογής χαρακτήρα
+        function sendCharacterSelectionNotification(characterName, userEmail, userName) {
+            const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+            
+            const notification = {
+                type: 'character_selection',
+                character: characterName,
+                userEmail: userEmail,
+                userName: userName,
+                date: new Date().toISOString(),
+                status: 'pending'
+            };
+            
+            notifications.push(notification);
+            localStorage.setItem('adminNotifications', JSON.stringify(notifications));
+            
+            console.log(`Ειδοποίηση για επιλογή χαρακτήρα ${characterName} από ${userEmail}`);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Audio για ειδοποιήσεις
             const notificationSound = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==');
@@ -2460,6 +2479,15 @@
                 
                 // Hide error message if shown
                 document.getElementById('fortuneTellerError').style.display = 'none';
+                
+                // ΑΠΟΣΤΟΛΗ ΕΙΔΟΠΟΙΗΣΗΣ ΣΤΟΝ ΔΙΑΧΕΙΡΙΣΤΗ
+                if (currentUser) {
+                    sendCharacterSelectionNotification(
+                        teller.name, 
+                        currentUser.email, 
+                        currentUser.name || 'Χρήστης'
+                    );
+                }
             }
 
             // PHOTO UPLOAD FUNCTIONALITY
