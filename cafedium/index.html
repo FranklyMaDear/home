@@ -14,98 +14,6 @@
     <meta name="msapplication-TileColor" content="#8B4513">
     <meta name="theme-color" content="#8B4513">
     
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            signOut, 
-            onAuthStateChanged,
-            sendPasswordResetEmail,
-            updateProfile,
-            setPersistence,
-            browserLocalPersistence,
-            browserSessionPersistence
-        } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            setDoc, 
-            getDoc, 
-            updateDoc,
-            onSnapshot,
-            collection,
-            addDoc,
-            query,
-            where,
-            getDocs,
-            orderBy,
-            serverTimestamp
-        } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-          apiKey: "AIzaSyD8pn4ZfzXIEmk7lD0f6pPuDcPOJFatnAc",
-          authDomain: "franklymadear-a5751.firebaseapp.com",
-          projectId: "franklymadear-a5751",
-          storageBucket: "franklymadear-a5751.firebasestorage.app",
-          messagingSenderId: "487154731862",
-          appId: "1:487154731862:web:40f86afee24ef06dad64f7",
-          measurementId: "G-SFT8BPMLFS"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        
-        // Enable persistence for cross-browser sync
-        setPersistence(auth, browserLocalPersistence)
-          .then(() => {
-            console.log("Firebase Auth Persistence enabled");
-          })
-          .catch((error) => {
-            console.error("Error setting persistence:", error);
-          });
-        
-        // Make Firebase available globally
-        window.firebaseApp = app;
-        window.firebaseAnalytics = analytics;
-        window.firebaseAuth = auth;
-        window.firebaseDB = db;
-        window.firebaseAuthFunctions = {
-            createUserWithEmailAndPassword,
-            signInWithEmailAndPassword,
-            signOut,
-            onAuthStateChanged,
-            sendPasswordResetEmail,
-            updateProfile,
-            setPersistence,
-            browserLocalPersistence,
-            browserSessionPersistence
-        };
-        window.firestoreFunctions = {
-            getFirestore,
-            doc,
-            setDoc,
-            getDoc,
-            updateDoc,
-            onSnapshot,
-            collection,
-            addDoc,
-            query,
-            where,
-            getDocs,
-            orderBy,
-            serverTimestamp
-        };
-    </script>
-    
     <style>
         * {
             box-sizing: border-box;
@@ -1956,70 +1864,6 @@
             // Audio για ειδοποιήσεις
             const notificationSound = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==');
             
-            // Check for existing session (for cross-browser sync)
-            const savedUser = localStorage.getItem('firebaseAuth_user');
-            if (savedUser) {
-                try {
-                    const userData = JSON.parse(savedUser);
-                    console.log('Found saved user session:', userData.email);
-                    
-                    // Check if session is recent (less than 1 hour old)
-                    const sessionTime = new Date(userData.timestamp);
-                    const currentTime = new Date();
-                    const hoursDiff = (currentTime - sessionTime) / (1000 * 60 * 60);
-                    
-                    if (hoursDiff < 1) {
-                        console.log('Session is recent, attempting auto-login...');
-                    }
-                } catch (e) {
-                    console.error('Error parsing saved session:', e);
-                    localStorage.removeItem('firebaseAuth_user');
-                }
-            }
-
-            // Firebase Auth functions
-            const auth = window.firebaseAuth;
-            const db = window.firebaseDB;
-            const { 
-                createUserWithEmailAndPassword, 
-                signInWithEmailAndPassword, 
-                signOut, 
-                onAuthStateChanged,
-                sendPasswordResetEmail,
-                updateProfile,
-                setPersistence,
-                browserLocalPersistence
-            } = window.firebaseAuthFunctions;
-
-            const {
-                doc,
-                setDoc,
-                getDoc,
-                updateDoc,
-                onSnapshot,
-                collection,
-                addDoc,
-                query,
-                where,
-                getDocs,
-                orderBy,
-                serverTimestamp
-            } = window.firestoreFunctions;
-
-            // UI Elements
-            const authSection = document.getElementById('authSection');
-            const mainApp = document.getElementById('mainApp');
-            const userInfo = document.getElementById('userInfo');
-            const userEmailSpan = document.getElementById('userEmail');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const adminPanelBtn = document.getElementById('adminPanelBtn');
-            const notificationModal = document.getElementById('notificationModal');
-            const notificationContent = document.getElementById('notificationContent');
-            const notificationClose = document.getElementById('notificationClose');
-            const pwaInstall = document.getElementById('pwaInstall');
-            const installPWA = document.getElementById('installPWA');
-            const hidePWA = document.getElementById('hidePWA');
-
             // Καφεμάντεις data
             const fortuneTellers = [
                 {
@@ -2055,82 +1899,34 @@
             ];
 
             let selectedFortuneTeller = null;
+            let currentUser = null;
 
-            // Monitor authentication state with cross-browser sync
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    // User is signed in
-                    authSection.style.display = 'none';
-                    mainApp.style.display = 'block';
-                    userInfo.style.display = 'flex';
-                    userEmailSpan.textContent = user.email;
-                    
-                    // Fill email in forms
-                    document.getElementById('email').value = user.email;
-                    document.getElementById('contact-email').value = user.email;
-                    document.getElementById('contact-name').value = user.displayName || '';
-                    
-                    // Cross-browser sync - save to localStorage
-                    localStorage.setItem('firebaseAuth_user', JSON.stringify({
-                        email: user.email,
-                        uid: user.uid,
-                        displayName: user.displayName,
-                        timestamp: new Date().toISOString()
-                    }));
-                    
-                    // Show admin panel button for admin users
-                    if (user.email === 'admin@kafedium.gr' || user.email === 'franklymadear@gmail.com') {
-                        adminPanelBtn.style.display = 'inline-block';
-                    }
-                    
-                    // Load user data
-                    loadUserPoints();
-                    checkOffersStatus();
-                    checkOfferRedemption();
-                    checkUserConsent();
-                    loadFortuneTellers();
-                    
-                    // Check for PWA installation
-                    checkPWAInstallation();
-                    
-                } else {
-                    // User is signed out
-                    authSection.style.display = 'block';
-                    mainApp.style.display = 'none';
-                    userInfo.style.display = 'none';
-                    localStorage.removeItem('firebaseAuth_user');
-                }
-            });
+            // UI Elements
+            const authSection = document.getElementById('authSection');
+            const mainApp = document.getElementById('mainApp');
+            const userInfo = document.getElementById('userInfo');
+            const userEmailSpan = document.getElementById('userEmail');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const adminPanelBtn = document.getElementById('adminPanelBtn');
+            const notificationModal = document.getElementById('notificationModal');
+            const notificationContent = document.getElementById('notificationContent');
+            const notificationClose = document.getElementById('notificationClose');
+            const pwaInstall = document.getElementById('pwaInstall');
+            const installPWA = document.getElementById('installPWA');
+            const hidePWA = document.getElementById('hidePWA');
 
-            // Listen for auth changes from other tabs/browsers
-            window.addEventListener('storage', (event) => {
-                if (event.key === 'firebaseAuth_user') {
-                    if (event.newValue) {
-                        // User signed in another tab/browser
-                        console.log('User signed in another tab/browser');
-                        location.reload();
-                    } else {
-                        // User signed out another tab/browser
-                        console.log('User signed out another tab/browser');
-                        location.reload();
-                    }
+            // Check for existing session
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    console.log('Found saved user session:', currentUser.email);
+                    updateUIForUser(currentUser);
+                } catch (e) {
+                    console.error('Error parsing saved session:', e);
+                    localStorage.removeItem('currentUser');
                 }
-                
-                // Listen for points updates from admin panel
-                if (event.key === 'pointsUpdated') {
-                    console.log('Points updated from admin panel');
-                    loadUserPoints();
-                }
-                
-                // Listen for new responses from admin
-                if (event.key === 'newResponseAdded') {
-                    console.log('New response added from admin');
-                    checkForNewResponses();
-                    if (document.getElementById('responses-tab').classList.contains('active')) {
-                        loadUserResponses();
-                    }
-                }
-            });
+            }
 
             // PWA Installation
             let deferredPrompt;
@@ -2245,11 +2041,10 @@
             }
 
             function checkUserConsent() {
-                const user = auth.currentUser;
-                if (!user) return;
+                if (!currentUser) return;
                 
                 const userConsent = JSON.parse(localStorage.getItem('userConsent') || '{}');
-                const userAccepted = userConsent[user.email];
+                const userAccepted = userConsent[currentUser.email];
                 
                 if (!userAccepted || userAccepted.version !== getCurrentTermsVersion()) {
                     showConsentModal();
@@ -2316,10 +2111,9 @@
                     return;
                 }
                 
-                const user = auth.currentUser;
-                if (user) {
+                if (currentUser) {
                     const userConsent = JSON.parse(localStorage.getItem('userConsent') || '{}');
-                    userConsent[user.email] = {
+                    userConsent[currentUser.email] = {
                         accepted: true,
                         version: getCurrentTermsVersion(),
                         date: new Date().toISOString(),
@@ -2337,12 +2131,11 @@
 
             // OFFER REDEMPTION CHECK
             function checkOfferRedemption() {
-                const user = auth.currentUser;
-                if (!user) return;
+                if (!currentUser) return;
 
                 const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
                 const userRedemption = redemptions.find(r => 
-                    r.email === user.email && 
+                    r.email === currentUser.email && 
                     r.offerTitle === 'Εξαργύρωσε την Καφεμαντεία'
                 );
 
@@ -2450,17 +2243,37 @@
                 try {
                     showMessage(registerMessage, 'Δημιουργία λογαριασμού...', 'info');
                     
-                    // Create user with Firebase Auth
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    const user = userCredential.user;
+                    // Check if user already exists
+                    const users = JSON.parse(localStorage.getItem('users') || '[]');
+                    const existingUser = users.find(u => u.email === email);
                     
-                    // Update profile with display name
-                    await updateProfile(user, {
-                        displayName: name
+                    if (existingUser) {
+                        showMessage(registerMessage, 'Υπάρχει ήδη λογαριασμός με αυτό το email.', 'error');
+                        return;
+                    }
+                    
+                    // Create new user
+                    const newUser = {
+                        id: Date.now().toString(),
+                        name: name,
+                        email: email,
+                        password: password, // Note: In a real app, this should be hashed
+                        registrationDate: new Date().toISOString()
+                    };
+                    
+                    users.push(newUser);
+                    localStorage.setItem('users', JSON.stringify(users));
+                    
+                    // Create user points record
+                    const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                    userPointsData.push({
+                        userId: newUser.id,
+                        email: email,
+                        points: 20, // 20 points for registration
+                        level: 'Αρχάριος',
+                        registrationDate: new Date().toISOString()
                     });
-                    
-                    // Create user in Firestore με 20 πόντους
-                    await createUserInFirestore(user, 20);
+                    localStorage.setItem('userPoints', JSON.stringify(userPointsData));
                     
                     // Save consent
                     const userConsent = JSON.parse(localStorage.getItem('userConsent') || '{}');
@@ -2473,21 +2286,16 @@
                     
                     localStorage.setItem('userConsent', JSON.stringify(userConsent));
                     
+                    // Auto login
+                    currentUser = newUser;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateUIForUser(currentUser);
+                    
                     showMessage(registerMessage, 'Η εγγραφή ολοκληρώθηκε επιτυχώς! Κερδίσατε 20 πόντους.', 'success');
                     
                 } catch (error) {
                     console.error('Registration error:', error);
-                    let errorMessage = 'Προέκυψε σφάλμα κατά την εγγραφή.';
-                    
-                    if (error.code === 'auth/email-already-in-use') {
-                        errorMessage = 'Υπάρχει ήδη λογαριασμός με αυτό το email.';
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorMessage = 'Το email δεν είναι έγκυρο.';
-                    } else if (error.code === 'auth/weak-password') {
-                        errorMessage = 'Ο κωδικός είναι πολύ αδύναμος.';
-                    }
-                    
-                    showMessage(registerMessage, errorMessage, 'error');
+                    showMessage(registerMessage, 'Προέκυψε σφάλμα κατά την εγγραφή.', 'error');
                 }
             });
             
@@ -2509,34 +2317,30 @@
                 try {
                     showMessage(loginMessage, 'Σύνδεση...', 'info');
                     
-                    await signInWithEmailAndPassword(auth, email, password);
+                    // Check credentials
+                    const users = JSON.parse(localStorage.getItem('users') || '[]');
+                    const user = users.find(u => u.email === email && u.password === password);
                     
-                    showMessage(loginMessage, 'Σύνδεση επιτυχής!', 'success');
+                    if (user) {
+                        currentUser = user;
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        updateUIForUser(currentUser);
+                        showMessage(loginMessage, 'Σύνδεση επιτυχής!', 'success');
+                    } else {
+                        showMessage(loginMessage, 'Λάθος email ή κωδικός πρόσβασης.', 'error');
+                    }
                     
                 } catch (error) {
                     console.error('Login error:', error);
-                    let errorMessage = 'Λάθος email ή κωδικός πρόσβασης.';
-                    
-                    if (error.code === 'auth/invalid-credential') {
-                        errorMessage = 'Λάθος email ή κωδικός πρόσβασης.';
-                    } else if (error.code === 'auth/user-not-found') {
-                        errorMessage = 'Δεν βρέθηκε χρήστης με αυτό το email.';
-                    } else if (error.code === 'auth/wrong-password') {
-                        errorMessage = 'Λάθος κωδικός πρόσβασης.';
-                    }
-                    
-                    showMessage(loginMessage, errorMessage, 'error');
+                    showMessage(loginMessage, 'Προέκυψε σφάλμα κατά τη σύνδεση.', 'error');
                 }
             });
             
-            // LOGOUT with cross-browser sync
-            logoutBtn.addEventListener('click', async function() {
-                try {
-                    await signOut(auth);
-                    localStorage.removeItem('firebaseAuth_user'); // Clear sync data
-                } catch (error) {
-                    console.error('Logout error:', error);
-                }
+            // LOGOUT
+            logoutBtn.addEventListener('click', function() {
+                currentUser = null;
+                localStorage.removeItem('currentUser');
+                updateUIForUser(null);
             });
             
             // PASSWORD RESET FUNCTIONALITY
@@ -2573,26 +2377,19 @@
                     return;
                 }
                 
-                try {
-                    await sendPasswordResetEmail(auth, email);
-                    showMessage(forgotPasswordMessage, `Email επαναφοράς κωδικού στάλθηκε στο ${email}. Ελέγξτε το inbox σας.`, 'success');
+                // Check if user exists
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const user = users.find(u => u.email === email);
+                
+                if (user) {
+                    showMessage(forgotPasswordMessage, `Οδηγίες επαναφοράς κωδικού έχουν σταλεί στο ${email}.`, 'success');
                     
                     setTimeout(() => {
                         forgotPasswordModal.style.display = 'none';
                         forgotPasswordForm.reset();
                     }, 3000);
-                    
-                } catch (error) {
-                    console.error('Password reset error:', error);
-                    let errorMessage = 'Προέκυψε σφάλμα κατά την αποστολή του email.';
-                    
-                    if (error.code === 'auth/user-not-found') {
-                        errorMessage = 'Δεν βρέθηκε χρήστης με αυτό το email.';
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorMessage = 'Το email δεν είναι έγκυρο.';
-                    }
-                    
-                    showMessage(forgotPasswordMessage, errorMessage, 'error');
+                } else {
+                    showMessage(forgotPasswordMessage, 'Δεν βρέθηκε χρήστης με αυτό το email.', 'error');
                 }
             });
             
@@ -2732,8 +2529,7 @@
             visitorForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                const user = auth.currentUser;
-                if (!user) return;
+                if (!currentUser) return;
                 
                 // Check if fortune teller is selected
                 if (!selectedFortuneTeller) {
@@ -2744,7 +2540,7 @@
                 
                 const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
                 const userRedemption = redemptions.find(r => 
-                    r.email === user.email && 
+                    r.email === currentUser.email && 
                     r.offerTitle === 'Εξαργύρωσε την Καφεμαντεία'
                 );
 
@@ -2794,7 +2590,7 @@
                         id: Date.now(),
                         type: 'photo',
                         userEmail: email,
-                        userId: user.uid,
+                        userId: currentUser.id,
                         fortuneTellerId: selectedFortuneTeller.id,
                         fortuneTellerName: selectedFortuneTeller.name,
                         coffeeType: coffeeType.value,
@@ -2849,81 +2645,31 @@
                 return typeMap[type] || type;
             }
 
-            // POINTS SYSTEM WITH FIRESTORE - ΒΕΛΤΙΩΜΕΝΗ ΣΥΓΧΡΟΝΙΣΗ
-            async function loadUserPoints() {
-                const user = auth.currentUser;
-                if (!user) return;
+            // POINTS SYSTEM
+            function loadUserPoints() {
+                if (!currentUser) return;
                 
-                try {
-                    const userDocRef = doc(db, 'users', user.uid);
-                    
-                    // Real-time listener για αλλαγές πόντων
-                    onSnapshot(userDocRef, (docSnap) => {
-                        if (docSnap.exists()) {
-                            const userData = docSnap.data();
-                            const points = userData.points || 0;
-                            const level = calculateLevel(points);
-                            
-                            updatePointsUI(points, level);
-                        } else {
-                            // Δημιουργία νέου χρήστη αν δεν υπάρχει
-                            createUserInFirestore(user, 20); // 20 points για εγγραφή
-                        }
-                    });
-                    
-                } catch (error) {
-                    console.error('Error loading user points:', error);
-                    // Fallback to localStorage αν αποτύχει το Firestore
-                    loadUserPointsFromLocalStorage();
-                }
+                const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                const userPoints = userPointsData.find(p => p.email === currentUser.email) || {
+                    userId: currentUser.id,
+                    email: currentUser.email,
+                    points: 0,
+                    level: 'Αρχάριος',
+                    registrationDate: new Date().toISOString()
+                };
+                
+                updatePointsUI(userPoints.points, userPoints.level);
             }
 
-            async function createUserInFirestore(user, initialPoints = 0) {
-                try {
-                    const userData = {
-                        email: user.email,
-                        displayName: user.displayName || '',
-                        points: initialPoints,
-                        level: calculateLevel(initialPoints),
-                        registrationDate: new Date().toISOString(),
-                        lastUpdated: new Date().toISOString()
-                    };
-                    
-                    await setDoc(doc(db, 'users', user.uid), userData);
-                    console.log('User created in Firestore with', initialPoints, 'points');
-                } catch (error) {
-                    console.error('Error creating user in Firestore:', error);
-                }
-            }
-
-            async function addPointsForSubmission(email, pointsToAdd) {
-                const user = auth.currentUser;
-                if (!user) return;
+            function addPointsForSubmission(email, pointsToAdd) {
+                const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                const userPoints = userPointsData.find(p => p.email === email);
                 
-                try {
-                    const userDocRef = doc(db, 'users', user.uid);
-                    const userDoc = await getDoc(userDocRef);
-                    
-                    if (userDoc.exists()) {
-                        const currentData = userDoc.data();
-                        const newPoints = (currentData.points || 0) + pointsToAdd;
-                        const newLevel = calculateLevel(newPoints);
-                        
-                        await updateDoc(userDocRef, {
-                            points: newPoints,
-                            level: newLevel,
-                            lastUpdated: new Date().toISOString()
-                        });
-                        
-                        console.log(`Added ${pointsToAdd} points to user ${email}. Total: ${newPoints}`);
-                    } else {
-                        // Αν ο χρήστης δεν υπάρχει ακόμα, δημιουργήστε τον
-                        await createUserInFirestore(user, pointsToAdd);
-                    }
-                } catch (error) {
-                    console.error('Error adding points:', error);
-                    // Fallback to localStorage
-                    addPointsToLocalStorage(email, pointsToAdd);
+                if (userPoints) {
+                    userPoints.points += pointsToAdd;
+                    userPoints.level = calculateLevel(userPoints.points);
+                    localStorage.setItem('userPoints', JSON.stringify(userPointsData));
+                    updatePointsUI(userPoints.points, userPoints.level);
                 }
             }
 
@@ -2943,35 +2689,6 @@
                 updateRedeemButton(points);
             }
 
-            // Fallback functions για localStorage
-            function loadUserPointsFromLocalStorage() {
-                const user = auth.currentUser;
-                if (!user) return;
-                
-                const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                const userPoints = userPointsData.find(p => p.email === user.email) || {
-                    userId: user.uid,
-                    email: user.email,
-                    points: 0,
-                    level: 'Αρχάριος',
-                    registrationDate: new Date().toISOString()
-                };
-                
-                updatePointsUI(userPoints.points, userPoints.level);
-            }
-
-            function addPointsToLocalStorage(email, pointsToAdd) {
-                const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                const userPoints = userPointsData.find(p => p.email === email);
-                
-                if (userPoints) {
-                    userPoints.points += pointsToAdd;
-                    userPoints.level = calculateLevel(userPoints.points);
-                    localStorage.setItem('userPoints', JSON.stringify(userPointsData));
-                    updatePointsUI(userPoints.points, userPoints.level);
-                }
-            }
-            
             // CONTACT FORM
             const contactForm = document.getElementById('contactForm');
             const contactSubmitBtn = document.getElementById('contactSubmitBtn');
@@ -2980,8 +2697,7 @@
             contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                const user = auth.currentUser;
-                if (!user) return;
+                if (!currentUser) return;
                 
                 const name = document.getElementById('contact-name').value;
                 const email = document.getElementById('contact-email').value;
@@ -3001,7 +2717,7 @@
                     type: 'message',
                     userName: name,
                     userEmail: email,
-                    userId: user.uid,
+                    userId: currentUser.id,
                     date: new Date().toISOString(),
                     status: 'pending',
                     subject: subject,
@@ -3025,8 +2741,8 @@
                 showMessage(contactMessageDiv, `Το μήνυμά σας στάλθηκε επιτυχώς! Θα λάβετε απάντηση στο ${email} το συντομότερο δυνατό.`, 'success');
                 
                 contactForm.reset();
-                document.getElementById('contact-name').value = user.displayName || '';
-                document.getElementById('contact-email').value = user.email;
+                document.getElementById('contact-name').value = currentUser.name || '';
+                document.getElementById('contact-email').value = currentUser.email;
                 
                 contactSubmitBtn.disabled = false;
                 contactSubmitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Μηνύματος';
@@ -3038,12 +2754,11 @@
                 localStorage.setItem('coffeeSubmissions', JSON.stringify(existingSubmissions));
             }
 
-            // LOAD USER RESPONSES - ΒΕΛΤΙΩΜΕΝΗ ΕΙΔΟΠΟΙΗΣΗ
+            // LOAD USER RESPONSES
             function loadUserResponses() {
-                const user = auth.currentUser;
-                if (!user) return;
+                if (!currentUser) return;
                 
-                const userEmail = user.email;
+                const userEmail = currentUser.email;
                 const responses = JSON.parse(localStorage.getItem('coffeeResponses') || '[]');
                 const userResponses = responses.filter(response => response.userEmail === userEmail);
                 const responsesList = document.getElementById('responses-list');
@@ -3101,10 +2816,9 @@
             }
 
             function checkForNewResponses() {
-                const user = auth.currentUser;
-                if (!user) return;
+                if (!currentUser) return;
                 
-                const userEmail = user.email;
+                const userEmail = currentUser.email;
                 const responses = JSON.parse(localStorage.getItem('coffeeResponses') || '[]');
                 const userResponses = responses.filter(response => response.userEmail === userEmail);
                 const newResponses = userResponses.filter(response => !response.viewed);
@@ -3152,80 +2866,12 @@
                 }
             });
             
-            // REDEEM MAIN OFFER WITH FIRESTORE
-            async function redeemMainOffer() {
-                const user = auth.currentUser;
-                if (!user) return;
-                
-                try {
-                    const userDocRef = doc(db, 'users', user.uid);
-                    const userDoc = await getDoc(userDocRef);
-                    
-                    if (userDoc.exists()) {
-                        const userData = userDoc.data();
-                        const currentPoints = userData.points || 0;
-                        
-                        if (currentPoints >= 50) {
-                            const newPoints = currentPoints - 50;
-                            
-                            // Update points in Firestore
-                            await updateDoc(userDocRef, {
-                                points: newPoints,
-                                level: calculateLevel(newPoints),
-                                lastUpdated: new Date().toISOString()
-                            });
-                            
-                            // Save redemption
-                            const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
-                            redemptions.push({
-                                userId: user.uid,
-                                email: user.email,
-                                offerId: 1,
-                                offerTitle: 'Εξαργύρωσε την Καφεμαντεία',
-                                date: new Date().toISOString(),
-                                pointsSpent: 50
-                            });
-                            localStorage.setItem('offerRedemptions', JSON.stringify(redemptions));
-                            
-                            // Notify admin
-                            const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
-                            adminNotifications.push({
-                                type: 'offer_redemption',
-                                userEmail: user.email,
-                                userName: user.displayName,
-                                offerTitle: 'Εξαργύρωσε την Καφεμαντεία',
-                                date: new Date().toISOString(),
-                                status: 'pending'
-                            });
-                            localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
-                            
-                            showNotification(`Ανταλλάξατε επιτυχώς την προσφορά "Εξαργύρωσε την Καφεμαντεία"! Αφαιρέθηκαν 50 πόντοι. Μπορείτε τώρα να υποβάλετε φωτογραφίες.`);
-                            
-                            checkOfferRedemption();
-                            
-                        } else {
-                            document.getElementById('warningPoints').textContent = currentPoints;
-                            document.getElementById('pointsWarningModal').style.display = 'flex';
-                        }
-                    } else {
-                        // User doesn't exist in Firestore
-                        await createUserInFirestore(user, 0);
-                        document.getElementById('warningPoints').textContent = 0;
-                        document.getElementById('pointsWarningModal').style.display = 'flex';
-                    }
-                } catch (error) {
-                    console.error('Error redeeming offer:', error);
-                    // Fallback to localStorage
-                    redeemMainOfferLocalStorage();
-                }
-            }
-
-            function redeemMainOfferLocalStorage() {
-                const user = auth.currentUser;
-                if (!user) return;
+            // REDEEM MAIN OFFER
+            function redeemMainOffer() {
+                if (!currentUser) return;
                 
                 const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                const userPoints = userPointsData.find(p => p.email === user.email);
+                const userPoints = userPointsData.find(p => p.email === currentUser.email);
                 
                 if (userPoints && userPoints.points >= 50) {
                     userPoints.points -= 50;
@@ -3233,8 +2879,8 @@
                     
                     const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
                     redemptions.push({
-                        userId: user.uid,
-                        email: user.email,
+                        userId: currentUser.id,
+                        email: currentUser.email,
                         offerId: 1,
                         offerTitle: 'Εξαργύρωσε την Καφεμαντεία',
                         date: new Date().toISOString(),
@@ -3254,11 +2900,10 @@
             
             function loadOffers() {
                 const offersList = document.getElementById('offersList');
-                const user = auth.currentUser;
-                if (!user) return;
+                if (!currentUser) return;
                 
                 const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                const userPoints = userPointsData.find(p => p.email === user.email) || { points: 0 };
+                const userPoints = userPointsData.find(p => p.email === currentUser.email) || { points: 0 };
                 
                 const offers = [];
                 
@@ -3272,7 +2917,7 @@
                 }
             }
 
-            // AUTO REFRESH - ΒΕΛΤΙΩΜΕΝΗ ΣΥΓΧΡΟΝΙΣΗ
+            // AUTO REFRESH
             setInterval(() => {
                 checkForNewResponses();
                 if (document.getElementById('responses-tab').classList.contains('active')) {
@@ -3319,8 +2964,7 @@
             }
 
             // Add admin buttons if user is admin
-            const user = auth.currentUser;
-            if (user && (user.email === 'admin@kafedium.gr' || user.email === 'franklymadear@gmail.com')) {
+            if (currentUser && (currentUser.email === 'admin@kafedium.gr' || currentUser.email === 'franklymadear@gmail.com')) {
                 addAdminButtons();
             }
 
@@ -3349,6 +2993,40 @@
                 setTimeout(function() {
                     element.style.display = 'none';
                 }, 5000);
+            }
+
+            function updateUIForUser(user) {
+                if (user) {
+                    authSection.style.display = 'none';
+                    mainApp.style.display = 'block';
+                    userInfo.style.display = 'flex';
+                    userEmailSpan.textContent = user.email;
+                    
+                    // Fill email in forms
+                    document.getElementById('email').value = user.email;
+                    document.getElementById('contact-email').value = user.email;
+                    document.getElementById('contact-name').value = user.name || '';
+                    
+                    // Show admin panel button for admin users
+                    if (user.email === 'admin@kafedium.gr' || user.email === 'franklymadear@gmail.com') {
+                        adminPanelBtn.style.display = 'inline-block';
+                    }
+                    
+                    // Load user data
+                    loadUserPoints();
+                    checkOffersStatus();
+                    checkOfferRedemption();
+                    checkUserConsent();
+                    loadFortuneTellers();
+                    
+                    // Check for PWA installation
+                    checkPWAInstallation();
+                    
+                } else {
+                    authSection.style.display = 'block';
+                    mainApp.style.display = 'none';
+                    userInfo.style.display = 'none';
+                }
             }
 
             // Make functions globally available
