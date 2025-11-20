@@ -868,6 +868,21 @@
             font-size: 0.85rem;
         }
 
+        /* Επιπλέον στυλ για καφεμάντη */
+        .fortune-teller-info {
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 3px solid #9C27B0;
+        }
+
+        .fortune-teller-info p {
+            margin: 4px 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
         /* Sound notification */
         .sound-notification {
             display: none;
@@ -1529,6 +1544,14 @@
                         </div>
                     ` : '';
                     
+                    // Πληροφορίες επιλεγμένου καφεμάντη - ΑΥΤΟ ΕΙΝΑΙ ΤΟ ΚΡΙΣΙΜΟ ΣΗΜΕΙΟ
+                    const fortuneTellerInfo = submission.fortuneTellerName ? `
+                        <div class="fortune-teller-info">
+                            <p><strong>Επιλεγμένος Καφεμάντης:</strong> ${submission.fortuneTellerName}</p>
+                            ${submission.fortuneTellerId ? `<p><strong>ID Καφεμάντη:</strong> ${submission.fortuneTellerId}</p>` : ''}
+                        </div>
+                    ` : '';
+                    
                     const submissionCard = document.createElement('div');
                     submissionCard.className = 'submission-card';
                     submissionCard.innerHTML = `
@@ -1538,6 +1561,7 @@
                             <div class="submission-status ${statusClass}">${statusText}</div>
                         </div>
                         
+                        ${fortuneTellerInfo}
                         ${coffeeReadingInfo}
                         
                         <div class="submission-content">
@@ -2042,12 +2066,21 @@
                         </div>
                     ` : '';
                     
+                    // Πληροφορίες επιλεγμένου καφεμάντη
+                    const fortuneTellerInfo = submission.fortuneTellerName ? `
+                        <div class="fortune-teller-info">
+                            <p><strong>Επιλεγμένος Καφεμάντης:</strong> ${submission.fortuneTellerName}</p>
+                            ${submission.fortuneTellerId ? `<p><strong>ID Καφεμάντη:</strong> ${submission.fortuneTellerId}</p>` : ''}
+                        </div>
+                    ` : '';
+                    
                     modalBody.innerHTML = `
                         <div class="submission-header">
                             <div class="submission-user">${submission.userEmail || submission.email || 'Άγνωστος Χρήστης'}</div>
                             <div class="submission-date">${formatDate(submission.date)}</div>
                         </div>
                         
+                        ${fortuneTellerInfo}
                         ${coffeeReadingInfo}
                         
                         <div class="submission-content">
@@ -2341,6 +2374,7 @@
                         <div class="submission-content">
                             <div class="submission-message">
                                 <strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText || 'Γραπτή Ερμηνεία'}<br>
+                                ${submission.fortuneTellerName ? `<strong>Επιλεγμένος Καφεμάντης:</strong> ${submission.fortuneTellerName}<br>` : ''}
                                 ${submission.desire ? `<strong>Επιθυμία Χρήστη:</strong><br>${submission.desire}<br><br>` : ''}
                                 <strong>Αρχικό Μήνυμα:</strong><br>
                                 ${submission.message || 'Δεν υπάρχει μήνυμα'}
@@ -2404,6 +2438,7 @@
                     userEmail: submission.userEmail || submission.email,
                     adminMessage: formattedMessage, // Αποθηκεύουμε το μήνυμα με links
                     originalMessage: submission.message || submission.subject,
+                    fortuneTellerName: submission.fortuneTellerName,
                     date: new Date().toISOString(),
                     status: 'sent'
                 };
