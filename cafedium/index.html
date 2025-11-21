@@ -1546,9 +1546,9 @@
                                         <input type="radio" name="coffeeType" value="1plus1" required>
                                         <div class="option-content">
                                             <div class="option-title">Προσφορά 1+1 Δώρο</div>
-                                            <div class="option-description">Δώρο:Η 2η ερμηνεία δωρεάν!Αποστείλετε και τα Δυο φλυτζάνια(φωτογραφίες) ηλεκτρονικά.</div>
+                                            <div class="option-description">Δώρο:Η 2η ερμηνεία δωρεάν!</div>
                                         </div>
-                                        <div class="option-price" id="1plus1-price">Ανταλλαγή (50 Πόντοι)</div>
+                                        <div class="option-price" id="1plus1-price">50 Πόντοι</div>
                                     </label>
                                 </div>
                             </div>
@@ -1712,7 +1712,7 @@
                 <div class="info-box">
                     <p><strong>Διαδικασία :</strong></p>
                     <ul><li>Στην κεντρική οθόνη πηγαίνετε στο πλαίσιο "Το Φλυτζάνι σου Μιλά".</li>
-                    <li>Επιλέξτε τον Καφεμάντη,το Μονοπάτι του Φλυντζανιού "Γραπτή η Προφορική" ερμηνεία .</li>
+                    <li>Επιλέξτε το Μονοπάτι του Φλυντζανιού "Γραπτή η Προφορική" ερμηνεία .</li>
                     <li>Κλείστε Ραντεβου μέσω Google Calendar.</li>
                     <li>Προσοχή να χρησιμοποιείτε το ίδιο Email κατά την εγγραφή στην εφαρμογή όπως στην εξαργύρωση Πόντων κ στο κλείσιμο Ραντεβού.</li>
                     <p><strong>Πώς λειτουργεί το σύστημα πόντων:</strong></p>
@@ -2215,8 +2215,8 @@
                 if (offer1plus1) {
                     if (offersStatus['1plus1']) {
                         offer1plus1.parentElement.style.display = 'flex';
-                        priceElement.textContent = 'Ενεργή Προσφορά!';
-                        priceElement.style.color = 'var(--success)';
+                        priceElement.textContent = '50 Πόντοι';
+                        priceElement.style.color = 'var(--primary)';
                         priceElement.style.fontWeight = 'bold';
                     } else {
                         offer1plus1.parentElement.style.display = 'none';
@@ -2612,6 +2612,37 @@
                     return;
                 }
                 
+                // ΕΛΕΓΧΟΣ ΓΙΑ 1+1 ΠΡΟΣΦΟΡΑ - ΧΡΕΩΣΗ 50 ΠΟΝΤΩΝ
+                if (coffeeType.value === '1plus1') {
+                    const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                    const userPoints = userPointsData.find(p => p.email === currentUser.email);
+                    
+                    if (!userPoints || userPoints.points < 50) {
+                        document.getElementById('warningPoints').textContent = userPoints ? userPoints.points : 0;
+                        document.getElementById('pointsWarningModal').style.display = 'flex';
+                        return;
+                    }
+                    
+                    // Αφαίρεση 50 πόντων για την προσφορά 1+1
+                    userPoints.points -= 50;
+                    localStorage.setItem('userPoints', JSON.stringify(userPointsData));
+                    
+                    // Καταγραφή εξαργύρωσης προσφοράς 1+1
+                    const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
+                    redemptions.push({
+                        userId: currentUser.id,
+                        email: currentUser.email,
+                        offerId: '1plus1',
+                        offerTitle: 'Προσφορά 1+1 Δώρο',
+                        date: new Date().toISOString(),
+                        pointsSpent: 50
+                    });
+                    localStorage.setItem('offerRedemptions', JSON.stringify(redemptions));
+                    
+                    showNotification(`Ανταλλάξατε επιτυχώς την προσφορά "1+1 Δώρο"! Αφαιρέθηκαν 50 πόντοι.`);
+                    loadUserPoints();
+                }
+                
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Αποστολή...';
                 
@@ -2646,7 +2677,11 @@
                     };
                     
                     saveSubmission(submission);
-                    addPointsForSubmission(email, 10);
+                    
+                    // Προσθήκη πόντων μόνο για γραπτή ή προφορική ερμηνεία, ΟΧΙ για 1+1
+                    if (coffeeType.value !== '1plus1') {
+                        addPointsForSubmission(email, 10);
+                    }
                     
                     // Notify admin
                     const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
@@ -2664,7 +2699,13 @@
                     });
                     localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
                     
-                    showMessage(messageDiv, `Οι ${selectedFiles.length} φωτογραφίες του καφέ σας στάλθηκαν επιτυχώς στον ${selectedFortuneTeller.name}! Κερδίσατε 10 πόντους.`, 'success');
+                    let successMessage = `Οι ${selectedFiles.length} φωτογραφίες του καφέ σας στάλθηκαν επιτυχώς στον ${selectedFortuneTeller.name}!`;
+                    
+                    if (coffeeType.value !== '1plus1') {
+                        successMessage += ' Κερδίσατε 10 πόντους.';
+                    }
+                    
+                    showMessage(messageDiv, successMessage, 'success');
                     
                     visitorForm.reset();
                     selectedFiles = [];
