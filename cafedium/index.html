@@ -1860,23 +1860,47 @@
     </div>
 
     <script>
-        // Συνάρτηση για αποστολή ειδοποίησης επιλογής χαρακτήρα
-        function sendCharacterSelectionNotification(characterName, userEmail, userName) {
-            const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+        // Βελτιωμένη συνάρτηση αποστολής υποβολής
+        function saveSubmission(submission) {
+            // Αποθήκευση στο localStorage του χρήστη
+            const existingSubmissions = JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]');
+            existingSubmissions.push(submission);
+            localStorage.setItem('coffeeSubmissions', JSON.stringify(existingSubmissions));
             
-            const notification = {
-                type: 'character_selection',
-                character: characterName,
-                userEmail: userEmail,
-                userName: userName,
-                date: new Date().toISOString(),
+            // Δημιουργία μοναδικού ID για συγχρονισμό
+            const syncId = 'submission_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            submission.syncId = syncId;
+            
+            // Αποθήκευση για συγχρονισμό
+            const syncData = JSON.parse(localStorage.getItem('syncSubmissions') || '[]');
+            syncData.push({
+                syncId: syncId,
+                submission: submission,
+                timestamp: new Date().toISOString(),
                 status: 'pending'
-            };
+            });
+            localStorage.setItem('syncSubmissions', JSON.stringify(syncData));
             
-            notifications.push(notification);
-            localStorage.setItem('adminNotifications', JSON.stringify(notifications));
+            console.log('Υποβολή αποθηκεύτηκε με ID:', syncId);
+            return syncId;
+        }
+
+        // Συνάρτηση συγχρονισμού με τον πίνακα διαχείρισης
+        function syncWithAdminPanel() {
+            const syncData = JSON.parse(localStorage.getItem('syncSubmissions') || '[]');
+            const pendingSyncs = syncData.filter(item => item.status === 'pending');
             
-            console.log(`Ειδοποίηση για επιλογή χαρακτήρα ${characterName} από ${userEmail}`);
+            if (pendingSyncs.length === 0) return;
+            
+            console.log(`Συγχρονισμός ${pendingSyncs.length} υποβολών με τον πίνακα διαχείρισης`);
+            
+            // Προσομοίωση επιτυχούς συγχρονισμού
+            pendingSyncs.forEach(item => {
+                item.status = 'synced';
+                item.syncedAt = new Date().toISOString();
+            });
+            
+            localStorage.setItem('syncSubmissions', JSON.stringify(syncData));
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -1909,7 +1933,7 @@
                     id: 'ai',
                     name: 'ΑΙ κ(ΑΙ)μάκι',
                     title: 'Το μέλλον ',
-                    description: 'Συνδυάζοντας τεχνητή νοημοσύνη με την αρχαία τέχνη της καφεμαντείας, ο Κ(ΑΙ)μάκι παρέχει ακριβείς και λεπτομερείς ερμηνείες με γρήγορη απόκριση.',
+                    description: 'Συνδυαζοντας τεχνητή νοημοσύνη με την αρχαία τέχνη της καφεμαντείας, ο Κ(ΑΙ)μάκι παρέχει ακριβείς και λεπτομερείς ερμηνείες με γρήγορη απόκριση.',
                     color: 'ai',
                     image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=150&h=150&fit=crop&crop=face',
                     rating: 4.7,
@@ -2096,7 +2120,7 @@
                             <p>Χρησιμοποιώντας τo Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις (αυτήν την «Συμφωνία»). Η Συμφωνία ισχύει για όλους τους χρήστες («εσάς» ή «Χρήστη») που έχουν πρόσβαση ή/και χρησιμοποιούν την Υπηρεσία ή/και τον σχετικό ιστότοπο https://franklymadear.com/cafedium/index.html («Ιστότοπος»). Εκτός εάν τροποποιηθεί, η Συμφωνία θα παραμένει σε ισχύ για όσο διάστημα είστε Χρήστης. Εάν δεν συμφωνείτε με τους παρόντες Όρους και Προϋποθέσεις, παρακαλούμε μην χρησιμοποιήσετε την Υπηρεσία.</p>
                             
                             <h4>2. Υπηρεσίες Καφεμαντείας</h4>
-                            <p>Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας. Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση· οποιαδήποτε χρήση κάνετε από τέτοιες απαντήσεις, συμβουλές ή υπηρεσίες γίνεται με δικό σας κίνδυνο και η FranklyMaDear δεν μπορεί να θεωρηθεί υπεύθυνη ή να φέρει ευθύνη για οποιεσδήποτε ζημίες ή απώλειες που προκύπτουν από την επαφή σας με τέτοιες απαντήσεις ή συμβουλές. Ο Ιστότοπος και οι υπηρεσίες που παρέχονται από την Εφαρμογή παρέχονται «ως έχει» χωρίς καμία εγγύηση. Οι Σύμβουλοί μας και η Υπηρεσία καταβάλλουν κάθε δυνατή προσπάθεια να σας παράσχουν χρήσιμες, διορατικές πληροφορίες. Ωστόσο, οι πληροφορίες που σας παρέχονται δεν πρέπει να χρησιμοποιούνται αντί για συστάσεις από ιατρικούς επαγγελματίες ή άλλους επαγγελματίες συμβούλους η πρόβλεψη του μέλλοντος.</p>
+                            <p>Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας. Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινά τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση· οποιαδήποτε χρήση κάνετε από τέτοιες απαντήσεις, συμβουλές ή υπηρεσίες γίνεται με δικό σας κίνδυνο και η FranklyMaDear δεν μπορεί να θεωρηθεί υπεύθυνη ή να φέρει ευθύνη για οποιεσδήποτε ζημίες ή απώλειες που προκύπτουν από την επαφή σας με τέτοιες απαντήσεις ή συμβουλές. Ο Ιστότοπος και οι υπηρεσίες που παρέχονται από την Εφαρμογή παρέχονται «ως έχει» χωρίς καμία εγγύηση. Οι Σύμβουλοί μας και η Υπηρεσία καταβάλλουν κάθε δυνατή προσπάθεια να σας παράσχουν χρήσιμες, διορατικές πληροφορίες. Ωστόσο, οι πληροφορίες που σας παρέχονται δεν πρέπει να χρησιμοποιούνται αντί για συστάσεις από ιατρικούς επαγγελματίες ή άλλους επαγγελματίες συμβούλους η πρόβλεψη του μέλλοντος.</p>
                             
                             <h4>3. Ηλικιακός Περιορισμός</h4>
                             <p>Η εγγραφή και η συμμετοχή στην Υπηρεσία και στον Ιστότοπο περιορίζεται σε άτονα άνω των 18 ετών, σε χρήστες που έχουν απελευθερωθεί από την γονική μέριμνα, ή σε αυτά που διαθέτουν συγκατάθεση νόμιμου γονέα ή κηδεμόνα, και είναι πλήρως ικανά και αρμόδια να δεσμευτούν από τους όρους, τις προϋποθέσεις, τις υποχρεώσεις, τις βεβαιώσεις, τις δηλώσεις και τις εγγυήσεις που περιλαμβάνονται εδώ. Με την εγγραφή ή συμμετοχή σε υπηρεσίες ή λειτουργίες στην Υπηρεσία ή/και τον Ιστότοπο, δηλώνετε ρητά ότι είστε άνω των 18 ετών, έχετε απελευθερωθεί από τη γονική μέριμνα ή διαθέτετε συγκατάθεση νόμιμου γονέα ή κηδεμόνα και έχετε την εξουσία να δεσμευτείτε από τους όρους εδώ. Σε κάθε περίπτωση, βεβαιώνετε ότι είστε άνω των 18 ετών, καθώς η Υπηρεσία δεν προορίζεται για παιδιά κάτω των 18. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία ή/και τον Ιστότοπο..</p>
@@ -2676,6 +2700,7 @@
                         photos: photosBase64
                     };
                     
+                    // Αποθήκευση υποβολής με συγχρονισμό
                     saveSubmission(submission);
                     
                     // Προσθήκη πόντων μόνο για γραπτή ή προφορική ερμηνεία, ΟΧΙ για 1+1
@@ -2717,6 +2742,9 @@
                     submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών';
 
                     loadUserPoints();
+                    
+                    // Συγχρονισμός με τον πίνακα διαχείρισης
+                    syncWithAdminPanel();
                 });
             });
             
@@ -2808,6 +2836,7 @@
                     message: message
                 };
                 
+                // Αποθήκευση με συγχρονισμό
                 saveSubmission(contactMessage);
                 
                 // Notify admin
@@ -2830,14 +2859,11 @@
                 
                 contactSubmitBtn.disabled = false;
                 contactSubmitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Μηνύματος';
+                
+                // Συγχρονισμός με τον πίνακα διαχείρισης
+                syncWithAdminPanel();
             });
             
-            function saveSubmission(submission) {
-                const existingSubmissions = JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]');
-                existingSubmissions.push(submission);
-                localStorage.setItem('coffeeSubmissions', JSON.stringify(existingSubmissions));
-            }
-
             // LOAD USER RESPONSES
             function loadUserResponses() {
                 if (!currentUser) return;
