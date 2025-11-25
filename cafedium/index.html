@@ -6,6 +6,11 @@
     <title>Cafedium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
     <!-- Favicon για όλες τις συσκευές -->
     <link rel="icon" type="image/png" href="coffeetime.png">
     <link rel="apple-touch-icon" href="coffeetime.png">
@@ -1860,94 +1865,21 @@
     </div>
 
     <script>
-        // ================== ΣΥΣΤΗΜΑ ΣΥΓΧΡΟΝΙΣΜΟΥ ΓΙΑ ΤΟ INDEX.HTML ==================
-        
-        // Συνάρτηση για φόρτωση συγχρονισμένων δεδομένων από τον διαχειριστή
-        function loadSyncedDataFromAdmin() {
-            console.log('Φόρτωση συγχρονισμένων δεδομένων από τον πίνακα διαχείρισης...');
-            
-            try {
-                const syncData = JSON.parse(localStorage.getItem('adminSyncData') || '{}');
-                
-                if (syncData.data && syncData.timestamp) {
-                    console.log('Βρέθηκαν συγχρονισμένα δεδομένα από διαχειριστή:', new Date(syncData.timestamp).toLocaleString());
-                    
-                    // Ενημέρωση τοπικών δεδομένων με τα συγχρονισμένα
-                    if (syncData.data.users) {
-                        localStorage.setItem('users', JSON.stringify(syncData.data.users));
-                    }
-                    if (syncData.data.submissions) {
-                        localStorage.setItem('coffeeSubmissions', JSON.stringify(syncData.data.submissions));
-                    }
-                    if (syncData.data.responses) {
-                        localStorage.setItem('coffeeResponses', JSON.stringify(syncData.data.responses));
-                    }
-                    if (syncData.data.userPoints) {
-                        localStorage.setItem('userPoints', JSON.stringify(syncData.data.userPoints));
-                    }
-                    if (syncData.data.notifications) {
-                        localStorage.setItem('adminNotifications', JSON.stringify(syncData.data.notifications));
-                    }
-                    if (syncData.data.offerRedemptions) {
-                        localStorage.setItem('offerRedemptions', JSON.stringify(syncData.data.offerRedemptions));
-                    }
-                    if (syncData.data.offersStatus) {
-                        localStorage.setItem('offersStatus', JSON.stringify(syncData.data.offersStatus));
-                    }
-                    if (syncData.data.offerExpiry) {
-                        localStorage.setItem('offerExpiry', JSON.stringify(syncData.data.offerExpiry));
-                    }
-                    
-                    console.log('Τα δεδομένα συγχρονίστηκαν επιτυχώς από τον διαχειριστή');
-                    return true;
-                }
-            } catch (error) {
-                console.error('Σφάλμα στη φόρτωση συγχρονισμένων δεδομένων από διαχειριστή:', error);
-            }
-            
-            return false;
-        }
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4wGkQYHcR8f9X8Q7Vj6b6dQ9wM8tN5vX",
+            authDomain: "cafedium-app.firebaseapp.com",
+            projectId: "cafedium-app",
+            storageBucket: "cafedium-app.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef123456"
+        };
 
-        // Συνάρτηση για ενημέρωση των δεδομένων συγχρονισμού προς τον διαχειριστή
-        function updateSyncDataForAdmin() {
-            const existingSyncData = JSON.parse(localStorage.getItem('adminSyncData') || '{}');
-            
-            const updatedSyncData = {
-                timestamp: new Date().toISOString(),
-                user: 'user_app',
-                data: {
-                    users: JSON.parse(localStorage.getItem('users') || '[]'),
-                    submissions: JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]'),
-                    responses: JSON.parse(localStorage.getItem('coffeeResponses') || '[]'),
-                    userPoints: JSON.parse(localStorage.getItem('userPoints') || '[]'),
-                    notifications: JSON.parse(localStorage.getItem('adminNotifications') || '[]'),
-                    offerRedemptions: JSON.parse(localStorage.getItem('offerRedemptions') || '[]'),
-                    offersStatus: JSON.parse(localStorage.getItem('offersStatus') || '{}'),
-                    offerExpiry: JSON.parse(localStorage.getItem('offerExpiry') || '{}')
-                }
-            };
-            
-            localStorage.setItem('adminSyncData', JSON.stringify(updatedSyncData));
-            console.log('Ενημερώθηκαν τα δεδομένα συγχρονισμού προς τον διαχειριστή');
-        }
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
 
-        // Βελτιωμένη συνάρτηση αποστολής υποβολής με συγχρονισμό
-        function saveSubmission(submission) {
-            // Αποθήκευση στο localStorage του χρήστη
-            const existingSubmissions = JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]');
-            existingSubmissions.push(submission);
-            localStorage.setItem('coffeeSubmissions', JSON.stringify(existingSubmissions));
-            
-            // Ενημέρωση συγχρονισμού
-            updateSyncDataForAdmin();
-            
-            console.log('Υποβολή αποθηκεύτηκε και συγχρονίστηκε:', submission.id);
-            return submission.id;
-        }
-
-        // Audio για ειδοποιήσεις
-        const notificationSound = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==');
-        
         // Καφεμάντεις data
         const fortuneTellers = [
             {
@@ -1999,30 +1931,31 @@
         const installPWA = document.getElementById('installPWA');
         const hidePWA = document.getElementById('hidePWA');
 
-        // Check for existing session
-        const savedUser = localStorage.getItem('currentUser');
-        if (savedUser) {
-            try {
-                currentUser = JSON.parse(savedUser);
-                console.log('Found saved user session:', currentUser.email);
+        // Firebase Authentication State Listener
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = {
+                    uid: user.uid,
+                    email: user.email,
+                    name: user.displayName || 'Χρήστης'
+                };
                 updateUIForUser(currentUser);
-            } catch (e) {
-                console.error('Error parsing saved session:', e);
-                localStorage.removeItem('currentUser');
+                loadUserData();
+            } else {
+                currentUser = null;
+                updateUIForUser(null);
             }
-        }
+        });
 
         // PWA Installation
         let deferredPrompt;
         
         function checkPWAInstallation() {
-            // Check if app is already installed
             if (window.matchMedia('(display-mode: standalone)').matches) {
                 console.log('App is running in standalone mode');
                 return;
             }
             
-            // Show install prompt for mobile devices
             if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
                 pwaInstall.style.display = 'block';
             }
@@ -2059,14 +1992,6 @@
             notificationContent.textContent = message;
             notificationModal.style.display = 'block';
             
-            // Play notification sound
-            try {
-                notificationSound.play();
-            } catch (e) {
-                console.log('Could not play notification sound:', e);
-            }
-            
-            // Auto-hide after 5 seconds
             setTimeout(() => {
                 notificationModal.style.display = 'none';
             }, 5000);
@@ -2124,26 +2049,6 @@
             }, 100);
         }
 
-        function checkUserConsent() {
-            if (!currentUser) return;
-            
-            const userConsent = JSON.parse(localStorage.getItem('userConsent') || '{}');
-            const userAccepted = userConsent[currentUser.email];
-            
-            if (!userAccepted || userAccepted.version !== getCurrentTermsVersion()) {
-                showConsentModal();
-            }
-        }
-
-        function getCurrentTermsVersion() {
-            return "1.0";
-        }
-
-        function showConsentModal() {
-            loadTermsContent();
-            document.getElementById('consentModal').style.display = 'flex';
-        }
-
         function loadTermsContent() {
             const terms = getTermsAndPrivacy();
             document.getElementById('termsContent').innerHTML = terms.terms;
@@ -2151,47 +2056,29 @@
         }
 
         function getTermsAndPrivacy() {
-            const storedTerms = JSON.parse(localStorage.getItem('siteTerms') || '{}');
-            
-            if (Object.keys(storedTerms).length === 0) {
-                return {
-                    version: getCurrentTermsVersion(),
-                    terms: `
-                        <h4>1. Αποδοχή Ορων</h4>
-                        <p>Χρησιμοποιώντας τo Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις (αυτήν την «Συμφωνία»). Η Συμφωνία ισχύει για όλους τους χρήστες («εσάς» ή «Χρήστη») που έχουν πρόσβαση ή/και χρησιμοποιούν την Υπηρεσία ή/και τον σχετικό ιστότοπο https://franklymadear.com/cafedium/index.html («Ιστότοπος»). Εκτός εάν τροποποιηθεί, η Συμφωνία θα παραμένει σε ισχύ για όσο διάστημα είστε Χρήστης. Εάν δεν συμφωνείτε με τους παρόντες Όρους και Προϋποθέσεις, παρακαλούμε μην χρησιμοποιήσετε την Υπηρεσία.</p>
-                        
-                        <h4>2. Υπηρεσίες Καφεμαντείας</h4>
-                        <p>Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας. Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινά τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση· οποιαδήποτε χρήση κάνετε από τέτοιες απαντήσεις, συμβουλές ή υπηρεσίες γίνεται με δικό σας κίνδυνο και η FranklyMaDear δεν μπορεί να θεωρηθεί υπεύθυνη ή να φέρει ευθύνη για οποιεσδήποτε ζημίες ή απώλειες που προκύπτουν από την επαφή σας με τέτοιες απαντήσεις ή συμβουλές. Ο Ιστότοπος και οι υπηρεσίες που παρέχονται από την Εφαρμογή παρέχονται «ως έχει» χωρίς καμία εγγύηση. Οι Σύμβουλοί μας και η Υπηρεσία καταβάλλουν κάθε δυνατή προσπάθεια να σας παράσχουν χρήσιμες, διορατικές πληροφορίες. Ωστόσο, οι πληροφορίες που σας παρέχονται δεν πρέπει να χρησιμοποιούνται αντί για συστάσεις από ιατρικούς επαγγελματίες ή άλλους επαγγελματίες συμβούλους η πρόβλεψη του μέλλοντος.</p>
-                        
-                        <h4>3. Ηλικιακός Περιορισμός</h4>
-                        <p>Η εγγραφή και η συμμετοχή στην Υπηρεσία και στον Ιστότοπο περιορίζεται σε άτονα άνω των 18 ετών, σε χρήστες που έχουν απελευθερωθεί από την γονική μέριμνα, ή σε αυτά που διαθέτουν συγκατάθεση νόμιμου γονέα ή κηδεμόνα, και είναι πλήρως ικανά και αρμόδια να δεσμευτούν από τους όρους, τις προϋποθέσεις, τις υποχρεώσεις, τις βεβαιώσεις, τις δηλώσεις και τις εγγυήσεις που περιλαμβάνονται εδώ. Με την εγγραφή ή συμμετοχή σε υπηρεσίες ή λειτουργίες στην Υπηρεσία ή/και τον Ιστότοπο, δηλώνετε ρητά ότι είστε άνω των 18 ετών, έχετε απελευθερωθεί από τη γονική μέριμνα ή διαθέτετε συγκατάθεση νόμιμου γονέα ή κηδεμόνα και έχετε την εξουσία να δεσμευτείτε από τους όρους εδώ. Σε κάθε περίπτωση, βεβαιώνετε ότι είστε άνω των 18 ετών, καθώς η Υπηρεσία δεν προορίζεται για παιδιά κάτω των 18. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία ή/και τον Ιστότοπο..</p>
-                    `,
-                    privacy: `
-                        <h4>1. Συλλογή Πληροφοριών</h4>
-                        <p>Ποιες πληροφορίες συλλέγουμε;
-        Συλλέγουμε πληροφορίες από εσάς όταν χρησιμοποιείτε υπηρεσίες που παρέχονται από τον ιστότοπο και/ή την εφαρμογή μας, κάνετε μια παραγγελία, εγγραφείτε στο ενημερωτικό μας δελτίο ή συμπληρώσετε μια φόρμα.
-
-        Κατά τη χρήση υπηρεσιών που παρέχονται από τον ιστότοπο και/ή την εφαρμογή μας, ενδέχεται να σας ζητηθεί, κατά περίπτωση, να εισάγετε: το όνομά σας, τη διεύθυνση ηλεκτρονικού ταχυδρομείου, την ημερομηνία γέννησης, το φύλο και την οικογενειακή σας κατάσταση. .</p>
-                        
-                        <h4>2. Χρήση Πληροφοριών</h4>
-                        <p>Κατά τη χρήση υπηρεσιών που παρέχονται από τον ιστότοπο και/ή την εφαρμογή μας, ενδέχεται να σας ζητηθεί, κατά περίπτωση, να εισάγετε: το όνομά σας, τη διεύθυνση ηλεκτρονικού ταχυδρομείου, την ημερομηνία γέννησης, το φύλο και την οικογενειακή σας κατάσταση. Ωστόσο, μπορείτε να επισκεφθείτε τον ιστότοπό μας ανώνυμα.
-
-        Σε τι χρησιμοποιούμε τις πληροφορίες σας;
-        Οποιεσδήποτε πληροφορίες συλλέγουμε από εσάς μπορούν να χρησιμοποιηθούν με έναν από τους ακόλουθους τρόπους:
-
-        · Για να εξατομικεύσουμε την εμπειρία σας και να παρέχουμε καλύτερη υπηρεσία. (Οι πληροφορίες σας μας βοηθούν να ανταποκρινόμαστε καλύτερα στις ατομικές σας ανάγκες)
-        · Για να βελτιώσουμε την εφαρμογή μας βάσει των πληροφοριών και των σχολίων που λαμβάνουμε από εσάς.
-        · Για να βελτιώσουμε την εξυπηρέτηση πελατών, καθώς οι πληροφορίες σας μας βοηθούν να ανταποκρινόμαστε πιο αποτελεσματικά στα αιτήματα και τις ανάγκες υποστήριξής σας.
-        · Για την επεξεργασία συναλλαγών.Οι πληροφορίες σας, είτε είναι δημόσιες είτε ιδιωτικές, δεν θα πωλούνται, ανταλλάσσονται, μεταβιβάζονται ή δίνονται σε οποιαδήποτε άλλη εταιρεία για οποιονδήποτε λόγο, χωρίς τη συγκατάθεσή σας, εκτός από τον σαφή σκοπό της παράδοσης του αγορασμένου προϊόντος ή της ζητηθείσας υπηρεσίας .</p>
-                        <h4>3. Συγκατάθεσή σας</h4>
-                        <p>Χρησιμοποιώντας τον ιστότοπό μας, συναινείτε στην πολιτική απορρήτου του ιστότοπού μας.<p>
-                        <h4>4. Προστασία Δεδομένων</h4>
-                        <p>Μετά από μια συναλλαγή, οι προσωπικές σας πληροφορίες (πιστωτικές κάρτες, αριθμοί κοινωνικής ασφάλισης, οικονομικά στοιχεία κ.λπ.) δεν θα αποθηκεύονται στους διακομιστές μας. Η αγορά πόντων γίνεται μεσα απο την ιστοσελίδα  buymeacoffee.com. Ουδεμία ευθύνη φέρει η ιστοσελίδα  Cafedium με τις συναλλαγές με την συγκεκριμένη σελίδα.</p>
-                    `
-                };
-            }
-            
-            return storedTerms;
+            return {
+                version: "1.0",
+                terms: `
+                    <h4>1. Αποδοχή Ορων</h4>
+                    <p>Χρησιμοποιώντας τo Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις.</p>
+                    
+                    <h4>2. Υπηρεσίες Καφεμαντείας</h4>
+                    <p>Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας.</p>
+                    
+                    <h4>3. Ηλικιακός Περιορισμός</h4>
+                    <p>Η εγγραφή και η συμμετοχή στην Υπηρεσία περιορίζεται σε άτονα άνω των 18 ετών.</p>
+                `,
+                privacy: `
+                    <h4>1. Συλλογή Πληροφοριών</h4>
+                    <p>Συλλέγουμε πληροφορίες από εσάς όταν χρησιμοποιείτε υπηρεσίες που παρέχονται από τον ιστότοπο.</p>
+                    
+                    <h4>2. Χρήση Πληροφοριών</h4>
+                    <p>Οι πληροφορίες σας χρησιμοποιούνται για να εξατομικεύσουμε την εμπειρία σας.</p>
+                    
+                    <h4>3. Προστασία Δεδομένων</h4>
+                    <p>Μετά από μια συναλλαγή, οι προσωπικές σας πληροφορίες δεν αποθηκεύονται στους διακομιστές μας.</p>
+                `
+            };
         }
 
         // Consent form submission
@@ -2207,17 +2094,6 @@
                 return;
             }
             
-            if (currentUser) {
-                const userConsent = JSON.parse(localStorage.getItem('userConsent') || '{}');
-                userConsent[currentUser.email] = {
-                    accepted: true,
-                    version: getCurrentTermsVersion(),
-                    date: new Date().toISOString(),
-                    ageVerified: true
-                };
-                localStorage.setItem('userConsent', JSON.stringify(userConsent));
-            }
-            
             document.getElementById('consentModal').style.display = 'none';
         });
 
@@ -2225,35 +2101,33 @@
             document.getElementById('consentModal').style.display = 'none';
         });
 
-        // ΒΕΛΤΙΩΜΕΝΟΣ ΕΛΕΓΧΟΣ ΕΞΑΡΓΥΡΩΣΗΣ ΜΕ ΣΥΓΧΡΟΝΙΣΜΟ
-        function checkOfferRedemption() {
+        // Έλεγχος εξαργύρωσης προσφοράς
+        async function checkOfferRedemption() {
             if (!currentUser) return;
 
-            // Φόρτωση συγχρονισμένων δεδομένων πρώτα
-            loadSyncedDataFromAdmin();
+            try {
+                const redemptionDoc = await db.collection('offerRedemptions')
+                    .where('userId', '==', currentUser.uid)
+                    .where('offerTitle', '==', 'Εξαργύρωσε την Καφεμαντεία')
+                    .get();
 
-            const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
-            const userRedemption = redemptions.find(r => 
-                r.email === currentUser.email && 
-                r.offerTitle === 'Εξαργύρωσε την Καφεμαντεία'
-            );
+                const offerCheckSection = document.getElementById('offerCheckSection');
+                const offerInForm = document.getElementById('offerInForm');
+                const submitBtn = document.getElementById('submitBtn');
 
-            const offerCheckSection = document.getElementById('offerCheckSection');
-            const offerInForm = document.getElementById('offerInForm');
-            const submitBtn = document.getElementById('submitBtn');
-
-            if (userRedemption) {
-                // Ο χρήστης έχει εξαργυρώσει - επιτρέπουμε υποβολή
-                offerCheckSection.style.display = 'block';
-                offerInForm.style.display = 'none';
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών';
-            } else {
-                // Ο χρήστης ΔΕΝ έχει εξαργυρώσει - ΑΠΑΓΟΡΕΥΟΥΜΕ υποβολή
-                offerCheckSection.style.display = 'none';
-                offerInForm.style.display = 'block';
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-lock"></i> Απαιτείται Εξαργύρωση';
+                if (!redemptionDoc.empty) {
+                    offerCheckSection.style.display = 'block';
+                    offerInForm.style.display = 'none';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών';
+                } else {
+                    offerCheckSection.style.display = 'none';
+                    offerInForm.style.display = 'block';
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-lock"></i> Απαιτείται Εξαργύρωση';
+                }
+            } catch (error) {
+                console.error('Error checking offer redemption:', error);
             }
         }
 
@@ -2267,34 +2141,6 @@
             document.getElementById('pointsWarningModal').style.display = 'none';
         });
 
-        // Check offers status
-        function checkOffersStatus() {
-            // Φόρτωση συγχρονισμένων δεδομένων πρώτα
-            loadSyncedDataFromAdmin();
-
-            const offersStatus = JSON.parse(localStorage.getItem('offersStatus') || '{"1plus1": false}');
-            const offerExpiry = JSON.parse(localStorage.getItem('offerExpiry') || '{}');
-            
-            const offer1plus1 = document.querySelector('input[value="1plus1"]');
-            const priceElement = document.getElementById('1plus1-price');
-            
-            if (offerExpiry['1plus1'] && new Date() > new Date(offerExpiry['1plus1'])) {
-                offersStatus['1plus1'] = false;
-                localStorage.setItem('offersStatus', JSON.stringify(offersStatus));
-            }
-            
-            if (offer1plus1) {
-                if (offersStatus['1plus1']) {
-                    offer1plus1.parentElement.style.display = 'flex';
-                    priceElement.textContent = '50 Πόντοι';
-                    priceElement.style.color = 'var(--primary)';
-                    priceElement.style.fontWeight = 'bold';
-                } else {
-                    offer1plus1.parentElement.style.display = 'none';
-                }
-            }
-        }
-        
         // AUTH TABS SYSTEM
         const authTabs = document.querySelectorAll('.auth-tab');
         const authContents = document.querySelectorAll('.auth-content');
@@ -2311,7 +2157,7 @@
             });
         });
         
-        // ΒΕΛΤΙΩΜΕΝΗ ΕΓΓΡΑΦΗ ΜΕ ΣΥΓΧΡΟΝΙΣΜΟ ΚΑΙ ΕΛΕΓΧΟ ΔΙΑΓΡΑΜΜΕΝΩΝ ΧΡΗΣΤΩΝ
+        // ΕΓΓΡΑΦΗ ΜΕ FIREBASE
         const registerForm = document.getElementById('registerForm');
         const registerMessage = document.getElementById('registerMessage');
         
@@ -2349,88 +2195,43 @@
             try {
                 showMessage(registerMessage, 'Δημιουργία λογαριασμού...', 'info');
                 
-                // Φόρτωση συγχρονισμένων δεδομένων πρώτα
-                loadSyncedDataFromAdmin();
+                // Δημιουργία χρήστη στο Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
                 
-                // Check if user already exists (συμπεριλαμβανομένων διαγραμμένων)
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                const existingUser = users.find(u => u.email === email);
+                // Ενημέρωση προφίλ
+                await user.updateProfile({
+                    displayName: name
+                });
                 
-                if (existingUser) {
-                    // Έλεγχος αν ο χρήστης έχει διαγραφεί από τον διαχειριστή
-                    const userPoints = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                    const userPointData = userPoints.find(p => p.email === email);
-                    
-                    if (!userPointData) {
-                        // Ο χρήστης έχει διαγραφεί - επιτρέπουμε επαναεγγραφή
-                        console.log('Ο χρήστης είχε διαγραφεί προηγουμένως, επιτρέπεται νέα εγγραφή');
-                    } else {
-                        showMessage(registerMessage, 'Υπάρχει ήδη λογαριασμός με αυτό το email.', 'error');
-                        return;
-                    }
-                }
-                
-                // Create new user
-                const newUser = {
-                    id: Date.now().toString(),
+                // Δημιουργία εγγραφής χρήστη στη Firestore
+                await db.collection('users').doc(user.uid).set({
                     name: name,
                     email: email,
-                    password: password,
-                    registrationDate: new Date().toISOString()
-                };
-                
-                users.push(newUser);
-                localStorage.setItem('users', JSON.stringify(users));
-                
-                // Create user points record
-                const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                // Έλεγχος αν υπάρχει ήδη εγγραφή πόντων (για διαγραμμένους χρήστες)
-                const existingPointsIndex = userPointsData.findIndex(p => p.email === email);
-                if (existingPointsIndex !== -1) {
-                    // Επαναφορά πόντων για διαγραμμένο χρήστη
-                    userPointsData[existingPointsIndex].points = 20;
-                    userPointsData[existingPointsIndex].level = 'Αρχάριος';
-                    userPointsData[existingPointsIndex].registrationDate = new Date().toISOString();
-                } else {
-                    // Νέα εγγραφή πόντων
-                    userPointsData.push({
-                        userId: newUser.id,
-                        email: email,
-                        points: 20, // 20 points for registration
-                        level: 'Αρχάριος',
-                        registrationDate: new Date().toISOString()
-                    });
-                }
-                localStorage.setItem('userPoints', JSON.stringify(userPointsData));
-                
-                // Save consent
-                const userConsent = JSON.parse(localStorage.getItem('userConsent') || '{}');
-                userConsent[email] = {
-                    accepted: true,
-                    version: getCurrentTermsVersion(),
-                    date: new Date().toISOString(),
-                    ageVerified: true
-                };
-                
-                localStorage.setItem('userConsent', JSON.stringify(userConsent));
-                
-                // Ενημέρωση συγχρονισμού
-                updateSyncDataForAdmin();
-                
-                // Auto login
-                currentUser = newUser;
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                updateUIForUser(currentUser);
+                    registrationDate: new Date().toISOString(),
+                    points: 20,
+                    level: 'Αρχάριος'
+                });
                 
                 showMessage(registerMessage, 'Η εγγραφή ολοκληρώθηκε επιτυχώς! Κερδίσατε 20 πόντους.', 'success');
                 
             } catch (error) {
                 console.error('Registration error:', error);
-                showMessage(registerMessage, 'Προέκυψε σφάλμα κατά την εγγραφή.', 'error');
+                let errorMessage = 'Προέκυψε σφάλμα κατά την εγγραφή.';
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'Υπάρχει ήδη λογαριασμός με αυτό το email.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Το email δεν είναι έγκυρο.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Ο κωδικός είναι πολύ αδύναμος.';
+                }
+                
+                showMessage(registerMessage, errorMessage, 'error');
             }
         });
         
-        // ΒΕΛΤΙΩΜΕΝΗ ΣΥΝΔΕΣΗ ΜΕ ΣΥΓΧΡΟΝΙΣΜΟ ΚΑΙ ΕΛΕΓΧΟ ΔΙΑΓΡΑΜΜΕΝΩΝ ΧΡΗΣΤΩΝ
+        // ΣΥΝΔΕΣΗ ΜΕ FIREBASE
         const loginForm = document.getElementById('loginForm');
         const loginMessage = document.getElementById('loginMessage');
         
@@ -2448,42 +2249,28 @@
             try {
                 showMessage(loginMessage, 'Σύνδεση...', 'info');
                 
-                // Φόρτωση συγχρονισμένων δεδομένων πρώτα
-                loadSyncedDataFromAdmin();
-                
-                // Check credentials
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                const user = users.find(u => u.email === email && u.password === password);
-                
-                if (user) {
-                    // Έλεγχος αν ο χρήστης έχει διαγραφεί (δεν έχει πόντους)
-                    const userPoints = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                    const userPointData = userPoints.find(p => p.email === email);
-                    
-                    if (!userPointData) {
-                        showMessage(loginMessage, 'Ο λογαριασμός σας έχει διαγραφεί. Παρακαλώ εγγραφείτε ξανά.', 'error');
-                        return;
-                    }
-                    
-                    currentUser = user;
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    updateUIForUser(currentUser);
-                    showMessage(loginMessage, 'Σύνδεση επιτυχής!', 'success');
-                } else {
-                    showMessage(loginMessage, 'Λάθος email ή κωδικός πρόσβασης.', 'error');
-                }
+                await auth.signInWithEmailAndPassword(email, password);
+                showMessage(loginMessage, 'Σύνδεση επιτυχής!', 'success');
                 
             } catch (error) {
                 console.error('Login error:', error);
-                showMessage(loginMessage, 'Προέκυψε σφάλμα κατά τη σύνδεση.', 'error');
+                let errorMessage = 'Λάθος email ή κωδικός πρόσβασης.';
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'Δεν βρέθηκε λογαριασμός με αυτό το email.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Λάθος κωδικός πρόσβασης.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Το email δεν είναι έγκυρο.';
+                }
+                
+                showMessage(loginMessage, errorMessage, 'error');
             }
         });
         
         // LOGOUT
         logoutBtn.addEventListener('click', function() {
-            currentUser = null;
-            localStorage.removeItem('currentUser');
-            updateUIForUser(null);
+            auth.signOut();
         });
         
         // PASSWORD RESET FUNCTIONALITY
@@ -2520,21 +2307,16 @@
                 return;
             }
             
-            // Φόρτωση συγχρονισμένων δεδομένων πρώτα
-            loadSyncedDataFromAdmin();
-            
-            // Check if user exists
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const user = users.find(u => u.email === email);
-            
-            if (user) {
+            try {
+                await auth.sendPasswordResetEmail(email);
                 showMessage(forgotPasswordMessage, `Οδηγίες επαναφοράς κωδικού έχουν σταλεί στο ${email}.`, 'success');
                 
                 setTimeout(() => {
                     forgotPasswordModal.style.display = 'none';
                     forgotPasswordForm.reset();
                 }, 3000);
-            } else {
+            } catch (error) {
+                console.error('Password reset error:', error);
                 showMessage(forgotPasswordMessage, 'Δεν βρέθηκε χρήστης με αυτό το email.', 'error');
             }
         });
@@ -2596,24 +2378,32 @@
         function selectFortuneTeller(teller, element) {
             selectedFortuneTeller = teller;
             
-            // Remove selected class from all options
             document.querySelectorAll('.fortune-teller-option').forEach(option => {
                 option.classList.remove('selected');
             });
             
-            // Add selected class to clicked option
             element.classList.add('selected');
             
-            // Hide error message if shown
             document.getElementById('fortuneTellerError').style.display = 'none';
             
-            // ΑΠΟΣΤΟΛΗ ΕΙΔΟΠΟΙΗΣΗΣ ΣΤΟΝ ΔΙΑΧΕΙΡΙΣΤΗ
+            // Αποστολή ειδοποίησης στον διαχειριστή
             if (currentUser) {
-                sendCharacterSelectionNotification(
-                    teller.name, 
-                    currentUser.email, 
-                    currentUser.name || 'Χρήστης'
-                );
+                sendCharacterSelectionNotification(teller.name);
+            }
+        }
+
+        async function sendCharacterSelectionNotification(characterName) {
+            try {
+                await db.collection('adminNotifications').add({
+                    type: 'character_selection',
+                    userEmail: currentUser.email,
+                    userName: currentUser.name,
+                    character: characterName,
+                    date: new Date().toISOString(),
+                    status: 'pending'
+                });
+            } catch (error) {
+                console.error('Error sending notification:', error);
             }
         }
 
@@ -2678,25 +2468,26 @@
             });
         }
         
-        // PHOTO SUBMISSION FORM - ΕΠΙΒΕΒΑΙΩΣΗ 50 ΠΟΝΤΩΝ - ΔΙΟΡΘΩΜΕΝΗ
-        visitorForm.addEventListener('submit', function(e) {
+        // PHOTO SUBMISSION FORM
+        visitorForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             if (!currentUser) return;
             
-            // Φόρτωση συγχρονισμένων δεδομένων πρώτα
-            loadSyncedDataFromAdmin();
-            
-            // ΠΡΟΣΘΗΚΗ: Έλεγχος αν έχει γίνει εξαργύρωση
-            const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
-            const userRedemption = redemptions.find(r => 
-                r.email === currentUser.email && 
-                r.offerTitle === 'Εξαργύρωσε την Καφεμαντεία'
-            );
-            
-            if (!userRedemption) {
-                document.getElementById('warningPoints').textContent = document.getElementById('currentPoints').textContent;
-                document.getElementById('pointsWarningModal').style.display = 'flex';
+            // Έλεγχος εξαργύρωσης
+            try {
+                const redemptionDoc = await db.collection('offerRedemptions')
+                    .where('userId', '==', currentUser.uid)
+                    .where('offerTitle', '==', 'Εξαργύρωσε την Καφεμαντεία')
+                    .get();
+
+                if (redemptionDoc.empty) {
+                    document.getElementById('warningPoints').textContent = document.getElementById('currentPoints').textContent;
+                    document.getElementById('pointsWarningModal').style.display = 'flex';
+                    return;
+                }
+            } catch (error) {
+                console.error('Error checking redemption:', error);
                 return;
             }
             
@@ -2726,62 +2517,32 @@
                 return;
             }
             
-            // ΕΛΕΓΧΟΣ ΓΙΑ 1+1 ΠΡΟΣΦΟΡΑ - ΧΡΕΩΣΗ 50 ΠΟΝΤΩΝ
-            if (coffeeType.value === '1plus1') {
-                const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-                const userPoints = userPointsData.find(p => p.email === currentUser.email);
-                
-                if (!userPoints || userPoints.points < 50) {
-                    document.getElementById('warningPoints').textContent = userPoints ? userPoints.points : 0;
-                    document.getElementById('pointsWarningModal').style.display = 'flex';
-                    return;
-                }
-                
-                // Αφαίρεση 50 πόντων για την προσφορά 1+1
-                userPoints.points -= 50;
-                localStorage.setItem('userPoints', JSON.stringify(userPointsData));
-                
-                // Καταγραφή εξαργύρωσης προσφοράς 1+1
-                const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
-                redemptions.push({
-                    userId: currentUser.id,
-                    email: currentUser.email,
-                    offerId: '1plus1',
-                    offerTitle: 'Προσφορά 1+1 Δώρο',
-                    date: new Date().toISOString(),
-                    pointsSpent: 50
-                });
-                localStorage.setItem('offerRedemptions', JSON.stringify(redemptions));
-                
-                // Ενημέρωση συγχρονισμού
-                updateSyncDataForAdmin();
-                
-                showNotification(`Ανταλλάξατε επιτυχώς την προσφορά "1+1 Δώρο"! Αφαιρέθηκαν 50 πόντοι.`);
-                loadUserPoints();
-            }
-            
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Αποστολή...';
             
-            const photoPromises = selectedFiles.map(file => {
-                return new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        resolve({
-                            name: file.name,
-                            data: e.target.result
-                        });
-                    };
-                    reader.readAsDataURL(file);
+            try {
+                // Μετατροπή φωτογραφιών σε base64
+                const photoPromises = selectedFiles.map(file => {
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            resolve({
+                                name: file.name,
+                                data: e.target.result
+                            });
+                        };
+                        reader.readAsDataURL(file);
+                    });
                 });
-            });
-            
-            Promise.all(photoPromises).then(photosBase64 => {
+                
+                const photosBase64 = await Promise.all(photoPromises);
+                
+                // Αποθήκευση υποβολής στη Firestore
                 const submission = {
-                    id: Date.now(),
                     type: 'photo',
                     userEmail: email,
-                    userId: currentUser.id,
+                    userId: currentUser.uid,
+                    userName: currentUser.name,
                     fortuneTellerId: selectedFortuneTeller.id,
                     fortuneTellerName: selectedFortuneTeller.name,
                     coffeeType: coffeeType.value,
@@ -2793,20 +2554,19 @@
                     photos: photosBase64
                 };
                 
-                // Αποθήκευση υποβολής με συγχρονισμό
-                saveSubmission(submission);
+                await db.collection('submissions').add(submission);
                 
-                // Προσθήκη πόντων μόνο για γραπτή ή προφορική ερμηνεία, ΟΧΙ για 1+1
+                // Προσθήκη πόντων (εκτός από 1+1 προσφορά)
                 if (coffeeType.value !== '1plus1') {
-                    addPointsForSubmission(email, 10);
+                    await addPoints(10);
                 }
                 
-                // Notify admin
-                const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
-                adminNotifications.push({
+                // Ειδοποίηση διαχειριστή
+                await db.collection('adminNotifications').add({
                     type: 'coffee_reading',
                     userEmail: submission.userEmail,
                     userId: submission.userId,
+                    userName: submission.userName,
                     fortuneTellerId: submission.fortuneTellerId,
                     fortuneTellerName: submission.fortuneTellerName,
                     coffeeType: submission.coffeeType,
@@ -2815,10 +2575,6 @@
                     date: new Date().toISOString(),
                     status: 'pending'
                 });
-                localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
-                
-                // Ενημέρωση συγχρονισμού
-                updateSyncDataForAdmin();
                 
                 let successMessage = `Οι ${selectedFiles.length} φωτογραφίες του καφέ σας στάλθηκαν επιτυχώς στον ${selectedFortuneTeller.name}!`;
                 
@@ -2832,13 +2588,18 @@
                 selectedFiles = [];
                 selectedFortuneTeller = null;
                 updatePreview();
-                loadFortuneTellers(); // Reset selection
+                loadFortuneTellers();
                 
+                // Ανανέωση πόντων
+                loadUserPoints();
+
+            } catch (error) {
+                console.error('Error submitting photos:', error);
+                showMessage(messageDiv, 'Προέκυψε σφάλμα κατά την αποστολή.', 'error');
+            } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών';
-
-                loadUserPoints();
-            });
+            }
         });
         
         function getCoffeeTypeText(type) {
@@ -2851,37 +2612,41 @@
         }
 
         // POINTS SYSTEM
-        function loadUserPoints() {
+        async function loadUserPoints() {
             if (!currentUser) return;
             
-            // Φόρτωση συγχρονισμένων δεδομένων πρώτα
-            loadSyncedDataFromAdmin();
-            
-            const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-            const userPoints = userPointsData.find(p => p.email === currentUser.email) || {
-                userId: currentUser.id,
-                email: currentUser.email,
-                points: 0,
-                level: 'Αρχάριος',
-                registrationDate: new Date().toISOString()
-            };
-            
-            updatePointsUI(userPoints.points, userPoints.level);
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    updatePointsUI(userData.points, userData.level);
+                }
+            } catch (error) {
+                console.error('Error loading user points:', error);
+            }
         }
 
-        function addPointsForSubmission(email, pointsToAdd) {
-            const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-            const userPoints = userPointsData.find(p => p.email === email);
+        async function addPoints(pointsToAdd) {
+            if (!currentUser) return;
             
-            if (userPoints) {
-                userPoints.points += pointsToAdd;
-                userPoints.level = calculateLevel(userPoints.points);
-                localStorage.setItem('userPoints', JSON.stringify(userPointsData));
+            try {
+                const userRef = db.collection('users').doc(currentUser.uid);
+                const userDoc = await userRef.get();
                 
-                // Ενημέρωση συγχρονισμού
-                updateSyncDataForAdmin();
-                
-                updatePointsUI(userPoints.points, userPoints.level);
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    const newPoints = userData.points + pointsToAdd;
+                    const newLevel = calculateLevel(newPoints);
+                    
+                    await userRef.update({
+                        points: newPoints,
+                        level: newLevel
+                    });
+                    
+                    updatePointsUI(newPoints, newLevel);
+                }
+            } catch (error) {
+                console.error('Error adding points:', error);
             }
         }
 
@@ -2906,7 +2671,7 @@
         const contactSubmitBtn = document.getElementById('contactSubmitBtn');
         const contactMessageDiv = document.getElementById('contactMessage');
         
-        contactForm.addEventListener('submit', function(e) {
+        contactForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             if (!currentUser) return;
@@ -2924,97 +2689,98 @@
             contactSubmitBtn.disabled = true;
             contactSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Αποστολή...';
             
-            const contactMessage = {
-                id: Date.now(),
-                type: 'message',
-                userName: name,
-                userEmail: email,
-                userId: currentUser.id,
-                date: new Date().toISOString(),
-                status: 'pending',
-                subject: subject,
-                message: message
-            };
-            
-            // Αποθήκευση με συγχρονισμό
-            saveSubmission(contactMessage);
-            
-            // Notify admin
-            const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
-            adminNotifications.push({
-                type: 'contact_message',
-                userEmail: email,
-                userName: name,
-                subject: subject,
-                date: new Date().toISOString(),
-                status: 'pending'
-            });
-            localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
-            
-            // Ενημέρωση συγχρονισμού
-            updateSyncDataForAdmin();
-            
-            showMessage(contactMessageDiv, `Το μήνυμά σας στάλθηκε επιτυχώς! Θα λάβετε απάντηση στο ${email} το συντομότερο δυνατό.`, 'success');
-            
-            contactForm.reset();
-            document.getElementById('contact-name').value = currentUser.name || '';
-            document.getElementById('contact-email').value = currentUser.email;
-            
-            contactSubmitBtn.disabled = false;
-            contactSubmitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Μηνύματος';
+            try {
+                const contactMessage = {
+                    type: 'message',
+                    userName: name,
+                    userEmail: email,
+                    userId: currentUser.uid,
+                    date: new Date().toISOString(),
+                    status: 'pending',
+                    subject: subject,
+                    message: message
+                };
+                
+                await db.collection('submissions').add(contactMessage);
+                
+                // Ειδοποίηση διαχειριστή
+                await db.collection('adminNotifications').add({
+                    type: 'contact_message',
+                    userEmail: email,
+                    userName: name,
+                    subject: subject,
+                    date: new Date().toISOString(),
+                    status: 'pending'
+                });
+                
+                showMessage(contactMessageDiv, `Το μήνυμά σας στάλθηκε επιτυχώς! Θα λάβετε απάντηση στο ${email} το συντομότερο δυνατό.`, 'success');
+                
+                contactForm.reset();
+                document.getElementById('contact-name').value = currentUser.name || '';
+                document.getElementById('contact-email').value = currentUser.email;
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showMessage(contactMessageDiv, 'Προέκυψε σφάλμα κατά την αποστολή του μηνύματος.', 'error');
+            } finally {
+                contactSubmitBtn.disabled = false;
+                contactSubmitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Μηνύματος';
+            }
         });
         
         // LOAD USER RESPONSES
-        function loadUserResponses() {
+        async function loadUserResponses() {
             if (!currentUser) return;
             
-            // Φόρτωση συγχρονισμένων δεδομένων πρώτα
-            loadSyncedDataFromAdmin();
-            
-            const userEmail = currentUser.email;
-            const responses = JSON.parse(localStorage.getItem('coffeeResponses') || '[]');
-            const userResponses = responses.filter(response => response.userEmail === userEmail);
-            const responsesList = document.getElementById('responses-list');
-            const noResponses = document.getElementById('no-responses');
+            try {
+                const responsesSnapshot = await db.collection('responses')
+                    .where('userEmail', '==', currentUser.email)
+                    .orderBy('date', 'desc')
+                    .get();
+                    
+                const responsesList = document.getElementById('responses-list');
+                const noResponses = document.getElementById('no-responses');
 
-            if (userResponses.length === 0) {
+                if (responsesSnapshot.empty) {
+                    responsesList.innerHTML = '';
+                    noResponses.style.display = 'block';
+                    return;
+                }
+
+                noResponses.style.display = 'none';
                 responsesList.innerHTML = '';
-                noResponses.style.display = 'block';
-                return;
+
+                responsesSnapshot.forEach(doc => {
+                    const response = doc.data();
+                    const responseCard = document.createElement('div');
+                    responseCard.className = 'response-card';
+                    responseCard.innerHTML = `
+                        <div class="response-header">
+                            <div class="response-subject">Απάντηση στην υποβολή σας</div>
+                            <div class="response-date">${formatDate(response.date)}</div>
+                        </div>
+                        <div class="response-content">
+                            <strong>Απάντηση διαχειριστή:</strong><br>
+                            ${response.adminMessage}
+                        </div>
+                        ${response.originalMessage ? `
+                        <div class="response-original">
+                            <span class="original-label">Το αρχικό σας μήνυμα:</span>
+                            ${response.originalMessage}
+                        </div>
+                        ` : ''}
+                        ${response.fortuneTellerName ? `
+                        <div class="response-original">
+                            <span class="original-label">Καφεμάντης:</span>
+                            ${response.fortuneTellerName}
+                        </div>
+                        ` : ''}
+                    `;
+                    responsesList.appendChild(responseCard);
+                });
+            } catch (error) {
+                console.error('Error loading responses:', error);
             }
-
-            noResponses.style.display = 'none';
-            responsesList.innerHTML = '';
-
-            userResponses.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            userResponses.forEach(response => {
-                const responseCard = document.createElement('div');
-                responseCard.className = 'response-card';
-                responseCard.innerHTML = `
-                    <div class="response-header">
-                        <div class="response-subject">Απάντηση στην υποβολή σας</div>
-                        <div class="response-date">${formatDate(response.date)}</div>
-                    </div>
-                    <div class="response-content">
-                        <strong>Απάντηση διαχειριστή:</strong><br>
-                        ${response.adminMessage}
-                    </div>
-                    ${response.originalMessage ? `
-                    <div class="response-original">
-                        <span class="original-label">Το αρχικό σας μήνυμα:</span>
-                        ${response.originalMessage}
-                    </div>
-                    ` : ''}
-                    ${response.fortuneTellerName ? `
-                    <div class="response-original">
-                        <span class="original-label">Καφεμάντης:</span>
-                        ${response.fortuneTellerName}
-                    </div>
-                    ` : ''}
-                `;
-                responsesList.appendChild(responseCard);
-            });
         }
 
         function formatDate(dateString) {
@@ -3028,21 +2794,27 @@
             return new Date(dateString).toLocaleDateString('el-GR', options);
         }
 
-        function checkForNewResponses() {
+        async function checkForNewResponses() {
             if (!currentUser) return;
             
-            const userEmail = currentUser.email;
-            const responses = JSON.parse(localStorage.getItem('coffeeResponses') || '[]');
-            const userResponses = responses.filter(response => response.userEmail === userEmail);
-            const newResponses = userResponses.filter(response => !response.viewed);
-            
-            if (newResponses.length > 0) {
-                showNotification(`Έχετε ${newResponses.length} νέες απαντήσεις!`);
-                
-                newResponses.forEach(response => {
-                    response.viewed = true;
-                });
-                localStorage.setItem('coffeeResponses', JSON.stringify(responses));
+            try {
+                const responsesSnapshot = await db.collection('responses')
+                    .where('userEmail', '==', currentUser.email)
+                    .where('viewed', '==', false)
+                    .get();
+                    
+                if (!responsesSnapshot.empty) {
+                    showNotification(`Έχετε ${responsesSnapshot.size} νέες απαντήσεις!`);
+                    
+                    // Σήμανση ως προβεβλημένων
+                    const batch = db.batch();
+                    responsesSnapshot.forEach(doc => {
+                        batch.update(doc.ref, { viewed: true });
+                    });
+                    await batch.commit();
+                }
+            } catch (error) {
+                console.error('Error checking new responses:', error);
             }
         }
 
@@ -3080,40 +2852,41 @@
         });
         
         // REDEEM MAIN OFFER
-        function redeemMainOffer() {
+        async function redeemMainOffer() {
             if (!currentUser) return;
             
-            // Φόρτωση συγχρονισμένων δεδομένων πρώτα
-            loadSyncedDataFromAdmin();
-            
-            const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-            const userPoints = userPointsData.find(p => p.email === currentUser.email);
-            
-            if (userPoints && userPoints.points >= 50) {
-                userPoints.points -= 50;
-                localStorage.setItem('userPoints', JSON.stringify(userPointsData));
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                if (!userDoc.exists) return;
                 
-                const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
-                redemptions.push({
-                    userId: currentUser.id,
-                    email: currentUser.email,
-                    offerId: 1,
-                    offerTitle: 'Εξαργύρωσε την Καφεμαντεία',
-                    date: new Date().toISOString(),
-                    pointsSpent: 50
-                });
-                localStorage.setItem('offerRedemptions', JSON.stringify(redemptions));
+                const userData = userDoc.data();
                 
-                // Ενημέρωση συγχρονισμού
-                updateSyncDataForAdmin();
-                
-                showNotification(`Ανταλλάξατε επιτυχώς την προσφορά "Εξαργύρωσε την Καφεμαντεία"! Αφαιρέθηκαν 50 πόντοι. Μπορείτε τώρα να υποβάλετε φωτογραφίες.`);
-                
-                loadUserPoints();
-                checkOfferRedemption();
-            } else {
-                document.getElementById('warningPoints').textContent = userPoints ? userPoints.points : 0;
-                document.getElementById('pointsWarningModal').style.display = 'flex';
+                if (userData.points >= 50) {
+                    // Αφαίρεση πόντων
+                    await db.collection('users').doc(currentUser.uid).update({
+                        points: userData.points - 50
+                    });
+                    
+                    // Καταγραφή εξαργύρωσης
+                    await db.collection('offerRedemptions').add({
+                        userId: currentUser.uid,
+                        email: currentUser.email,
+                        offerId: 1,
+                        offerTitle: 'Εξαργύρωσε την Καφεμαντεία',
+                        date: new Date().toISOString(),
+                        pointsSpent: 50
+                    });
+                    
+                    showNotification(`Ανταλλάξατε επιτυχώς την προσφορά "Εξαργύρωσε την Καφεμαντεία"! Αφαιρέθηκαν 50 πόντοι. Μπορείτε τώρα να υποβάλετε φωτογραφίες.`);
+                    
+                    loadUserPoints();
+                    checkOfferRedemption();
+                } else {
+                    document.getElementById('warningPoints').textContent = userData.points;
+                    document.getElementById('pointsWarningModal').style.display = 'flex';
+                }
+            } catch (error) {
+                console.error('Error redeeming offer:', error);
             }
         }
         
@@ -3121,106 +2894,20 @@
             const offersList = document.getElementById('offersList');
             if (!currentUser) return;
             
-            const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
-            const userPoints = userPointsData.find(p => p.email === currentUser.email) || { points: 0 };
-            
-            const offers = [];
-            
             offersList.innerHTML = '';
             
-            if (offers.length === 0) {
-                const noOffersMessage = document.createElement('div');
-                noOffersMessage.className = 'info-box';
-                noOffersMessage.innerHTML = '<p>Οι προσφορές εμφανίζονται στην κύρια οθόνη για πιο εύκολη πρόσβαση.</p>';
-                offersList.appendChild(noOffersMessage);
-            }
+            const noOffersMessage = document.createElement('div');
+            noOffersMessage.className = 'info-box';
+            noOffersMessage.innerHTML = '<p>Οι προσφορές εμφανίζονται στην κύρια οθόνη για πιο εύκολη πρόσβαση.</p>';
+            offersList.appendChild(noOffersMessage);
         }
 
-        // ΣΥΝΑΡΤΗΣΕΙΣ ΣΥΓΧΡΟΝΙΣΜΟΥ
-        function sendCharacterSelectionNotification(characterName, userEmail, userName) {
-            const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
-            
-            notifications.push({
-                type: 'character_selection',
-                userEmail: userEmail,
-                userName: userName,
-                character: characterName,
-                date: new Date().toISOString(),
-                status: 'pending'
-            });
-            
-            localStorage.setItem('adminNotifications', JSON.stringify(notifications));
-            updateSyncDataForAdmin(); // Συγχρονισμός αμέσως μετά την ειδοποίηση
-        }
-
-        // AUTO REFRESH ΚΑΙ ΣΥΓΧΡΟΝΙΣΜΟΣ
-        setInterval(() => {
-            // Συγχρονισμός δεδομένων κάθε 30 δευτερόλεπτα
-            loadSyncedDataFromAdmin();
-            
-            checkForNewResponses();
-            if (document.getElementById('responses-tab').classList.contains('active')) {
-                loadUserResponses();
-            }
-        }, 30000);
-        
-        setInterval(() => {
-            checkOffersStatus();
-        }, 30000);
-
-        // ADMIN FUNCTIONS
-        function adminUpdateTerms() {
-            const currentTerms = JSON.parse(localStorage.getItem('siteTerms') || '{}');
-            
-            const newTerms = prompt("Εισάγετε τους νέους Όρους Χρήσης (HTML):", 
-                currentTerms.terms || getTermsAndPrivacy().terms);
-            const newPrivacy = prompt("Εισάγετε τη νέα Πολιτική Απορρήτου (HTML):", 
-                currentTerms.privacy || getTermsAndPrivacy().privacy);
-            
-            if (newTerms && newPrivacy) {
-                const termsData = {
-                    version: generateNewVersion(),
-                    terms: newTerms,
-                    privacy: newPrivacy,
-                    lastUpdated: new Date().toISOString()
-                };
-                
-                localStorage.setItem('siteTerms', JSON.stringify(termsData));
-                
-                const userConsent = JSON.parse(localStorage.getItem('userConsent') || '{}');
-                for (let email in userConsent) {
-                    userConsent[email].needsRenewal = true;
-                }
-                localStorage.setItem('userConsent', JSON.stringify(userConsent));
-                
-                alert("Οι όροι ενημερώθηκαν επιτυχώς! Οι χρήστες θα πρέπει να τους αποδεχτούν ξανά.");
-            }
-        }
-
-        function generateNewVersion() {
-            const now = new Date();
-            return `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}.${now.getHours()}${now.getMinutes()}`;
-        }
-
-        // Add admin buttons if user is admin
-        if (currentUser && (currentUser.email === 'admin@kafedium.gr' || currentUser.email === 'franklymadear@gmail.com')) {
-            addAdminButtons();
-        }
-
-        function addAdminButtons() {
-            const adminSection = document.createElement('div');
-            adminSection.className = 'admin-section';
-            adminSection.innerHTML = `
-                <h3><i class="fas fa-cog"></i> Διαχείριση Όρων</h3>
-                <div class="admin-buttons">
-                    <button onclick="adminUpdateTerms()" class="points-btn">
-                        <i class="fas fa-edit"></i> Επεξεργασία Όρων
-                    </button>
-                </div>
-            `;
-            
-            const container = document.querySelector('.container');
-            container.insertBefore(adminSection, container.firstChild);
+        // LOAD USER DATA
+        async function loadUserData() {
+            await loadUserPoints();
+            checkOfferRedemption();
+            loadFortuneTellers();
+            loadUserResponses();
         }
 
         // UTILITY FUNCTIONS
@@ -3251,13 +2938,6 @@
                     adminPanelBtn.style.display = 'inline-block';
                 }
                 
-                // Load user data
-                loadUserPoints();
-                checkOffersStatus();
-                checkOfferRedemption();
-                checkUserConsent();
-                loadFortuneTellers();
-                
                 // Check for PWA installation
                 checkPWAInstallation();
                 
@@ -3268,8 +2948,17 @@
             }
         }
 
+        // AUTO REFRESH
+        setInterval(() => {
+            if (currentUser) {
+                checkForNewResponses();
+                if (document.getElementById('responses-tab').classList.contains('active')) {
+                    loadUserResponses();
+                }
+            }
+        }, 30000);
+
         // Make functions globally available
-        window.adminUpdateTerms = adminUpdateTerms;
         window.redeemMainOffer = redeemMainOffer;
     </script>
 </body>
