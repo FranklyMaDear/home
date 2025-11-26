@@ -1,0 +1,26 @@
+{
+  "name": "Cafedium",
+  "short_name": "Cafedium", 
+  "description": "Καφεμαντεία - Το φλιτζάνι σου μιλάει",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8B4513",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "coffeetime.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "coffeetime.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "entertainment"],
+  "lang": "el"
+}
