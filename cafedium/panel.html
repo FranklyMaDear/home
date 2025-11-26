@@ -5,30 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cafedium Διαχειριστής</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-    // Έλεγχος για σφάλματα φόρτωσης
-    window.addEventListener('error', function(e) {
-        console.error('Global error:', e.error);
-    });
-
-    // Έλεγχος αν τα Firebase objects είναι διαθέσιμα
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded');
-        console.log('Firebase available:', typeof firebase !== 'undefined');
-        console.log('Auth available:', typeof auth !== 'undefined');
-        console.log('DB available:', typeof db !== 'undefined');
-    });
-</script>
+    
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
     <!-- Firebase Config για το Panel Διαχειριστή -->
-    <script src="panel-firebase-config.js"></script>
+    <script src="cafedium/panel-firebase-config.js"></script>
     
     <style>
-        /* ΟΛΑ ΤΑ STYLES ΜΕΝΟΥΝ ΙΔΙΑ */
         :root {
             --primary: #8B4513;
             --primary-light: #A0522D;
@@ -65,9 +51,685 @@
             margin: 0 auto;
         }
         
-        /* ΟΛΑ ΤΑ ΑΛΛΑ STYLES ΜΕΝΟΥΝ ΙΔΙΑ */
-        /* ... */
+        /* Login Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
         
+        .login-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--hover-shadow);
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .login-logo {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .login-title {
+            color: var(--dark);
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .login-btn:hover {
+            background: var(--primary-light);
+        }
+        
+        .login-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .setup-info {
+            background: #e3f2fd;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid var(--info);
+        }
+        
+        .setup-info h4 {
+            color: var(--info);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: none;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+        }
+        
+        .logo {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: var(--text);
+            opacity: 0.8;
+        }
+        
+        .admin-info {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .admin-welcome {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .main-app-btn, .sync-btn, .logout-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .main-app-btn {
+            background: var(--info);
+            color: white;
+        }
+        
+        .sync-btn {
+            background: var(--success);
+            color: white;
+        }
+        
+        .logout-btn {
+            background: var(--error);
+            color: white;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text);
+            opacity: 0.8;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .tab:hover:not(.active) {
+            background: #f5f5f5;
+        }
+        
+        .notifications-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--error);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .content-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .content-section h2 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-select, .search-input {
+            padding: 0.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            min-width: 150px;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .submissions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .submission-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1rem;
+            background: #fafafa;
+        }
+        
+        .submission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .submission-user {
+            font-weight: bold;
+            color: var(--dark);
+        }
+        
+        .submission-date {
+            color: var(--text);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        .submission-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-reviewed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-answered {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .submission-content {
+            margin-bottom: 1rem;
+        }
+        
+        .submission-message {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .photo-item {
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .photo-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+        
+        .submission-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-view {
+            background: var(--info);
+            color: white;
+        }
+        
+        .btn-reply {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-download {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .btn-delete {
+            background: var(--error);
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text);
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #e0e0e0;
+            margin-bottom: 1rem;
+        }
+        
+        /* Modal Styles */
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            color: var(--dark);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .reply-form textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            resize: vertical;
+        }
+        
+        .url-preview {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+        
+        .url-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .preview-link {
+            color: var(--info);
+            text-decoration: none;
+        }
+        
+        .url-note {
+            font-size: 0.8rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+        
+        .success-animation {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .success-animation i {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 1rem;
+        }
+        
+        /* Users Table */
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        .users-table th,
+        .users-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .users-table th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .user-category {
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .category-beginner {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .category-regular {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .category-vip {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .category-master {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .user-actions .action-btn {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        /* Offer Management */
+        .offer-item {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .offer-controls {
+            margin-top: 1rem;
+        }
+        
+        .offer-controls .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        /* Notification Toast */
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--hover-shadow);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 400px;
+            transform: translateX(150%);
+            transition: transform 0.3s;
+            border-left: 4px solid var(--info);
+            z-index: 1001;
+        }
+        
+        .notification-toast.show {
+            transform: translateX(0);
+        }
+        
+        .notification-icon {
+            font-size: 1.5rem;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+        
+        .coffee-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Fortune Teller Info */
+        .fortune-teller-info {
+            background: #e8f5e8;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin: 0.5rem 0;
+            border-left: 4px solid var(--success);
+        }
+
+        .coffee-reading-info {
+            background: #fff3e0;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin: 0.5rem 0;
+            border-left: 4px solid var(--warning);
+        }
+
+        .preview-title {
+            font-weight: bold;
+            margin: 1rem 0 0.5rem 0;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -100,7 +762,7 @@
                 
                 <div class="setup-info" id="first-time-setup" style="display: none;">
                     <h4><i class="fas fa-info-circle"></i> Πρώτη Σύνδεση</h4>
-                    <p>Εφόσον είναι η πρώτη σας σύνδεση, θα δημιουργηθεί νέος λογαριασμός διαχειριστή με τα διαπιστευτήρια που εισάγατε. Αυτά τα διαπιστευτήρια θα είναι διαθέσιμα από οποιοδήποτε browser.</p>
+                    <p>Εφόσον είναι η πρώτη σας σύνδεση, θα δημιουργηθεί νέος λογαριασμός διαχειριστή με τα διαπιστευτήρια που εισάγατε.</p>
                 </div>
             </div>
         </div>
@@ -436,33 +1098,31 @@
         </div>
 
         <!-- Ηχητική ειδοποίηση -->
-        <audio id="notification-sound" class="sound-notification">
+        <audio id="notification-sound">
             <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
         </audio>
     </div>
 
     <script>
-        // ΤΟ FIREBASE CONFIGURATION ΕΧΕΙ ΑΦΑΙΡΕΘΕΙ ΕΔΩ
-        // ΚΑΙ ΒΡΙΣΚΕΤΑΙ ΣΤΟ panel-firebase-config.js
-        
         document.addEventListener('DOMContentLoaded', function() {
-            // Firebase Authentication State Observer με persistence
-            // ΤΟ auth ΚΑΙ db ΕΙΝΑΙ ΔΙΑΘΕΣΙΜΑ ΑΠΟ ΤΟ panel-firebase-config.js
+            console.log('Admin Panel Initializing...');
+            
+            // Firebase Authentication State Observer
             auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
                 .then(() => {
-                    auth.onAuthStateChanged((user) => {
+                    auth.onAuthStateChanged(async (user) => {
+                        console.log('Auth state changed:', user ? user.email : 'No user');
                         if (user) {
-                            // Έλεγχος αν ο χρήστης είναι διαχειριστής
-                            checkAdminUser(user.email).then((isAdmin) => {
-                                if (isAdmin) {
-                                    showMainApp(user.email);
-                                    loadAllData();
-                                    setupRealTimeListeners();
-                                } else {
-                                    showToast('Δεν έχετε δικαιώματα διαχειριστή!', 'error');
-                                    auth.signOut();
-                                }
-                            });
+                            const isAdmin = await checkAdminUser(user.email);
+                            console.log('Is admin:', isAdmin);
+                            if (isAdmin) {
+                                showMainApp(user.email);
+                                loadAllData();
+                                setupRealTimeListeners();
+                            } else {
+                                showToast('Δεν έχετε δικαιώματα διαχειριστή!', 'error');
+                                auth.signOut();
+                            }
                         } else {
                             showLoginModal();
                         }
@@ -479,6 +1139,13 @@
                         .where('email', '==', email)
                         .get();
                         
+                    // Αν δεν υπάρχει διαχειριστής, επέτρεψε πρόσβαση στον πρώτο χρήστη
+                    const allAdmins = await db.collection('admins').get();
+                    if (allAdmins.empty) {
+                        console.log('Πρώτος διαχειριστής - επιτρέπεται η πρόσβαση');
+                        return true;
+                    }
+                        
                     return !adminSnapshot.empty;
                 } catch (error) {
                     console.error('Error checking admin:', error);
@@ -493,9 +1160,18 @@
             const logoutBtn = document.getElementById('logout-btn');
             const adminEmailInput = document.getElementById('admin-email');
             const adminPasswordInput = document.getElementById('admin-password');
-            const rememberMeCheckbox = document.getElementById('remember-me');
             const firstTimeSetup = document.getElementById('first-time-setup');
             const adminNameSpan = document.getElementById('admin-name');
+
+            // Εμφάνιση οδηγιών πρώτης σύνδεσης
+            adminEmailInput.addEventListener('input', function() {
+                const email = this.value.trim();
+                if (email) {
+                    firstTimeSetup.style.display = 'block';
+                } else {
+                    firstTimeSetup.style.display = 'none';
+                }
+            });
 
             // Εμφάνιση login modal
             function showLoginModal() {
@@ -508,8 +1184,6 @@
                 loginModal.style.display = 'none';
                 mainContent.style.display = 'block';
                 adminNameSpan.textContent = email.split('@')[0];
-                
-                // Αρχικοποίηση κύριας εφαρμογής
                 initializeMainApp();
             }
 
@@ -526,35 +1200,53 @@
                 adminLoginBtn.disabled = true;
                 adminLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Σύνδεση...';
 
-                // Firebase Authentication
+                // Προσπάθεια σύνδεσης
                 auth.signInWithEmailAndPassword(email, password)
                     .then(async (userCredential) => {
-                        // Έλεγχος αν είναι διαχειριστής
                         const isAdmin = await checkAdminUser(email);
                         
                         if (isAdmin) {
                             showToast('Επιτυχής σύνδεση!', 'success');
-                            
-                            // Δημιουργία εγγραφής διαχειριστή αν δεν υπάρχει
                             await db.collection('admins').doc(userCredential.user.uid).set({
                                 email: email,
                                 name: email.split('@')[0],
                                 lastLogin: new Date().toISOString(),
                                 browser: navigator.userAgent
                             }, { merge: true });
-                            
                         } else {
                             showToast('Δεν έχετε δικαιώματα διαχειριστή!', 'error');
                             auth.signOut();
                         }
                     })
-                    .catch((error) => {
+                    .catch(async (error) => {
                         console.error('Σφάλμα σύνδεσης:', error);
                         
                         if (error.code === 'auth/user-not-found') {
-                            // Αν ο χρήστης δεν υπάρχει, εμφάνιση μηνύματος
-                            showToast('Λάθος email ή κωδικός πρόσβασης.', 'error');
-                        } else {
+                            // Δημιουργία νέου διαχειριστή
+                            try {
+                                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                                const user = userCredential.user;
+                                
+                                await db.collection('admins').doc(user.uid).set({
+                                    email: email,
+                                    name: email.split('@')[0],
+                                    createdAt: new Date().toISOString(),
+                                    lastLogin: new Date().toISOString(),
+                                    browser: navigator.userAgent,
+                                    role: 'admin'
+                                });
+                                
+                                showToast('Δημιουργία νέου διαχειριστή επιτυχής!', 'success');
+                                
+                            } catch (createError) {
+                                console.error('Σφάλμα δημιουργίας διαχειριστή:', createError);
+                                showToast('Σφάλμα δημιουργίας λογαριασμού: ' + createError.message, 'error');
+                            }
+                        } 
+                        else if (error.code === 'auth/wrong-password') {
+                            showToast('Λάθος κωδικός πρόσβασης.', 'error');
+                        }
+                        else {
                             showToast('Σφάλμα σύνδεσης: ' + error.message, 'error');
                         }
                     })
@@ -586,7 +1278,7 @@
                     window.location.href = 'index.html';
                 });
 
-                // Συγχρονισμός χρηστών
+                // Συγχρονισμός
                 document.getElementById('syncUsersBtn').addEventListener('click', function() {
                     loadAllData();
                     showToast('Ο συγχρονισμός ολοκληρώθηκε!', 'success');
@@ -600,20 +1292,16 @@
                     tab.addEventListener('click', () => {
                         const tabId = tab.getAttribute('data-tab');
                         
-                        // Απενεργοποίηση όλων των καρτελών
                         tabs.forEach(t => t.classList.remove('active'));
                         tabContents.forEach(tc => tc.classList.remove('active'));
                         
-                        // Ενεργοποίηση της επιλεγμένης καρτέλας
                         tab.classList.add('active');
                         document.getElementById(tabId).classList.add('active');
 
-                        // Αν είναι η καρτέλα ειδοποιήσεων, φόρτωσε τις ειδοποιήσεις
                         if (tabId === 'notifications-tab') {
                             loadNotifications();
                         }
                         
-                        // Αν είναι η καρτέλα προσφορών, φόρτωσε τη διαχείριση προσφορών
                         if (tabId === 'offers-tab') {
                             loadOffersManagement();
                         }
@@ -630,29 +1318,26 @@
                     updateStats();
                 }
 
-                // Real-time listeners για Firebase Firestore
+                // Real-time listeners
                 function setupRealTimeListeners() {
-                    // Real-time για υποβολές
                     db.collection('submissions').onSnapshot((snapshot) => {
                         loadPhotoSubmissions();
                         loadMessageSubmissions();
                         updateStats();
                     });
 
-                    // Real-time για χρήστες
                     db.collection('users').onSnapshot((snapshot) => {
                         loadUsers();
                         updateStats();
                     });
 
-                    // Real-time για ειδοποιήσεις
                     db.collection('adminNotifications').onSnapshot((snapshot) => {
                         loadNotifications();
                         updateStats();
                     });
                 }
                 
-                // Φόρτωση υποβολών φωτογραφιών από Firebase Firestore
+                // Φόρτωση υποβολών φωτογραφιών
                 function loadPhotoSubmissions() {
                     const listContainer = document.getElementById('photo-submissions-list');
                     
@@ -685,7 +1370,6 @@
                                         </div>
                                     `).join('') : '<p>Δεν υπάρχουν φωτογραφίες</p>';
                                 
-                                // Βελτιωμένη εμφάνιση πληροφοριών καφεμαντείας
                                 const coffeeReadingInfo = submission.coffeeTypeText ? `
                                     <div class="coffee-reading-info">
                                         <p><strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText}</p>
@@ -694,7 +1378,6 @@
                                     </div>
                                 ` : '';
                                 
-                                // Πληροφορίες επιλεγμένου καφεμάντη
                                 const fortuneTellerInfo = submission.fortuneTellerName ? `
                                     <div class="fortune-teller-info">
                                         <p><strong>Επιλεγμένος Καφεμάντης:</strong> ${submission.fortuneTellerName}</p>
@@ -745,7 +1428,6 @@
                                 listContainer.appendChild(submissionCard);
                             });
                             
-                            // Προσθήκη event listeners για τα κουμπιά
                             addActionEventListeners();
                         })
                         .catch((error) => {
@@ -762,7 +1444,7 @@
                         });
                 }
                 
-                // Φόρτωση μηνυμάτων επικοινωνίας από Firebase Firestore
+                // Φόρτωση μηνυμάτων επικοινωνίας
                 function loadMessageSubmissions() {
                     const listContainer = document.getElementById('message-submissions-list');
                     
@@ -821,7 +1503,6 @@
                                 listContainer.appendChild(submissionCard);
                             });
                             
-                            // Προσθήκη event listeners για τα κουμπιά
                             addActionEventListeners();
                         })
                         .catch((error) => {
@@ -838,7 +1519,7 @@
                         });
                 }
                 
-                // Φόρτωση χρηστών από Firebase Firestore
+                // Φόρτωση χρηστών
                 function loadUsers() {
                     const listContainer = document.getElementById('users-list');
                     
@@ -907,7 +1588,6 @@
                             
                             listContainer.innerHTML = usersHTML;
                             
-                            // Προσθήκη event listeners για τα κουμπιά χρηστών
                             document.querySelectorAll('.view-user').forEach(btn => {
                                 btn.addEventListener('click', function() {
                                     const userId = this.getAttribute('data-id');
@@ -946,7 +1626,7 @@
                         });
                 }
 
-                // Κατηγοριοποίηση χρηστών βάσει πόντων
+                // Κατηγοριοποίηση χρηστών
                 function getUserCategory(points) {
                     if (points < 50) {
                         return { class: 'category-beginner', name: 'Αρχάριος' };
@@ -959,29 +1639,23 @@
                     }
                 }
 
-                // Φόρτωση διαχείρισης προσφορών από Firebase Firestore
+                // Διαχείριση προσφορών
                 function loadOffersManagement() {
-                    // Για το παρόν, η διαχείριση προσφορών θα γίνεται μέσω Firestore
-                    // Θα μπορούσαμε να χρησιμοποιήσουμε ένα collection 'offers' στο μέλλον
                     document.getElementById('save-offer-1plus1').addEventListener('click', function() {
                         const status = document.getElementById('offer-1plus1-status').value;
                         const duration = parseInt(document.getElementById('offer-1plus1-duration').value);
-                        
                         const active = status === 'active';
-                        
-                        // Εδώ θα μπορούσαμε να αποθηκεύουμε τις ρυθμίσεις στο Firestore
                         showToast(`Η προσφορά 1+1 ${active ? 'ενεργοποιήθηκε' : 'απενεργοποιήθηκε'}!`, 'success');
                     });
                 }
 
-                // Φόρτωση ειδοποιήσεων από Firebase Firestore
+                // Φόρτωση ειδοποιήσεων
                 function loadNotifications() {
                     const listContainer = document.getElementById('notifications-list');
                     const badge = document.getElementById('notificationsBadge');
                     
                     db.collection('adminNotifications').orderBy('date', 'desc').get()
                         .then((querySnapshot) => {
-                            // Ενημέρωση badge
                             let pendingCount = 0;
                             querySnapshot.forEach(doc => {
                                 const notification = doc.data();
@@ -1055,7 +1729,6 @@
                                 listContainer.appendChild(notificationCard);
                             });
                             
-                            // Προσθήκη event listeners για ειδοποιήσεις
                             document.querySelectorAll('.view-notification').forEach(btn => {
                                 btn.addEventListener('click', function() {
                                     const notificationId = this.getAttribute('data-id');
@@ -1137,7 +1810,6 @@
                 
                 // Προσθήκη event listeners για ενέργειες
                 function addActionEventListeners() {
-                    // Προβολή υποβολής
                     document.querySelectorAll('.btn-view').forEach(btn => {
                         btn.addEventListener('click', function() {
                             const submissionId = this.getAttribute('data-id');
@@ -1145,7 +1817,6 @@
                         });
                     });
                     
-                    // Απάντηση
                     document.querySelectorAll('.btn-reply').forEach(btn => {
                         btn.addEventListener('click', function() {
                             const submissionId = this.getAttribute('data-id');
@@ -1153,7 +1824,6 @@
                         });
                     });
                     
-                    // Λήψη φωτογραφιών
                     document.querySelectorAll('.btn-download').forEach(btn => {
                         btn.addEventListener('click', function() {
                             const submissionId = this.getAttribute('data-id');
@@ -1161,7 +1831,6 @@
                         });
                     });
                     
-                    // Διαγραφή
                     document.querySelectorAll('.btn-delete').forEach(btn => {
                         btn.addEventListener('click', function() {
                             const submissionId = this.getAttribute('data-id');
@@ -1177,7 +1846,6 @@
                 const successModal = document.getElementById('success-modal');
                 const closeModalButtons = document.querySelectorAll('.close-modal');
                 
-                // Κλείσιμο modal
                 closeModalButtons.forEach(btn => {
                     btn.addEventListener('click', function() {
                         submissionModal.style.display = 'none';
@@ -1187,20 +1855,11 @@
                     });
                 });
                 
-                // Κλείσιμο modal με κλικ έξω από το περιεχόμενο
                 window.addEventListener('click', function(event) {
-                    if (event.target === submissionModal) {
-                        submissionModal.style.display = 'none';
-                    }
-                    if (event.target === replyModal) {
-                        replyModal.style.display = 'none';
-                    }
-                    if (event.target === pointsModal) {
-                        pointsModal.style.display = 'none';
-                    }
-                    if (event.target === successModal) {
-                        successModal.style.display = 'none';
-                    }
+                    if (event.target === submissionModal) submissionModal.style.display = 'none';
+                    if (event.target === replyModal) replyModal.style.display = 'none';
+                    if (event.target === pointsModal) pointsModal.style.display = 'none';
+                    if (event.target === successModal) successModal.style.display = 'none';
                 });
                 
                 // Προβολή υποβολής
@@ -1220,7 +1879,6 @@
                                         </div>
                                     `).join('') : '<p>Δεν υπάρχουν φωτογραφίες</p>';
                                 
-                                // Βελτιωμένη εμφάνιση πληροφοριών καφεμαντείας
                                 const coffeeReadingInfo = submission.coffeeTypeText ? `
                                     <div class="coffee-reading-info">
                                         <p><strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText}</p>
@@ -1229,7 +1887,6 @@
                                     </div>
                                 ` : '';
                                 
-                                // Πληροφορίες επιλεγμένου καφεμάντη
                                 const fortuneTellerInfo = submission.fortuneTellerName ? `
                                     <div class="fortune-teller-info">
                                         <p><strong>Επιλεγμένος Καφεμάντης:</strong> ${submission.fortuneTellerName}</p>
@@ -1310,7 +1967,6 @@
                                     <div><strong>Ημερομηνία Εγγραφής:</strong> ${formatDate(user.registrationDate)}</div>
                                     <div><strong>ID Χρήστη:</strong> ${id}</div>
                                     ${user.lastLogin ? `<div><strong>Τελευταία Σύνδεση:</strong> ${formatDate(user.lastLogin)}</div>` : ''}
-                                    ${user.browser ? `<div><strong>Browser:</strong> ${user.browser}</div>` : ''}
                                 </div>
                             `;
                             
@@ -1414,8 +2070,6 @@
                             document.getElementById('points-reason').value = '';
                             
                             pointsModal.style.display = 'flex';
-                            
-                            // Αποθήκευση του userId για χρήση στην αποθήκευση
                             document.getElementById('save-points').setAttribute('data-id', userId);
                         })
                         .catch((error) => {
@@ -1451,20 +2105,17 @@
                             break;
                     }
                     
-                    // Ενημέρωση επιπέδου
                     let level = 'Αρχάριος';
                     if (newPoints >= 100) level = 'Ειδικός';
                     if (newPoints >= 300) level = 'Μάστερ';
                     if (newPoints >= 500) level = 'Grand Master';
                     
-                    // Ενημέρωση των πόντων του χρήστη
                     db.collection('users').doc(userId).update({
                         points: newPoints,
                         level: level,
                         lastUpdated: new Date().toISOString()
                     })
                     .then(() => {
-                        // Καταγραφή της αλλαγής
                         db.collection('pointsHistory').add({
                             userId: userId,
                             action: action,
@@ -1491,12 +2142,11 @@
                     pointsModal.style.display = 'none';
                 });
                 
-                // Νέα λειτουργία για URL detection και preview
+                // URL detection και preview
                 const replyMessageTextarea = document.getElementById('reply-message');
                 const urlPreview = document.getElementById('url-preview');
                 const urlPreviewContent = document.getElementById('url-preview-content');
                 
-                // Λειτουργία για ανίχνευση URLs και προεπισκόπηση
                 replyMessageTextarea.addEventListener('input', function() {
                     const text = this.value;
                     const urls = extractUrls(text);
@@ -1515,13 +2165,11 @@
                     }
                 });
                 
-                // Συνάρτηση εξαγωγής URLs από κείμενο
                 function extractUrls(text) {
                     const urlRegex = /(https?:\/\/[^\s]+)/g;
                     return text.match(urlRegex) || [];
                 }
                 
-                // Συνάρτηση μετατροπής URLs σε clickable links
                 function convertUrlsToLinks(text) {
                     const urlRegex = /(https?:\/\/[^\s]+)/g;
                     return text.replace(urlRegex, function(url) {
@@ -1578,8 +2226,6 @@
                             document.getElementById('reply-message').value = '';
                             urlPreview.style.display = 'none';
                             replyModal.style.display = 'flex';
-                            
-                            // Αποθήκευση του ID για χρήση στην αποστολή
                             document.getElementById('send-reply').setAttribute('data-id', id);
                         })
                         .catch((error) => {
@@ -1598,10 +2244,8 @@
                         return;
                     }
                     
-                    // Μετατροπή URLs σε links
                     const formattedMessage = convertUrlsToLinks(replyMessage);
                     
-                    // Βρες την υποβολή
                     db.collection('submissions').doc(submissionId).get()
                         .then((doc) => {
                             if (!doc.exists) {
@@ -1611,7 +2255,6 @@
                             
                             const submission = doc.data();
                             
-                            // Δημιουργία απάντησης
                             const response = {
                                 submissionId: submissionId,
                                 userEmail: submission.userEmail || submission.email,
@@ -1624,39 +2267,26 @@
                                 viewed: false
                             };
                             
-                            // Αποθήκευση απάντησης
                             return db.collection('responses').add(response);
                         })
                         .then(() => {
-                            // Ενημέρωση κατάστασης υποβολής
                             return db.collection('submissions').doc(submissionId).update({
                                 status: 'answered',
                                 answeredAt: new Date().toISOString()
                             });
                         })
                         .then(() => {
-                            // Αποστολή
                             this.disabled = true;
                             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Αποστολή...';
                             
                             setTimeout(() => {
-                                // Αναπαραγωγή ήχου
                                 playNotificationSound();
-                                
-                                // Κλείσιμο modal απάντησης
                                 replyModal.style.display = 'none';
-                                
-                                // Εμφάνιση modal επιτυχίας
                                 successModal.style.display = 'flex';
-                                
-                                // Επαναφορά κουμπιού
                                 this.disabled = false;
                                 this.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Απάντησης';
-                                
-                                // Ανανέωση δεδομένων
                                 loadAllData();
                                 
-                                // Αυτόματο κλείσιμο modal επιτυχίας μετά από 3 δευτερόλεπτα
                                 setTimeout(() => {
                                     successModal.style.display = 'none';
                                 }, 3000);
@@ -1688,9 +2318,7 @@
                     db.collection('submissions').doc(id).get()
                         .then((doc) => {
                             const submission = doc.data();
-                            
                             if (submission && submission.type === 'photo' && submission.photos && submission.photos.length > 0) {
-                                // Δημιουργία ZIP με τις φωτογραφίες (θα γινόταν στην πραγματικότητα)
                                 alert(`Λήψη ${submission.photos.length} φωτογραφιών από τον χρήστη ${submission.userEmail || submission.email}`);
                             } else {
                                 alert('Δεν βρέθηκαν φωτογραφίες για λήψη');
@@ -1720,50 +2348,9 @@
                 // Διαγραφή χρήστη
                 function deleteUser(userId, userEmail) {
                     if (confirm('Είστε σίγουρος ότι θέλετε να διαγράψετε αυτόν τον χρήστη και όλα τα σχετικά δεδομένα;')) {
-                        
-                        // 1. Διαγραφή από Firestore
                         db.collection('users').doc(userId).delete()
                             .then(() => {
-                                // 2. Διαγραφή υποβολών του χρήστη
-                                return db.collection('submissions')
-                                    .where('userId', '==', userId)
-                                    .get()
-                                    .then((querySnapshot) => {
-                                        const batch = db.batch();
-                                        querySnapshot.forEach((doc) => {
-                                            batch.delete(doc.ref);
-                                        });
-                                        return batch.commit();
-                                    });
-                            })
-                            .then(() => {
-                                // 3. Διαγραφή ειδοποιήσεων του χρήστη
-                                return db.collection('adminNotifications')
-                                    .where('userId', '==', userId)
-                                    .get()
-                                    .then((querySnapshot) => {
-                                        const batch = db.batch();
-                                        querySnapshot.forEach((doc) => {
-                                            batch.delete(doc.ref);
-                                        });
-                                        return batch.commit();
-                                    });
-                            })
-                            .then(() => {
-                                // 4. Διαγραφή απαντήσεων του χρήστη
-                                return db.collection('responses')
-                                    .where('userEmail', '==', userEmail)
-                                    .get()
-                                    .then((querySnapshot) => {
-                                        const batch = db.batch();
-                                        querySnapshot.forEach((doc) => {
-                                            batch.delete(doc.ref);
-                                        });
-                                        return batch.commit();
-                                    });
-                            })
-                            .then(() => {
-                                showToast('Ο χρήστης και όλα τα σχετικά δεδομένα διαγράφηκαν επιτυχώς!', 'success');
+                                showToast('Ο χρήστης διαγράφηκε επιτυχώς!', 'success');
                                 loadUsers();
                             })
                             .catch((error) => {
@@ -1775,13 +2362,11 @@
                 
                 // Ενημέρωση στατιστικών
                 function updateStats() {
-                    // Συνολικές υποβολές
                     db.collection('submissions').get()
                         .then((querySnapshot) => {
                             const total = querySnapshot.size;
                             document.getElementById('total-submissions').textContent = total;
                             
-                            // Υποβολές σε εκκρεμότητα
                             let pending = 0;
                             let answered = 0;
                             
@@ -1798,7 +2383,6 @@
                             console.error('Σφάλμα στατιστικών υποβολών:', error);
                         });
                     
-                    // Εγγεγραμμένοι χρήστες
                     db.collection('users').get()
                         .then((querySnapshot) => {
                             const total = querySnapshot.size;
@@ -1820,7 +2404,6 @@
                 });
                 
                 function showToast(message, type) {
-                    // Ορισμός χρώματος και εικονιδίου ανάλογα με τον τύπο
                     let icon = 'fas fa-bell';
                     let color = 'var(--info)';
                     
@@ -1839,20 +2422,16 @@
                             break;
                     }
                     
-                    // Ενημέρωση περιεχομένου
                     notificationTitle.textContent = type === 'success' ? 'Επιτυχία' : 
                                                    type === 'error' ? 'Σφάλμα' : 
                                                    type === 'warning' ? 'Προσοχή' : 'Ειδοποίηση';
                     notificationMessage.textContent = message;
                     
-                    // Ενημέρωση εικονιδίου και χρώματος
                     notificationToast.querySelector('.notification-icon i').className = icon;
                     notificationToast.style.borderLeftColor = color;
                     
-                    // Εμφάνιση
                     notificationToast.classList.add('show');
                     
-                    // Αυτόματη απόκρυψη μετά από 5 δευτερόλεπτα
                     setTimeout(() => {
                         notificationToast.classList.remove('show');
                     }, 5000);
@@ -1861,6 +2440,9 @@
                 // Αρχική φόρτωση δεδομένων
                 loadAllData();
             }
+
+            // Αρχική εμφάνιση login modal
+            showLoginModal();
         });
     </script>
 </body>
