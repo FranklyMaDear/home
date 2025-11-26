@@ -13,6 +13,7 @@
     <meta name="msapplication-TileImage" content="coffeetime.png">
     <meta name="msapplication-TileColor" content="#8B4513">
     <meta name="theme-color" content="#8B4513">
+    
     <!-- ==== ΠΡΟΣΘΗΚΗ PWA ==== -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#8B4513">
@@ -22,6 +23,7 @@
     <meta name="apple-mobile-web-app-title" content="Cafedium">
     <link rel="apple-touch-icon" href="coffeetime.png">
     <!-- ==== ΤΕΛΟΣ PWA ==== -->
+    
     <style>
         * {
             box-sizing: border-box;
@@ -1574,7 +1576,7 @@
                             <div class="form-group">
                                 <label><i class="fas fa-camera"></i> Επιλογή Φωτογραφιών Καφέ:</label>
                                 <div class="file-input-container">
-                                    <input type="file" id="photos" class="file-input" multiple accept="image/*">
+                                    <input type="file" id="photos" class="file-input" multiple accept="image/*" max="5">
                                     <label for="photos" class="file-input-label">
                                         <i class="fas fa-cloud-upload-alt"></i> Επιλέξτε φωτογραφίες καφέ (μέχρι 5)
                                     </label>
@@ -1868,6 +1870,18 @@
     </div>
 
     <script>
+        // =============================================
+        // ΒΕΛΤΙΩΜΕΝΟΣ ΚΩΔΙΚΑΣ ΜΕ ΑΣΦΑΛΕΙΑ ΚΑΙ ΒΕΛΤΙΩΜΕΝΗ ΛΕΙΤΟΥΡΓΙΚΟΤΗΤΑ
+        // =============================================
+
+        // Απλό hash function για κωδικούς (Σε πραγματική εφαρμογή χρησιμοποιήστε bcrypt)
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         // Συνάρτηση για αποστολή ειδοποίησης επιλογής χαρακτήρα
         function sendCharacterSelectionNotification(characterName, userEmail, userName) {
             const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
@@ -2283,12 +2297,13 @@
                         return;
                     }
                     
-                    // Create new user
+                    // Create new user with hashed password
+                    const hashedPassword = await hashPassword(password);
                     const newUser = {
                         id: Date.now().toString(),
                         name: name,
                         email: email,
-                        password: password, // Note: In a real app, this should be hashed
+                        password: hashedPassword, // Ασφαλής αποθήκευση
                         registrationDate: new Date().toISOString()
                     };
                     
@@ -2348,15 +2363,20 @@
                 try {
                     showMessage(loginMessage, 'Σύνδεση...', 'info');
                     
-                    // Check credentials
+                    // Check credentials with hashed password
                     const users = JSON.parse(localStorage.getItem('users') || '[]');
-                    const user = users.find(u => u.email === email && u.password === password);
+                    const user = users.find(u => u.email === email);
                     
                     if (user) {
-                        currentUser = user;
-                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                        updateUIForUser(currentUser);
-                        showMessage(loginMessage, 'Σύνδεση επιτυχής!', 'success');
+                        const hashedPassword = await hashPassword(password);
+                        if (user.password === hashedPassword) {
+                            currentUser = user;
+                            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                            updateUIForUser(currentUser);
+                            showMessage(loginMessage, 'Σύνδεση επιτυχής!', 'success');
+                        } else {
+                            showMessage(loginMessage, 'Λάθος email ή κωδικός πρόσβασης.', 'error');
+                        }
                     } else {
                         showMessage(loginMessage, 'Λάθος email ή κωδικός πρόσβασης.', 'error');
                     }
@@ -2511,12 +2531,28 @@
             
             let selectedFiles = [];
             const MAX_FILES = 5;
+            const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
             
             fileInput.addEventListener('change', function(e) {
                 const files = Array.from(e.target.files);
                 
+                // Έλεγχος για μέγιστο αριθμό αρχείων
                 if (selectedFiles.length + files.length > MAX_FILES) {
                     showMessage(messageDiv, `Μπορείτε να επιλέξετε μέχρι ${MAX_FILES} φωτογραφίες συνολικά.`, 'error');
+                    return;
+                }
+                
+                // Έλεγχος για μέγεθος αρχείου
+                const oversizedFiles = files.filter(file => file.size > MAX_FILE_SIZE);
+                if (oversizedFiles.length > 0) {
+                    showMessage(messageDiv, `Μερικά αρχεία είναι πολύ μεγάλα. Μέγιστο μέγεθος: 5MB.`, 'error');
+                    return;
+                }
+                
+                // Έλεγχος για τύπο αρχείου
+                const invalidFiles = files.filter(file => !file.type.startsWith('image/'));
+                if (invalidFiles.length > 0) {
+                    showMessage(messageDiv, `Μόνο αρχεία εικόνας επιτρέπονται.`, 'error');
                     return;
                 }
                 
@@ -2617,7 +2653,9 @@
                         reader.onload = function(e) {
                             resolve({
                                 name: file.name,
-                                data: e.target.result
+                                data: e.target.result,
+                                size: file.size,
+                                type: file.type
                             });
                         };
                         reader.readAsDataURL(file);
@@ -3068,9 +3106,20 @@
                 }
             }
 
+            // Αρχικοποίηση
+            loadFortuneTellers();
+            loadAllData();
+
             // Make functions globally available
             window.adminUpdateTerms = adminUpdateTerms;
             window.redeemMainOffer = redeemMainOffer;
+
+            function loadAllData() {
+                loadUserPoints();
+                checkOffersStatus();
+                checkOfferRedemption();
+                checkUserConsent();
+            }
         });
     </script>
 </body>
