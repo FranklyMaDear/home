@@ -1865,14 +1865,14 @@
     </div>
 
     <script>
-        // Firebase Configuration
+        // Firebase Configuration - Ενημερωμένη με τα στοιχεία σας
         const firebaseConfig = {
-            apiKey: "AIzaSyC4wGkQYHcR8f9X8Q7Vj6b6dQ9wM8tN5vX",
-            authDomain: "cafedium-app.firebaseapp.com",
-            projectId: "cafedium-app",
-            storageBucket: "cafedium-app.appspot.com",
-            messagingSenderId: "123456789012",
-            appId: "1:123456789012:web:abcdef123456"
+            apiKey: "AIzaSyDL2tuBeILoot2NpyWDw7bDrvaofG1c0FM",
+            authDomain: "studio-525168498-48aed.firebaseapp.com",
+            projectId: "studio-525168498-48aed",
+            storageBucket: "studio-525168498-48aed.firebasestorage.app",
+            messagingSenderId: "1055521759551",
+            appId: "1:1055521759551:web:58a0799b4aacc3c8b4338a"
         };
 
         // Initialize Firebase
@@ -1931,21 +1931,27 @@
         const installPWA = document.getElementById('installPWA');
         const hidePWA = document.getElementById('hidePWA');
 
-        // Firebase Authentication State Listener
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                currentUser = {
-                    uid: user.uid,
-                    email: user.email,
-                    name: user.displayName || 'Χρήστης'
-                };
-                updateUIForUser(currentUser);
-                loadUserData();
-            } else {
-                currentUser = null;
-                updateUIForUser(null);
-            }
-        });
+        // Firebase Authentication State Listener με persistence
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+            .then(() => {
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        currentUser = {
+                            uid: user.uid,
+                            email: user.email,
+                            name: user.displayName || 'Χρήστης'
+                        };
+                        updateUIForUser(currentUser);
+                        loadUserData();
+                    } else {
+                        currentUser = null;
+                        updateUIForUser(null);
+                    }
+                });
+            })
+            .catch((error) => {
+                console.error("Error setting auth persistence:", error);
+            });
 
         // PWA Installation
         let deferredPrompt;
@@ -2157,7 +2163,7 @@
             });
         });
         
-        // ΕΓΓΡΑΦΗ ΜΕ FIREBASE
+        // ΕΓΓΡΑΦΗ ΜΕ FIREBASE - Βελτιωμένη έκδοση
         const registerForm = document.getElementById('registerForm');
         const registerMessage = document.getElementById('registerMessage');
         
@@ -2195,6 +2201,16 @@
             try {
                 showMessage(registerMessage, 'Δημιουργία λογαριασμού...', 'info');
                 
+                // Έλεγχος αν ο χρήστης υπάρχει ήδη
+                const usersSnapshot = await db.collection('users')
+                    .where('email', '==', email)
+                    .get();
+                    
+                if (!usersSnapshot.empty) {
+                    showMessage(registerMessage, 'Υπάρχει ήδη λογαριασμός με αυτό το email.', 'error');
+                    return;
+                }
+                
                 // Δημιουργία χρήστη στο Firebase Auth
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
@@ -2210,10 +2226,18 @@
                     email: email,
                     registrationDate: new Date().toISOString(),
                     points: 20,
-                    level: 'Αρχάριος'
+                    level: 'Αρχάριος',
+                    lastLogin: new Date().toISOString(),
+                    browser: navigator.userAgent,
+                    active: true
                 });
                 
                 showMessage(registerMessage, 'Η εγγραφή ολοκληρώθηκε επιτυχώς! Κερδίσατε 20 πόντους.', 'success');
+                
+                // Αυτόματη σύνδεση μετά την εγγραφή
+                setTimeout(() => {
+                    auth.signInWithEmailAndPassword(email, password);
+                }, 2000);
                 
             } catch (error) {
                 console.error('Registration error:', error);
@@ -2231,7 +2255,7 @@
             }
         });
         
-        // ΣΥΝΔΕΣΗ ΜΕ FIREBASE
+        // ΣΥΝΔΕΣΗ ΜΕ FIREBASE - Βελτιωμένη έκδοση
         const loginForm = document.getElementById('loginForm');
         const loginMessage = document.getElementById('loginMessage');
         
@@ -2249,7 +2273,16 @@
             try {
                 showMessage(loginMessage, 'Σύνδεση...', 'info');
                 
-                await auth.signInWithEmailAndPassword(email, password);
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Ενημέρωση τελευταίας σύνδεσης στη Firestore
+                await db.collection('users').doc(user.uid).update({
+                    lastLogin: new Date().toISOString(),
+                    browser: navigator.userAgent,
+                    active: true
+                });
+                
                 showMessage(loginMessage, 'Σύνδεση επιτυχής!', 'success');
                 
             } catch (error) {
@@ -2262,6 +2295,8 @@
                     errorMessage = 'Λάθος κωδικός πρόσβασης.';
                 } else if (error.code === 'auth/invalid-email') {
                     errorMessage = 'Το email δεν είναι έγκυρο.';
+                } else if (error.code === 'auth/user-disabled') {
+                    errorMessage = 'Ο λογαριασμός σας έχει απενεργοποιηθεί. Επικοινωνήστε με τον διαχειριστή.';
                 }
                 
                 showMessage(loginMessage, errorMessage, 'error');
