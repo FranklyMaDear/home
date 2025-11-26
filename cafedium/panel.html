@@ -9,16 +9,7 @@
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="coffeetime.png">
-    <link rel="apple-touch-icon" href="coffeetime.png">
-    <link rel="shortcut icon" href="coffeetime.png" type="image/x-icon">
-    <meta name="msapplication-TileImage" content="coffeetime.png">
-    <meta name="msapplication-TileColor" content="#8B4513">
-    <meta name="theme-color" content="#8B4513">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
     <style>
         :root {
@@ -1530,12 +1521,13 @@
     </div>
 
     <script>
-        // Firebase Configuration
+        // Firebase Configuration για το project σας
         const firebaseConfig = {
-            apiKey: "AIzaSyC4RYDqSqYz7QZqY4qY4qY4qY4qY4qY4qY4",
-            authDomain: "cofedium-admin.firebaseapp.com",
-            projectId: "cofedium-admin",
-            storageBucket: "cofedium-admin.appspot.com",
+            apiKey: "AIzaSyB9QdN0FqW9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q9Q",
+            authDomain: "franklymadear-a5751.firebaseapp.com",
+            databaseURL: "https://franklymadear-a5751-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "franklymadear-a5751",
+            storageBucket: "franklymadear-a5751.appspot.com",
             messagingSenderId: "123456789",
             appId: "1:123456789:web:abcdef123456"
         };
@@ -1543,8 +1535,7 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.firestore();
-        const storage = firebase.storage();
+        const database = firebase.database();
 
         document.addEventListener('DOMContentLoaded', function() {
             // Firebase Authentication State Observer
@@ -1693,38 +1684,37 @@
                     updateStats();
                 }
 
-                // Real-time listeners για Firebase
+                // Real-time listeners για Firebase Realtime Database
                 function setupRealTimeListeners() {
                     // Real-time για υποβολές
-                    db.collection('submissions').onSnapshot((snapshot) => {
+                    database.ref('submissions').on('value', (snapshot) => {
                         loadPhotoSubmissions();
                         loadMessageSubmissions();
                         updateStats();
                     });
 
                     // Real-time για χρήστες
-                    db.collection('users').onSnapshot((snapshot) => {
+                    database.ref('users').on('value', (snapshot) => {
                         loadUsers();
                         updateStats();
                     });
 
                     // Real-time για ειδοποιήσεις
-                    db.collection('notifications').onSnapshot((snapshot) => {
+                    database.ref('notifications').on('value', (snapshot) => {
                         loadNotifications();
                         updateStats();
                     });
                 }
                 
-                // Φόρτωση υποβολών φωτογραφιών από Firebase
+                // Φόρτωση υποβολών φωτογραφιών από Firebase Realtime Database
                 function loadPhotoSubmissions() {
                     const listContainer = document.getElementById('photo-submissions-list');
                     
-                    db.collection('submissions')
-                        .where('type', '==', 'photo')
-                        .orderBy('date', 'desc')
-                        .get()
-                        .then((querySnapshot) => {
-                            if (querySnapshot.empty) {
+                    database.ref('submissions').orderByChild('type').equalTo('photo').once('value')
+                        .then((snapshot) => {
+                            const submissions = snapshot.val();
+                            
+                            if (!submissions || Object.keys(submissions).length === 0) {
                                 listContainer.innerHTML = `
                                     <div class="empty-state">
                                         <div class="empty-icon">
@@ -1739,8 +1729,7 @@
                             
                             listContainer.innerHTML = '';
                             
-                            querySnapshot.forEach((doc) => {
-                                const submission = { id: doc.id, ...doc.data() };
+                            Object.entries(submissions).forEach(([id, submission]) => {
                                 const statusClass = `status-${submission.status || 'pending'}`;
                                 const statusText = getStatusText(submission.status || 'pending');
                                 
@@ -1791,18 +1780,18 @@
                                     </div>
                                     
                                     <div class="submission-actions">
-                                        <button class="action-btn btn-view" data-id="${submission.id}">
+                                        <button class="action-btn btn-view" data-id="${id}">
                                             <i class="fas fa-eye"></i> Προβολή
                                         </button>
-                                        <button class="action-btn btn-reply" data-id="${submission.id}">
+                                        <button class="action-btn btn-reply" data-id="${id}">
                                             <i class="fas fa-reply"></i> Απάντηση
                                         </button>
                                         ${submission.photos && submission.photos.length > 0 ? `
-                                        <button class="action-btn btn-download" data-id="${submission.id}">
+                                        <button class="action-btn btn-download" data-id="${id}">
                                             <i class="fas fa-download"></i> Λήψη
                                         </button>
                                         ` : ''}
-                                        <button class="action-btn btn-delete" data-id="${submission.id}">
+                                        <button class="action-btn btn-delete" data-id="${id}">
                                             <i class="fas fa-trash"></i> Διαγραφή
                                         </button>
                                     </div>
@@ -1828,16 +1817,15 @@
                         });
                 }
                 
-                // Φόρτωση μηνυμάτων επικοινωνίας από Firebase
+                // Φόρτωση μηνυμάτων επικοινωνίας από Firebase Realtime Database
                 function loadMessageSubmissions() {
                     const listContainer = document.getElementById('message-submissions-list');
                     
-                    db.collection('submissions')
-                        .where('type', '==', 'message')
-                        .orderBy('date', 'desc')
-                        .get()
-                        .then((querySnapshot) => {
-                            if (querySnapshot.empty) {
+                    database.ref('submissions').orderByChild('type').equalTo('message').once('value')
+                        .then((snapshot) => {
+                            const submissions = snapshot.val();
+                            
+                            if (!submissions || Object.keys(submissions).length === 0) {
                                 listContainer.innerHTML = `
                                     <div class="empty-state">
                                         <div class="empty-icon">
@@ -1852,8 +1840,7 @@
                             
                             listContainer.innerHTML = '';
                             
-                            querySnapshot.forEach((doc) => {
-                                const submission = { id: doc.id, ...doc.data() };
+                            Object.entries(submissions).forEach(([id, submission]) => {
                                 const statusClass = `status-${submission.status || 'pending'}`;
                                 const statusText = getStatusText(submission.status || 'pending');
                                 
@@ -1875,13 +1862,13 @@
                                     </div>
                                     
                                     <div class="submission-actions">
-                                        <button class="action-btn btn-view" data-id="${submission.id}">
+                                        <button class="action-btn btn-view" data-id="${id}">
                                             <i class="fas fa-eye"></i> Προβολή
                                         </button>
-                                        <button class="action-btn btn-reply" data-id="${submission.id}">
+                                        <button class="action-btn btn-reply" data-id="${id}">
                                             <i class="fas fa-reply"></i> Απάντηση
                                         </button>
-                                        <button class="action-btn btn-delete" data-id="${submission.id}">
+                                        <button class="action-btn btn-delete" data-id="${id}">
                                             <i class="fas fa-trash"></i> Διαγραφή
                                         </button>
                                     </div>
@@ -1907,15 +1894,15 @@
                         });
                 }
                 
-                // Φόρτωση χρηστών από Firebase
+                // Φόρτωση χρηστών από Firebase Realtime Database
                 function loadUsers() {
                     const listContainer = document.getElementById('users-list');
                     
-                    db.collection('users')
-                        .orderBy('registrationDate', 'desc')
-                        .get()
-                        .then((querySnapshot) => {
-                            if (querySnapshot.empty) {
+                    database.ref('users').once('value')
+                        .then((snapshot) => {
+                            const users = snapshot.val();
+                            
+                            if (!users || Object.keys(users).length === 0) {
                                 listContainer.innerHTML = `
                                     <div class="empty-state">
                                         <div class="empty-icon">
@@ -1943,8 +1930,7 @@
                                     <tbody>
                             `;
                             
-                            querySnapshot.forEach((doc) => {
-                                const user = { id: doc.id, ...doc.data() };
+                            Object.entries(users).forEach(([id, user]) => {
                                 const userCategory = getUserCategory(user.points || 0);
                                 
                                 usersHTML += `
@@ -1956,13 +1942,13 @@
                                         <td>${formatDate(user.registrationDate)}</td>
                                         <td>
                                             <div class="user-actions">
-                                                <button class="action-btn btn-view view-user" data-id="${user.id}" data-email="${user.email}">
+                                                <button class="action-btn btn-view view-user" data-id="${id}" data-email="${user.email}">
                                                     <i class="fas fa-eye"></i> Προβολή
                                                 </button>
-                                                <button class="action-btn btn-reply manage-points" data-id="${user.id}" data-email="${user.email}">
+                                                <button class="action-btn btn-reply manage-points" data-id="${id}" data-email="${user.email}">
                                                     <i class="fas fa-coins"></i> Πόντοι
                                                 </button>
-                                                <button class="action-btn btn-delete delete-user" data-id="${user.id}" data-email="${user.email}">
+                                                <button class="action-btn btn-delete delete-user" data-id="${id}" data-email="${user.email}">
                                                     <i class="fas fa-trash"></i> Διαγραφή
                                                 </button>
                                             </div>
@@ -2030,17 +2016,17 @@
                     }
                 }
 
-                // Φόρτωση διαχείρισης προσφορών από Firebase
+                // Φόρτωση διαχείρισης προσφορών από Firebase Realtime Database
                 function loadOffersManagement() {
-                    db.collection('offers').doc('1plus1').get()
-                        .then((doc) => {
-                            if (doc.exists) {
-                                const offer = doc.data();
+                    database.ref('offers/1plus1').once('value')
+                        .then((snapshot) => {
+                            const offer = snapshot.val();
+                            if (offer) {
                                 document.getElementById('offer-1plus1-status').value = offer.active ? 'active' : 'inactive';
                                 
                                 // Έλεγχος αν η προσφορά έχει λήξει
                                 if (offer.expiry && new Date() > new Date(offer.expiry)) {
-                                    db.collection('offers').doc('1plus1').update({ active: false });
+                                    database.ref('offers/1plus1').update({ active: false });
                                     document.getElementById('offer-1plus1-status').value = 'inactive';
                                 }
                             }
@@ -2050,7 +2036,7 @@
                         });
                 }
 
-                // Αποθήκευση ρυθμίσεων προσφοράς στο Firebase
+                // Αποθήκευση ρυθμίσεων προσφοράς στο Firebase Realtime Database
                 document.getElementById('save-offer-1plus1').addEventListener('click', function() {
                     const status = document.getElementById('offer-1plus1-status').value;
                     const duration = parseInt(document.getElementById('offer-1plus1-duration').value);
@@ -2064,12 +2050,12 @@
                         expiry = expiryDate.toISOString();
                     }
                     
-                    db.collection('offers').doc('1plus1').set({
+                    database.ref('offers/1plus1').set({
                         active: active,
                         expiry: expiry,
                         duration: duration,
                         lastUpdated: new Date().toISOString()
-                    }, { merge: true })
+                    })
                     .then(() => {
                         showToast(`Η προσφορά 1+1 ${active ? 'ενεργοποιήθηκε' : 'απενεργοποιήθηκε'}!`, 'success');
                     })
@@ -2079,28 +2065,33 @@
                     });
                 });
 
-                // Φόρτωση ειδοποιήσεων από Firebase
+                // Φόρτωση ειδοποιήσεων από Firebase Realtime Database
                 function loadNotifications() {
                     const listContainer = document.getElementById('notifications-list');
                     const badge = document.getElementById('notificationsBadge');
                     
-                    db.collection('notifications')
-                        .orderBy('date', 'desc')
-                        .get()
-                        .then((querySnapshot) => {
-                            // Ενημέρωση badge
-                            const pendingNotifications = querySnapshot.docs.filter(doc => 
-                                doc.data().status === 'pending'
-                            );
+                    database.ref('notifications').once('value')
+                        .then((snapshot) => {
+                            const notifications = snapshot.val();
                             
-                            if (pendingNotifications.length > 0) {
-                                badge.textContent = pendingNotifications.length;
+                            // Ενημέρωση badge
+                            let pendingCount = 0;
+                            if (notifications) {
+                                Object.values(notifications).forEach(notification => {
+                                    if (notification.status === 'pending') {
+                                        pendingCount++;
+                                    }
+                                });
+                            }
+                            
+                            if (pendingCount > 0) {
+                                badge.textContent = pendingCount;
                                 badge.style.display = 'flex';
                             } else {
                                 badge.style.display = 'none';
                             }
                             
-                            if (querySnapshot.empty) {
+                            if (!notifications || Object.keys(notifications).length === 0) {
                                 listContainer.innerHTML = `
                                     <div class="empty-state">
                                         <div class="empty-icon">
@@ -2115,8 +2106,7 @@
                             
                             listContainer.innerHTML = '';
                             
-                            querySnapshot.forEach((doc) => {
-                                const notification = { id: doc.id, ...doc.data() };
+                            Object.entries(notifications).forEach(([id, notification]) => {
                                 const statusClass = `status-${notification.status || 'pending'}`;
                                 const statusText = getNotificationStatusText(notification.status || 'pending');
                                 
@@ -2141,15 +2131,15 @@
                                     </div>
                                     
                                     <div class="submission-actions">
-                                        <button class="action-btn btn-view view-notification" data-id="${notification.id}">
+                                        <button class="action-btn btn-view view-notification" data-id="${id}">
                                             <i class="fas fa-eye"></i> Προβολή
                                         </button>
                                         ${notification.status === 'pending' ? `
-                                        <button class="action-btn btn-reply mark-processed" data-id="${notification.id}">
+                                        <button class="action-btn btn-reply mark-processed" data-id="${id}">
                                             <i class="fas fa-check"></i> Επεξεργασμένη
                                         </button>
                                         ` : ''}
-                                        <button class="action-btn btn-delete delete-notification" data-id="${notification.id}">
+                                        <button class="action-btn btn-delete delete-notification" data-id="${id}">
                                             <i class="fas fa-trash"></i> Διαγραφή
                                         </button>
                                     </div>
@@ -2307,11 +2297,11 @@
                 
                 // Προβολή υποβολής
                 function viewSubmission(id) {
-                    db.collection('submissions').doc(id).get()
-                        .then((doc) => {
-                            if (!doc.exists) return;
+                    database.ref('submissions/' + id).once('value')
+                        .then((snapshot) => {
+                            const submission = snapshot.val();
+                            if (!submission) return;
                             
-                            const submission = { id: doc.id, ...doc.data() };
                             const modalBody = document.getElementById('modal-body');
                             
                             if (submission.type === 'photo') {
@@ -2392,11 +2382,11 @@
                 
                 // Προβολή χρήστη
                 function viewUser(id, email) {
-                    db.collection('users').doc(id).get()
-                        .then((doc) => {
-                            if (!doc.exists) return;
+                    database.ref('users/' + id).once('value')
+                        .then((snapshot) => {
+                            const user = snapshot.val();
+                            if (!user) return;
                             
-                            const user = { id: doc.id, ...doc.data() };
                             const modalBody = document.getElementById('modal-body');
                             
                             modalBody.innerHTML = `
@@ -2410,7 +2400,7 @@
                                     <div><strong>Πόντοι:</strong> ${user.points || 0}</div>
                                     <div><strong>Επίπεδο:</strong> ${user.level || 'Αρχάριος'}</div>
                                     <div><strong>Ημερομηνία Εγγραφής:</strong> ${formatDate(user.registrationDate)}</div>
-                                    <div><strong>ID Χρήστη:</strong> ${user.id}</div>
+                                    <div><strong>ID Χρήστη:</strong> ${id}</div>
                                 </div>
                             `;
                             
@@ -2424,11 +2414,11 @@
 
                 // Προβολή ειδοποίησης
                 function viewNotification(id) {
-                    db.collection('notifications').doc(id).get()
-                        .then((doc) => {
-                            if (!doc.exists) return;
+                    database.ref('notifications/' + id).once('value')
+                        .then((snapshot) => {
+                            const notification = snapshot.val();
+                            if (!notification) return;
                             
-                            const notification = { id: doc.id, ...doc.data() };
                             const modalBody = document.getElementById('modal-body');
                             
                             modalBody.innerHTML = `
@@ -2459,7 +2449,7 @@
 
                 // Σήμανση ειδοποίησης ως επεξεργασμένης
                 function markNotificationProcessed(id) {
-                    db.collection('notifications').doc(id).update({
+                    database.ref('notifications/' + id).update({
                         status: 'processed',
                         processedAt: new Date().toISOString()
                     })
@@ -2476,7 +2466,7 @@
                 // Διαγραφή ειδοποίησης
                 function deleteNotification(id) {
                     if (confirm('Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την ειδοποίηση;')) {
-                        db.collection('notifications').doc(id).delete()
+                        database.ref('notifications/' + id).remove()
                             .then(() => {
                                 showToast('Η ειδοποίηση διαγράφηκε επιτυχώς!', 'success');
                                 loadNotifications();
@@ -2490,11 +2480,11 @@
                 
                 // Διαχείριση πόντων χρήστη
                 function manageUserPoints(userId, userEmail) {
-                    db.collection('users').doc(userId).get()
-                        .then((doc) => {
-                            if (!doc.exists) return;
+                    database.ref('users/' + userId).once('value')
+                        .then((snapshot) => {
+                            const user = snapshot.val();
+                            if (!user) return;
                             
-                            const user = { id: doc.id, ...doc.data() };
                             const pointsUserInfo = document.getElementById('points-user-info');
                             
                             pointsUserInfo.innerHTML = `
@@ -2558,14 +2548,14 @@
                     if (newPoints >= 500) level = 'Grand Master';
                     
                     // Ενημέρωση των πόντων του χρήστη
-                    db.collection('users').doc(userId).update({
+                    database.ref('users/' + userId).update({
                         points: newPoints,
                         level: level,
                         lastUpdated: new Date().toISOString()
                     })
                     .then(() => {
                         // Καταγραφή της αλλαγής
-                        db.collection('pointsHistory').add({
+                        database.ref('pointsHistory').push({
                             userId: userId,
                             action: action,
                             amount: amount,
@@ -2631,11 +2621,11 @@
                 
                 // Άνοιγμα modal απάντησης
                 function openReplyModal(id) {
-                    db.collection('submissions').doc(id).get()
-                        .then((doc) => {
-                            if (!doc.exists) return;
+                    database.ref('submissions/' + id).once('value')
+                        .then((snapshot) => {
+                            const submission = snapshot.val();
+                            if (!submission) return;
                             
-                            const submission = { id: doc.id, ...doc.data() };
                             const userInfo = document.getElementById('reply-user-info');
                             
                             if (submission.type === 'photo') {
@@ -2702,14 +2692,13 @@
                     const formattedMessage = convertUrlsToLinks(replyMessage);
                     
                     // Βρες την υποβολή
-                    db.collection('submissions').doc(submissionId).get()
-                        .then((doc) => {
-                            if (!doc.exists) {
+                    database.ref('submissions/' + submissionId).once('value')
+                        .then((snapshot) => {
+                            const submission = snapshot.val();
+                            if (!submission) {
                                 alert('Δεν βρέθηκε η υποβολή!');
                                 return;
                             }
-                            
-                            const submission = doc.data();
                             
                             // Δημιουργία απάντησης
                             const response = {
@@ -2724,11 +2713,11 @@
                             };
                             
                             // Αποθήκευση απάντησης
-                            return db.collection('responses').add(response);
+                            return database.ref('responses').push(response);
                         })
                         .then(() => {
                             // Ενημέρωση κατάστασης υποβολής
-                            return db.collection('submissions').doc(submissionId).update({
+                            return database.ref('submissions/' + submissionId).update({
                                 status: 'answered',
                                 answeredAt: new Date().toISOString()
                             });
@@ -2784,13 +2773,11 @@
                 
                 // Λήψη υποβολής
                 function downloadSubmission(id) {
-                    db.collection('submissions').doc(id).get()
-                        .then((doc) => {
-                            if (!doc.exists) return;
+                    database.ref('submissions/' + id).once('value')
+                        .then((snapshot) => {
+                            const submission = snapshot.val();
                             
-                            const submission = doc.data();
-                            
-                            if (submission.type === 'photo' && submission.photos && submission.photos.length > 0) {
+                            if (submission && submission.type === 'photo' && submission.photos && submission.photos.length > 0) {
                                 // Δημιουργία ZIP με τις φωτογραφίες (θα γινόταν στην πραγματικότητα)
                                 alert(`Λήψη ${submission.photos.length} φωτογραφιών από τον χρήστη ${submission.userEmail || submission.email}`);
                             } else {
@@ -2806,7 +2793,7 @@
                 // Διαγραφή υποβολής
                 function deleteSubmission(id) {
                     if (confirm('Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την υποβολή;')) {
-                        db.collection('submissions').doc(id).delete()
+                        database.ref('submissions/' + id).remove()
                             .then(() => {
                                 showToast('Η υποβολή διαγράφηκε επιτυχώς!', 'success');
                                 loadAllData();
@@ -2822,31 +2809,27 @@
                 function deleteUser(userId, userEmail) {
                     if (confirm('Είστε σίγουρος ότι θέλετε να διαγράψετε αυτόν τον χρήστη και όλα τα σχετικά δεδομένα;')) {
                         // Διαγραφή χρήστη
-                        db.collection('users').doc(userId).delete()
+                        database.ref('users/' + userId).remove()
                             .then(() => {
                                 // Διαγραφή υποβολών του χρήστη
-                                return db.collection('submissions')
-                                    .where('userEmail', '==', userEmail)
-                                    .get()
-                                    .then((querySnapshot) => {
-                                        const batch = db.batch();
-                                        querySnapshot.forEach((doc) => {
-                                            batch.delete(doc.ref);
+                                return database.ref('submissions').orderByChild('userEmail').equalTo(userEmail).once('value')
+                                    .then((snapshot) => {
+                                        const updates = {};
+                                        snapshot.forEach((childSnapshot) => {
+                                            updates['submissions/' + childSnapshot.key] = null;
                                         });
-                                        return batch.commit();
+                                        return database.ref().update(updates);
                                     });
                             })
                             .then(() => {
                                 // Διαγραφή ειδοποιήσεων του χρήστη
-                                return db.collection('notifications')
-                                    .where('userEmail', '==', userEmail)
-                                    .get()
-                                    .then((querySnapshot) => {
-                                        const batch = db.batch();
-                                        querySnapshot.forEach((doc) => {
-                                            batch.delete(doc.ref);
+                                return database.ref('notifications').orderByChild('userEmail').equalTo(userEmail).once('value')
+                                    .then((snapshot) => {
+                                        const updates = {};
+                                        snapshot.forEach((childSnapshot) => {
+                                            updates['notifications/' + childSnapshot.key] = null;
                                         });
-                                        return batch.commit();
+                                        return database.ref().update(updates);
                                     });
                             })
                             .then(() => {
@@ -2863,20 +2846,24 @@
                 // Ενημέρωση στατιστικών
                 function updateStats() {
                     // Συνολικές υποβολές
-                    db.collection('submissions').get()
-                        .then((querySnapshot) => {
-                            document.getElementById('total-submissions').textContent = querySnapshot.size;
+                    database.ref('submissions').once('value')
+                        .then((snapshot) => {
+                            const submissions = snapshot.val();
+                            const total = submissions ? Object.keys(submissions).length : 0;
+                            document.getElementById('total-submissions').textContent = total;
                             
                             // Υποβολές σε εκκρεμότητα
-                            const pending = querySnapshot.docs.filter(doc => 
-                                doc.data().status === 'pending'
-                            ).length;
-                            document.getElementById('pending-submissions').textContent = pending;
+                            let pending = 0;
+                            let answered = 0;
                             
-                            // Απαντημένες υποβολές
-                            const answered = querySnapshot.docs.filter(doc => 
-                                doc.data().status === 'answered'
-                            ).length;
+                            if (submissions) {
+                                Object.values(submissions).forEach(submission => {
+                                    if (submission.status === 'pending') pending++;
+                                    if (submission.status === 'answered') answered++;
+                                });
+                            }
+                            
+                            document.getElementById('pending-submissions').textContent = pending;
                             document.getElementById('answered-submissions').textContent = answered;
                         })
                         .catch((error) => {
@@ -2884,9 +2871,11 @@
                         });
                     
                     // Εγγεγραμμένοι χρήστες
-                    db.collection('users').get()
-                        .then((querySnapshot) => {
-                            document.getElementById('registered-users').textContent = querySnapshot.size;
+                    database.ref('users').once('value')
+                        .then((snapshot) => {
+                            const users = snapshot.val();
+                            const total = users ? Object.keys(users).length : 0;
+                            document.getElementById('registered-users').textContent = total;
                         })
                         .catch((error) => {
                             console.error('Σφάλμα στατιστικών χρηστών:', error);
