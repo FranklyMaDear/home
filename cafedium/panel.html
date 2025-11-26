@@ -3,16 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cofedium Διαχειριστής</title>
+    <title>Cafedium Διαχειριστής</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Favicon για όλες τις συσκευές -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="coffeetime.png">
     <link rel="apple-touch-icon" href="coffeetime.png">
     <link rel="shortcut icon" href="coffeetime.png" type="image/x-icon">
-    <meta name="msapplication-TileImage" content="coffeetime.png">
-    <meta name="msapplication-TileColor" content="#8B4513">
-    <meta name="theme-color" content="#8B4513">
     
     <style>
         :root {
@@ -592,268 +589,6 @@
             margin-top: 16px;
         }
 
-        /* URL preview και links */
-        .url-preview {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
-            padding: 12px;
-            margin: 12px 0;
-        }
-
-        .url-preview h4 {
-            margin-bottom: 8px;
-            color: var(--dark);
-            font-size: 0.85rem;
-        }
-
-        .url-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 6px;
-            padding: 6px;
-            background: white;
-            border-radius: 4px;
-            font-size: 0.8rem;
-        }
-
-        .url-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .url-item i {
-            color: var(--primary);
-        }
-
-        .preview-link {
-            color: var(--primary);
-            text-decoration: none;
-            flex: 1;
-            word-break: break-all;
-        }
-
-        .preview-link:hover {
-            text-decoration: underline;
-        }
-
-        .url-note {
-            font-size: 0.7rem;
-            color: #6c757d;
-            white-space: nowrap;
-        }
-
-        /* Προβολή μηνυμάτων με links */
-        .message-link {
-            color: var(--primary);
-            text-decoration: underline;
-            word-break: break-all;
-        }
-
-        .message-link:hover {
-            color: var(--primary-light);
-            text-decoration: none;
-        }
-
-        .submission-message a {
-            color: var(--primary);
-            text-decoration: underline;
-            word-break: break-all;
-        }
-
-        .submission-message a:hover {
-            color: var(--primary-light);
-            text-decoration: none;
-        }
-        
-        /* Πίνακας χρηστών */
-        .users-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 16px;
-            font-size: 0.85rem;
-        }
-        
-        .users-table th, .users-table td {
-            padding: 10px 12px;
-            text-align: left;
-            border-bottom: 1px solid #e0d6c9;
-        }
-        
-        .users-table th {
-            background-color: #f8f4e9;
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        .users-table tr:hover {
-            background-color: #fcfaf7;
-        }
-        
-        .user-actions {
-            display: flex;
-            gap: 6px;
-        }
-        
-        .user-actions .action-btn {
-            padding: 4px 8px;
-            font-size: 0.75rem;
-        }
-
-        /* Ειδοποιήσεις */
-        .notifications-badge {
-            background: var(--error);
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.65rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            top: -4px;
-            right: -4px;
-        }
-        
-        /* Διαχείριση προσφορών */
-        .offer-management {
-            display: grid;
-            gap: 16px;
-        }
-        
-        .offer-item {
-            background: #fcfaf7;
-            border-radius: 8px;
-            padding: 16px;
-            border: 1px solid #e0d6c9;
-        }
-        
-        .offer-item h3 {
-            color: var(--primary);
-            margin-bottom: 8px;
-            font-size: 1.1rem;
-        }
-        
-        .offer-controls {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #e0d6c9;
-        }
-        
-        .offer-status {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-        
-        .status-active {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-inactive {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .offer-expiry {
-            font-size: 0.85rem;
-            color: var(--text);
-            margin-top: 4px;
-        }
-        
-        /* Κατηγορίες χρηστών */
-        .user-category {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 6px;
-        }
-        
-        .category-beginner {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-        
-        .category-regular {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        
-        .category-vip {
-            background: #fff3e0;
-            color: #ef6c00;
-        }
-        
-        .category-master {
-            background: #fce4ec;
-            color: #c2185b;
-        }
-        
-        /* Βελτιωμένες ειδοποιήσεις */
-        .notification-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            padding: 16px;
-            max-width: 320px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            border-left: 4px solid var(--info);
-        }
-        
-        .notification-toast.show {
-            transform: translateX(0);
-        }
-        
-        .notification-icon {
-            font-size: 1.2rem;
-            color: var(--info);
-            margin-top: 2px;
-        }
-        
-        .notification-content {
-            flex: 1;
-        }
-        
-        .notification-title {
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: var(--dark);
-        }
-        
-        .notification-message {
-            font-size: 0.85rem;
-            color: var(--text);
-            line-height: 1.4;
-        }
-        
-        .notification-close {
-            background: none;
-            border: none;
-            font-size: 1rem;
-            cursor: pointer;
-            color: var(--text);
-            opacity: 0.7;
-        }
-        
-        .notification-close:hover {
-            opacity: 1;
-        }
-
         /* Επιπλέον στυλ για καφεμαντεία */
         .coffee-reading-info {
             background: #f8f4e9;
@@ -881,11 +616,6 @@
             margin: 4px 0;
             font-size: 0.85rem;
             font-weight: 500;
-        }
-
-        /* Sound notification */
-        .sound-notification {
-            display: none;
         }
 
         /* Success animation */
@@ -974,20 +704,6 @@
             .photo-image {
                 height: 80px;
             }
-
-            .url-preview {
-                padding: 8px;
-            }
-
-            .url-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
-            }
-
-            .url-note {
-                white-space: normal;
-            }
             
             .users-table {
                 display: block;
@@ -996,12 +712,6 @@
             
             .user-actions {
                 flex-direction: column;
-            }
-            
-            .notification-toast {
-                right: 10px;
-                left: 10px;
-                max-width: none;
             }
         }
         
@@ -1028,8 +738,7 @@
     <div class="container">
         <header>
             <i class="fas fa-mug-hot logo"></i>
-            <h1>Πίνακας Διαχειριστή
-            </h1>
+            <h1>Πίνακας Διαχειριστή Cafedium</h1>
             <p class="subtitle">Διαχείριση υποβολών και μηνυμάτων από επισκέπτες</p>
         </header>
         
@@ -1093,9 +802,6 @@
             </button>
             <button class="tab" data-tab="users-tab">
                 <i class="fas fa-users"></i> Χρήστες
-            </button>
-            <button class="tab" data-tab="offers-tab">
-                <i class="fas fa-gift"></i> Προσφορές
             </button>
             <button class="tab" data-tab="notifications-tab" id="notificationsTab">
                 <i class="fas fa-bell"></i> Ειδοποιήσεις
@@ -1169,39 +875,6 @@
                 </div>
             </section>
 
-            <!-- Καρτέλα Διαχείρισης Προσφορών -->
-            <section id="offers-tab" class="tab-content">
-                <div class="content-section">
-                    <h2><i class="fas fa-gift"></i> Διαχείριση Προσφορών</h2>
-                    
-                    <div class="offer-management">
-                        <div class="offer-item">
-                            <h3>Προσφορά 1+1 Δώρο</h3>
-                            <p>Ενεργοποίηση της προσφοράς 1+1 δώρο για όλους τους χρήστες.</p>
-                            
-                            <div class="offer-controls">
-                                <div class="form-group">
-                                    <label for="offer-1plus1-status">Κατάσταση:</label>
-                                    <select class="filter-select" id="offer-1plus1-status">
-                                        <option value="active">Ενεργή</option>
-                                        <option value="inactive">Ανενεργή</option>
-                                    </select>
-                                </div>
-                                    
-                                <div class="form-group">
-                                    <label for="offer-1plus1-duration">Διάρκεια (ώρες):</label>
-                                    <input type="number" id="offer-1plus1-duration" class="filter-select" min="1" max="168" value="24">
-                                </div>
-                                    
-                                <button class="action-btn btn-reply" id="save-offer-1plus1">
-                                    <i class="fas fa-save"></i> Αποθήκευση Ρυθμίσεων
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             <!-- Καρτέλα Ειδοποιήσεων -->
             <section id="notifications-tab" class="tab-content">
                 <div class="content-section">
@@ -1216,7 +889,7 @@
         
         <footer>
             <p>
-                Καφεμαντεία <span class="coffee-icon">☕</span> 
+                Cafedium <span class="coffee-icon">☕</span> 
                 Πίνακας Διαχειριστή
             </p>
             <p>© 2023 - Όλα τα δικαιώματα διατηρούνται</p>
@@ -1251,12 +924,7 @@
                 <div class="reply-form">
                     <div class="form-group">
                         <label for="reply-message">Μήνυμα Απάντησης:</label>
-                        <textarea id="reply-message" placeholder="Γράψτε το μήνυμα απάντησής σας εδώ...&#10;&#10;Μπορείτε να επικολλήσετε URLs που θα μετατραπούν αυτόματα σε clickable links για τον χρήστη."></textarea>
-                    </div>
-                    
-                    <div class="url-preview" id="url-preview" style="display: none;">
-                        <h4>Προεπισκόπηση URLs:</h4>
-                        <div id="url-preview-content"></div>
+                        <textarea id="reply-message" placeholder="Γράψτε το μήνυμα απάντησής σας εδώ..."></textarea>
                     </div>
                     
                     <div class="modal-actions">
@@ -1339,35 +1007,15 @@
         </div>
     </div>
 
-    <!-- Βελτιωμένη ειδοποίηση -->
-    <div class="notification-toast" id="notification-toast">
-        <div class="notification-icon">
-            <i class="fas fa-bell"></i>
-        </div>
-        <div class="notification-content">
-            <div class="notification-title" id="notification-title">Νέα Ειδοποίηση</div>
-            <div class="notification-message" id="notification-message">Έχετε νέα μηνύματα</div>
-        </div>
-        <button class="notification-close" id="notification-close">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-
-    <!-- Ηχητική ειδοποίηση -->
-    <audio id="notification-sound" class="sound-notification">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
-    </audio>
-
     <script>
+        // =============================================
+        // ΒΕΛΤΙΩΜΕΝΟΣ ΚΩΔΙΚΑΣ ΠΑΝΕΛ ΔΙΑΧΕΙΡΙΣΤΗ
+        // =============================================
+
         document.addEventListener('DOMContentLoaded', function() {
             // Σύνδεση με την κύρια εφαρμογή
             document.getElementById('mainAppBtn').addEventListener('click', function() {
                 window.location.href = 'index.html';
-            });
-
-            // Συγχρονισμός χρηστών
-            document.getElementById('syncUsersBtn').addEventListener('click', function() {
-                manualUserSync();
             });
 
             // Βελτιωμένο σύστημα συγχρονισμού χρηστών
@@ -1379,7 +1027,7 @@
                 userPoints.forEach(up => {
                     if (up.email && !allUsers.find(u => u.email === up.email)) {
                         allUsers.push({
-                            id: up.userId || Date.now(),
+                            id: up.userId || Date.now().toString(),
                             name: up.name || 'Χρήστης',
                             email: up.email,
                             registrationDate: up.registrationDate || new Date().toISOString(),
@@ -1393,7 +1041,7 @@
                 submissions.forEach(sub => {
                     if (sub.userEmail && !allUsers.find(u => u.email === sub.userEmail)) {
                         allUsers.push({
-                            id: sub.userId || Date.now(),
+                            id: sub.userId || Date.now().toString(),
                             name: sub.userName || 'Χρήστης',
                             email: sub.userEmail,
                             registrationDate: sub.date || new Date().toISOString(),
@@ -1407,7 +1055,7 @@
                 notifications.forEach(notif => {
                     if (notif.userEmail && !allUsers.find(u => u.email === notif.userEmail)) {
                         allUsers.push({
-                            id: Date.now(),
+                            id: Date.now().toString(),
                             name: notif.userName || 'Χρήστης',
                             email: notif.userEmail,
                             registrationDate: notif.date || new Date().toISOString(),
@@ -1421,7 +1069,7 @@
                 redemptions.forEach(redemption => {
                     if (redemption.email && !allUsers.find(u => u.email === redemption.email)) {
                         allUsers.push({
-                            id: redemption.userId || Date.now(),
+                            id: redemption.userId || Date.now().toString(),
                             name: 'Χρήστης',
                             email: redemption.email,
                             registrationDate: redemption.date || new Date().toISOString(),
@@ -1457,11 +1105,6 @@
                     if (tabId === 'notifications-tab') {
                         loadNotifications();
                     }
-                    
-                    // Αν είναι η καρτέλα προσφορών, φόρτωσε τη διαχείριση προσφορών
-                    if (tabId === 'offers-tab') {
-                        loadOffersManagement();
-                    }
                 });
             });
             
@@ -1470,13 +1113,17 @@
                 loadAllData();
                 showToast('Τα δεδομένα ανανεώθηκαν!', 'success');
             });
+
+            // Συγχρονισμός χρηστών
+            document.getElementById('syncUsersBtn').addEventListener('click', function() {
+                manualUserSync();
+            });
             
             // Φόρτωση όλων των δεδομένων
             function loadAllData() {
                 loadPhotoSubmissions();
                 loadMessageSubmissions();
                 loadUsers();
-                loadOffersManagement();
                 loadNotifications();
                 updateStats();
             }
@@ -1544,7 +1191,7 @@
                         </div>
                     ` : '';
                     
-                    // Πληροφορίες επιλεγμένου καφεμάντη - ΑΥΤΟ ΕΙΝΑΙ ΤΟ ΚΡΙΣΙΜΟ ΣΗΜΕΙΟ
+                    // Πληροφορίες επιλεγμένου καφεμάντη
                     const fortuneTellerInfo = submission.fortuneTellerName ? `
                         <div class="fortune-teller-info">
                             <p><strong>Επιλεγμένος Καφεμάντης:</strong> ${submission.fortuneTellerName}</p>
@@ -1712,7 +1359,7 @@
                             <td>${user.name || 'Χωρίς όνομα'}</td>
                             <td>${user.email}</td>
                             <td>${userPointData.points}</td>
-                            <td>${userPointData.level} <span class="user-category ${userCategory.class}">${userCategory.name}</span></td>
+                            <td>${userPointData.level}</td>
                             <td>${formatDate(user.registrationDate || user.date)}</td>
                             <td>
                                 <div class="user-actions">
@@ -1776,45 +1423,6 @@
                     return { class: 'category-master', name: 'Master' };
                 }
             }
-
-            // Φόρτωση διαχείρισης προσφορών
-            function loadOffersManagement() {
-                const offersStatus = JSON.parse(localStorage.getItem('offersStatus') || '{"1plus1": false}');
-                const offerExpiry = JSON.parse(localStorage.getItem('offerExpiry') || '{}');
-                
-                document.getElementById('offer-1plus1-status').value = offersStatus['1plus1'] ? 'active' : 'inactive';
-                
-                // Έλεγχος αν η προσφορά έχει λήξει
-                if (offerExpiry['1plus1'] && new Date() > new Date(offerExpiry['1plus1'])) {
-                    offersStatus['1plus1'] = false;
-                    localStorage.setItem('offersStatus', JSON.stringify(offersStatus));
-                    document.getElementById('offer-1plus1-status').value = 'inactive';
-                }
-            }
-
-            // Αποθήκευση ρυθμίσεων προσφοράς
-            document.getElementById('save-offer-1plus1').addEventListener('click', function() {
-                const status = document.getElementById('offer-1plus1-status').value;
-                const duration = parseInt(document.getElementById('offer-1plus1-duration').value);
-                
-                const offersStatus = JSON.parse(localStorage.getItem('offersStatus') || '{}');
-                const offerExpiry = JSON.parse(localStorage.getItem('offerExpiry') || '{}');
-                
-                offersStatus['1plus1'] = status === 'active';
-                
-                if (status === 'active') {
-                    const expiryDate = new Date();
-                    expiryDate.setHours(expiryDate.getHours() + duration);
-                    offerExpiry['1plus1'] = expiryDate.toISOString();
-                } else {
-                    delete offerExpiry['1plus1'];
-                }
-                
-                localStorage.setItem('offersStatus', JSON.stringify(offersStatus));
-                localStorage.setItem('offerExpiry', JSON.stringify(offerExpiry));
-                
-                showToast(`Η προσφορά 1+1 ${status === 'active' ? 'ενεργοποιήθηκε' : 'απενεργοποιήθηκε'}!`, 'success');
-            });
 
             // Φόρτωση ειδοποιήσεων
             function loadNotifications() {
@@ -2318,44 +1926,6 @@
                 pointsModal.style.display = 'none';
             });
             
-            // Νέα λειτουργία για URL detection και preview
-            const replyMessageTextarea = document.getElementById('reply-message');
-            const urlPreview = document.getElementById('url-preview');
-            const urlPreviewContent = document.getElementById('url-preview-content');
-            
-            // Λειτουργία για ανίχνευση URLs και προεπισκόπηση
-            replyMessageTextarea.addEventListener('input', function() {
-                const text = this.value;
-                const urls = extractUrls(text);
-                
-                if (urls.length > 0) {
-                    urlPreviewContent.innerHTML = urls.map(url => `
-                        <div class="url-item">
-                            <i class="fas fa-link"></i>
-                            <a href="${url}" target="_blank" class="preview-link">${url}</a>
-                            <span class="url-note">(θα ανοίξει σε νέα καρτέλα)</span>
-                        </div>
-                    `).join('');
-                    urlPreview.style.display = 'block';
-                } else {
-                    urlPreview.style.display = 'none';
-                }
-            });
-            
-            // Συνάρτηση εξαγωγής URLs από κείμενο
-            function extractUrls(text) {
-                const urlRegex = /(https?:\/\/[^\s]+)/g;
-                return text.match(urlRegex) || [];
-            }
-            
-            // Συνάρτηση μετατροπής URLs σε clickable links
-            function convertUrlsToLinks(text) {
-                const urlRegex = /(https?:\/\/[^\s]+)/g;
-                return text.replace(urlRegex, function(url) {
-                    return `<a href="${url}" target="_blank" class="message-link">${url}</a>`;
-                });
-            }
-            
             // Άνοιγμα modal απάντησης
             function openReplyModal(id) {
                 const allSubmissions = getAllSubmissions();
@@ -2402,7 +1972,6 @@
                 }
                 
                 document.getElementById('reply-message').value = '';
-                urlPreview.style.display = 'none';
                 replyModal.style.display = 'flex';
                 
                 // Αποθήκευση του ID για χρήση στην αποστολή
@@ -2419,9 +1988,6 @@
                     return;
                 }
                 
-                // Μετατροπή URLs σε links
-                const formattedMessage = convertUrlsToLinks(replyMessage);
-                
                 // Βρες την υποβολή
                 const allSubmissions = getAllSubmissions();
                 const submission = allSubmissions.find(sub => sub.id === submissionId);
@@ -2436,7 +2002,7 @@
                     id: Date.now(),
                     submissionId: submissionId,
                     userEmail: submission.userEmail || submission.email,
-                    adminMessage: formattedMessage, // Αποθηκεύουμε το μήνυμα με links
+                    adminMessage: replyMessage,
                     originalMessage: submission.message || submission.subject,
                     fortuneTellerName: submission.fortuneTellerName,
                     date: new Date().toISOString(),
@@ -2454,9 +2020,6 @@
                 this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Αποστολή...';
                 
                 setTimeout(() => {
-                    // Αναπαραγωγή ήχου
-                    playNotificationSound();
-                    
                     // Κλείσιμο modal απάντησης
                     replyModal.style.display = 'none';
                     
@@ -2476,14 +2039,6 @@
                     }, 3000);
                 }, 1500);
             });
-            
-            // Αναπαραγωγή ήχου ειδοποίησης
-            function playNotificationSound() {
-                const sound = document.getElementById('notification-sound');
-                sound.play().catch(e => {
-                    console.log('Αποτυχία αναπαραγωγής ήχου:', e);
-                });
-            }
             
             // Αποθήκευση απάντησης στο LocalStorage
             function saveResponse(response) {
@@ -2569,51 +2124,32 @@
             }
             
             // Βελτιωμένη ειδοποίηση (Toast)
-            const notificationToast = document.getElementById('notification-toast');
-            const notificationTitle = document.getElementById('notification-title');
-            const notificationMessage = document.getElementById('notification-message');
-            const notificationClose = document.getElementById('notification-close');
-            
-            notificationClose.addEventListener('click', function() {
-                notificationToast.classList.remove('show');
-            });
-            
             function showToast(message, type) {
-                // Ορισμός χρώματος και εικονιδίου ανάλογα με τον τύπο
-                let icon = 'fas fa-bell';
-                let color = 'var(--info)';
+                // Δημιουργία temporary toast element
+                const toast = document.createElement('div');
+                toast.className = `submission-card ${type === 'success' ? 'status-answered' : 'status-pending'}`;
+                toast.style.position = 'fixed';
+                toast.style.top = '20px';
+                toast.style.right = '20px';
+                toast.style.zIndex = '10000';
+                toast.style.maxWidth = '300px';
+                toast.innerHTML = `
+                    <div class="submission-header">
+                        <div class="submission-user">${type === 'success' ? 'Επιτυχία' : 'Ειδοποίηση'}</div>
+                        <button class="close-modal" onclick="this.parentElement.parentElement.remove()">×</button>
+                    </div>
+                    <div class="submission-content">
+                        <div class="submission-message">${message}</div>
+                    </div>
+                `;
                 
-                switch(type) {
-                    case 'success':
-                        icon = 'fas fa-check-circle';
-                        color = 'var(--success)';
-                        break;
-                    case 'error':
-                        icon = 'fas fa-exclamation-circle';
-                        color = 'var(--error)';
-                        break;
-                    case 'warning':
-                        icon = 'fas fa-exclamation-triangle';
-                        color = 'var(--warning)';
-                        break;
-                }
-                
-                // Ενημέρωση περιεχομένου
-                notificationTitle.textContent = type === 'success' ? 'Επιτυχία' : 
-                                               type === 'error' ? 'Σφάλμα' : 
-                                               type === 'warning' ? 'Προσοχή' : 'Ειδοποίηση';
-                notificationMessage.textContent = message;
-                
-                // Ενημέρωση εικονιδίου και χρώματος
-                notificationToast.querySelector('.notification-icon i').className = icon;
-                notificationToast.style.borderLeftColor = color;
-                
-                // Εμφάνιση
-                notificationToast.classList.add('show');
+                document.body.appendChild(toast);
                 
                 // Αυτόματη απόκρυψη μετά από 5 δευτερόλεπτα
                 setTimeout(() => {
-                    notificationToast.classList.remove('show');
+                    if (toast.parentElement) {
+                        toast.remove();
+                    }
                 }, 5000);
             }
             
