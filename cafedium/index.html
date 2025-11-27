@@ -1305,6 +1305,13 @@
 </head>
 <body>
     <div class="container">
+        <!-- Clear Cache Button -->
+        <div style="text-align: center; margin: 10px 0;">
+            <button onclick="clearAppCache()" style="background: #ff6b6b; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">
+                <i class="fas fa-sync"></i> Clear Cache & Refresh
+            </button>
+        </div>
+
         <!-- Ειδοποίηση για νέα μηνύματα -->
         <div id="notificationModal" class="notification-modal">
             <div class="notification-header">
@@ -1874,7 +1881,32 @@
         // ΒΕΛΤΙΩΜΕΝΟΣ ΚΩΔΙΚΑΣ ΜΕ ΑΣΦΑΛΕΙΑ ΚΑΙ ΒΕΛΤΙΩΜΕΝΗ ΛΕΙΤΟΥΡΓΙΚΟΤΗΤΑ
         // =============================================
 
-        // Απλό hash function για κωδικούς (Σε πραγματική εφαρμογή χρησιμοποιήστε bcrypt)
+        // Προσθήκη debugging
+        console.log('=== Cafedium Debug ===');
+        console.log('User Agent:', navigator.userAgent);
+        console.log('LocalStorage currentUser:', localStorage.getItem('currentUser'));
+        console.log('URL:', window.location.href);
+
+        // Clear cache function
+        function clearAppCache() {
+            console.log('Clearing application cache...');
+            localStorage.removeItem('currentUser');
+            sessionStorage.clear();
+            
+            // Clear service worker cache if exists
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    for (let name of names) {
+                        caches.delete(name);
+                    }
+                });
+            }
+            
+            // Force reload
+            window.location.reload(true);
+        }
+
+        // Απλό hash function για κωδικούς
         async function hashPassword(password) {
             const encoder = new TextEncoder();
             const data = encoder.encode(password);
@@ -1956,17 +1988,50 @@
             const installPWA = document.getElementById('installPWA');
             const hidePWA = document.getElementById('hidePWA');
 
-            // Check for existing session
+            // Enhanced session check
             const savedUser = localStorage.getItem('currentUser');
+            console.log('Session check - savedUser:', savedUser);
+
             if (savedUser) {
                 try {
                     currentUser = JSON.parse(savedUser);
-                    console.log('Found saved user session:', currentUser.email);
-                    updateUIForUser(currentUser);
+                    console.log('Found saved user session:', currentUser);
+                    
+                    // Additional validation
+                    if (!currentUser.email) {
+                        console.warn('User session missing email, clearing invalid session');
+                        localStorage.removeItem('currentUser');
+                        currentUser = null;
+                    } else {
+                        updateUIForUser(currentUser);
+                    }
                 } catch (e) {
                     console.error('Error parsing saved session:', e);
                     localStorage.removeItem('currentUser');
+                    currentUser = null;
                 }
+            } else {
+                console.log('No saved user session found');
+                updateUIForUser(null);
+            }
+
+            // Session refresh function
+            function refreshUserSession() {
+                const savedUser = localStorage.getItem('currentUser');
+                if (savedUser) {
+                    try {
+                        const user = JSON.parse(savedUser);
+                        if (user && user.email) {
+                            console.log('Refreshing session for:', user.email);
+                            currentUser = user;
+                            updateUIForUser(user);
+                            return true;
+                        }
+                    } catch (e) {
+                        console.error('Error refreshing session:', e);
+                    }
+                }
+                return false;
             }
 
             // PWA Installation
@@ -2372,8 +2437,16 @@
                         if (user.password === hashedPassword) {
                             currentUser = user;
                             localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                            updateUIForUser(currentUser);
-                            showMessage(loginMessage, 'Σύνδεση επιτυχής!', 'success');
+                            
+                            // Force UI update with delay to ensure DOM is ready
+                            setTimeout(() => {
+                                updateUIForUser(currentUser);
+                                showMessage(loginMessage, 'Σύνδεση επιτυχής!', 'success');
+                                
+                                // Additional verification
+                                console.log('Login successful, current user:', currentUser);
+                            }, 100);
+                            
                         } else {
                             showMessage(loginMessage, 'Λάθος email ή κωδικός πρόσβασης.', 'error');
                         }
@@ -2392,6 +2465,7 @@
                 currentUser = null;
                 localStorage.removeItem('currentUser');
                 updateUIForUser(null);
+                console.log('User logged out');
             });
             
             // PASSWORD RESET FUNCTIONALITY
@@ -3073,7 +3147,14 @@
             }
 
             function updateUIForUser(user) {
-                if (user) {
+                console.log('updateUIForUser called with:', user);
+                
+                const authSection = document.getElementById('authSection');
+                const mainApp = document.getElementById('mainApp');
+                const userInfo = document.getElementById('userInfo');
+                
+                if (user && user.email) {
+                    console.log('User is logged in, showing main app');
                     authSection.style.display = 'none';
                     mainApp.style.display = 'block';
                     userInfo.style.display = 'flex';
@@ -3096,10 +3177,8 @@
                     checkUserConsent();
                     loadFortuneTellers();
                     
-                    // Check for PWA installation
-                    checkPWAInstallation();
-                    
                 } else {
+                    console.log('No user or no email, showing auth section');
                     authSection.style.display = 'block';
                     mainApp.style.display = 'none';
                     userInfo.style.display = 'none';
@@ -3113,6 +3192,7 @@
             // Make functions globally available
             window.adminUpdateTerms = adminUpdateTerms;
             window.redeemMainOffer = redeemMainOffer;
+            window.clearAppCache = clearAppCache;
 
             function loadAllData() {
                 loadUserPoints();
@@ -3120,6 +3200,13 @@
                 checkOfferRedemption();
                 checkUserConsent();
             }
+
+            // Session refresh on load and periodically
+            setTimeout(refreshUserSession, 100);
+            setInterval(refreshUserSession, 30000); // Refresh every 30 seconds
+            
+            // Check for PWA installation
+            checkPWAInstallation();
         });
     </script>
 </body>
