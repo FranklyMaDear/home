@@ -1700,6 +1700,53 @@
                         <div class="message" id="forgotPasswordMessage"></div>
                     </form>
                 </div>
+                
+                <!-- Βήμα 2: Εισαγωγή προσωρινού κωδικού -->
+                <div id="resetStep2" class="reset-steps">
+                    <div class="info-box">
+                        <p><strong>Οδηγίες:</strong></p>
+                        <p>Σας έχει σταλεί προσωρινός κωδικός στο email σας. Εισάγετε τον παρακάτω.</p>
+                    </div>
+                    
+                    <form id="tempCodeForm">
+                        <div class="form-group">
+                            <label for="temp-code"><i class="fas fa-shield-alt"></i> Προσωρινός Κωδικός:</label>
+                            <input type="text" id="temp-code" name="tempCode" placeholder="Εισάγετε τον προσωρινό κωδικό" required>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-check"></i> Επαλήθευση
+                        </button>
+                        
+                        <div class="message" id="tempCodeMessage"></div>
+                    </form>
+                </div>
+                
+                <!-- Βήμα 3: Δημιουργία νέου κωδικού -->
+                <div id="resetStep3" class="reset-steps">
+                    <div class="info-box">
+                        <p><strong>Οδηγίες:</strong></p>
+                        <p>Δημιουργήστε έναν νέο κωδικό πρόσβασης.</p>
+                    </div>
+                    
+                    <form id="newPasswordForm">
+                        <div class="form-group">
+                            <label for="new-password"><i class="fas fa-lock"></i> Νέος Κωδικός Πρόσβασης:</label>
+                            <input type="password" id="new-password" name="newPassword" placeholder="Δημιουργήστε έναν νέο κωδικό" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm-new-password"><i class="fas fa-lock"></i> Επιβεβαίωση Νέου Κωδικού:</label>
+                            <input type="password" id="confirm-new-password" name="confirmNewPassword" placeholder="Εισάγετε ξανά τον νέο κωδικό" required>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Αποθήκευση Νέου Κωδικού
+                        </button>
+                        
+                        <div class="message" id="newPasswordMessage"></div>
+                    </form>
+                </div>
             </div>
         </div>
         
@@ -1711,7 +1758,7 @@
                 
                 <div class="info-box">
                     <p><strong>Διαδικασία :</strong></p>
-                    <ul><li>Στην κεντρική οθόνη πηγαίνετε στο πλαίσιο "Το Φλυτζάνι σου Μιλά".</li>
+                    <ul><li>Στην κεντρική οθόνη πηγαίνετε στο πλαίσιο "Το Φλιτζάνι σου Μιλά".</li>
                     <li>Επιλέξτε το Μονοπάτι του Φλυντζανιού "Γραπτή η Προφορική" ερμηνεία .</li>
                     <li>Κλείστε Ραντεβου μέσω Google Calendar.</li>
                     <li>Προσοχή να χρησιμοποιείτε το ίδιο Email κατά την εγγραφή στην εφαρμογή όπως στην εξαργύρωση Πόντων κ στο κλείσιμο Ραντεβού.</li>
@@ -1919,6 +1966,7 @@
 
             let selectedFortuneTeller = null;
             let currentUser = null;
+            let tempResetEmail = null;
 
             // UI Elements
             const authSection = document.getElementById('authSection');
@@ -2413,31 +2461,47 @@
                 }
             });
             
-            // PASSWORD RESET FUNCTIONALITY - ΔΙΟΡΘΩΜΕΝΗ
+            // PASSWORD RESET FUNCTIONALITY - ΒΕΛΤΙΩΜΕΝΗ
             const forgotPasswordLink = document.getElementById('forgotPasswordLink');
             const forgotPasswordModal = document.getElementById('forgotPasswordModal');
             const closeForgotPasswordModal = document.getElementById('closeForgotPasswordModal');
             const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+            const tempCodeForm = document.getElementById('tempCodeForm');
+            const newPasswordForm = document.getElementById('newPasswordForm');
             const forgotPasswordMessage = document.getElementById('forgotPasswordMessage');
+            const tempCodeMessage = document.getElementById('tempCodeMessage');
+            const newPasswordMessage = document.getElementById('newPasswordMessage');
             
             forgotPasswordLink.addEventListener('click', function(e) {
                 e.preventDefault();
+                resetPasswordModal();
                 forgotPasswordModal.style.display = 'flex';
             });
             
             closeForgotPasswordModal.addEventListener('click', function() {
                 forgotPasswordModal.style.display = 'none';
-                forgotPasswordForm.reset();
+                resetPasswordModal();
             });
             
             forgotPasswordModal.addEventListener('click', function(e) {
                 if (e.target === forgotPasswordModal) {
                     forgotPasswordModal.style.display = 'none';
-                    forgotPasswordForm.reset();
+                    resetPasswordModal();
                 }
             });
             
-            // ΔΙΟΡΘΩΜΕΝΗ FORGOT PASSWORD
+            // Reset password modal to step 1
+            function resetPasswordModal() {
+                document.getElementById('resetStep1').classList.add('active');
+                document.getElementById('resetStep2').classList.remove('active');
+                document.getElementById('resetStep3').classList.remove('active');
+                forgotPasswordForm.reset();
+                tempCodeForm.reset();
+                newPasswordForm.reset();
+                tempResetEmail = null;
+            }
+            
+            // Step 1: Request password reset
             forgotPasswordForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
@@ -2453,21 +2517,120 @@
                 const user = users.find(u => u.email === email);
                 
                 if (user) {
-                    // Generate temporary password
-                    const tempPassword = Math.random().toString(36).slice(-8);
-                    user.password = tempPassword;
-                    localStorage.setItem('users', JSON.stringify(users));
+                    // Generate temporary code (6-digit number)
+                    const tempCode = Math.floor(100000 + Math.random() * 900000).toString();
+                    tempResetEmail = email;
+                    
+                    // Store temporary code (in a real app, this would be sent via email)
+                    const tempCodes = JSON.parse(localStorage.getItem('tempResetCodes') || '{}');
+                    tempCodes[email] = {
+                        code: tempCode,
+                        expires: new Date(Date.now() + 15 * 60 * 1000).toISOString() // 15 minutes
+                    };
+                    localStorage.setItem('tempResetCodes', JSON.stringify(tempCodes));
                     
                     showMessage(forgotPasswordMessage, 
-                        `Επαναφορά κωδικού επιτυχής!<br><strong>Προσωρινός κωδικός: ${tempPassword}</strong><br>Μπορείτε να συνδεθείτε και να αλλάξετε τον κωδικό.`, 
+                        `Προσωρινός κωδικός δημιουργήθηκε!<br><strong>Κωδικός: ${tempCode}</strong><br>Χρησιμοποιήστε τον για να επαναφέρετε τον κωδικό σας.`, 
                         'success');
                     
+                    // Move to step 2
                     setTimeout(() => {
-                        forgotPasswordModal.style.display = 'none';
-                        forgotPasswordForm.reset();
-                    }, 5000);
+                        document.getElementById('resetStep1').classList.remove('active');
+                        document.getElementById('resetStep2').classList.add('active');
+                    }, 2000);
                 } else {
                     showMessage(forgotPasswordMessage, 'Δεν βρέθηκε χρήστης με αυτό το email.', 'error');
+                }
+            });
+            
+            // Step 2: Verify temporary code
+            tempCodeForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const tempCode = document.getElementById('temp-code').value;
+                
+                if (!tempCode) {
+                    showMessage(tempCodeMessage, 'Παρακαλώ εισάγετε τον προσωρινό κωδικό.', 'error');
+                    return;
+                }
+                
+                if (!tempResetEmail) {
+                    showMessage(tempCodeMessage, 'Παρακαλώ ξεκινήστε ξανά τη διαδικασία επαναφοράς.', 'error');
+                    return;
+                }
+                
+                // Verify temporary code
+                const tempCodes = JSON.parse(localStorage.getItem('tempResetCodes') || '{}');
+                const userCode = tempCodes[tempResetEmail];
+                
+                if (userCode && userCode.code === tempCode) {
+                    // Check if code has expired
+                    if (new Date() > new Date(userCode.expires)) {
+                        showMessage(tempCodeMessage, 'Ο προσωρινός κωδικός έχει λήξει. Παρακαλώ ζητήστε νέο.', 'error');
+                        return;
+                    }
+                    
+                    showMessage(tempCodeMessage, 'Ο κωδικός επαληθεύτηκε επιτυχώς!', 'success');
+                    
+                    // Move to step 3
+                    setTimeout(() => {
+                        document.getElementById('resetStep2').classList.remove('active');
+                        document.getElementById('resetStep3').classList.add('active');
+                    }, 1000);
+                } else {
+                    showMessage(tempCodeMessage, 'Λάθος προσωρινός κωδικός.', 'error');
+                }
+            });
+            
+            // Step 3: Set new password
+            newPasswordForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const newPassword = document.getElementById('new-password').value;
+                const confirmNewPassword = document.getElementById('confirm-new-password').value;
+                
+                if (!newPassword || !confirmNewPassword) {
+                    showMessage(newPasswordMessage, 'Παρακαλώ συμπληρώστε όλα τα πεδία.', 'error');
+                    return;
+                }
+                
+                if (newPassword !== confirmNewPassword) {
+                    showMessage(newPasswordMessage, 'Οι κωδικοί πρόσβασης δεν ταιριάζουν.', 'error');
+                    return;
+                }
+                
+                if (newPassword.length < 6) {
+                    showMessage(newPasswordMessage, 'Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες.', 'error');
+                    return;
+                }
+                
+                if (!tempResetEmail) {
+                    showMessage(newPasswordMessage, 'Παρακαλώ ξεκινήστε ξανά τη διαδικασία επαναφοράς.', 'error');
+                    return;
+                }
+                
+                // Update user password
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const userIndex = users.findIndex(u => u.email === tempResetEmail);
+                
+                if (userIndex !== -1) {
+                    users[userIndex].password = newPassword;
+                    localStorage.setItem('users', JSON.stringify(users));
+                    
+                    // Clear temporary code
+                    const tempCodes = JSON.parse(localStorage.getItem('tempResetCodes') || '{}');
+                    delete tempCodes[tempResetEmail];
+                    localStorage.setItem('tempResetCodes', JSON.stringify(tempCodes));
+                    
+                    showMessage(newPasswordMessage, 'Ο κωδικός σας ενημερώθηκε επιτυχώς! Μπορείτε τώρα να συνδεθείτε.', 'success');
+                    
+                    // Close modal and reset
+                    setTimeout(() => {
+                        forgotPasswordModal.style.display = 'none';
+                        resetPasswordModal();
+                    }, 2000);
+                } else {
+                    showMessage(newPasswordMessage, 'Προέκυψε σφάλμα κατά την ενημέρωση του κωδικού.', 'error');
                 }
             });
             
