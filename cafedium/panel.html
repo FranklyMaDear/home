@@ -892,6 +892,109 @@
             100% { transform: scale(1); }
         }
         
+        /* Σύστημα εγγραφής/σύνδεσης */
+        .auth-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.15);
+            margin-bottom: 25px;
+            border: 1px solid rgba(210, 105, 30, 0.2);
+            max-width: 500px;
+            margin: 0 auto 25px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: #f8f4e9;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .auth-tab.active {
+            background: white;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .auth-content {
+            display: none;
+        }
+        
+        .auth-content.active {
+            display: block;
+        }
+
+        .auth-form {
+            max-width: 100%;
+        }
+
+        .admin-setup-info {
+            background: linear-gradient(to right, #e8f5e8, #d0e9d0);
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .admin-setup-info h3 {
+            color: var(--success);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-credentials {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid var(--success);
+        }
+
+        .admin-credentials h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .credential-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .credential-item:last-child {
+            border-bottom: none;
+        }
+
+        .credential-label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .credential-value {
+            color: var(--primary);
+            font-family: monospace;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -988,6 +1091,10 @@
                 left: 10px;
                 max-width: none;
             }
+
+            .auth-section {
+                padding: 20px 15px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1017,186 +1124,285 @@
             <p class="subtitle">Διαχείριση υποβολών και μηνυμάτων από επισκέπτες</p>
         </header>
         
-        <div class="admin-info">
-            <div class="admin-welcome">
-                <i class="fas fa-user-shield"></i> Καλώς ήρθες, Διαχειριστή!
+        <!-- Αυτή η ενότητα θα εμφανίζεται μόνο αν ο διαχειριστής δεν είναι συνδεδεμένος -->
+        <div id="authSection" class="auth-section">
+            <div class="admin-setup-info">
+                <h3><i class="fas fa-info-circle"></i> Πληροφορίες για τον Διαχειριστή</h3>
+                <p>Για να χρησιμοποιήσετε τον πίνακα διαχειριστή, πρέπει πρώτα να δημιουργήσετε λογαριασμό.</p>
+                
+                <div class="admin-credentials">
+                    <h4><i class="fas fa-key"></i> Προτεινόμενα Διαπιστευτήρια:</h4>
+                    <div class="credential-item">
+                        <span class="credential-label">Email:</span>
+                        <span class="credential-value">admin@cafedium.gr</span>
+                    </div>
+                    <div class="credential-item">
+                        <span class="credential-label">Κωδικός:</span>
+                        <span class="credential-value">admin123</span>
+                    </div>
+                </div>
             </div>
-            <div class="admin-actions">
-                <button class="main-app-btn" id="mainAppBtn">
-                    <i class="fas fa-home"></i> Κύρια Εφαρμογή
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-auth-tab="login-tab">
+                    <i class="fas fa-sign-in-alt"></i> Σύνδεση
                 </button>
-                <button class="sync-btn" id="syncUsersBtn">
-                    <i class="fas fa-sync"></i> Συγχρονισμός
+                <button class="auth-tab" data-auth-tab="register-tab">
+                    <i class="fas fa-user-plus"></i> Εγγραφή
                 </button>
-                <button class="logout-btn" id="refreshBtn">
-                    <i class="fas fa-sync-alt"></i> Ανανέωση
+                <button class="auth-tab" data-auth-tab="reset-tab">
+                    <i class="fas fa-sync"></i> Επαναφορά
                 </button>
             </div>
-        </div>
-        
-        <div class="stats-cards">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-images"></i>
-                </div>
-                <div class="stat-number" id="total-submissions">0</div>
-                <div class="stat-label">Συνολικές Υποβολές</div>
+            
+            <div id="login-tab" class="auth-content active">
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email"><i class="fas fa-envelope"></i> Διεύθυνση E-mail:</label>
+                        <input type="email" id="login-email" name="email" placeholder="π.χ. admin@cafedium.gr" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password"><i class="fas fa-lock"></i> Κωδικός Πρόσβασης:</label>
+                        <input type="password" id="login-password" name="password" placeholder="Ο κωδικός πρόσβασής σας" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-sign-in-alt"></i> Σύνδεση
+                    </button>
+                    
+                    <div class="message" id="loginMessage"></div>
+                </form>
             </div>
             
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="stat-number" id="pending-submissions">0</div>
-                <div class="stat-label">Υποβολές σε Εκκρεμότητα</div>
+            <div id="register-tab" class="auth-content">
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="register-name"><i class="fas fa-user"></i> Ονοματεπώνυμο:</label>
+                        <input type="text" id="register-name" name="name" placeholder="Το ονοματεπώνυμό σας" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-email"><i class="fas fa-envelope"></i> Διεύθυνση E-mail:</label>
+                        <input type="email" id="register-email" name="email" placeholder="π.χ. admin@cafedium.gr" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-password"><i class="fas fa-lock"></i> Κωδικός Πρόσβασης:</label>
+                        <input type="password" id="register-password" name="password" placeholder="Δημιουργήστε έναν κωδικό πρόσβασης" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-confirm-password"><i class="fas fa-lock"></i> Επιβεβαίωση Κωδικού:</label>
+                        <input type="password" id="register-confirm-password" name="confirmPassword" placeholder="Εισάγετε ξανά τον κωδικό πρόσβασης" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-user-plus"></i> Εγγραφή
+                    </button>
+                    
+                    <div class="message" id="registerMessage"></div>
+                </form>
             </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-number" id="answered-submissions">0</div>
-                <div class="stat-label">Απαντημένες Υποβολές</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-number" id="registered-users">0</div>
-                <div class="stat-label">Εγγεγραμμένοι Χρήστες</div>
-            </div>
-        </div>
-        
-        <div class="tabs">
-            <button class="tab active" data-tab="photos-tab">
-                <i class="fas fa-camera"></i> Υποβολές
-            </button>
-            <button class="tab" data-tab="messages-tab">
-                <i class="fas fa-envelope"></i> Μηνύματα
-            </button>
-            <button class="tab" data-tab="users-tab">
-                <i class="fas fa-users"></i> Χρήστες
-            </button>
-            <button class="tab" data-tab="offers-tab">
-                <i class="fas fa-gift"></i> Προσφορές
-            </button>
-            <button class="tab" data-tab="notifications-tab" id="notificationsTab">
-                <i class="fas fa-bell"></i> Ειδοποιήσεις
-                <span class="notifications-badge" id="notificationsBadge" style="display: none;">0</span>
-            </button>
-        </div>
-        
-        <main>
-            <!-- Καρτέλα Υποβολών Φωτογραφιών -->
-            <section id="photos-tab" class="tab-content active">
-                <div class="content-section">
-                    <h2><i class="fas fa-images"></i> Υποβολές Φωτογραφιών Καφέ</h2>
-                    
-                    <div class="filters">
-                        <select class="filter-select" id="status-filter">
-                            <option value="all">Όλες οι Καταστάσεις</option>
-                            <option value="pending">Σε Εκκρεμότητα</option>
-                            <option value="reviewed">Εξετασμένες</option>
-                            <option value="answered">Απαντημένες</option>
-                        </select>
-                        
-                        <select class="filter-select" id="date-filter">
-                            <option value="all">Όλες οι Ημερομηνίες</option>
-                            <option value="today">Σήμερα</option>
-                            <option value="week">Τελευταία 7 Ημέρες</option>
-                            <option value="month">Τελευταίος Μήνας</option>
-                        </select>
-                        
-                        <input type="text" class="search-input" id="search-input" placeholder="Αναζήτηση με email...">
-                    </div>
-                    
-                    <div class="submissions-list" id="photo-submissions-list">
-                        <!-- Θα προστεθούν δυναμικά οι υποβολές -->
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Καρτέλα Μηνυμάτων Επικοινωνίας -->
-            <section id="messages-tab" class="tab-content">
-                <div class="content-section">
-                    <h2><i class="fas fa-comments"></i> Μηνύματα Επικοινωνίας</h2>
-                    
-                    <div class="filters">
-                        <select class="filter-select" id="message-status-filter">
-                            <option value="all">Όλα τα Μηνύματα</option>
-                            <option value="pending">Σε Εκκρεμότητα</option>
-                            <option value="answered">Απαντημένα</option>
-                        </select>
-                        
-                        <input type="text" class="search-input" id="message-search-input" placeholder="Αναζήτηση με όνομα ή email...">
-                    </div>
-                    
-                    <div class="submissions-list" id="message-submissions-list">
-                        <!-- Θα προστεθούν δυναμικά τα μηνύματα -->
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Καρτέλα Διαχείρισης Χρηστών -->
-            <section id="users-tab" class="tab-content">
-                <div class="content-section">
-                    <h2><i class="fas fa-users"></i> Διαχείριση Εγγεγραμμένων Χρηστών</h2>
-                    
-                    <div class="filters">
-                        <input type="text" class="search-input" id="user-search-input" placeholder="Αναζήτηση με όνομα ή email...">
-                    </div>
-                    
-                    <div class="users-list" id="users-list">
-                        <!-- Θα προστεθεί δυναμικά ο πίνακας χρηστών -->
-                    </div>
-                </div>
-            </section>
 
-            <!-- Καρτέλα Διαχείρισης Προσφορών -->
-            <section id="offers-tab" class="tab-content">
-                <div class="content-section">
-                    <h2><i class="fas fa-gift"></i> Διαχείριση Προσφορών</h2>
-                    
-                    <div class="offer-management">
-                        <div class="offer-item">
-                            <h3>Προσφορά 1+1 Δώρο</h3>
-                            <p>Ενεργοποίηση της προσφοράς 1+1 δώρο για όλους τους χρήστες.</p>
+            <div id="reset-tab" class="auth-content">
+                <div class="admin-setup-info">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Επαναφορά Συστήματος</h3>
+                    <p>Αυτή η ενότητα σας επιτρέπει να διαγράψετε όλους τους υπάρχοντες χρήστες για να μπορέσετε να κάνετε νέα εγγραφή.</p>
+                    <p><strong>Προσοχή:</strong> Αυτή η ενέργεια θα διαγράψει όλους τους χρήστες από τη βάση δεδομένων.</p>
+                </div>
+                
+                <button type="button" class="submit-btn" id="resetUsersBtn" style="background: var(--error);">
+                    <i class="fas fa-trash"></i> Διαγραφή Όλων των Χρηστών
+                </button>
+                
+                <div class="message" id="resetMessage"></div>
+            </div>
+        </div>
+        
+        <!-- Αυτή η ενότητα θα εμφανίζεται μόνο αν ο διαχειριστής είναι συνδεδεμένος -->
+        <div id="adminPanel" style="display: none;">
+            <div class="admin-info">
+                <div class="admin-welcome">
+                    <i class="fas fa-user-shield"></i> Καλώς ήρθες, <span id="adminName">Διαχειριστή</span>!
+                </div>
+                <div class="admin-actions">
+                    <button class="main-app-btn" id="mainAppBtn">
+                        <i class="fas fa-home"></i> Κύρια Εφαρμογή
+                    </button>
+                    <button class="sync-btn" id="syncUsersBtn">
+                        <i class="fas fa-sync"></i> Συγχρονισμός
+                    </button>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Αποσύνδεση
+                    </button>
+                </div>
+            </div>
+            
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <div class="stat-number" id="total-submissions">0</div>
+                    <div class="stat-label">Συνολικές Υποβολές</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-number" id="pending-submissions">0</div>
+                    <div class="stat-label">Υποβολές σε Εκκρεμότητα</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-number" id="answered-submissions">0</div>
+                    <div class="stat-label">Απαντημένες Υποβολές</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number" id="registered-users">0</div>
+                    <div class="stat-label">Εγγεγραμμένοι Χρήστες</div>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" data-tab="photos-tab">
+                    <i class="fas fa-camera"></i> Υποβολές
+                </button>
+                <button class="tab" data-tab="messages-tab">
+                    <i class="fas fa-envelope"></i> Μηνύματα
+                </button>
+                <button class="tab" data-tab="users-tab">
+                    <i class="fas fa-users"></i> Χρήστες
+                </button>
+                <button class="tab" data-tab="offers-tab">
+                    <i class="fas fa-gift"></i> Προσφορές
+                </button>
+                <button class="tab" data-tab="notifications-tab" id="notificationsTab">
+                    <i class="fas fa-bell"></i> Ειδοποιήσεις
+                    <span class="notifications-badge" id="notificationsBadge" style="display: none;">0</span>
+                </button>
+            </div>
+            
+            <main>
+                <!-- Καρτέλα Υποβολών Φωτογραφιών -->
+                <section id="photos-tab" class="tab-content active">
+                    <div class="content-section">
+                        <h2><i class="fas fa-images"></i> Υποβολές Φωτογραφιών Καφέ</h2>
+                        
+                        <div class="filters">
+                            <select class="filter-select" id="status-filter">
+                                <option value="all">Όλες οι Καταστάσεις</option>
+                                <option value="pending">Σε Εκκρεμότητα</option>
+                                <option value="reviewed">Εξετασμένες</option>
+                                <option value="answered">Απαντημένες</option>
+                            </select>
                             
-                            <div class="offer-controls">
-                                <div class="form-group">
-                                    <label for="offer-1plus1-status">Κατάσταση:</label>
-                                    <select class="filter-select" id="offer-1plus1-status">
-                                        <option value="active">Ενεργή</option>
-                                        <option value="inactive">Ανενεργή</option>
-                                    </select>
+                            <select class="filter-select" id="date-filter">
+                                <option value="all">Όλες οι Ημερομηνίες</option>
+                                <option value="today">Σήμερα</option>
+                                <option value="week">Τελευταία 7 Ημέρες</option>
+                                <option value="month">Τελευταίος Μήνας</option>
+                            </select>
+                            
+                            <input type="text" class="search-input" id="search-input" placeholder="Αναζήτηση με email...">
+                        </div>
+                        
+                        <div class="submissions-list" id="photo-submissions-list">
+                            <!-- Θα προστεθούν δυναμικά οι υποβολές -->
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Καρτέλα Μηνυμάτων Επικοινωνίας -->
+                <section id="messages-tab" class="tab-content">
+                    <div class="content-section">
+                        <h2><i class="fas fa-comments"></i> Μηνύματα Επικοινωνίας</h2>
+                        
+                        <div class="filters">
+                            <select class="filter-select" id="message-status-filter">
+                                <option value="all">Όλα τα Μηνύματα</option>
+                                <option value="pending">Σε Εκκρεμότητα</option>
+                                <option value="answered">Απαντημένα</option>
+                            </select>
+                            
+                            <input type="text" class="search-input" id="message-search-input" placeholder="Αναζήτηση με όνομα ή email...">
+                        </div>
+                        
+                        <div class="submissions-list" id="message-submissions-list">
+                            <!-- Θα προστεθούν δυναμικά τα μηνύματα -->
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Καρτέλα Διαχείρισης Χρηστών -->
+                <section id="users-tab" class="tab-content">
+                    <div class="content-section">
+                        <h2><i class="fas fa-users"></i> Διαχείριση Εγγεγραμμένων Χρηστών</h2>
+                        
+                        <div class="filters">
+                            <input type="text" class="search-input" id="user-search-input" placeholder="Αναζήτηση με όνομα ή email...">
+                        </div>
+                        
+                        <div class="users-list" id="users-list">
+                            <!-- Θα προστεθεί δυναμικά ο πίνακας χρηστών -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Καρτέλα Διαχείρισης Προσφορών -->
+                <section id="offers-tab" class="tab-content">
+                    <div class="content-section">
+                        <h2><i class="fas fa-gift"></i> Διαχείριση Προσφορών</h2>
+                        
+                        <div class="offer-management">
+                            <div class="offer-item">
+                                <h3>Προσφορά 1+1 Δώρο</h3>
+                                <p>Ενεργοποίηση της προσφοράς 1+1 δώρο για όλους τους χρήστες.</p>
+                                
+                                <div class="offer-controls">
+                                    <div class="form-group">
+                                        <label for="offer-1plus1-status">Κατάσταση:</label>
+                                        <select class="filter-select" id="offer-1plus1-status">
+                                            <option value="active">Ενεργή</option>
+                                            <option value="inactive">Ανενεργή</option>
+                                        </select>
+                                    </div>
+                                        
+                                    <div class="form-group">
+                                        <label for="offer-1plus1-duration">Διάρκεια (ώρες):</label>
+                                        <input type="number" id="offer-1plus1-duration" class="filter-select" min="1" max="168" value="24">
+                                    </div>
+                                        
+                                    <button class="action-btn btn-reply" id="save-offer-1plus1">
+                                        <i class="fas fa-save"></i> Αποθήκευση Ρυθμίσεων
+                                    </button>
                                 </div>
-                                    
-                                <div class="form-group">
-                                    <label for="offer-1plus1-duration">Διάρκεια (ώρες):</label>
-                                    <input type="number" id="offer-1plus1-duration" class="filter-select" min="1" max="168" value="24">
-                                </div>
-                                    
-                                <button class="action-btn btn-reply" id="save-offer-1plus1">
-                                    <i class="fas fa-save"></i> Αποθήκευση Ρυθμίσεων
-                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Καρτέλα Ειδοποιήσεων -->
-            <section id="notifications-tab" class="tab-content">
-                <div class="content-section">
-                    <h2><i class="fas fa-bell"></i> Ειδοποιήσεις Ανταλλαγών</h2>
-                    
-                    <div class="submissions-list" id="notifications-list">
-                        <!-- Θα προστεθούν δυναμικά οι ειδοποιήσεις -->
+                <!-- Καρτέλα Ειδοποιήσεων -->
+                <section id="notifications-tab" class="tab-content">
+                    <div class="content-section">
+                        <h2><i class="fas fa-bell"></i> Ειδοποιήσεις Ανταλλαγών</h2>
+                        
+                        <div class="submissions-list" id="notifications-list">
+                            <!-- Θα προστεθούν δυναμικά οι ειδοποιήσεις -->
+                        </div>
                     </div>
-                </div>
-            </section>
-        </main>
+                </section>
+            </main>
+        </div>
         
         <footer>
             <p>
@@ -1343,7 +1549,259 @@
     </audio>
 
     <script>
+        // Προσθήκη στυλ για submit button
+        const style = document.createElement('style');
+        style.textContent = `
+            .submit-btn {
+                background: linear-gradient(to right, var(--primary), var(--primary-light));
+                color: white;
+                border: none;
+                padding: 16px 25px;
+                font-size: 1.1rem;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.3s;
+                width: 100%;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+                margin-top: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .submit-btn:hover {
+                background: linear-gradient(to right, var(--primary-light), var(--secondary));
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+            }
+            
+            .submit-btn:active {
+                transform: translateY(0);
+            }
+            
+            .submit-btn:disabled {
+                background: linear-gradient(to right, #cccccc, #aaaaaa);
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+            
+            .message {
+                padding: 15px;
+                border-radius: 10px;
+                margin-top: 20px;
+                text-align: center;
+                display: none;
+                font-weight: 500;
+            }
+            
+            .success {
+                background-color: #e8f5e9;
+                color: var(--success);
+                border: 1px solid #c8e6c9;
+            }
+            
+            .error {
+                background-color: #ffebee;
+                color: var(--error);
+                border: 1px solid #ffcdd2;
+            }
+            
+            .info {
+                background-color: #e3f2fd;
+                color: var(--info);
+                border: 1px solid #bbdefb;
+            }
+        `;
+        document.head.appendChild(style);
+
         document.addEventListener('DOMContentLoaded', function() {
+            let currentAdmin = null;
+
+            // Σύστημα εγγραφής/σύνδεσης για διαχειριστές
+            const authSection = document.getElementById('authSection');
+            const adminPanel = document.getElementById('adminPanel');
+            const authTabs = document.querySelectorAll('.auth-tab');
+            const authContents = document.querySelectorAll('.auth-content');
+            
+            // Έλεγχος αν υπάρχει διαχειριστής συνδεδεμένος
+            function checkAdminSession() {
+                const savedAdmin = localStorage.getItem('currentAdmin');
+                if (savedAdmin) {
+                    currentAdmin = JSON.parse(savedAdmin);
+                    showAdminPanel();
+                } else {
+                    showAuthSection();
+                }
+            }
+            
+            function showAuthSection() {
+                authSection.style.display = 'block';
+                adminPanel.style.display = 'none';
+            }
+            
+            function showAdminPanel() {
+                authSection.style.display = 'none';
+                adminPanel.style.display = 'block';
+                document.getElementById('adminName').textContent = currentAdmin.name;
+                loadAllData();
+            }
+            
+            // Σύστημα καρτελών εγγραφής/σύνδεσης
+            authTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const authTabId = tab.getAttribute('data-auth-tab');
+                    
+                    authTabs.forEach(t => t.classList.remove('active'));
+                    authContents.forEach(tc => tc.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    document.getElementById(authTabId).classList.add('active');
+                });
+            });
+            
+            // Φόρμα εγγραφής
+            const registerForm = document.getElementById('registerForm');
+            const registerMessage = document.getElementById('registerMessage');
+            
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm-password').value;
+                
+                if (!name || !email || !password || !confirmPassword) {
+                    showMessage(registerMessage, 'Παρακαλώ συμπληρώστε όλα τα πεδία.', 'error');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    showMessage(registerMessage, 'Οι κωδικοί πρόσβασης δεν ταιριάζουν.', 'error');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    showMessage(registerMessage, 'Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες.', 'error');
+                    return;
+                }
+                
+                try {
+                    showMessage(registerMessage, 'Δημιουργία λογαριασμού διαχειριστή...', 'info');
+                    
+                    // Δημιουργία νέου διαχειριστή
+                    const newAdmin = {
+                        id: Date.now().toString(),
+                        name: name,
+                        email: email,
+                        password: password,
+                        registrationDate: new Date().toISOString(),
+                        role: 'admin'
+                    };
+                    
+                    // Αποθήκευση διαχειριστή
+                    const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+                    admins.push(newAdmin);
+                    localStorage.setItem('admins', JSON.stringify(admins));
+                    
+                    // Αυτόματη σύνδεση
+                    currentAdmin = newAdmin;
+                    localStorage.setItem('currentAdmin', JSON.stringify(currentAdmin));
+                    showAdminPanel();
+                    
+                    showMessage(registerMessage, 'Ο λογαριασμός διαχειριστή δημιουργήθηκε επιτυχώς!', 'success');
+                    
+                } catch (error) {
+                    console.error('Admin registration error:', error);
+                    showMessage(registerMessage, 'Προέκυψε σφάλμα κατά την εγγραφή.', 'error');
+                }
+            });
+            
+            // Φόρμα σύνδεσης
+            const loginForm = document.getElementById('loginForm');
+            const loginMessage = document.getElementById('loginMessage');
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                if (!email || !password) {
+                    showMessage(loginMessage, 'Παρακαλώ συμπληρώστε όλα τα πεδία.', 'error');
+                    return;
+                }
+                
+                try {
+                    showMessage(loginMessage, 'Σύνδεση...', 'info');
+                    
+                    // Έλεγχος διαπιστευτηρίων
+                    const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+                    const admin = admins.find(a => a.email === email && a.password === password);
+                    
+                    if (admin) {
+                        currentAdmin = admin;
+                        localStorage.setItem('currentAdmin', JSON.stringify(currentAdmin));
+                        showAdminPanel();
+                        showMessage(loginMessage, 'Σύνδεση επιτυχής!', 'success');
+                    } else {
+                        showMessage(loginMessage, 'Λάθος email ή κωδικός πρόσβασης.', 'error');
+                    }
+                    
+                } catch (error) {
+                    console.error('Admin login error:', error);
+                    showMessage(loginMessage, 'Προέκυψε σφάλμα κατά τη σύνδεση.', 'error');
+                }
+            });
+            
+            // Επαναφορά συστήματος - Διαγραφή όλων των χρηστών
+            const resetUsersBtn = document.getElementById('resetUsersBtn');
+            const resetMessage = document.getElementById('resetMessage');
+            
+            resetUsersBtn.addEventListener('click', function() {
+                if (confirm('Είστε σίγουρος ότι θέλετε να διαγράψετε όλους τους χρήστες; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.')) {
+                    try {
+                        // Διαγραφή όλων των χρηστών
+                        localStorage.setItem('users', JSON.stringify([]));
+                        localStorage.setItem('userPoints', JSON.stringify([]));
+                        
+                        showMessage(resetMessage, 'Όλοι οι χρήστες διαγράφηκαν επιτυχώς! Μπορείτε τώρα να κάνετε νέα εγγραφή.', 'success');
+                        
+                        setTimeout(() => {
+                            document.querySelector('[data-auth-tab="register-tab"]').click();
+                        }, 2000);
+                        
+                    } catch (error) {
+                        console.error('Reset users error:', error);
+                        showMessage(resetMessage, 'Προέκυψε σφάλμα κατά τη διαγραφή των χρηστών.', 'error');
+                    }
+                }
+            });
+            
+            // Αποσύνδεση
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                if (confirm('Θέλετε να αποσυνδεθείτε;')) {
+                    currentAdmin = null;
+                    localStorage.removeItem('currentAdmin');
+                    showAuthSection();
+                }
+            });
+            
+            // Βοηθητική συνάρτηση για εμφάνιση μηνυμάτων
+            function showMessage(element, text, type) {
+                element.textContent = text;
+                element.className = `message ${type}`;
+                element.style.display = 'block';
+                
+                setTimeout(function() {
+                    element.style.display = 'none';
+                }, 5000);
+            }
+
+            // Τα υπόλοιπα scripts από τον αρχικό κώδικα...
             // Σύνδεση με την κύρια εφαρμογή
             document.getElementById('mainAppBtn').addEventListener('click', function() {
                 window.location.href = 'index.html';
@@ -1450,7 +1908,7 @@
             });
             
             // Ανανέωση δεδομένων
-            document.getElementById('refreshBtn').addEventListener('click', function() {
+            document.getElementById('refreshBtn')?.addEventListener('click', function() {
                 loadAllData();
                 showToast('Τα δεδομένα ανανεώθηκαν!', 'success');
             });
@@ -2584,9 +3042,8 @@
             // Αυτόματη ανανέωση κάθε 30 δευτερόλεπτα
             setInterval(loadAllData, 30000);
             
-            // Αρχική φόρτωση δεδομένων
-            loadAllData();
-            manualUserSync(); // Αυτόματος συγχρονισμός κατά τη φόρτωση
+            // Έλεγχος αρχικής σύνδεσης
+            checkAdminSession();
         });
     </script>
 </body>
