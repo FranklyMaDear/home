@@ -14,6 +14,9 @@
     <meta name="msapplication-TileColor" content="#8B4513">
     <meta name="theme-color" content="#8B4513">
     
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="app-manifest.json">
+    
     <style>
         * {
             box-sizing: border-box;
@@ -1924,6 +1927,19 @@
     </div>
 
     <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registered: ', registration);
+                    })
+                    .catch(function(error) {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+
         // Συνάρτηση για αποστολή ειδοποίησης επιλογής χαρακτήρα
         function sendCharacterSelectionNotification(characterName, userEmail, userName) {
             const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
@@ -1984,6 +2000,7 @@
             let selectedFortuneTeller = null;
             let currentUser = null;
             let tempResetEmail = null;
+            let deferredPrompt = null;
 
             // UI Elements
             const authSection = document.getElementById('authSection');
@@ -2042,18 +2059,20 @@
                 }
             }
 
-            // PWA Installation
-            let deferredPrompt;
-            
+            // ΒΕΛΤΙΩΜΕΝΟ PWA SETUP
             function checkPWAInstallation() {
                 // Check if app is already installed
                 if (window.matchMedia('(display-mode: standalone)').matches) {
                     console.log('App is running in standalone mode');
+                    pwaInstall.style.display = 'none';
                     return;
                 }
                 
-                // Show install prompt for mobile devices
-                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                // Enhanced device detection
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+                
+                if ((isMobile && isChrome) || deferredPrompt) {
                     pwaInstall.style.display = 'block';
                 }
             }
@@ -2062,18 +2081,24 @@
                 e.preventDefault();
                 deferredPrompt = e;
                 pwaInstall.style.display = 'block';
-            });
-            
-            installPWA.addEventListener('click', async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        console.log('User accepted PWA installation');
+                
+                // Enhanced install button
+                installPWA.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        
+                        if (outcome === 'accepted') {
+                            console.log('User accepted PWA installation');
+                            showNotification('Η εφαρμογή εγκαταστάθηκε επιτυχώς!');
+                        } else {
+                            console.log('User dismissed PWA installation');
+                        }
+                        
+                        deferredPrompt = null;
+                        pwaInstall.style.display = 'none';
                     }
-                    deferredPrompt = null;
-                    pwaInstall.style.display = 'none';
-                }
+                });
             });
             
             hidePWA.addEventListener('click', () => {
@@ -3033,7 +3058,7 @@
                 localStorage.setItem('coffeeSubmissions', JSON.stringify(existingSubmissions));
             }
 
-            // LOAD USER RESPONSES
+            // ΒΕΛΤΙΩΜΕΝΗ: LOAD USER RESPONSES ΜΕ ΔΥΝΑΤΟΤΗΤΑ ΔΙΑΓΡΑΦΗΣ
             function loadUserResponses() {
                 if (!currentUser) return;
                 
@@ -3078,9 +3103,40 @@
                             ${response.fortuneTellerName}
                         </div>
                         ` : ''}
+                        <!-- ΠΡΟΣΘΗΚΗ: ΚΟΥΜΠΙ ΔΙΑΓΡΑΦΗΣ -->
+                        <div class="response-actions" style="margin-top: 15px; text-align: right;">
+                            <button class="delete-response-btn" data-response-id="${response.id}" 
+                                    style="background: var(--error); color: white; border: none; padding: 8px 15px; 
+                                           border-radius: 5px; cursor: pointer; font-size: 0.9rem;">
+                                <i class="fas fa-trash"></i> Διαγραφή
+                            </button>
+                        </div>
                     `;
                     responsesList.appendChild(responseCard);
                 });
+
+                // ΠΡΟΣΘΗΚΗ: Event listeners για διαγραφή
+                document.querySelectorAll('.delete-response-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const responseId = this.getAttribute('data-response-id');
+                        deleteResponse(responseId);
+                    });
+                });
+            }
+
+            // ΠΡΟΣΘΗΚΗ: ΣΥΝΑΡΤΗΣΗ ΔΙΑΓΡΑΦΗΣ ΑΠΑΝΤΗΣΗΣ
+            function deleteResponse(responseId) {
+                if (!confirm('Θέλετε να διαγράψετε αυτή την απάντηση; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.')) {
+                    return;
+                }
+
+                const responses = JSON.parse(localStorage.getItem('coffeeResponses') || '[]');
+                const updatedResponses = responses.filter(response => response.id != responseId);
+                
+                localStorage.setItem('coffeeResponses', JSON.stringify(updatedResponses));
+                
+                showNotification('Η απάντηση διαγράφηκε επιτυχώς!');
+                loadUserResponses(); // Ανανέωση λίστας
             }
 
             function formatDate(dateString) {
