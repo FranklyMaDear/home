@@ -2193,7 +2193,7 @@
                 });
             }
             
-            // Φόρτωση υποβολών φωτογραφιών
+            // Φόρτωση υποβολών φωτογραφιών - ΔΙΟΡΘΩΜΕΝΗ
             function loadPhotoSubmissions() {
                 const allSubmissions = getAllSubmissions();
                 const realSubmissions = filterRealUsers(allSubmissions);
@@ -2229,12 +2229,12 @@
                             </div>
                         `).join('') : '<p>Δεν υπάρχουν φωτογραφίες</p>';
                     
-                    // Βελτιωμένη εμφάνιση πληροφοριών καφεμαντείας
-                    const coffeeReadingInfo = submission.coffeeTypeText ? `
-                        <div class="coffee-reading-info">
-                            <p><strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText}</p>
-                            <p><strong>Email Χρήστη:</strong> ${submission.userEmail || submission.email || 'Δεν παρέχεται'}</p>
-                            ${submission.desire ? `<p><strong>Επιθυμία Χρήστη:</strong> ${submission.desire}</p>` : ''}
+                    // ΠΡΟΣΘΗΚΗ: Πληροφορίες καφεμάντη στην κάρτα
+                    const fortuneTellerBadge = submission.fortuneTellerName ? `
+                        <div style="margin-top: 8px;">
+                            <span style="background: var(--primary); color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">
+                                <i class="fas fa-crystal-ball"></i> ${submission.fortuneTellerName}
+                            </span>
                         </div>
                     ` : '';
                     
@@ -2242,16 +2242,18 @@
                     submissionCard.className = 'submission-card';
                     submissionCard.innerHTML = `
                         <div class="submission-header">
-                            <div class="submission-user">${submission.userEmail || submission.email || 'Άγνωστος Χρήστης'}</div>
+                            <div class="submission-user">
+                                ${submission.userEmail || submission.email || 'Άγνωστος Χρήστης'}
+                                ${fortuneTellerBadge}
+                            </div>
                             <div class="submission-date">${formatDate(submission.date)}</div>
                             <div class="submission-status ${statusClass}">${statusText}</div>
                         </div>
                         
-                        ${coffeeReadingInfo}
-                        
                         <div class="submission-content">
                             <div class="submission-message">
-                                ${submission.message || 'Δεν υπάρχει μήνυμα'}
+                                <strong>Τύπος:</strong> ${submission.coffeeTypeText || 'Γραπτή Ερμηνεία'}<br>
+                                ${submission.desire ? `<strong>Επιθυμία:</strong> ${submission.desire}` : ''}
                             </div>
                             
                             <div class="photos-grid">
@@ -2726,7 +2728,7 @@
                 }
             });
             
-            // Προβολή υποβολής
+            // Προβολή υποβολής - ΔΙΟΡΘΩΜΕΝΗ
             function viewSubmission(id) {
                 const allSubmissions = getAllSubmissions();
                 const submission = allSubmissions.find(sub => sub.id === id);
@@ -2742,9 +2744,11 @@
                             </div>
                         `).join('') : '<p>Δεν υπάρχουν φωτογραφίες</p>';
                     
-                    // Βελτιωμένη εμφάνιση πληροφοριών καφεμαντείας
-                    const coffeeReadingInfo = submission.coffeeTypeText ? `
+                    // ΠΡΟΣΘΗΚΗ: Πληροφορίες καφεμάντη
+                    const fortuneTellerInfo = submission.fortuneTellerName ? `
                         <div class="coffee-reading-info">
+                            <p><strong>Επιλεγμένος Καφεμάντης:</strong> ${submission.fortuneTellerName}</p>
+                            ${submission.fortuneTellerImage ? `<img src="${submission.fortuneTellerImage}" alt="${submission.fortuneTellerName}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-top: 5px;">` : ''}
                             <p><strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText}</p>
                             <p><strong>Email Χρήστη:</strong> ${submission.userEmail || submission.email || 'Δεν παρέχεται'}</p>
                             ${submission.desire ? `<p><strong>Επιθυμία Χρήστη:</strong> ${submission.desire}</p>` : ''}
@@ -2757,7 +2761,7 @@
                             <div class="submission-date">${formatDate(submission.date)}</div>
                         </div>
                         
-                        ${coffeeReadingInfo}
+                        ${fortuneTellerInfo}
                         
                         <div class="submission-content">
                             <div class="submission-message">
