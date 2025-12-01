@@ -1,0 +1,559 @@
+/* 
+ENHANCED CAFEDIUM STYLES
+Απλώς πρόσθεσε αυτό το link στο <head> του index.html:
+<link rel="stylesheet" href="enhanced-styles.css">
+*/
+
+/* ===== GLOBAL ENHANCEMENTS ===== */
+:root {
+    --spacing-sm: 10px;
+    --spacing-md: 20px;
+    --spacing-lg: 30px;
+    --border-radius: 12px;
+    --box-shadow: 0 8px 30px rgba(139, 69, 19, 0.12);
+    --box-shadow-hover: 0 12px 40px rgba(139, 69, 19, 0.2);
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* ===== TYPOGRAPHY ENHANCEMENT ===== */
+h1 {
+    font-size: 2rem !important;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    margin-bottom: 15px !important;
+}
+
+h2 {
+    font-size: 1.4rem !important;
+    margin-bottom: 15px !important;
+    padding-bottom: 10px !important;
+    border-bottom: 2px solid var(--accent) !important;
+}
+
+.subtitle {
+    font-size: 1rem !important;
+    line-height: 1.5;
+    max-width: 700px !important;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* ===== CONTAINER & SPACING ENHANCEMENT ===== */
+.container {
+    max-width: 900px !important;
+    padding: 15px !important;
+}
+
+.form-section {
+    padding: var(--spacing-lg) !important;
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--box-shadow) !important;
+    margin-bottom: var(--spacing-lg) !important;
+    border: 1px solid rgba(210, 105, 30, 0.15) !important;
+    transition: var(--transition);
+}
+
+.form-section:hover {
+    box-shadow: var(--box-shadow-hover) !important;
+}
+
+/* ===== HEADER ENHANCEMENT ===== */
+header {
+    padding: 30px 25px !important;
+    border-radius: var(--border-radius) !important;
+    margin-bottom: 30px !important;
+    position: relative;
+    overflow: hidden;
+}
+
+header::after {
+    content: "☕";
+    position: absolute;
+    bottom: -30px;
+    right: -30px;
+    font-size: 120px;
+    opacity: 0.1;
+    transform: rotate(15deg);
+}
+
+.logo {
+    font-size: 3.2rem !important;
+    margin-bottom: 15px !important;
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* ===== CARD & BOX ENHANCEMENTS ===== */
+.info-box {
+    padding: 20px !important;
+    border-radius: 10px !important;
+    border-left: 5px solid var(--accent) !important;
+    background: linear-gradient(to right, #faf6f0, #f5f0e6) !important;
+    margin: 25px 0 !important;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.info-box p {
+    margin-bottom: 10px;
+}
+
+.info-box ul {
+    padding-left: 20px;
+    margin-top: 10px;
+}
+
+.info-box li {
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.info-box li:before {
+    content: "•";
+    color: var(--primary);
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}
+
+/* ===== FORM ELEMENTS ENHANCEMENT ===== */
+.form-group {
+    margin-bottom: 25px !important;
+}
+
+label {
+    font-size: 0.95rem !important;
+    margin-bottom: 10px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dark) !important;
+}
+
+input[type="email"], 
+input[type="text"], 
+input[type="password"], 
+textarea, 
+select {
+    padding: 16px 20px !important;
+    border-radius: 10px !important;
+    border: 2px solid #e8e2d6 !important;
+    font-size: 1rem !important;
+    transition: var(--transition) !important;
+    background-color: #fefcf8 !important;
+}
+
+input:focus, 
+textarea:focus, 
+select:focus {
+    border-color: var(--secondary) !important;
+    box-shadow: 0 0 0 4px rgba(210, 105, 30, 0.15) !important;
+    transform: translateY(-2px);
+}
+
+textarea {
+    min-height: 140px !important;
+    line-height: 1.6;
+}
+
+/* ===== BUTTON ENHANCEMENTS ===== */
+.submit-btn {
+    padding: 18px 30px !important;
+    font-size: 1.1rem !important;
+    border-radius: 12px !important;
+    margin-top: 20px !important;
+    box-shadow: 0 6px 20px rgba(139, 69, 19, 0.25) !important;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition) !important;
+}
+
+.submit-btn:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.submit-btn:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 25px rgba(139, 69, 19, 0.35) !important;
+}
+
+.submit-btn:hover:after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(40, 40);
+        opacity: 0;
+    }
+}
+
+/* ===== TAB ENHANCEMENTS ===== */
+.tabs {
+    border-radius: 12px !important;
+    overflow: hidden;
+    margin-bottom: 25px !important;
+    background: linear-gradient(135deg, #f8f4e9, #f0e6d3) !important;
+    padding: 5px !important;
+}
+
+.tab {
+    padding: 18px !important;
+    font-size: 1rem !important;
+    border-radius: 10px !important;
+    margin: 3px !important;
+    transition: var(--transition) !important;
+    border: none !important;
+}
+
+.tab.active {
+    background: white !important;
+    color: var(--primary) !important;
+    box-shadow: 0 4px 15px rgba(139, 69, 19, 0.15) !important;
+    transform: translateY(-2px);
+}
+
+.tab:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.7) !important;
+    transform: translateY(-1px);
+}
+
+/* ===== COFFEE OPTIONS ENHANCEMENT ===== */
+.coffee-options {
+    gap: 20px !important;
+    margin: 25px 0 !important;
+}
+
+.coffee-option {
+    padding: 20px !important;
+    border-radius: 12px !important;
+    border: 2px solid #e8e2d6 !important;
+    transition: var(--transition) !important;
+    background: white !important;
+}
+
+.coffee-option:hover {
+    border-color: var(--accent) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.coffee-option.selected {
+    border-color: var(--primary) !important;
+    background: linear-gradient(135deg, #f9f3ec, #f5e9d8) !important;
+    box-shadow: 0 8px 25px rgba(139, 69, 19, 0.15) !important;
+}
+
+.option-title {
+    font-size: 1.1rem !important;
+    margin-bottom: 8px !important;
+}
+
+.option-description {
+    font-size: 0.9rem !important;
+    line-height: 1.5;
+    color: var(--text) !important;
+}
+
+/* ===== FORTUNE TELLERS ENHANCEMENT ===== */
+.fortune-teller-options {
+    gap: 25px !important;
+    margin: 25px 0 !important;
+}
+
+.fortune-teller-option {
+    border-radius: 15px !important;
+    padding: 25px !important;
+    border: 3px solid #e8e2d6 !important;
+    transition: var(--transition) !important;
+}
+
+.fortune-teller-option:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+}
+
+.fortune-teller-option.selected {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.fortune-teller-name {
+    font-size: 1.3rem !important;
+    margin-bottom: 8px !important;
+}
+
+.fortune-teller-title {
+    font-size: 0.95rem !important;
+    margin-bottom: 12px !important;
+}
+
+.fortune-teller-description {
+    font-size: 0.9rem !important;
+    line-height: 1.5;
+    margin-bottom: 20px !important;
+}
+
+/* ===== OFFER SECTION ENHANCEMENT ===== */
+.offer-in-form {
+    padding: 25px !important;
+    border-radius: 12px !important;
+    margin: 25px 0 !important;
+    background: linear-gradient(135deg, #e8f5e8, #d0e9d0) !important;
+    border: 2px solid var(--success) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.offer-in-form:before {
+    content: "⭐";
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    font-size: 60px;
+    opacity: 0.1;
+    transform: rotate(25deg);
+}
+
+.offer-title {
+    font-size: 1.3rem !important;
+}
+
+.offer-description {
+    font-size: 0.95rem !important;
+    line-height: 1.6;
+}
+
+/* ===== PREVIEW GRID ENHANCEMENT ===== */
+.preview-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+    gap: 15px !important;
+    margin-top: 15px !important;
+}
+
+.preview-item {
+    border-radius: 10px !important;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    transition: var(--transition) !important;
+}
+
+.preview-item:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.preview-image {
+    height: 110px !important;
+}
+
+/* ===== RESPONSES ENHANCEMENT ===== */
+.response-card {
+    padding: 25px !important;
+    border-radius: 12px !important;
+    border-left: 5px solid var(--success) !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08) !important;
+    margin-bottom: 20px;
+    transition: var(--transition);
+}
+
+.response-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
+}
+
+.response-subject {
+    font-size: 1.1rem !important;
+}
+
+.response-date {
+    font-size: 0.85rem !important;
+}
+
+.response-content {
+    font-size: 0.95rem !important;
+    line-height: 1.6;
+}
+
+/* ===== POINTS SECTION ENHANCEMENT ===== */
+.points-section {
+    padding: 25px !important;
+    border-radius: 12px !important;
+    margin: 25px 0 !important;
+    background: linear-gradient(135deg, #fff9e6, #ffefb3) !important;
+    border: 2px solid #ffd700 !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.points-section:before {
+    content: "🏆";
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    font-size: 80px;
+    opacity: 0.1;
+}
+
+.points-count {
+    font-size: 1.6rem !important;
+}
+
+/* ===== MODAL ENHANCEMENTS ===== */
+.modal-content {
+    border-radius: 15px !important;
+    padding: 30px !important;
+    max-width: 550px !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* ===== FOOTER ENHANCEMENT ===== */
+footer {
+    margin-top: 40px !important;
+    padding: 25px !important;
+    background: linear-gradient(135deg, #f8f4e9, #f0e6d3) !important;
+    border-radius: var(--border-radius);
+    border-top: 1px solid rgba(139, 69, 19, 0.1);
+}
+
+/* ===== RESPONSIVE ENHANCEMENTS ===== */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px !important;
+    }
+    
+    header {
+        padding: 25px 20px !important;
+    }
+    
+    h1 {
+        font-size: 1.8rem !important;
+    }
+    
+    h2 {
+        font-size: 1.3rem !important;
+    }
+    
+    .form-section {
+        padding: 20px !important;
+    }
+    
+    .tabs {
+        flex-direction: column !important;
+    }
+    
+    .tab {
+        padding: 15px !important;
+        margin: 2px !important;
+    }
+    
+    .coffee-option {
+        padding: 15px !important;
+    }
+    
+    .fortune-teller-option {
+        padding: 20px !important;
+    }
+    
+    .preview-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)) !important;
+        gap: 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 8px !important;
+    }
+    
+    header {
+        padding: 20px 15px !important;
+    }
+    
+    h1 {
+        font-size: 1.6rem !important;
+    }
+    
+    .logo {
+        font-size: 2.5rem !important;
+    }
+    
+    .form-section {
+        padding: 18px !important;
+    }
+    
+    input[type="email"], 
+    input[type="text"], 
+    input[type="password"], 
+    textarea, 
+    select {
+        padding: 14px 16px !important;
+    }
+    
+    .submit-btn {
+        padding: 16px 20px !important;
+    }
+}
+
+/* ===== SPECIAL EFFECTS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-section {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.coffee-option:nth-child(1) { animation-delay: 0.1s; }
+.coffee-option:nth-child(2) { animation-delay: 0.2s; }
+.coffee-option:nth-child(3) { animation-delay: 0.3s; }
+
+.fortune-teller-option:nth-child(1) { animation-delay: 0.1s; }
+.fortune-teller-option:nth-child(2) { animation-delay: 0.2s; }
+.fortune-teller-option:nth-child(3) { animation-delay: 0.3s; }
+
+/* ===== SCROLLBAR STYLING ===== */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary);
+}
