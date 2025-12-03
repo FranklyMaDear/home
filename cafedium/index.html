@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
+    <!-- ========== ADMAVEN VERIFICATION ========== -->
+    <meta name='admaven-placement' content='BqjwFpjU5'>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cafedium</title>
@@ -40,6 +43,7 @@
             --zaira: #9C27B0;
             --sousou: #E91E63;
             --ai: #2196F3;
+            --video-reward: #9C27B0;
         }
         
         body {
@@ -309,7 +313,7 @@
             border: 2px dashed var(--accent);
             border-radius: 12px;
             text-align: center;
-            cursor: pointer;
+                    cursor: pointer;
             transition: all 0.3s;
             color: var(--primary-light);
             font-weight: 600;
@@ -873,6 +877,55 @@
             transform: translateY(-2px);
         }
         
+        /* VIDEO REWARDS SECTION */
+        .video-reward-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .video-offer {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid var(--video-reward);
+            transition: all 0.3s;
+        }
+        
+        .video-offer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(156, 39, 176, 0.2);
+        }
+        
+        .video-offer h3 {
+            color: var(--video-reward);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .video-offer p {
+            color: var(--text);
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        
+        .points-reward {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--success);
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .points-reward i {
+            color: #ffd700;
+        }
+        
         /* CONSENT MODAL */
         .terms-container {
             max-height: 300px;
@@ -1365,7 +1418,8 @@
             }
             
             .coffee-options,
-            .fortune-teller-options {
+            .fortune-teller-options,
+            .video-reward-options {
                 grid-template-columns: 1fr;
             }
             
@@ -1465,7 +1519,6 @@
     
 </head>
 <body>
-    <!-- Ο ίδιος HTML κώδικας παραμένει αμετάβλητος -->
     <div class="container">
         <!-- Ειδοποίηση για νέα μηνύματα -->
         <div id="notificationModal" class="notification-modal">
@@ -1625,6 +1678,9 @@
                 <button class="tab active" data-tab="photos-tab">
                     <i class="fas fa-camera"></i> Αποστολή Φωτογραφιών
                 </button>
+                <button class="tab" data-tab="video-rewards-tab">
+                    <i class="fas fa-video"></i> Βίντεο για Πόντοus
+                </button>
                 <button class="tab" data-tab="calendar-tab">
                     <i class="fas fa-calendar"></i> Κλείσιμο Ραντεβού
                 </button>
@@ -1680,7 +1736,6 @@
                        <p>Κερδίστε 200+20 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478517" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.<p>
                        Προσθέστε το ίδιο email όπως στην εφαρμογή.Οι πόντοι θα καταχωρηθούν από τους Διαχειριστές
                         </div>
-                       
                 </div>
                             <button class="redeem-btn" id="redeemInFormBtn">
                                 <i class="fas fa-shopping-cart"></i> Ανταλλαγή (50 Πόντοι)
@@ -1763,7 +1818,7 @@
                             
                             <div class="preview-container">
                                 <div class="preview-title">
-                                    <i class="fas fa-images"></i> Προεπισκόπηση φωτογραφιών:
+                                    <i class="fas fa-images"></i> Προεπισκόπηση φωτογραφίες:
                                 </div>
                                 <div class="preview-grid" id="previewGrid">
                                     <!-- Εδώ θα προστεθούν οι προεπισκοπήσεις των φωτογραφιών -->
@@ -1776,6 +1831,71 @@
                             
                             <div class="message" id="message"></div>
                         </form>
+                    </div>
+                </section>
+
+                <!-- Καρτέλα Βίντεο για Πόντοus (ΝΕΑ ΚΑΡΤΕΛΑ) -->
+                <section id="video-rewards-tab" class="tab-content">
+                    <div class="form-section">
+                        <h2><i class="fas fa-video"></i> Βίντεο για Πόντοus</h2>
+                        
+                        <div class="info-box">
+                            <p><strong>Πώς λειτουργεί:</strong></p>
+                            <p>Παρακολούθησε βίντεο διαφημίσεις και κέρδισε πόντους! Οι πόντοι προστίθενται αυτόματα στον λογαριασμό σου.</p>
+                            <p><strong>Οδηγίες:</strong></p>
+                            <ul>
+                                <li>Πατήσε το κουμπί "Παίξε Βίντεο"</li>
+                                <li>Θα ανοίξει ένα παράθυρο με διαφήμιση</li>
+                                <li>Περίμενε 30 δευτερόλεπτα</li>
+                                <li>Οι πόντοι θα προστεθούν αυτόματα!</li>
+                            </ul>
+                        </div>
+
+                        <!-- Video Offers -->
+                        <div class="video-reward-options">
+                            <div class="video-offer">
+                                <h3>📺 Βίντεο 30 δευτερολέπτων</h3>
+                                <p>Παρακολούθησε μια σύντομη διαφήμιση</p>
+                                <div class="points-reward">
+                                    <i class="fas fa-coins"></i> +10 Πόντοι
+                                </div>
+                                <button class="submit-btn" onclick="playVideoAd(10)" style="background: var(--info); margin-top: 10px;">
+                                    <i class="fas fa-play-circle"></i> Παίξε Βίντεο
+                                </button>
+                            </div>
+                            
+                            <div class="video-offer">
+                                <h3>🎬 Βίντεο 45 δευτερολέπτων</h3>
+                                <p>Μεγαλύτερη διάρκεια, περισσότεροι πόντοι</p>
+                                <div class="points-reward">
+                                    <i class="fas fa-coins"></i> +15 Πόντοι
+                                </div>
+                                <button class="submit-btn" onclick="playVideoAd(15)" style="background: var(--success); margin-top: 10px;">
+                                    <i class="fas fa-play-circle"></i> Παίξε Βίντεο
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Video Stats -->
+                        <div class="info-box" style="margin-top: 25px;">
+                            <p><strong>Στατιστικά σημερινά:</strong></p>
+                            <div id="videoStats">
+                                <p>Βίντεο που έχεις δει σήμερα: <span id="videosWatchedToday">0</span></p>
+                                <p>Μέγιστο ημερήσιο όριο: 5 βίντεο</p>
+                                <p>Συνολικοί πόντοι από βίντεο: <span id="totalVideoPoints">0</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div style="margin-top: 20px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span>Πρόοδος σήμερα</span>
+                                <span id="progressText">0/5 βίντεο</span>
+                            </div>
+                            <div style="background: #e0e0e0; border-radius: 10px; height: 10px; overflow: hidden;">
+                                <div id="progressBar" style="background: var(--info); height: 100%; width: 0%; transition: width 0.3s;"></div>
+                            </div>
+                        </div>
                     </div>
                 </section>
                 
@@ -2094,7 +2214,6 @@
 
     <!-- ΤΟ JAVASCRIPT ΚΩΔΙΚΑΣ ΠΑΡΑΜΕΝΕΙ ΑΜΕΤΑΒΛΗΤΟΣ -->
     <script>
-        // Ολόκληρο το JavaScript παραμένει αμετάβλητο όπως το είχαμε πριν
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
@@ -2126,6 +2245,175 @@
             
             console.log(`Ειδοποίηση για επιλογή χαρακτήρα ${characterName} από ${userEmail}`);
         }
+
+        // ===========================================
+        // ADMAVEN VIDEO REWARDS FUNCTIONS
+        // ===========================================
+        function playVideoAd(points) {
+            if (!currentUser) {
+                showNotification('Πρέπει να είστε συνδεδεμένοι!');
+                return;
+            }
+            
+            // Check daily limit
+            const videoStats = JSON.parse(localStorage.getItem('videoStats') || '{}');
+            const userStats = videoStats[currentUser.email] || { 
+                videosWatchedToday: 0, 
+                lastWatchedDate: null,
+                totalVideoPoints: 0 
+            };
+            
+            const today = new Date().toDateString();
+            
+            // Reset if new day
+            if (userStats.lastWatchedDate !== today) {
+                userStats.videosWatchedToday = 0;
+                userStats.lastWatchedDate = today;
+            }
+            
+            // Check daily limit
+            const DAILY_LIMIT = 5;
+            if (userStats.videosWatchedToday >= DAILY_LIMIT) {
+                showNotification(`Έχετε φτάσει το ημερήσιο όριο των ${DAILY_LIMIT} βίντεο. Επιστρέψτε αύριο!`);
+                return;
+            }
+            
+            // Confirm with user
+            if (!confirm(`Θα ανοίξει βίντεο διαφήμισης για ${points} πόντους. Συνέχεια;`)) {
+                return;
+            }
+            
+            // Show loading
+            event.target.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Φορτώνει...';
+            event.target.disabled = true;
+            
+            try {
+                // Store start time
+                const startTime = new Date().getTime();
+                
+                // Trigger AdMaven ad
+                if (typeof admaven !== 'undefined') {
+                    console.log('Triggering AdMaven ad...');
+                    admaven.showAd();
+                    
+                    // Alternatively, we can use manual popup as fallback
+                    setTimeout(() => {
+                        window.open('about:blank', 'adWindow', 'width=800,height=600');
+                    }, 500);
+                } else {
+                    console.log('AdMaven not loaded, using fallback');
+                    window.open('about:blank', 'adWindow', 'width=800,height=600');
+                }
+                
+                // Show countdown
+                let secondsLeft = 30;
+                const countdownInterval = setInterval(() => {
+                    secondsLeft--;
+                    event.target.innerHTML = `<i class="fas fa-clock"></i> ${secondsLeft}s...`;
+                    
+                    if (secondsLeft <= 0) {
+                        clearInterval(countdownInterval);
+                        completeVideoAd(points, startTime, userStats);
+                    }
+                }, 1000);
+                
+            } catch(error) {
+                console.error('Video ad error:', error);
+                showNotification('Σφάλμα! Δοκίμασε ξανά.');
+                resetVideoButton();
+            }
+        }
+        
+        function completeVideoAd(points, startTime, userStats) {
+            const endTime = new Date().getTime();
+            const timeWatched = Math.floor((endTime - startTime) / 1000);
+            
+            // Check if user watched at least 25 seconds
+            if (timeWatched >= 25) {
+                // Award points
+                const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                const userPoints = userPointsData.find(p => p.email === currentUser.email);
+                
+                if (userPoints) {
+                    userPoints.points += points;
+                    localStorage.setItem('userPoints', JSON.stringify(userPointsData));
+                    
+                    // Update video stats
+                    const videoStats = JSON.parse(localStorage.getItem('videoStats') || '{}');
+                    const today = new Date().toDateString();
+                    
+                    if (!videoStats[currentUser.email]) {
+                        videoStats[currentUser.email] = {
+                            videosWatchedToday: 1,
+                            lastWatchedDate: today,
+                            totalVideoPoints: points
+                        };
+                    } else {
+                        videoStats[currentUser.email].videosWatchedToday++;
+                        videoStats[currentUser.email].lastWatchedDate = today;
+                        videoStats[currentUser.email].totalVideoPoints += points;
+                    }
+                    localStorage.setItem('videoStats', JSON.stringify(videoStats));
+                    
+                    // Update UI
+                    document.getElementById('currentPoints').textContent = userPoints.points;
+                    updateVideoStatsUI();
+                    
+                    // Send AdMaven conversion tracking
+                    if (typeof admaven !== 'undefined' && admaven.trackEvent) {
+                        admaven.trackEvent('video_watched', {
+                            points: points,
+                            userId: currentUser.id
+                        });
+                    }
+                    
+                    showNotification(`🎉 Κέρδισες ${points} πόντους από το βίντεο!`);
+                }
+                
+                // Track in your own system
+                const videoLog = JSON.parse(localStorage.getItem('videoRewardsLog') || '[]');
+                videoLog.push({
+                    userId: currentUser.id,
+                    email: currentUser.email,
+                    points: points,
+                    date: new Date().toISOString(),
+                    timeWatched: timeWatched
+                });
+                localStorage.setItem('videoRewardsLog', JSON.stringify(videoLog));
+                
+            } else {
+                showNotification('Δεν παρακολούθησες το βίντεο αρκετά. Προσπάθησε ξανά!');
+            }
+            
+            resetVideoButton();
+        }
+        
+        function resetVideoButton() {
+            const buttons = document.querySelectorAll('.video-offer .submit-btn');
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-play-circle"></i> Παίξε Βίντεο';
+            });
+        }
+        
+        function updateVideoStatsUI() {
+            if (!currentUser) return;
+            
+            const videoStats = JSON.parse(localStorage.getItem('videoStats') || '{}');
+            const userStats = videoStats[currentUser.email] || { 
+                videosWatchedToday: 0, 
+                totalVideoPoints: 0 
+            };
+            
+            const DAILY_LIMIT = 5;
+            document.getElementById('videosWatchedToday').textContent = userStats.videosWatchedToday;
+            document.getElementById('totalVideoPoints').textContent = userStats.totalVideoPoints;
+            document.getElementById('progressText').textContent = `${userStats.videosWatchedToday}/${DAILY_LIMIT} βίντεο`;
+            
+            const progressPercent = (userStats.videosWatchedToday / DAILY_LIMIT) * 100;
+            document.getElementById('progressBar').style.width = `${progressPercent}%`;
+        }
+        // ===========================================
 
         document.addEventListener('DOMContentLoaded', function() {
             // Audio για ειδοποιήσεις
@@ -2870,6 +3158,10 @@
                     if (tabId === 'photos-tab') {
                         checkOfferRedemption();
                     }
+                    
+                    if (tabId === 'video-rewards-tab') {
+                        updateVideoStatsUI();
+                    }
                 });
             });
             
@@ -3377,7 +3669,7 @@
             // REDEEM MAIN OFFER - ΔΙΟΡΘΩΜΕΝΗ
             function redeemMainOffer() {
                 if (!currentUser) {
-                    showNotification('Πρέπει να είστε συνδεδεμένος για εξαργύρωση!');
+                    showNotification('Πρέπει να είστε συνδεδεμένοι για εξαργύρωση!');
                     return;
                 }
                 
@@ -3543,6 +3835,7 @@
                     checkOfferRedemption();
                     checkUserConsent();
                     loadFortuneTellers();
+                    updateVideoStatsUI();
                     
                     // Check for PWA installation
                     checkPWAInstallation();
@@ -3567,11 +3860,43 @@
             // Make functions globally available
             window.adminUpdateTerms = adminUpdateTerms;
             window.redeemMainOffer = redeemMainOffer;
+            window.playVideoAd = playVideoAd;
 
             // Initial load
             loadFortuneTellers();
             checkPWAInstallation();
         });
     </script>
+
+    <!-- ============================================== -->
+    <!-- ADMAVEN SCRIPT INTEGRATION -->
+    <!-- ============================================== -->
+    <script type='text/javascript'>
+        // Βασική ρύθμιση AdMaven
+        var admaven_pub_id = 'BqjwFpjU5';
+        var admaven_format = 'popunder'; // 'inpagepush' για mobile
+        var admaven_subid = 'cafedium_user';
+        
+        // Προαιρετικά: Για καλύτερο targeting
+        var admaven_country = 'GR'; // Ελλάδα
+        var admaven_language = 'el'; // Ελληνικά
+        
+        // Προαιρετικά: Αναγνώριση συσκευής
+        var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile) {
+            admaven_format = 'inpagepush'; // Καλύτερο για κινητά
+        }
+        
+        console.log('AdMaven initialized with:', {
+            pub_id: admaven_pub_id,
+            format: admaven_format,
+            subid: admaven_subid,
+            country: admaven_country,
+            language: admaven_language
+        });
+    </script>
+    <script src='https://ads.admaven.com/popunder.js'></script>
+    <!-- ============================================== -->
+    
 </body>
 </html>
