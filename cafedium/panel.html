@@ -14,6 +14,12 @@
     <meta name="msapplication-TileColor" content="#8B4513">
     <meta name="theme-color" content="#8B4513">
     
+    <!-- EMAILJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        emailjs.init("G7qrbhfmcsBbeZTOUUGHP0e6");
+    </script>
+    
     <style>
         :root {
             --primary: #8B4513;
@@ -1764,6 +1770,68 @@
         document.addEventListener('DOMContentLoaded', function() {
             let currentAdmin = null;
 
+            // ============================================
+            // ΣΥΝΑΡΤΗΣΕΙΣ ΓΙΑ ΑΠΟΣΤΟΛΗ EMAIL
+            // ============================================
+            
+            // 1. ΣΥΝΑΡΤΗΣΗ ΑΠΟΣΤΟΛΗΣ EMAIL
+            function sendAdminEmail(subject, message, type) {
+                const serviceID = 'service_64rk8d9';
+                const templateID = '__ejs-test-mail-service__'; // Χρησιμοποίησε το default test template
+                const adminEmail = 'admin@cafedium.gr'; // ΑΝΤΙΚΑΤΑΣΤΗΣΕ ΜΕ ΤΟ EMAIL ΣΟΥ
+                
+                const templateParams = {
+                    to_email: adminEmail,
+                    to_name: 'Διαχειριστής Cafedium',
+                    subject: subject,
+                    message: message,
+                    notification_type: type,
+                    date: new Date().toLocaleString('el-GR')
+                };
+                
+                console.log(`📧 Προσπάθεια αποστολής email: ${subject}`);
+                
+                emailjs.send(serviceID, templateID, templateParams)
+                    .then(function(response) {
+                        console.log('✅ Email ειδοποίησης στάλθηκε!', response.status, response.text);
+                        showToast('Email ειδοποίησης στάλθηκε!', 'success');
+                    })
+                    .catch(function(error) {
+                        console.error('❌ Σφάλμα αποστολής email:', error);
+                        showToast('Σφάλμα αποστολής email. Έλεγξε το console.', 'error');
+                    });
+            }
+
+            // 2. ΣΗΜΑΝΣΗ ΥΠΟΒΟΛΗΣ ΩΣ ΕΙΔΟΠΟΙΗΜΕΝΗ
+            function markSubmissionAsNotified(id) {
+                try {
+                    const allSubmissions = JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]');
+                    const submissionIndex = allSubmissions.findIndex(sub => sub.id === id);
+                    if (submissionIndex !== -1) {
+                        allSubmissions[submissionIndex].emailNotified = true;
+                        localStorage.setItem('coffeeSubmissions', JSON.stringify(allSubmissions));
+                        console.log(`✅ Υποβολή ${id} σημάνθηκε ως ειδοποιημένη`);
+                    }
+                } catch (e) {
+                    console.error('Σφάλμα σήμανσης υποβολής:', e);
+                }
+            }
+
+            // 3. ΣΗΜΑΝΣΗ ΧΡΗΣΤΗ ΩΣ ΕΙΔΟΠΟΙΗΜΕΝΟΣ
+            function markUserAsNotified(email) {
+                try {
+                    const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+                    const userIndex = allUsers.findIndex(user => user.email === email);
+                    if (userIndex !== -1) {
+                        allUsers[userIndex].emailNotified = true;
+                        localStorage.setItem('users', JSON.stringify(allUsers));
+                        console.log(`✅ Χρήστης ${email} σημάνθηκε ως ειδοποιημένος`);
+                    }
+                } catch (e) {
+                    console.error('Σφάλμα σήμανσης χρήστη:', e);
+                }
+            }
+            
             // Enhanced reset functionality
             function setupResetButtons() {
                 // Add reset section to auth page
@@ -1910,7 +1978,10 @@
                 document.getElementById('authSection').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 document.getElementById('adminName').textContent = currentAdmin.name;
+                
+                // Φόρτωσε δεδομένα και έλεγξε για νέα
                 loadAllData();
+                checkForNewDataAndSendEmail();
             }
 
             // Σύστημα καρτελών εγγραφής/σύνδεσης
@@ -2165,7 +2236,82 @@
                 showToast('Τα δεδομένα ανανεώθηκαν!', 'success');
             }
             
-            // Φόρτωση όλων των δεδομένων
+            // ============================================
+            // ΒΕΛΤΙΩΜΕΝΗ LOADALLDATA ΜΕ EMAIL ΕΙΔΟΠΟΙΗΣΕΙΣ
+            // ============================================
+            
+            // Βοηθητική συνάρτηση για έλεγχο νέων δεδομένων
+            function checkForNewDataAndSendEmail() {
+                console.log('🔍 Έλεγχος για νέα δεδομένα...');
+                
+                try {
+                    const allSubmissions = JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]');
+                    const users = JSON.parse(localStorage.getItem('users') || '[]');
+                    
+                    // ΕΥΡΕΣΗ ΝΕΩΝ ΥΠΟΒΟΛΩΝ (ΧΩΡΙΣ emailNotified)
+                    const newSubmissions = allSubmissions.filter(sub => 
+                        !sub.emailNotified && sub.status === 'pending'
+                    );
+                    
+                    // ΕΥΡΕΣΗ ΝΕΩΝ ΧΡΗΣΤΩΝ (ΤΕΛΕΥΤΑΙΕΣ 24 ΩΡΕΣ, ΧΩΡΙΣ emailNotified)
+                    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                    const newUsers = users.filter(user => {
+                        const userDate = new Date(user.registrationDate || user.date || Date.now());
+                        return !user.emailNotified && userDate > twentyFourHoursAgo;
+                    });
+                    
+                    // ΑΠΟΣΤΟΛΗ EMAIL ΓΙΑ ΝΕΕΣ ΥΠΟΒΟΛΕΣ
+                    if (newSubmissions.length > 0) {
+                        console.log(`📨 Βρέθηκαν ${newSubmissions.length} νέες υποβολές`);
+                        
+                        // Αποστολή ενός email για όλες τις υποβολές
+                        const emailSubject = `📊 ${newSubmissions.length} Νέα(ες) Υποβολή(ές) στο Cafedium`;
+                        let emailMessage = `Έχετε ${newSubmissions.length} νέα(ες) υποβολή(ές) προς επεξεργασία:\n\n`;
+                        
+                        newSubmissions.forEach((submission, index) => {
+                            emailMessage += `${index + 1}. ${submission.type === 'photo' ? '📸 Φωτογραφίες Καφέ' : '✉️ Μήνυμα'}\n`;
+                            emailMessage += `   Χρήστης: ${submission.userEmail || submission.email || 'Άγνωστος'}\n`;
+                            emailMessage += `   Ημερομηνία: ${formatDate(submission.date)}\n`;
+                            if (submission.desire) {
+                                emailMessage += `   Επιθυμία: ${submission.desire.substring(0, 100)}${submission.desire.length > 100 ? '...' : ''}\n`;
+                            }
+                            emailMessage += '\n';
+                            
+                            // Σήμανση ως ειδοποιημένη
+                            markSubmissionAsNotified(submission.id);
+                        });
+                        
+                        emailMessage += `\nΣύνδεσμος προς πίνακα διαχειριστή: ${window.location.href}`;
+                        
+                        sendAdminEmail(emailSubject, emailMessage, 'new_submissions_batch');
+                        
+                    } else if (newUsers.length > 0) {
+                        // ΑΠΟΣΤΟΛΗ EMAIL ΓΙΑ ΝΕΟΥΣ ΧΡΗΣΤΕΣ
+                        console.log(`👤 Βρέθηκαν ${newUsers.length} νέοι χρήστες`);
+                        
+                        const emailSubject = `👥 ${newUsers.length} Νέοι Χρήστες στο Cafedium`;
+                        let emailMessage = `Έχετε ${newUsers.length} νέους χρήστες:\n\n`;
+                        
+                        newUsers.forEach((user, index) => {
+                            emailMessage += `${index + 1}. ${user.name || 'Χωρίς όνομα'}\n`;
+                            emailMessage += `   Email: ${user.email}\n`;
+                            emailMessage += `   Ημερομηνία: ${formatDate(user.registrationDate || user.date)}\n\n`;
+                            
+                            // Σήμανση ως ειδοποιημένος
+                            markUserAsNotified(user.email);
+                        });
+                        
+                        emailMessage += `Σύνολο εγγεγραμμένων χρηστών: ${users.length}`;
+                        
+                        sendAdminEmail(emailSubject, emailMessage, 'new_users_batch');
+                    }
+                    
+                } catch (error) {
+                    console.error('Σφάλμα κατά τον έλεγχο νέων δεδομένων:', error);
+                }
+            }
+            
+            // Αρχική loadAllData συνάρτηση (χωρίς email αποστολή)
             function loadAllData() {
                 loadPhotoSubmissions();
                 loadMessageSubmissions();
@@ -3295,9 +3441,26 @@
                 }, 5000);
             }
             
-            // Αυτόματη ανανέωση κάθε 30 δευτερόλεπτα
-            setInterval(loadAllData, 30000);
+            // ============================================
+            // ΑΥΤΟΜΑΤΟΣ ΕΛΕΓΧΟΣ ΚΑΘΕ 10 ΛΕΠΤΑ
+            // ============================================
             
+            // Αυτόματος έλεγχος κάθε 10 λεπτά
+            setInterval(function() {
+                if (currentAdmin) { // ΜΟΝΟ ΑΝ Ο ADMIN ΕΙΝΑΙ ΣΥΝΔΕΔΕΜΕΝΟΣ
+                    console.log('🔄 Αυτόματος έλεγχος για νέα δεδομένα...');
+                    checkForNewDataAndSendEmail();
+                    loadAllData(); // Ανανέωση και των δεδομένων στην οθόνη
+                }
+            }, 600000); // 10 λεπτά = 600000 ms
+            
+            // Επίσης έλεγχος κατά τη φόρτωση της σελίδας
+            setInterval(function() {
+                if (currentAdmin) {
+                    loadAllData(); // Ανανέωση δεδομένων κάθε 30 δευτερόλεπτα
+                }
+            }, 30000);
+
             // Initialize
             if (!ensureBrowserCompatibility()) {
                 return;
@@ -3306,6 +3469,11 @@
             // Check session and setup
             if (!checkAdminSession()) {
                 showAuthSection();
+            } else {
+                // Αν είναι συνδεδεμένος, έλεγξε για νέα δεδομένα αμέσως
+                setTimeout(() => {
+                    checkForNewDataAndSendEmail();
+                }, 2000);
             }
         });
     </script>
