@@ -18,7 +18,6 @@
     <link rel="manifest" href="app-manifest.json">
     
     <style>
-        /* ΒΑΣΙΚΑ ΣΤΥΛ */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -45,28 +44,24 @@
         body {
             background: linear-gradient(135deg, var(--light) 0%, #f8f4e9 100%);
             color: var(--text);
-            line-height: 1.65;
+            line-height: 1.6;
             min-height: 100vh;
             padding: 10px;
-            font-size: 0.95rem;
         }
         
-        /* ΚΥΡΙΟ CONTAINER */
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 15px;
         }
         
-        /* HEADER - ΒΕΛΤΙΩΜΕΝΟ */
         header {
             text-align: center;
-            margin-bottom: 30px;
-            padding: 30px 25px;
-            background: linear-gradient(145deg, var(--primary) 0%, var(--primary-light) 100%);
+            margin-bottom: 25px;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             color: white;
-            border-radius: 18px;
-            box-shadow: 0 15px 35px rgba(139, 69, 19, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(139, 69, 19, 0.2);
             position: relative;
             overflow: hidden;
         }
@@ -83,27 +78,22 @@
         }
         
         .logo {
-            font-size: 3.2rem;
-            margin-bottom: 15px;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
             display: block;
-            animation: pulse 2s infinite;
         }
         
         h1 {
-            font-size: 2.4rem;
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-            line-height: 1.3;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
         
         .subtitle {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             opacity: 0.9;
-            max-width: 650px;
+            max-width: 600px;
             margin: 0 auto;
-            line-height: 1.6;
-            padding: 0 10px;
         }
         
         .user-info {
@@ -150,34 +140,33 @@
             background: rgba(255, 255, 255, 0.4);
         }
         
-        /* TABS - ΒΕΛΤΙΩΜΕΝΑ */
         .tabs {
             display: flex;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             background: white;
-            border-radius: 14px;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
         .tab {
             flex: 1;
-            padding: 18px 15px;
+            padding: 15px;
             text-align: center;
             background: #f8f4e9;
             border: none;
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--text);
             cursor: pointer;
             transition: all 0.3s;
-            border-bottom: 4px solid transparent;
+            border-bottom: 3px solid transparent;
         }
         
         .tab.active {
             background: white;
             color: var(--primary);
-            border-bottom: 4px solid var(--primary);
+            border-bottom: 3px solid var(--primary);
         }
         
         .tab:hover:not(.active) {
@@ -190,91 +179,56 @@
         
         .tab-content.active {
             display: block;
-            animation: fadeInUp 0.5s ease-out;
         }
         
-        /* FORM SECTIONS - ΒΕΛΤΙΩΜΕΝΕΣ */
         .form-section {
             background-color: white;
-            padding: 28px 25px;
-            border-radius: 16px;
-            box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
-            margin: 25px 0;
-            border: none;
-            transition: transform 0.3s ease;
-            animation: fadeInUp 0.5s ease-out;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .form-section:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 18px 50px rgba(139, 69, 19, 0.15);
-        }
-        
-        .form-section:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 100%;
-            background: linear-gradient(to bottom, transparent 95%, rgba(0,0,0,0.02) 100%);
-            border-radius: inherit;
-            pointer-events: none;
-            z-index: -1;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.15);
+            margin-bottom: 25px;
+            border: 1px solid rgba(210, 105, 30, 0.2);
         }
         
         h2 {
-            color: var(--dark);
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid var(--accent);
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--accent);
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 1.4rem;
-            line-height: 1.3;
+            gap: 10px;
         }
         
         h2 i {
-            font-size: 1.3rem;
             color: var(--secondary);
-            background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
         
-        /* FORM ELEMENTS - ΒΕΛΤΙΩΜΕΝΑ */
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
         
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 600;
             color: var(--dark);
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         
         input[type="email"], input[type="text"], input[type="password"], textarea, select {
             width: 100%;
-            padding: 16px 20px;
-            border: 2px solid #e5dcd0;
-            border-radius: 12px;
+            padding: 15px;
+            border: 2px solid #e0d6c9;
+            border-radius: 10px;
             font-size: 1rem;
-            transition: all 0.3s ease;
-            background-color: #fefcf8;
+            transition: all 0.3s;
+            background-color: #fcfaf7;
         }
         
         input:focus, textarea:focus, select:focus {
-            border-color: var(--primary);
+            border-color: var(--secondary);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.15);
+            box-shadow: 0 0 0 3px rgba(210, 105, 30, 0.2);
             background-color: white;
         }
         
@@ -284,7 +238,6 @@
             font-family: inherit;
         }
         
-        /* FILE UPLOAD */
         .file-input-container {
             position: relative;
             overflow: hidden;
@@ -307,9 +260,9 @@
             padding: 20px 15px;
             background: linear-gradient(to right, #f9f3ec, #f5e9d8);
             border: 2px dashed var(--accent);
-            border-radius: 12px;
+            border-radius: 10px;
             text-align: center;
-                    cursor: pointer;
+            cursor: pointer;
             transition: all 0.3s;
             color: var(--primary-light);
             font-weight: 600;
@@ -326,7 +279,6 @@
             font-size: 1.2rem;
         }
         
-        /* PREVIEW */
         .preview-container {
             margin-top: 25px;
             padding-top: 15px;
@@ -391,48 +343,29 @@
             transform: scale(1.1);
         }
         
-        /* BUTTONS - ΒΕΛΤΙΩΜΕΝΑ */
         .submit-btn {
             background: linear-gradient(to right, var(--primary), var(--primary-light));
             color: white;
             border: none;
-            padding: 18px 30px;
+            padding: 16px 25px;
             font-size: 1.1rem;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s;
             width: 100%;
-            font-weight: 700;
-            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.25);
-            margin: 25px 0 10px 0;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+            margin-top: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .submit-btn:after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-            transform: rotate(30deg);
-            transition: all 0.5s;
-        }
-        
-        .submit-btn:hover:after {
-            transform: rotate(30deg) translate(50px, 50px);
         }
         
         .submit-btn:hover {
             background: linear-gradient(to right, var(--primary-light), var(--secondary));
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(139, 69, 19, 0.4);
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
         }
         
         .submit-btn:active {
@@ -446,7 +379,6 @@
             box-shadow: none;
         }
         
-        /* MESSAGES */
         .message {
             padding: 15px;
             border-radius: 10px;
@@ -474,61 +406,30 @@
             border: 1px solid #bbdefb;
         }
         
-        /* INFO BOXES - ΒΕΛΤΙΩΜΕΝΕΣ */
         .info-box {
-            background: linear-gradient(135deg, #fdf9f5 0%, #f9f2e9 100%);
-            border-left: 5px solid var(--accent);
-            padding: 20px 22px;
-            border-radius: 14px;
-            margin: 22px 0;
-            line-height: 1.65;
+            background: linear-gradient(to right, #f9f3ec, #f5e9d8);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
             font-size: 0.95rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .info-box:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 100%;
-            background: linear-gradient(to bottom, transparent 95%, rgba(0,0,0,0.02) 100%);
-            border-radius: inherit;
-            pointer-events: none;
-            z-index: -1;
         }
         
         .info-box ul {
-            padding-left: 22px;
-            margin: 15px 0;
+            padding-left: 20px;
+            margin-top: 10px;
         }
         
         .info-box li {
             margin-bottom: 8px;
-            position: relative;
-            padding-left: 5px;
         }
         
-        .info-box li:before {
-            content: "•";
-            color: var(--primary);
-            font-weight: bold;
-            position: absolute;
-            left: -15px;
-        }
-        
-        .info-box p {
-            margin-bottom: 12px;
-        }
-        
-        /* RESPONSES */
+        /* Νέο CSS για απαντήσεις */
         .responses-list {
             display: grid;
             gap: 20px;
         }
-        
+
         .response-card {
             background: #f8f9fa;
             border-radius: 10px;
@@ -536,7 +437,7 @@
             border-left: 4px solid var(--success);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-        
+
         .response-header {
             display: flex;
             justify-content: space-between;
@@ -545,22 +446,22 @@
             padding-bottom: 10px;
             border-bottom: 1px solid #e9ecef;
         }
-        
+
         .response-subject {
             font-weight: 600;
             color: var(--dark);
             font-size: 1.1rem;
         }
-        
+
         .response-date {
             color: var(--text);
             font-size: 0.9rem;
         }
-        
+
         .response-content {
             line-height: 1.6;
         }
-        
+
         .response-original {
             background: white;
             padding: 15px;
@@ -568,7 +469,7 @@
             margin-top: 15px;
             border-left: 3px solid var(--accent);
         }
-        
+
         .original-label {
             font-weight: 600;
             color: var(--primary);
@@ -576,7 +477,7 @@
             display: block;
         }
         
-        /* AUTH FORMS */
+        /* Στυλ για φόρμες εγγραφής/σύνδεσης */
         .auth-form {
             max-width: 500px;
             margin: 0 auto;
@@ -629,35 +530,31 @@
             color: var(--primary);
             margin-bottom: 20px;
         }
-        
-        /* FORGOT PASSWORD */
+
+        /* Στυλ για επαναφορά κωδικού */
         .forgot-password {
             text-align: center;
             margin-top: 15px;
         }
-        
+
         .forgot-password a {
             color: var(--primary);
             text-decoration: none;
             font-size: 0.9rem;
             transition: color 0.3s;
         }
-        
+
         .forgot-password a:hover {
             color: var(--primary-light);
             text-decoration: underline;
         }
         
-        /* FOOTER - ΒΕΛΤΙΩΜΕΝΟ */
         footer {
             text-align: center;
-            padding: 25px 20px;
-            margin-top: 40px;
+            margin-top: 30px;
+            padding: 20px;
             color: var(--primary-light);
             font-size: 0.9rem;
-            border-top: 1px solid rgba(139, 69, 19, 0.1);
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 12px;
         }
         
         .coffee-icon {
@@ -666,7 +563,13 @@
             animation: float 3s ease-in-out infinite;
         }
         
-        /* MODALS */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -679,7 +582,7 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         .modal-content {
             background: white;
             border-radius: 15px;
@@ -691,7 +594,7 @@
             position: relative;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        
+
         .close-modal {
             position: absolute;
             top: 15px;
@@ -709,49 +612,46 @@
             border-radius: 50%;
             transition: background 0.3s;
         }
-        
+
         .close-modal:hover {
             background: #f0f0f0;
         }
-        
+
         .reset-steps {
             display: none;
         }
-        
+
         .reset-steps.active {
             display: block;
         }
         
-        /* COFFEE OPTIONS - ΒΕΛΤΙΩΜΕΝΕΣ */
+        /* Στυλ για επιλογές καφεμαντείας */
         .coffee-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 18px;
-            margin: 25px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
         }
         
         .coffee-option {
             display: flex;
             align-items: center;
-            padding: 22px 20px;
-            border: 2px solid #e8e0d5;
-            border-radius: 14px;
+            padding: 15px;
+            border: 2px solid #e0d6c9;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: #fefbf7;
-            animation: fadeInUp 0.5s ease-out;
+            transition: all 0.3s;
+            background-color: #fcfaf7;
         }
         
         .coffee-option:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(139, 69, 19, 0.15);
             border-color: var(--accent);
+            background-color: #f9f3ec;
         }
         
         .coffee-option.selected {
             border-color: var(--primary);
-            background: linear-gradient(135deg, #f9f1e7 0%, #f5e9dd 100%);
-            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.2);
+            background-color: #f5e9d8;
         }
         
         .coffee-option input[type="radio"] {
@@ -766,25 +666,19 @@
         .option-title {
             font-weight: 600;
             color: var(--dark);
-            margin-bottom: 8px;
-            font-size: 1.1rem;
+            margin-bottom: 5px;
         }
         
         .option-description {
             color: var(--text);
-            font-size: 0.92rem;
-            line-height: 1.5;
+            font-size: 0.9rem;
         }
         
         .option-price {
-            font-weight: 700;
+            font-weight: 600;
             color: var(--primary);
             margin-left: 10px;
             white-space: nowrap;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px dashed #e0d6c9;
-            font-size: 1rem;
         }
         
         .special-offer {
@@ -807,7 +701,7 @@
             transform: rotate(45deg);
         }
         
-        /* POINTS SYSTEM */
+        /* Στυλ για σύστημα πόντων */
         .points-section {
             background: linear-gradient(135deg, #fff9e6 0%, #fff0cc 100%);
             border-radius: 10px;
@@ -873,13 +767,181 @@
             transform: translateY(-2px);
         }
         
-        /* TERMS LINKS */
+        /* Στυλ για το consent modal */
+        .terms-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e0d6c9;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            background: #fcfaf7;
+        }
+
+        .terms-section, .privacy-section {
+            margin-bottom: 20px;
+        }
+
+        .terms-section h3, .privacy-section h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .terms-container h4 {
+            color: var(--dark);
+            margin: 15px 0 8px 0;
+            font-size: 1rem;
+        }
+
+        .terms-container p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .terms-container ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .terms-container li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            margin-top: 3px;
+        }
+
+        .consent-version {
+            font-size: 0.8rem;
+            color: var(--primary-light);
+            text-align: right;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Scrollbar styling for terms container */
+        .terms-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .terms-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .terms-container::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        .terms-container::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        /* Στυλ για διαχειριστή */
+        .admin-section {
+            background: #f0f0f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .admin-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Στυλ για προσφορά μέσα στη φόρμα */
+        .offer-in-form {
+            background: linear-gradient(135deg, #e8f5e8 0%, #d0e9d0 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid var(--success);
+        }
+        
+        .offer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .offer-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .offer-title i {
+            color: var(--success);
+        }
+        
+        .offer-cost {
+            font-weight: 600;
+            color: var(--primary);
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--success);
+        }
+        
+        .offer-description {
+            color: var(--text);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .redeem-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .redeem-btn:hover:not(:disabled) {
+            background: #388e3c;
+            transform: translateY(-2px);
+        }
+        
+        .redeem-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Στυλ για links όρων */
         .terms-links {
             text-align: center;
             margin: 15px 0;
             padding: 10px;
         }
-        
+
         .terms-links a {
             color: var(--primary);
             text-decoration: none;
@@ -887,123 +949,120 @@
             font-size: 0.9rem;
             transition: color 0.3s;
         }
-        
+
         .terms-links a:hover {
             color: var(--primary-light);
             text-decoration: underline;
         }
-        
-        /* FORTUNE TELLER OPTIONS - ΒΕΛΤΙΩΜΕΝΕΣ */
+
+        /* Στυλ για επιλογή καφεμάντεις */
         .fortune-teller-options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 22px;
-            margin: 25px 0;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
         }
-        
+
         .fortune-teller-option {
-            border: 3px solid #e8e0d5;
-            border-radius: 16px;
-            padding: 22px;
+            border: 3px solid #e0d6c9;
+            border-radius: 15px;
+            padding: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             background: white;
             text-align: center;
             position: relative;
             overflow: hidden;
-            animation: fadeInUp 0.5s ease-out;
         }
-        
+
         .fortune-teller-option:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        
+
         .fortune-teller-option.selected {
             border-color: var(--primary);
             background: linear-gradient(135deg, #f9f3ec, #f5e9d8);
-            box-shadow: 0 12px 30px rgba(139, 69, 19, 0.15);
         }
-        
+
         .fortune-teller-option.zaira {
             border-color: var(--zaira);
         }
-        
+
         .fortune-teller-option.zaira.selected {
             background: linear-gradient(135deg, #f3e5f5, #e1bee7);
         }
-        
+
         .fortune-teller-option.sousou {
             border-color: var(--sousou);
         }
-        
+
         .fortune-teller-option.sousou.selected {
             background: linear-gradient(135deg, #fce4ec, #f8bbd9);
         }
-        
+
         .fortune-teller-option.ai {
             border-color: var(--ai);
         }
-        
+
         .fortune-teller-option.ai.selected {
             background: linear-gradient(135deg, #e3f2fd, #bbdefb);
         }
-        
+
         .fortune-teller-image {
-            width: 90px;
-            height: 90px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             object-fit: cover;
-            margin: 0 auto 18px;
-            border: 4px solid;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+            margin: 0 auto 15px;
+            border: 3px solid;
         }
-        
+
         .zaira .fortune-teller-image {
             border-color: var(--zaira);
         }
-        
+
         .sousou .fortune-teller-image {
             border-color: var(--sousou);
         }
-        
+
         .ai .fortune-teller-image {
             border-color: var(--ai);
         }
-        
+
         .fortune-teller-name {
             font-size: 1.3rem;
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 10px;
             color: var(--dark);
         }
-        
+
         .zaira .fortune-teller-name {
             color: var(--zaira);
         }
-        
+
         .sousou .fortune-teller-name {
             color: var(--sousou);
         }
-        
+
         .ai .fortune-teller-name {
             color: var(--ai);
         }
-        
+
         .fortune-teller-title {
             font-style: italic;
             color: var(--text);
-            margin-bottom: 12px;
-            font-size: 0.95rem;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
         }
-        
+
         .fortune-teller-description {
             color: var(--text);
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             line-height: 1.5;
-            margin-bottom: 18px;
+            margin-bottom: 15px;
         }
-        
+
         .fortune-teller-rating {
             display: flex;
             align-items: center;
@@ -1011,22 +1070,22 @@
             gap: 5px;
             margin-bottom: 10px;
         }
-        
+
         .rating-stars {
             color: #ffd700;
         }
-        
+
         .rating-value {
             font-weight: 600;
             color: var(--dark);
         }
-        
+
         .rating-count {
             color: var(--text);
             font-size: 0.8rem;
         }
-        
-        /* NOTIFICATION MODAL */
+
+        /* Στυλ για ειδοποίηση νέων μηνυμάτων */
         .notification-modal {
             display: none;
             position: fixed;
@@ -1041,30 +1100,30 @@
             border-left: 5px solid var(--info);
             animation: slideIn 0.5s ease-out;
         }
-        
+
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-        
+
         .notification-header {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-bottom: 10px;
         }
-        
+
         .notification-title {
             font-weight: 700;
             color: var(--info);
             font-size: 1.1rem;
         }
-        
+
         .notification-content {
             line-height: 1.5;
             margin-bottom: 15px;
         }
-        
+
         .notification-close {
             background: var(--info);
             color: white;
@@ -1075,8 +1134,8 @@
             font-weight: 600;
             width: 100%;
         }
-        
-        /* PWA INSTALL */
+
+        /* Στυλ για αποθήκευση στην αρχική οθόνη */
         .pwa-install {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             color: white;
@@ -1086,7 +1145,7 @@
             text-align: center;
             box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
         }
-        
+
         .pwa-install h3 {
             margin-bottom: 10px;
             display: flex;
@@ -1094,19 +1153,19 @@
             justify-content: center;
             gap: 10px;
         }
-        
+
         .pwa-install p {
             margin-bottom: 15px;
             opacity: 0.9;
         }
-        
+
         .pwa-buttons {
             display: flex;
             gap: 10px;
             justify-content: center;
             flex-wrap: wrap;
         }
-        
+
         .pwa-btn {
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -1120,76 +1179,29 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         .pwa-btn:hover {
             background: white;
             color: var(--primary);
         }
-        
-        /* SCROLLBAR - ΒΕΛΤΙΩΜΕΝΟ */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f5f1ea;
-            border-radius: 5px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 5px;
-            border: 2px solid #f5f1ea;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--secondary);
-        }
-        
-        /* ANIMATIONS */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        /* RESPONSIVE DESIGN */
-        @media (max-width: 768px) {
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
             .container {
-                padding: 10px;
+                padding: 5px;
             }
             
             header {
-                padding: 25px 20px;
+                padding: 20px 15px;
+                margin-bottom: 20px;
             }
             
             h1 {
-                font-size: 1.9rem;
+                font-size: 1.8rem;
             }
             
             .logo {
-                font-size: 2.5rem;
-            }
-            
-            .subtitle {
-                font-size: 1.05rem;
+                font-size: 2.2rem;
             }
             
             .user-info {
@@ -1205,22 +1217,7 @@
             }
             
             .form-section {
-                padding: 22px 18px;
-            }
-            
-            .coffee-options,
-            .fortune-teller-options {
-                grid-template-columns: 1fr;
-            }
-            
-            .offer-header {
-                flex-direction: column;
-                text-align: center;
-                gap: 12px;
-            }
-            
-            h2 {
-                font-size: 1.25rem;
+                padding: 20px 15px;
             }
             
             .preview-grid {
@@ -1238,7 +1235,7 @@
             }
             
             .submit-btn {
-                padding: 16px 20px;
+                padding: 14px 20px;
                 font-size: 1rem;
             }
             
@@ -1254,9 +1251,7 @@
             
             .option-price {
                 margin-left: 0;
-                margin-top: 12px;
-                padding-top: 12px;
-                border-top: 1px dashed #e0d6c9;
+                margin-top: 8px;
             }
             
             .points-display {
@@ -1269,44 +1264,37 @@
                 flex-direction: column;
             }
             
+            .offer-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
             .admin-buttons {
                 flex-direction: column;
             }
-        
+
+            .fortune-teller-options {
+                grid-template-columns: 1fr;
+            }
+
             .notification-modal {
                 right: 10px;
                 left: 10px;
                 max-width: none;
             }
-        
+
             .pwa-buttons {
                 flex-direction: column;
             }
         }
         
-        @media (max-width: 480px) {
-            .container {
-                padding: 5px;
-            }
-            
-            h1 {
-                font-size: 1.7rem;
-            }
-            
-            .form-section {
-                padding: 20px 15px;
-            }
-            
-            .submit-btn {
-                padding: 14px 20px;
-            }
-            
+        @media (max-width: 400px) {
             .preview-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
-    
 </head>
 <body>
     <div class="container">
@@ -1343,7 +1331,7 @@
             <p>Για ευκολότερη πρόσβαση, αποθηκεύστε την εφαρμογή στην αρχική σας οθόνη</p>
             <div class="pwa-buttons">
                 <button class="pwa-btn" id="installPWA">
-                    <i class="fas fa-download"></i> 📤Εγκατάσταση📩 - Safari
+                    <i class="fas fa-download"></i> 📤Εγκατάσταση📩-Browser Chrome
                 </button>
                 <button class="pwa-btn" id="hidePWA">
                     <i class="fas fa-times"></i> Απόρριψη
@@ -1484,23 +1472,13 @@
                 <section id="photos-tab" class="tab-content active">
                     <div class="form-section">
                         <h2><i class="fas fa-user"></i> Στοιχεία Επισκέπτη</h2>
-                        <p><strong>Οδηγίες υποβολής:</strong></p>
+                        
                         <div class="info-box">
-                            <p>1.<strong>Κλείστε το ραντεβού σας από την καρτέλα "Κλείσιμο Ραντεβού"</strong></p>
+                            <p><strong>Οδηγίες υποβολής:</strong></p>
+                            <p>1. <strong>Κλείστε το ραντεβού σας από την καρτέλα "Κλείσιμο Ραντεβού"</strong></p>
                             <p>2.Εξαργυρώστε την προσφορά "Το φλιτζάνι σου μιλά"</p>
-                            <p>3.Σας αποστέλλουμε το αποτέλεσμα στο email σας κ σε μήνυμα μέσα στην εφαρμογή.</p>
-                            <li>Επιλέξτε Χαρακτήρα.</li>
-                        <li>Επιλέξτε το Μονοπάτι του Φλυντζανιού "Γραπτή η Προφορική" ερμηνεία.</li>
-                        <li>Γράψτε την Επιθυμία σας (προαιρετικά).Ανεβάστε τις Φωτογραφίες.Αποστολή.</li>
                             <p><strong>Βεβαιωθείτε ότι χρησιμοποιείτε το ίδιο email στην σελίδα ραντεβού κ στην Εφαρμογή!</strong></p>
                         </div>
-                        <div class="info-box">  
-                    <p><strong>Πώς λειτουργεί το σύστημα πόντων:</strong></p>
-                    <p>Για κάθε εγγραφή στην εφαρμογή μας κερδίστε 20 πόντους.<p>
-             <p>Για κάθε Γραπτή η Προφορική Ερμηνεία κερδίστε 10 πόντους.<p>
-                       <p>Για κάθε Ερμηνεία αφαιρούνται 50 πόντους.<p>
-                        </div>
-
 
                         <!-- ΠΡΟΣΦΟΡΑ ΜΕΣΑ ΣΤΗ ΦΟΡΜΑ -->
                         <div class="offer-in-form" id="offerInForm">
@@ -1516,13 +1494,25 @@
                             <div class="offer-description">
                                 <strong>Απαραίτητη προϋπόθεση:</strong> Πρέπει πρώτα να εξαργυρώσετε αυτή την προσφορά για να μπορέσετε να υποβάλετε φωτογραφίες καφέ στους διαχειριστές.
                             </div>
-                            <div class="info-box">  
-                    <p><strong>Κερδίστε Πόντους</strong></p>
-                    <p>Κερδίστε 70 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478228" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.<p>
-             <p>Κερδίστε 100+10 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478229" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.<p>
-                       <p>Κερδίστε 200+20 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478517" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.<p>
-                       Προσθέστε το ίδιο email όπως στην εφαρμογή.Οι πόντοι θα καταχωρηθούν από τους Διαχειριστές
-                        </div>
+                            <div class="info-box">
+                    <p><strong>Διαδικασία :</strong></p>
+                    <ul>
+                        <li>Κλείστε Ραντεβού μέσω Google Calendar.</li>
+                        <li>Στην κεντρική οθόνη ελέγξτε την Διεύθυνση Ε-mail αν έχετε συμπληρώσει το Email σας.</li>
+                    <li>Επιλέξτε Χαρακτήρα.</li>
+                        <li>Επιλέξτε το Μονοπάτι του Φλυντζανιού "Γραπτή η Προφορική" ερμηνεία.</li>
+                        <li>Γράψτε την Επιθυμία σας.Ανεβάστε τις Φωτογραφίες.Αποστολή.</li>
+                    <li>Προσοχή να χρησιμοποιείτε το ίδιο Email κατά την εγγραφή στην εφαρμογή όπως στην εξαργύρωση Πόντων κ στο κλείσιμο Ραντεβού.</li>
+                    <p><strong>Πώς λειτουργεί το σύστημα πόντων:</strong></p>
+                    <ul> <li>Για κάθε εγγραφή στην εφαρμογή μας κερδίστε 20 πόντους.</li>
+                        <li>Για κάθε Γραπτή η Προφορική Ερμηνεία κερδίστε 10 πόντους.</li>
+                        <li>Για κάθε Ερμηνεία αφαιρούνται 50 πόντους.</li>
+                        <li><strong>Κερδίστε Πόντους <strong>.</li>
+                        <li>Κερδίστε 70 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478228" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
+                        <li>Κερδίστε 100+10 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478229" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
+                        <li>Κερδίστε 200+20 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478517" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li> 
+                        <li>Να γραφτείτε με το ίδιο email. Οι πόντοι θα καταχωρηθούν από τους Διαχειριστές </li>
+                    </ul>
                 </div>
                             <button class="redeem-btn" id="redeemInFormBtn">
                                 <i class="fas fa-shopping-cart"></i> Ανταλλαγή (50 Πόντοι)
@@ -1568,7 +1558,7 @@
                                         <input type="radio" name="coffeeType" value="verbal" required>
                                         <div class="option-content">
                                             <div class="option-title">Προφορική Ερμηνεία</div>
-                                            <div class="option-description">Επιθυμώ προφορικά.Το αρχείο θα σταλεί σε mp3 AI μορφή.</div>
+                                            <div class="option-description">Επιθυμώ προφορικά.Το αρχείο θα σταλεί σε mp3 μορφή.</div>
                                         </div>
                                         <div class="option-price">Κερδίζω 10 πόντους</div>
                                     </label>
@@ -1577,7 +1567,7 @@
                                         <input type="radio" name="coffeeType" value="1plus1" required>
                                         <div class="option-content">
                                             <div class="option-title">Προσφορά 1+1 Δώρο</div>
-                                            <div class="option-description">Δώρο:Η 2η ερμηνεία δωρεάν!Αρμιθήσετε και Αποστείλετε φωτογραφίες τα δυο φλιτζάνια.Η ερμηνεία θα είναι σε γραπτή μορφή.</div>
+                                            <div class="option-description">Δώρο:Η 2η ερμηνεία δωρεάν!</div>
                                         </div>
                                         <div class="option-price" id="1plus1-price">Χωρίς Πόντο</div>
                                     </label>
@@ -1587,9 +1577,10 @@
                             <!-- ΝΕΟ ΠΛΑΙΣΙΟ ΓΙΑ ΤΗΝ ΕΠΙΘΥΜΙΑ ΤΟΥ ΧΡΗΣΤΗ -->
                             <div class="form-group">
                                 <label for="user-desire"><i class="fas fa-star"></i> Η Επιθυμία σας:</label>
-                                <textarea id="user-desire" name="desire" placeholder="Γράψτε εδώ την επιθυμία σας ..." rows="3"></textarea>
+                                <textarea id="user-desire" name="desire" placeholder="Γράψτε εδώ την επιθυμία σας 
+                                    ..." rows="3"></textarea>
                                 <div class="info-box" style="margin-top: 10px;">
-                                    <p><strong>Προαιρετικό:</strong> Μοιραστείτε το πρώτο γράμμα του ονόματός σας και την επιθυμία σας, και αφήστε τη μαγεία του καφέ να δράσει.</p>
+                                    <p><strong>Προαιρετικό:</strong> Μοιραστείτε το πρώτο γράμμα του ονόματός σας και την επιθυμία σας, και αφήστε τη μαγεία του καφέ να δράσει..</p>
                                 </div>
                             </div>
                             
@@ -1605,7 +1596,7 @@
                             
                             <div class="preview-container">
                                 <div class="preview-title">
-                                    <i class="fas fa-images"></i> Προεπισκόπηση φωτογραφίες:
+                                    <i class="fas fa-images"></i> Προεπισκόπηση φωτογραφιών:
                                 </div>
                                 <div class="preview-grid" id="previewGrid">
                                     <!-- Εδώ θα προστεθούν οι προεπισκοπήσεις των φωτογραφιών -->
@@ -1788,8 +1779,8 @@
                 
                 <div class="info-box">
                     <p><strong>Διαδικασία :</strong></p>
-                    <ul><li>Στην κεντρική οθόνη πηγαίνετε στο πλαίσιο "Το Φλιτζάνι σου Μιλά".Εξαργυρώστε τους πόντους σας.</li>
-                    <li>Επιλέξτε τον Χαρακτήρα και το Μονοπάτι του Φλυντζανιού "Γραπτή η Προφορική" ερμηνεία .</li>
+                    <ul><li>Στην κεντρική οθόνη πηγαίνετε στο πλαίσιο "Το Φλιτζάνι σου Μιλά".</li>
+                    <li>Επιλέξτε το Μονοπάτι του Φλυντζανιού "Γραπτή η Προφορική" ερμηνεία .</li>
                     <li>Κλείστε Ραντεβου μέσω Google Calendar.</li>
                     <li>Προσοχή να χρησιμοποιείτε το ίδιο Email κατά την εγγραφή στην εφαρμογή όπως στην εξαργύρωση Πόντων κ στο κλείσιμο Ραντεβού.</li>
                     <p><strong>Πώς λειτουργεί το σύστημα πόντων:</strong></p>
@@ -1799,6 +1790,7 @@
                         <li>Κερδίστε 70 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478228" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
                         <li>Κερδίστε 100+10 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478229" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
                         <li>Κερδίστε 200+20 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478517" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li> 
+                        <li>Να γραφτείτε με το ίδιο email. Οι πόντοι θα καταχωρηθούν από τους Διαχειριστές </li>
                     </ul>
                 </div>
                 
@@ -1930,11 +1922,10 @@
             <p>
                 Cafedium by FmD<span class="coffee-icon">☕</span>«Το Φλυτζάνι σου μιλάει» εδώ ξεκινά το ταξίδι σας στο μυστήριο του φλιτζανιού.
             </p>
-            <p>©2026-Όλα τα δικαιώματα διατηρούνται-Browser Safari.</p>
+            <p>©2026-Όλα τα δικαιώματα διατηρούνται-Browser Google Chrome</p>
         </footer>
     </div>
 
-    <!-- ΤΟ JAVASCRIPT ΚΩΔΙΚΑΣ ΜΕΤΑ ΤΙΣ ΑΦΑΙΡΕΣΕΙΣ -->
     <script>
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
@@ -1982,8 +1973,7 @@
                     color: 'zaira',
                     image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
                     rating: 4.8,
-                    reviewCount: 25
-                    
+                    reviewCount: 127
                 },
                 {
                     id: 'sousou',
@@ -1993,7 +1983,7 @@
                     color: 'sousou',
                     image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
                     rating: 4.9,
-                    reviewCount: 23
+                    reviewCount: 89
                 },
                 {
                     id: 'ai',
@@ -2003,7 +1993,7 @@
                     color: 'ai',
                     image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=150&h=150&fit=crop&crop=face',
                     rating: 4.7,
-                    reviewCount: 12
+                    reviewCount: 203
                 }
             ];
 
@@ -2227,12 +2217,8 @@
                             
                             <h4>2. Υπηρεσίες Καφεμαντείας</h4>
                             <p>Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας. Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση· οποιαδήποτε χρήση κάνετε από τέτοιες απαντήσεις, συμβουλές ή υπηρεσίες γίνεται με δικό σας κίνδυνο και η FranklyMaDear δεν μπορεί να θεωρηθεί υπεύθυνη ή να φέρει ευθύνη για οποιεσδήποτε ζημίες ή απώλειες που προκύπτουν από την επαφή σας με τέτοιες απαντήσεις ή συμβουλές. Ο Ιστότοπος και οι υπηρεσίες που παρέχονται από την Εφαρμογή παρέχονται «ως έχει» χωρίς καμία εγγύηση. Οι Σύμβουλοί μας και η Υπηρεσία καταβάλλουν κάθε δυνατή προσπάθεια να σας παράσχουν χρήσιμες, διορατικές πληροφορίες. Ωστόσο, οι πληροφορίες που σας παρέχονται δεν πρέπει να χρησιμοποιούνται αντί για συστάσεις από ιατρικούς επαγγελματίες ή άλλους επαγγελματίες συμβούλους η πρόβλεψη του μέλλοντος.</p>
-
-                            <h4>3. Αποποίηση Ευθύνης <h4>
-                            <p>  Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες που παρουσιάζονται προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς και δεν αποτελούν συμβουλές, καθοδήγηση, προτροπή λήψης αποφάσεων ή επιστημονική/επαγγελματική ενημέρωση.
-
-Κάθε επισκέπτης φέρει την πλήρη και αποκλειστική ευθύνη για τον τρόπο με τον οποίο θα χρησιμοποιήσει ή θα ερμηνεύσει το περιεχόμενο της σελίδας. <p>
-                            <h4>4. Ηλικιακός Περιορισμός</h4>
+                            
+                            <h4>3. Ηλικιακός Περιορισμός</h4>
                             <p>Η εγγραφή και η συμμετοχή στην Υπηρεσία και στον Ιστότοπο περιορίζεται σε άτονα άνω των 18 ετών, σε χρήστες που έχουν απελευθερωθεί από την γονική μέριμνα, ή σε αυτά που διαθέτουν συγκατάθεση νόμιμου γονέα ή κηδεμόνα, και είναι πλήρως ικανά και αρμόδια να δεσμευτούν από τους όρους, τις προϋποθέσεις, τις υποχρεώσεις, τις βεβαιώσεις, τις δηλώσεις και τις εγγυήσεις που περιλαμβάνονται εδώ. Με την εγγραφή ή συμμετοχή σε υπηρεσίες ή λειτουργίες στην Υπηρεσία ή/και τον Ιστότοπο, δηλώνετε ρητά ότι είστε άνω των 18 ετών, έχετε απελευθερωθεί από τη γονική μέριμνα ή διαθέτετε συγκατάθεση νόμιμου γονέα ή κηδεμόνα και έχετε την εξουσία να δεσμευτείτε από τους όρους εδώ. Σε κάθε περίπτωση, βεβαιώνετε ότι είστε άνω των 18 ετών, καθώς η Υπηρεσία δεν προορίζεται για παιδιά κάτω των 18. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία ή/και τον Ιστότοπο..</p>
                         `,
                         privacy: `
@@ -3218,7 +3204,7 @@
             // REDEEM MAIN OFFER - ΔΙΟΡΘΩΜΕΝΗ
             function redeemMainOffer() {
                 if (!currentUser) {
-                    showNotification('Πρέπει να είστε συνδεδεμένοι για εξαργύρωση!');
+                    showNotification('Πρέπει να είστε συνδεδεμένος για εξαργύρωση!');
                     return;
                 }
                 
