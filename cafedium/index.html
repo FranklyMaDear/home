@@ -2392,12 +2392,29 @@
                 const submitBtn = document.getElementById('submitBtn');
                 const redeemBtn = document.getElementById('redeemInFormBtn');
 
+                console.log('Checking offer redemption for user:', currentUser.email);
+                console.log('Redemptions found:', redemptions);
+                console.log('User redemption:', userRedemption);
+
                 if (userRedemption) {
                     // Ο χρήστης έχει εξαργυρώσει - επιτρέπουμε υποβολή
                     offerCheckSection.style.display = 'block';
                     offerInForm.style.display = 'none';
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών';
+                    
+                    // Εμφάνιση επιβεβαίωσης εξαργύρωσης
+                    offerCheckSection.innerHTML = `
+                        <p><i class="fas fa-check-circle" style="color: var(--success);"></i> 
+                        <strong>Έχετε εξαργυρώσει την προσφορά! Μπορείτε τώρα να υποβάλετε φωτογραφίες.</strong></p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">
+                            <i class="fas fa-info-circle"></i> Εξαργύρωση στις: ${new Date(userRedemption.date).toLocaleDateString('el-GR')}
+                        </p>
+                    `;
+                    
+                    // Ενεργοποίηση του redeem κουμπιού (αν χρειάζεται για νέα εξαργύρωση)
+                    redeemBtn.disabled = false;
+                    redeemBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Ανταλλαγή (50 Πόντοι)';
                 } else {
                     // Ο χρήστης ΔΕΝ έχει εξαργυρώσει - ΑΠΑΓΟΡΕΥΟΥΜΕ υποβολή
                     offerCheckSection.style.display = 'none';
@@ -2408,6 +2425,8 @@
                     // Check if user has enough points for redemption
                     const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
                     const userPoints = userPointsData.find(p => p.email === currentUser.email);
+                    
+                    console.log('User points:', userPoints);
                     
                     if (userPoints && userPoints.points >= 50) {
                         redeemBtn.disabled = false;
@@ -2550,6 +2569,9 @@
                     };
                     
                     localStorage.setItem('userConsent', JSON.stringify(userConsent));
+                    
+                    // ΑΝΑΜΕΣΑ: ΜΗΝ δημιουργείτε εξαργύρωση εδώ!
+                    // Ο χρήστης πρέπει να εξαργυρώσει χειροκίνητα μετά
                     
                     // Auto login
                     currentUser = newUser;
@@ -3508,6 +3530,9 @@
             // Initial load
             loadFortuneTellers();
             checkPWAInstallation();
+            
+            // Clear any existing offer redemptions for testing
+            // localStorage.removeItem('offerRedemptions');
         });
     </script>
 </body>
