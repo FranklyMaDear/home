@@ -1126,6 +1126,83 @@
             color: var(--primary);
         }
         
+        /* OFFER IN FORM */
+        .offer-in-form {
+            background: linear-gradient(135deg, #fff8f0 0%, #fff0e0 100%);
+            border: 2px solid var(--accent);
+            border-radius: 14px;
+            padding: 22px;
+            margin: 25px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .offer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .offer-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .offer-cost {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .offer-description {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .redeem-btn {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 16px 25px;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .redeem-btn:hover:not(:disabled) {
+            background: linear-gradient(to right, var(--primary-light), var(--secondary));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 69, 19, 0.4);
+        }
+        
+        .redeem-btn:disabled {
+            background: linear-gradient(to right, #cccccc, #aaaaaa);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
         /* SCROLLBAR - ΒΕΛΤΙΩΜΕΝΟ */
         ::-webkit-scrollbar {
             width: 10px;
@@ -1486,22 +1563,12 @@
                         <h2><i class="fas fa-user"></i> Στοιχεία Επισκέπτη</h2>
                         <p><strong>Οδηγίες υποβολής:</strong></p>
                         <div class="info-box">
-                            <p>1.<strong>Κλείστε το ραντεβού σας από την καρτέλα "Κλείσιμο Ραντεβού"</strong></p>
-                            <p>2.Εξαργυρώστε την προσφορά "Το φλιτζάνι σου μιλά"</p>
-                            <p>3.Σας αποστέλλουμε το αποτέλεσμα στο email σας κ σε μήνυμα μέσα στην εφαρμογή.</p>
-                            <li>Επιλέξτε Χαρακτήρα.</li>
-                        <li>Επιλέξτε το Μονοπάτι του Φλυντζανιού "Γραπτή η Προφορική" ερμηνεία.</li>
-                        <li>Γράψτε την Επιθυμία σας (προαιρετικά).Ανεβάστε τις Φωτογραφίες.Αποστολή.</li>
-                            <p><strong>Βεβαιωθείτε ότι χρησιμοποιείτε το ίδιο email στην σελίδα ραντεβού κ στην Εφαρμογή!</strong></p>
+                            <p>1. <strong>Κλείστε το ραντεβού σας από την καρτέλα "Κλείσιμο Ραντεβού"</strong></p>
+                            <p>2. Εξαργυρώστε την προσφορά "Το φλιτζάνι σου μιλά"</p>
+                            <p>3. Σας αποστέλλουμε το αποτέλεσμα στο email σας κ σε μήνυμα μέσα στην εφαρμογή.</p>
+                            <p>Βεβαιωθείτε ότι χρησιμοποιείτε το ίδιο email στην σελίδα ραντεβού κ στην Εφαρμογή!</p>
                         </div>
-                        <div class="info-box">  
-                    <p><strong>Πώς λειτουργεί το σύστημα πόντων:</strong></p>
-                    <p>Για κάθε εγγραφή στην εφαρμογή μας κερδίστε 20 πόντους.<p>
-             <p>Για κάθε Γραπτή η Προφορική Ερμηνεία κερδίστε 10 πόντους.<p>
-                       <p>Για κάθε Ερμηνεία αφαιρούνται 50 πόντους.<p>
-                        </div>
-
-
+                        
                         <!-- ΠΡΟΣΦΟΡΑ ΜΕΣΑ ΣΤΗ ΦΟΡΜΑ -->
                         <div class="offer-in-form" id="offerInForm">
                             <div class="offer-header">
@@ -1513,17 +1580,31 @@
                                     50 Πόντοι
                                 </div>
                             </div>
+                            
+                            <!-- ΚΕΙΜΕΝΟ ΠΡΙΝ ΑΠΟ ΤΟ ΚΟΥΜΠΙ -->
+                            <div class="info-box" style="margin: 20px 0; background: linear-gradient(to right, #f9f3e9, #f5ecdd); border-left: 4px solid var(--primary);">
+                                <p><strong>Πώς λειτουργεί το σύστημα πόντων:</strong></p>
+                                <ul style="margin: 10px 0;">
+                                    <li><strong>Εγγραφή:</strong> 20 πόντοι (μόνο στην πρώτη εγγραφή)</li>
+                                    <li><strong>Γραπτή/Προφορική ερμηνεία:</strong> +10 πόντοι για κάθε υποβολή</li>
+                                    <li><strong>Εξαργύρωση για υποβολή:</strong> -50 πόντοι (απαραίτητη προϋπόθεση)</li>
+                                    <li><strong>Κερδίστε Πόντους:</strong> 
+                                        <ul style="margin: 5px 0;">
+                                            <li>Κερδίστε 70 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478228" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a></li>
+                                            <li>Κερδίστε 100+10 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478229" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a></li>
+                                            <li>Κερδίστε 200+20 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478517" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <p style="margin-top: 10px; font-style: italic; color: var(--primary-light);">
+                                    <i class="fas fa-info-circle"></i> Προσθέστε το ίδιο email όπως στην εφαρμογή. Οι πόντοι θα καταχωρηθούν από τους Διαχειριστές.
+                                </p>
+                            </div>
+                            
                             <div class="offer-description">
                                 <strong>Απαραίτητη προϋπόθεση:</strong> Πρέπει πρώτα να εξαργυρώσετε αυτή την προσφορά για να μπορέσετε να υποβάλετε φωτογραφίες καφέ στους διαχειριστές.
                             </div>
-                            <div class="info-box">  
-                    <p><strong>Κερδίστε Πόντους</strong></p>
-                    <p>Κερδίστε 70 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478228" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.<p>
-             <p>Κερδίστε 100+10 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478229" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.<p>
-                       <p>Κερδίστε 200+20 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478517" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.<p>
-                       Προσθέστε το ίδιο email όπως στην εφαρμογή.Οι πόντοι θα καταχωρηθούν από τους Διαχειριστές
-                        </div>
-                </div>
+                            
                             <button class="redeem-btn" id="redeemInFormBtn">
                                 <i class="fas fa-shopping-cart"></i> Ανταλλαγή (50 Πόντοι)
                             </button>
@@ -1787,18 +1868,21 @@
                 <h2><i class="fas fa-trophy"></i> Πληροφορίες & Πόντοι</h2>
                 
                 <div class="info-box">
-                    <p><strong>Διαδικασία :</strong></p>
-                    <ul><li>Στην κεντρική οθόνη πηγαίνετε στο πλαίσιο "Το Φλιτζάνι σου Μιλά".Εξαργυρώστε τους πόντους σας.</li>
-                    <li>Επιλέξτε τον Χαρακτήρα και το Μονοπάτι του Φλυντζανιού "Γραπτή η Προφορική" ερμηνεία .</li>
-                    <li>Κλείστε Ραντεβου μέσω Google Calendar.</li>
-                    <li>Προσοχή να χρησιμοποιείτε το ίδιο Email κατά την εγγραφή στην εφαρμογή όπως στην εξαργύρωση Πόντων κ στο κλείσιμο Ραντεβού.</li>
+                    <p><strong>Διαδικασία:</strong></p>
+                    <ul>
+                        <li>Στην κεντρική οθόνη πηγαίνετε στο πλαίσιο "Το Φλιτζάνι σου Μιλά". Εξαργυρώστε τους πόντους σας.</li>
+                        <li>Επιλέξτε τον Χαρακτήρα και το Μονοπάτι του Φλυντζανιού "Γραπτή η Προφορική" ερμηνεία.</li>
+                        <li>Κλείστε Ραντεβού μέσω Google Calendar.</li>
+                        <li>Προσοχή να χρησιμοποιείτε το ίδιο Email κατά την εγγραφή στην εφαρμογή όπως στην εξαργύρωση Πόντων κ στο κλείσιμο Ραντεβού.</li>
+                    </ul>
                     <p><strong>Πώς λειτουργεί το σύστημα πόντων:</strong></p>
-                    <ul> <li>Για κάθε εγγραφή στην εφαρμογή μας κερδίστε 20 πόντους.</li>
+                    <ul>
+                        <li>Για κάθε εγγραφή στην εφαρμογή μας κερδίστε 20 πόντους.</li>
                         <li>Για κάθε Γραπτή η Προφορική Ερμηνεία κερδίστε 10 πόντους.</li>
-                        <li><strong>Κερδίστε Πόντους <strong></li>
-                        <li>Κερδίστε 70 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478228" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
-                        <li>Κερδίστε 100+10 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478229" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
-                        <li>Κερδίστε 200+20 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478517" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li> 
+                        <li><strong>Κερδίστε Πόντους</strong></li>
+                        <li>Κερδίστε 70 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478228" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
+                        <li>Κερδίστε 100+10 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478229" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
+                        <li>Κερδίστε 200+20 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478517" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
                     </ul>
                 </div>
                 
@@ -1907,12 +1991,12 @@
                     <ul>
                         <li>Εγγραφή: <strong>20 πόντοι</strong></li>
                         <li>Υποβολή φωτογραφιών: <strong>10 πόντοι ανά υποβολή</strong></li>
-                        <li><strong>Κερδίστε Πόντους <strong>.</li>
-                        <li>Κερδίστε 70 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478228" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
-                        <li>Κερδίστε 100+10 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478229" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
-                        <li>Κερδίστε 200+20 Πόντους  <a href="https://buymeacoffee.com/franklymadear/e/478517" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li> 
-                        <li>Να γραφτείτε με το ίδιο email. Οι πόντοι θα καταχωρηθούν από τους Διαχειριστές </li>
-                        <li>Κερδίζω πόντους: <strong>από τους Διαχειριστές αναλόγος την Συμμετοχή σας.</strong></li>
+                        <li><strong>Κερδίστε Πόντους</strong></li>
+                        <li>Κερδίστε 70 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478228" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
+                        <li>Κερδίστε 100+10 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478229" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
+                        <li>Κερδίστε 200+20 Πόντους <a href="https://buymeacoffee.com/franklymadear/e/478517" style="color: var(--primary); text-decoration: underline;">με ένα φιλοδώρημα</a> σας.</li>
+                        <li>Να γραφτείτε με το ίδιο email. Οι πόντοι θα καταχωρηθούν από τους Διαχειριστές</li>
+                        <li>Κερδίζω πόντους: <strong>από τους Διαχειριστές αναλόγως την Συμμετοχή σας.</strong></li>
                     </ul>
                 </div>
 
@@ -1934,7 +2018,7 @@
         </footer>
     </div>
 
-    <!-- ΤΟ JAVASCRIPT ΚΩΔΙΚΑΣ ΜΕΤΑ ΤΙΣ ΑΦΑΙΡΕΣΕΙΣ -->
+    <!-- ΤΟ JAVASCRIPT ΚΩΔΙΚΑΣ -->
     <script>
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
@@ -2229,18 +2313,18 @@
                             <p>Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας. Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση· οποιαδήποτε χρήση κάνετε από τέτοιες απαντήσεις, συμβουλές ή υπηρεσίες γίνεται με δικό σας κίνδυνο και η FranklyMaDear δεν μπορεί να θεωρηθεί υπεύθυνη ή να φέρει ευθύνη για οποιεσδήποτε ζημίες ή απώλειες που προκύπτουν από την επαφή σας με τέτοιες απαντήσεις ή συμβουλές. Ο Ιστότοπος και οι υπηρεσίες που παρέχονται από την Εφαρμογή παρέχονται «ως έχει» χωρίς καμία εγγύηση. Οι Σύμβουλοί μας και η Υπηρεσία καταβάλλουν κάθε δυνατή προσπάθεια να σας παράσχουν χρήσιμες, διορατικές πληροφορίες. Ωστόσο, οι πληροφορίες που σας παρέχονται δεν πρέπει να χρησιμοποιούνται αντί για συστάσεις από ιατρικούς επαγγελματίες ή άλλους επαγγελματίες συμβούλους η πρόβλεψη του μέλλοντος.</p>
 
                             <h4>3. Αποποίηση Ευθύνης <h4>
-                            <p>  Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες που παρουσιάζονται προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς και δεν αποτελούν συμβουλές, καθοδήγηση, προτροπή λήψης αποφάσεων ή επιστημονική/επαγγελματική ενημέρωση.
+                            <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες που παρουσιάζονται προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς και δεν αποτελούν συμβουλές, καθοδήγηση, προτροπή λήψης αποφάσεων ή επιστημονική/επαγγελματική ενημέρωση.
 
-Κάθε επισκέπτης φέρει την πλήρη και αποκλειστική ευθύνη για τον τρόπο με τον οποίο θα χρησιμοποιήσει ή θα ερμηνεύσει το περιεχόμενο της σελίδας. <p>
+Κάθε επισκέπτης φέρει την πλήρη και αποκλειστική ευθύνη για τον τρόπο με τον οποίο θα χρησιμοποιήσει ή θα ερμηνεύει το περιεχόμενο της σελίδας.</p>
                             <h4>4. Ηλικιακός Περιορισμός</h4>
-                            <p>Η εγγραφή και η συμμετοχή στην Υπηρεσία και στον Ιστότοπο περιορίζεται σε άτονα άνω των 18 ετών, σε χρήστες που έχουν απελευθερωθεί από την γονική μέριμνα, ή σε αυτά που διαθέτουν συγκατάθεση νόμιμου γονέα ή κηδεμόνα, και είναι πλήρως ικανά και αρμόδια να δεσμευτούν από τους όρους, τις προϋποθέσεις, τις υποχρεώσεις, τις βεβαιώσεις, τις δηλώσεις και τις εγγυήσεις που περιλαμβάνονται εδώ. Με την εγγραφή ή συμμετοχή σε υπηρεσίες ή λειτουργίες στην Υπηρεσία ή/και τον Ιστότοπο, δηλώνετε ρητά ότι είστε άνω των 18 ετών, έχετε απελευθερωθεί από τη γονική μέριμνα ή διαθέτετε συγκατάθεση νόμιμου γονέα ή κηδεμόνα και έχετε την εξουσία να δεσμευτείτε από τους όρους εδώ. Σε κάθε περίπτωση, βεβαιώνετε ότι είστε άνω των 18 ετών, καθώς η Υπηρεσία δεν προορίζεται για παιδιά κάτω των 18. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία ή/και τον Ιστότοπο..</p>
+                            <p>Η εγγραφή και η συμμετοχή στην Υπηρεσία και στον Ιστότοπο περιορίζεται σε άτονα άνω των 18 ετών, σε χρήστες που έχουν απελευθερωθεί από την γονική μέριμνα, ή σε αυτά που διαθέτουν συγκατάθεση νόμιμου γονέα ή κηδεμόνα, και είναι πλήρως ικανά και αρμόδια να δεσμευτούν από τους όρους, τις προϋποθέσεις, τις υποχρεώσεις, τις βεβαιώσεις, τις δηλώσεις και τις εγγυήσεις που περιλαμβάνονται εδώ. Με την εγγραφή ή συμμετοχή σε υπηρεσίες ή λειτουργίες στην Υπηρεσία ή/και τον Ιστότοπο, δηλώνετε ρητά ότι είστε άνω των 18 ετών, έχετε απελευθερωθεί από τη γονική μέριμνα ή διαθέτετε συγκατάθεση νόμιμου γονέα ή κηδεμόνα και έχετε την εξουσία να δεσμευτείτε από τους όρους εδώ. Σε κάθε περίπτωση, βεβαιώνετε ότι είστε άνω των 18 ετών, καθώς η Υπηρεσία δεν προορίζεται για παιδιά κάτω των 18. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία ή/και τον Ιστότοπο.</p>
                         `,
                         privacy: `
                             <h4>1. Συλλογή Πληροφοριών</h4>
                             <p>Ποιες πληροφορίες συλλέγουμε;
 Συλλέγουμε πληροφορίες από εσάς όταν χρησιμοποιείτε υπηρεσίες που παρέχονται από τον ιστότοπο και/ή την εφαρμογή μας, κάνετε μια παραγγελία, εγγραφείτε στο ενημερωτικό μας δελτίο ή συμπληρώσετε μια φόρμα.
 
-Κατά τη χρήση υπηρεσιών που παρέχονται από τον ιστότοπο και/ή την εφαρμογή μας, ενδέχεται να σας ζητηθεί, κατά περίπτωση, να εισάγετε: το όνομά σας, τη διεύθυνση ηλεκτρονικού ταχυδρομείου, την ημερομηνία γέννησης, το φύλο και την οικογενειακή σας κατάσταση. .</p>
+Κατά τη χρήση υπηρεσιών που παρέχονται από τον ιστότοπο και/ή την εφαρμογή μας, ενδέχεται να σας ζητηθεί, κατά περίπτωση, να εισάγετε: το όνομά σας, τη διεύθυνση ηλεκτρονικού ταχυδρομείου, την ημερομηνία γέννησης, το φύλο και την οικογενειακή σας κατάσταση.</p>
                             
                             <h4>2. Χρήση Πληροφοριών</h4>
                             <p>Κατά τη χρήση υπηρεσιών που παρέχονται από τον ιστότοπο και/ή την εφαρμογή μας, ενδέχεται να σας ζητηθεί, κατά περίπτωση, να εισάγετε: το όνομά σας, τη διεύθυνση ηλεκτρονικού ταχυδρομείου, την ημερομηνία γέννησης, το φύλο και την οικογενειακή σας κατάσταση. Ωστόσο, μπορείτε να επισκεφθείτε τον ιστότοπό μας ανώνυμα.
@@ -2251,7 +2335,7 @@
 · Για να εξατομικεύσουμε την εμπειρία σας και να παρέχουμε καλύτερη υπηρεσία. (Οι πληροφορίες σας μας βοηθούν να ανταποκρινόμαστε καλύτερα στις ατομικές σας ανάγκες)
 · Για να βελτιώσουμε την εφαρμογή μας βάσει των πληροφοριών και των σχολίων που λαμβάνουμε από εσάς.
 · Για να βελτιώσουμε την εξυπηρέτηση πελατών, καθώς οι πληροφορίες σας μας βοηθούν να ανταποκρινόμαστε πιο αποτελεσματικά στα αιτήματα και τις ανάγκες υποστήριξής σας.
-· Για την επεξεργασία συναλλαγών.Οι πληροφορίες σας, είτε είναι δημόσιες είτε ιδιωτικές, δεν θα πωλούνται, ανταλλάσσονται, μεταβιβάζονται ή δίνονται σε οποιαδήποτε άλλη εταιρεία για οποιονδήποτε λόγο, χωρίς τη συγκατάθεσή σας, εκτός από τον σαφή σκοπό της παράδοσης του αγορασμένου προϊόντος ή της ζητηθείσας υπηρεσίας .</p>
+· Για την επεξεργασία συναλλαγών.Οι πληροφορίες σας, είτε είναι δημόσιες είτε ιδιωτικές, δεν θα πωλούνται, ανταλλάσσονται, μεταβιβάζονται ή δίνονται σε οποιαδήποτε άλλη εταιρεία για οποιονδήποτε λόγο, χωρίς τη συγκατάθεσή σας, εκτός από τον σαφή σκοπό της παράδοσης του αγορασμένου προϊόντος ή της ζητηθείσας υπηρεσίας.</p>
                             
                             <h4>3. Προστασία Δεδομένων</h4>
                             <p>Εφαρμόζουμε μέτρα ασφαλείας για την προστασία των προσωπικών σας δεδομένων.</p>
@@ -2306,6 +2390,7 @@
                 const offerCheckSection = document.getElementById('offerCheckSection');
                 const offerInForm = document.getElementById('offerInForm');
                 const submitBtn = document.getElementById('submitBtn');
+                const redeemBtn = document.getElementById('redeemInFormBtn');
 
                 if (userRedemption) {
                     // Ο χρήστης έχει εξαργυρώσει - επιτρέπουμε υποβολή
@@ -2318,7 +2403,19 @@
                     offerCheckSection.style.display = 'none';
                     offerInForm.style.display = 'block';
                     submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-lock"></i> Απαιτείται Εξαργύρωση (50 Πόντοι)';
+                    submitBtn.innerHTML = '<i class="fas fa-lock"></i> Απαιτείται Εξαργύρωση';
+                    
+                    // Check if user has enough points for redemption
+                    const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                    const userPoints = userPointsData.find(p => p.email === currentUser.email);
+                    
+                    if (userPoints && userPoints.points >= 50) {
+                        redeemBtn.disabled = false;
+                        redeemBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Ανταλλαγή (50 Πόντοι)';
+                    } else {
+                        redeemBtn.disabled = true;
+                        redeemBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Ανεπαρκείς Πόντοι (Απαιτούνται 50)';
+                    }
                 }
             }
 
@@ -2432,7 +2529,7 @@
                     users.push(newUser);
                     localStorage.setItem('users', JSON.stringify(users));
                     
-                    // Create user points record
+                    // Create user points record - 20 POINTS FOR REGISTRATION
                     const userPointsData = JSON.parse(localStorage.getItem('userPoints') || '[]');
                     userPointsData.push({
                         userId: newUser.id,
@@ -2909,6 +3006,8 @@
                     };
                     
                     saveSubmission(submission);
+                    
+                    // ADD 10 POINTS FOR SUBMISSION
                     addPointsForSubmission(email, 10);
                     
                     // Notify admin
@@ -2966,6 +3065,7 @@
                 };
                 
                 updatePointsUI(userPoints.points, userPoints.level);
+                checkOfferRedemption(); // Update redemption button state
             }
 
             function addPointsForSubmission(email, pointsToAdd) {
@@ -3003,8 +3103,17 @@
                 document.getElementById('userLevel').textContent = level;
                 document.getElementById('modalPoints').textContent = points;
                 document.getElementById('modalLevel').textContent = level;
+                document.getElementById('warningPoints').textContent = points;
                 
-                updateRedeemButton(points);
+                // Update redeem button state
+                const redeemBtn = document.getElementById('redeemInFormBtn');
+                if (points >= 50) {
+                    redeemBtn.disabled = false;
+                    redeemBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Ανταλλαγή (50 Πόντοι)';
+                } else {
+                    redeemBtn.disabled = true;
+                    redeemBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Ανεπαρκείς Πόντοι (Απαιτούνται 50)';
+                }
             }
 
             // CONTACT FORM
@@ -3182,19 +3291,6 @@
                 }
             }
 
-            function updateRedeemButton(points) {
-                const redeemBtn = document.getElementById('redeemInFormBtn');
-                const canRedeem = points >= 50;
-                
-                if (canRedeem) {
-                    redeemBtn.disabled = false;
-                    redeemBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Ανταλλαγή (50 Πόντοι)';
-                } else {
-                    redeemBtn.disabled = true;
-                    redeemBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Ανεπαρκείς Πόντοι (Απαιτούνται 50)';
-                }
-            }
-            
             // POINTS MODAL
             const pointsModal = document.getElementById('pointsModal');
             const pointsInfoBtn = document.getElementById('pointsInfoBtn');
