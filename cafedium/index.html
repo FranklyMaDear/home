@@ -309,7 +309,7 @@
             border: 2px dashed var(--accent);
             border-radius: 12px;
             text-align: center;
-                    cursor: pointer;
+            cursor: pointer;
             transition: all 0.3s;
             color: var(--primary-light);
             font-weight: 600;
@@ -1679,11 +1679,26 @@
                             
                             <div class="form-group">
                                 <label><i class="fas fa-camera"></i> Επιλογή Φωτογραφιών Καφέ:</label>
+                                <div class="info-box" style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-left: 4px solid var(--success);">
+                                    <p><strong>📱 Βελτιωμένο Upload για Safari & Chrome:</strong></p>
+                                    <ul>
+                                        <li>Μέγιστο μέγεθος ανά φωτογραφία: <strong>2 MB</strong></li>
+                                        <li>Αυτόματη συμπίεση για μικρότερο μέγεθος</li>
+                                        <li>Εξαιρετική ποιότητα για καφεμαντεία</li>
+                                        <li>Βελτιωμένη απόδοση και σταθερότητα</li>
+                                    </ul>
+                                    <p style="margin-top: 10px; font-size: 0.9rem;">
+                                        <i class="fas fa-info-circle"></i> Συμβουλή: Αποθηκεύστε φωτογραφίες καφέ με καλή φωτισμό για καλύτερη ερμηνεία.
+                                    </p>
+                                </div>
                                 <div class="file-input-container">
                                     <input type="file" id="photos" class="file-input" multiple accept="image/*">
                                     <label for="photos" class="file-input-label">
-                                        <i class="fas fa-cloud-upload-alt"></i> Επιλέξτε φωτογραφίες καφέ (μέχρι 5)
+                                        <i class="fas fa-cloud-upload-alt"></i> Επιλέξτε φωτογραφίες καφέ (μέχρι 5, 2MB max ανά φωτογραφία)
                                     </label>
+                                </div>
+                                <div id="fileSizeInfo" style="font-size: 0.8rem; color: var(--text); margin-top: 5px; display: none;">
+                                    Συνολικό μέγεθος: <span id="totalSize">0</span> MB
                                 </div>
                             </div>
                             
@@ -2059,6 +2074,155 @@
             console.log(`Ειδοποίηση για επιλογή χαρακτήρα ${characterName} από ${userEmail}`);
         }
 
+        // ΒΕΛΤΙΩΜΕΝΕΣ ΣΥΝΑΡΤΗΣΕΙΣ ΓΙΑ ΦΩΤΟΓΡΑΦΙΕΣ
+        // Συμπίεση εικόνας για μικρότερο μέγεθος
+        async function compressImage(file, maxWidth = 1024, maxHeight = 1024, quality = 0.8, maxSizeMB = 2) {
+            return new Promise((resolve, reject) => {
+                // Έλεγχος αρχικού μεγέθους
+                const originalSizeMB = file.size / (1024 * 1024);
+                if (originalSizeMB > maxSizeMB * 1.5) {
+                    showMessage(document.getElementById('message'), 
+                        `Η φωτογραφία "${file.name}" είναι πολύ μεγάλη (${originalSizeMB.toFixed(2)}MB). Μέγιστο μέγεθος: ${maxSizeMB}MB.`, 
+                        'error');
+                    reject(new Error('File too large'));
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        // Υπολογισμός νέων διαστάσεων
+                        if (width > maxWidth || height > maxHeight) {
+                            if (width > height) {
+                                if (width > maxWidth) {
+                                    height *= maxWidth / width;
+                                    width = maxWidth;
+                                }
+                            } else {
+                                if (height > maxHeight) {
+                                    width *= maxHeight / height;
+                                    height = maxHeight;
+                                }
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Safari specific: χρήση white background
+                        if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+                            ctx.fillStyle = 'white';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        }
+                        
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Προσαρμογή ποιότητας βάσει μεγέθους
+                        let finalQuality = quality;
+                        if (originalSizeMB > maxSizeMB) {
+                            finalQuality = Math.max(0.5, quality - (originalSizeMB - maxSizeMB) * 0.1);
+                        }
+
+                        // Μετατροπή σε blob με υποστήριξη για Safari
+                        canvas.toBlob(function(blob) {
+                            if (!blob) {
+                                // Fallback για Safari
+                                const dataUrl = canvas.toDataURL('image/jpeg', finalQuality);
+                                const base64Data = dataUrl.split(',')[1];
+                                resolve({
+                                    name: file.name.replace(/\.[^/.]+$/, "") + '_compressed.jpg',
+                                    data: base64Data,
+                                    originalName: file.name,
+                                    size: (base64Data.length * 3) / 4 / (1024 * 1024), // Προσεγγιστικό μέγεθος σε MB
+                                    width: width,
+                                    height: height
+                                });
+                            } else {
+                                const compressedReader = new FileReader();
+                                compressedReader.onload = function(e) {
+                                    const base64Data = e.target.result.split(',')[1];
+                                    resolve({
+                                        name: file.name.replace(/\.[^/.]+$/, "") + '_compressed.jpg',
+                                        data: base64Data,
+                                        originalName: file.name,
+                                        size: blob.size / (1024 * 1024), // MB
+                                        width: width,
+                                        height: height
+                                    });
+                                };
+                                compressedReader.readAsDataURL(blob);
+                            }
+                        }, 'image/jpeg', finalQuality);
+                    };
+                    img.onerror = function() {
+                        // Fallback: χρήση αρχικού αρχείου αν αποτύχει η συμπίεση
+                        const fallbackReader = new FileReader();
+                        fallbackReader.onload = function(e) {
+                            const base64Data = e.target.result.split(',')[1];
+                            resolve({
+                                name: file.name,
+                                data: base64Data,
+                                originalName: file.name,
+                                size: file.size / (1024 * 1024),
+                                width: 0,
+                                height: 0,
+                                compressed: false
+                            });
+                        };
+                        fallbackReader.readAsDataURL(file);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Βελτιωμένη συνάρτηση για φόρτωμα πολλαπλών φωτογραφιών
+        async function processMultipleFiles(files) {
+            const processedFiles = [];
+            let totalSize = 0;
+            
+            for (let i = 0; i < files.length; i++) {
+                try {
+                    const compressed = await compressImage(files[i]);
+                    if (compressed) {
+                        processedFiles.push(compressed);
+                        totalSize += compressed.size;
+                        
+                        // Ενημέρωση προόδου
+                        updateUploadProgress(i + 1, files.length, totalSize);
+                    }
+                } catch (error) {
+                    console.error('Error processing file:', files[i].name, error);
+                }
+            }
+            
+            return { files: processedFiles, totalSize: totalSize };
+        }
+
+        // Ενημέρωση προόδου upload
+        function updateUploadProgress(current, total, totalSizeMB) {
+            const messageDiv = document.getElementById('message');
+            const fileSizeInfo = document.getElementById('fileSizeInfo');
+            const totalSizeSpan = document.getElementById('totalSize');
+            
+            if (messageDiv && fileSizeInfo && totalSizeSpan) {
+                showMessage(messageDiv, 
+                    `Επεξεργασία ${current}/${total} φωτογραφιών... (${totalSizeMB.toFixed(2)} MB)`, 
+                    'info');
+                
+                totalSizeSpan.textContent = totalSizeMB.toFixed(2);
+                fileSizeInfo.style.display = 'block';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // SAFARI DETECTION AND COMPATIBILITY FIXES
             const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -2146,6 +2310,10 @@
             let currentUser = null;
             let tempResetEmail = null;
             let deferredPrompt = null;
+            let selectedFiles = [];
+            const MAX_FILES = 5;
+            const MAX_FILE_SIZE_MB = 2; // 2MB ανά φωτογραφία
+            const MAX_TOTAL_SIZE_MB = 10; // 10MB συνολικά
 
             // UI Elements
             const authSection = document.getElementById('authSection');
@@ -2364,7 +2532,7 @@
                             <p>Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας. Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση· οποιαδήποτε χρήση κάνετε από τέτοιες απαντήσεις, συμβουλές ή υπηρεσίες γίνεται με δικό σας κίνδυνο και η FranklyMaDear δεν μπορεί να θεωρηθεί υπεύθυνη ή να φέρει ευθύνη για οποιεσδήποτε ζημίες ή απώλειες που προκύπτουν από την επαφή σας με τέτοιες απαντήσεις ή συμβουλές. Ο Ιστότοπος και οι υπηρεσίες που παρέχονται από την Εφαρμογή παρέχονται «ως έχει» χωρίς καμία εγγύηση. Οι Σύμβουλοί μας και η Υπηρεσία καταβάλλουν κάθε δυνατή προσπάθεια να σας παράσχουν χρήσιμες, διορατικές πληροφορίες. Ωστόσο, οι πληροφορίες που σας παρέχονται δεν πρέπει να χρησιμοποιούνται αντί για συστάσεις από ιατρικούς επαγγελματίες ή άλλους επαγγελματίες συμβούλους η πρόβλεψη του μέλλοντος.</p>
 
                             <h4>3. Αποποίηση Ευθύνης <h4>
-                            <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες που παρουσιάζονται προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς και δεν αποτελούν συμβουλές, καθοδήγηση, προτροπή λήψης αποφάσεων ή επιστημονική/επαγγελματική ενημέρωση.
+                            <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες που παρουσιάζονται προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς και δεν αποτελούν συμβουλές, καθοδήγηση, προτροπή λήψης αποφάσεων ή επιστημονική/επαγγελματική ενημέρωση.
 
 Κάθε επισκέπτης φέρει την πλήρη και αποκλειστική ευθύνη για τον τρόπο με τον οποίο θα χρησιμοποιήσει ή θα ερμηνεύσει το περιεχόμενο της σελίδας.</p>
                             <h4>4. Ηλικιακός Περιορισμός</h4>
@@ -3019,31 +3187,85 @@
                 }
             }
 
-            // PHOTO UPLOAD FUNCTIONALITY
+            // ΒΕΛΤΙΩΜΕΝΟ PHOTO UPLOAD FUNCTIONALITY
             const fileInput = document.getElementById('photos');
             const previewGrid = document.getElementById('previewGrid');
             const visitorForm = document.getElementById('visitorForm');
             const submitBtn = document.getElementById('submitBtn');
             const messageDiv = document.getElementById('message');
+            const fileSizeInfo = document.getElementById('fileSizeInfo');
+            const totalSizeSpan = document.getElementById('totalSize');
             
-            let selectedFiles = [];
-            const MAX_FILES = 5;
-            
-            fileInput.addEventListener('change', function(e) {
+            fileInput.addEventListener('change', async function(e) {
                 const files = Array.from(e.target.files);
                 
+                // Έλεγχος αριθμού αρχείων
                 if (selectedFiles.length + files.length > MAX_FILES) {
                     showMessage(messageDiv, `Μπορείτε να επιλέξετε μέχρι ${MAX_FILES} φωτογραφίες συνολικά.`, 'error');
+                    fileInput.value = '';
                     return;
                 }
                 
-                selectedFiles = [...selectedFiles, ...files];
+                // Έλεγχος συνολικού μεγέθους
+                let totalSizeMB = selectedFiles.reduce((sum, file) => sum + (file.size || 0), 0) / (1024 * 1024);
+                const newFilesSizeMB = files.reduce((sum, file) => sum + file.size, 0) / (1024 * 1024);
+                
+                if (totalSizeMB + newFilesSizeMB > MAX_TOTAL_SIZE_MB) {
+                    showMessage(messageDiv, 
+                        `Συνολικό μέγεθος αρχείων υπερβαίνει τα ${MAX_TOTAL_SIZE_MB}MB. Τρέχον: ${totalSizeMB.toFixed(2)}MB + ${newFilesSizeMB.toFixed(2)}MB`, 
+                        'error');
+                    fileInput.value = '';
+                    return;
+                }
+                
+                // Επεξεργασία κάθε νέου αρχείου
+                for (const file of files) {
+                    const fileSizeMB = file.size / (1024 * 1024);
+                    
+                    // Έλεγχος μεγέθους ανά αρχείο
+                    if (fileSizeMB > MAX_FILE_SIZE_MB) {
+                        showMessage(messageDiv, 
+                            `Η φωτογραφία "${file.name}" (${fileSizeMB.toFixed(2)}MB) υπερβαίνει το όριο των ${MAX_FILE_SIZE_MB}MB.`, 
+                            'error');
+                        continue;
+                    }
+                    
+                    selectedFiles.push(file);
+                }
+                
+                // Ενημέρωση προεπισκόπησης
                 updatePreview();
                 
+                // Ενημέρωση συνολικού μεγέθους
+                updateTotalSize();
+                
                 if (files.length > 0) {
-                    showMessage(messageDiv, `Προστέθηκαν ${files.length} φωτογραφίες. Συνολικές: ${selectedFiles.length}/${MAX_FILES}`, 'success');
+                    showMessage(messageDiv, 
+                        `Προστέθηκαν ${files.length} φωτογραφίες. Συνολικές: ${selectedFiles.length}/${MAX_FILES}`, 
+                        'success');
                 }
+                
+                fileInput.value = '';
             });
+            
+            function updateTotalSize() {
+                let totalSizeMB = 0;
+                selectedFiles.forEach(file => {
+                    totalSizeMB += file.size / (1024 * 1024);
+                });
+                
+                totalSizeSpan.textContent = totalSizeMB.toFixed(2);
+                fileSizeInfo.style.display = 'block';
+                
+                // Προειδοποίηση για μεγάλο συνολικό μέγεθος
+                if (totalSizeMB > MAX_TOTAL_SIZE_MB * 0.8) {
+                    fileSizeInfo.style.color = 'var(--error)';
+                    fileSizeInfo.innerHTML = `Συνολικό μέγεθος: <strong>${totalSizeMB.toFixed(2)} MB</strong> (Κοντινό στο όριο)`;
+                } else {
+                    fileSizeInfo.style.color = 'var(--text)';
+                    fileSizeInfo.innerHTML = `Συνολικό μέγεθος: ${totalSizeMB.toFixed(2)} MB`;
+                }
+            }
             
             function updatePreview() {
                 previewGrid.innerHTML = '';
@@ -3059,6 +3281,7 @@
                         img.src = e.target.result;
                         img.className = 'preview-image';
                         img.alt = 'Προεπισκόπηση φωτογραφίας καφέ';
+                        img.title = `${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`;
                         
                         const removeBtn = document.createElement('button');
                         removeBtn.className = 'remove-btn';
@@ -3068,6 +3291,7 @@
                         removeBtn.addEventListener('click', function() {
                             selectedFiles.splice(index, 1);
                             updatePreview();
+                            updateTotalSize();
                             showMessage(messageDiv, 'Η φωτογραφία αφαιρέθηκε.', 'success');
                         });
                         
@@ -3081,7 +3305,7 @@
             }
             
             // PHOTO SUBMISSION FORM - ΕΠΙΒΕΒΑΙΩΣΗ 50 ΠΟΝΤΩΝ - ΒΕΛΤΙΩΜΕΝΗ ΓΙΑ SAFARI
-            visitorForm.addEventListener('submit', function(e) {
+            visitorForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 if (!currentUser) return;
@@ -3151,22 +3375,19 @@
                 }
                 
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Αποστολή...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Επεξεργασία και Αποστολή...';
                 
-                const photoPromises = selectedFiles.map(file => {
-                    return new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            resolve({
-                                name: file.name,
-                                data: e.target.result
-                            });
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                });
-                
-                Promise.all(photoPromises).then(photosBase64 => {
+                try {
+                    // Επεξεργασία και συμπίεση φωτογραφιών
+                    showMessage(messageDiv, 'Συμπίεση φωτογραφιών... (αυτό μπορεί να πάρει λίγα δευτερόλεπτα)', 'info');
+                    
+                    const processed = await processMultipleFiles(selectedFiles);
+                    
+                    if (processed.files.length === 0) {
+                        throw new Error('Αποτυχία επεξεργασίας φωτογραφιών');
+                    }
+                    
+                    // Δημιουργία υποβολής
                     const submission = {
                         id: Date.now(),
                         type: 'photo',
@@ -3181,7 +3402,9 @@
                         date: new Date().toISOString(),
                         status: 'pending',
                         message: 'Υποβολή φωτογραφιών καφέ για ερμηνεία',
-                        photos: photosBase64
+                        photos: processed.files,
+                        totalSizeMB: processed.totalSize.toFixed(2),
+                        browser: isSafari ? 'Safari' : 'Chrome/Other'
                     };
                     
                     saveSubmission(submission);
@@ -3202,7 +3425,9 @@
                         coffeeTypeText: submission.coffeeTypeText,
                         desire: submission.desire,
                         date: new Date().toISOString(),
-                        status: 'pending'
+                        status: 'pending',
+                        compressed: true,
+                        totalSize: processed.totalSize.toFixed(2) + ' MB'
                     });
                     
                     try {
@@ -3211,19 +3436,37 @@
                         console.error('❌ Error saving admin notification:', error);
                     }
                     
-                    showMessage(messageDiv, `Οι ${selectedFiles.length} φωτογραφίες του καφέ σας στάλθηκαν επιτυχώς στον ${selectedFortuneTeller.name}! Κερδίσατε 10 πόντους.`, 'success');
+                    showMessage(messageDiv, 
+                        `Οι ${processed.files.length} φωτογραφίες του καφέ σας στάλθηκαν επιτυχώς στον ${selectedFortuneTeller.name}!<br>
+                        Συνολικό μέγεθος: ${processed.totalSize.toFixed(2)} MB<br>
+                        Κερδίσατε 10 πόντους.`, 
+                        'success');
                     
+                    // Reset form
                     visitorForm.reset();
                     selectedFiles = [];
                     selectedFortuneTeller = null;
                     updatePreview();
+                    updateTotalSize();
                     loadFortuneTellers(); // Reset selection
                     
+                    // Επαναφορά του submit button
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών';
 
+                    // Ανανέωση πόντων
                     loadUserPoints();
-                });
+                    
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    showMessage(messageDiv, 
+                        'Προέκυψε σφάλμα κατά την αποστολή. Παρακαλώ δοκιμάστε ξανά με μικρότερες φωτογραφίες.', 
+                        'error');
+                    
+                    // Επαναφορά του submit button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Φωτογραφιών';
+                }
             });
             
             function getCoffeeTypeText(type) {
@@ -3850,7 +4093,7 @@
 
             // UTILITY FUNCTIONS
             function showMessage(element, text, type) {
-                element.textContent = text;
+                element.innerHTML = text;
                 element.className = `message ${type}`;
                 element.style.display = 'block';
                 
