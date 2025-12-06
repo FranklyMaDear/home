@@ -1,0 +1,3602 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafedium Διαχειριστής</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="coffeetime.png">
+    <link rel="apple-touch-icon" href="coffeetime.png">
+    <link rel="shortcut icon" href="coffeetime.png" type="image/x-icon">
+    <meta name="msapplication-TileImage" content="coffeetime.png">
+    <meta name="msapplication-TileColor" content="#8B4513">
+    <meta name="theme-color" content="#8B4513">
+    
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // Αρχικοποίηση EmailJS με το σωστό Public Key
+        emailjs.init("2a_9Pufk5U23tZ0Vg");
+    </script>
+    
+    <style>
+        :root {
+            --primary: #8B4513;
+            --primary-light: #A0522D;
+            --secondary: #D2691E;
+            --accent: #F4A460;
+            --light: #F5F5DC;
+            --dark: #3E2723;
+            --text: #5D4037;
+            --success: #4CAF50;
+            --error: #f44336;
+            --info: #2196F3;
+            --warning: #FF9800;
+            --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--light) 0%, #f8f4e9 100%);
+            color: var(--text);
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
+        .logo {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .admin-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .admin-welcome {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+        
+        .logout-btn {
+            background: var(--info);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+            font-size: 0.85rem;
+        }
+        
+        .logout-btn:hover {
+            background: #0b7dda;
+        }
+
+        .main-app-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+            font-size: 0.85rem;
+            margin-right: 8px;
+        }
+        
+        .main-app-btn:hover {
+            background: #388e3c;
+        }
+
+        .sync-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+            font-size: 0.85rem;
+            margin-right: 8px;
+        }
+        
+        .sync-btn:hover {
+            background: var(--primary-light);
+        }
+        
+        .email-test-btn {
+            background: var(--warning);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+            font-size: 0.85rem;
+            margin-right: 8px;
+        }
+        
+        .email-test-btn:hover {
+            background: #f57c00;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .stat-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+        
+        .stat-label {
+            color: var(--text);
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 16px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: #f8f4e9;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            min-width: 120px;
+        }
+        
+        .tab.active {
+            background: white;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .tab:hover:not(.active) {
+            background: #f0e6d3;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .content-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 20px;
+            border: 1px solid rgba(210, 105, 30, 0.1);
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.3rem;
+        }
+        
+        h2 i {
+            color: var(--secondary);
+        }
+        
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-select, .search-input {
+            padding: 8px 12px;
+            border: 1px solid #e0d6c9;
+            border-radius: 6px;
+            background: #fcfaf7;
+            font-size: 0.9rem;
+            color: var(--text);
+            flex: 1;
+            min-width: 140px;
+        }
+        
+        .search-input {
+            flex: 2;
+            min-width: 180px;
+        }
+        
+        .submissions-list {
+            display: grid;
+            gap: 16px;
+        }
+        
+        .submission-card {
+            background: #fcfaf7;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: var(--card-shadow);
+            border-left: 3px solid var(--accent);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .submission-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .submission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .submission-user {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1rem;
+        }
+        
+        .submission-date {
+            color: var(--text);
+            font-size: 0.8rem;
+        }
+        
+        .submission-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-reviewed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-answered {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .submission-content {
+            margin-bottom: 12px;
+        }
+        
+        .submission-message {
+            margin-bottom: 12px;
+            line-height: 1.4;
+            font-size: 0.9rem;
+        }
+        
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .photo-item {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid #fff;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .photo-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .photo-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+            background: #f5f5dc;
+        }
+        
+        .submission-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .btn-view {
+            background: var(--info);
+            color: white;
+        }
+        
+        .btn-view:hover {
+            background: #0b7dda;
+        }
+        
+        .btn-reply {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-reply:hover {
+            background: #388e3c;
+        }
+        
+        .btn-delete {
+            background: var(--error);
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #d32f2f;
+        }
+        
+        .btn-download {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-download:hover {
+            background: var(--primary-light);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px 16px;
+            color: var(--text);
+        }
+        
+        .empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            color: #e0d6c9;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 16px;
+            gap: 4px;
+        }
+        
+        .page-btn {
+            padding: 6px 10px;
+            border: 1px solid #e0d6c9;
+            background: white;
+            color: var(--text);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+        
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .page-btn:hover:not(.active) {
+            background: #f0e6d3;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 25px;
+            padding: 16px;
+            color: var(--primary-light);
+            font-size: 0.85rem;
+        }
+        
+        .coffee-icon {
+            display: inline-block;
+            margin: 0 4px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0d6c9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+        
+        .modal-body {
+            padding: 16px;
+        }
+        
+        .reply-form {
+            margin-top: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 12px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0d6c9;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        
+        textarea:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(210, 105, 30, 0.2);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        /* URL preview */
+        .url-preview {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+
+        .url-preview h4 {
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-size: 0.85rem;
+        }
+
+        .url-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+            padding: 6px;
+            background: white;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .url-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .url-item i {
+            color: var(--primary);
+        }
+
+        .preview-link {
+            color: var(--primary);
+            text-decoration: none;
+            flex: 1;
+            word-break: break-all;
+        }
+
+        .preview-link:hover {
+            text-decoration: underline;
+        }
+
+        .url-note {
+            font-size: 0.7rem;
+            color: #6c757d;
+            white-space: nowrap;
+        }
+
+        /* Links in messages */
+        .message-link {
+            color: var(--primary);
+            text-decoration: underline;
+            word-break: break-all;
+        }
+
+        .message-link:hover {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+
+        .submission-message a {
+            color: var(--primary);
+            text-decoration: underline;
+            word-break: break-all;
+        }
+
+        .submission-message a:hover {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+        
+        /* Users table */
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.85rem;
+        }
+        
+        .users-table th, .users-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0d6c9;
+        }
+        
+        .users-table th {
+            background-color: #f8f4e9;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .users-table tr:hover {
+            background-color: #fcfaf7;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .user-actions .action-btn {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+        }
+
+        /* Notifications badge */
+        .notifications-badge {
+            background: var(--error);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -4px;
+            right: -4px;
+        }
+        
+        /* Offers management */
+        .offer-management {
+            display: grid;
+            gap: 16px;
+        }
+        
+        .offer-item {
+            background: #fcfaf7;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #e0d6c9;
+        }
+        
+        .offer-item h3 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .offer-controls {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e0d6c9;
+        }
+        
+        .offer-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .offer-expiry {
+            font-size: 0.85rem;
+            color: var(--text);
+            margin-top: 4px;
+        }
+        
+        /* User categories */
+        .user-category {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 6px;
+        }
+        
+        .category-beginner {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .category-regular {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .category-vip {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .category-master {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+        
+        /* Toast notifications */
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 16px;
+            max-width: 320px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--info);
+        }
+        
+        .notification-toast.show {
+            transform: translateX(0);
+        }
+        
+        .notification-icon {
+            font-size: 1.2rem;
+            color: var(--info);
+            margin-top: 2px;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+        
+        .notification-message {
+            font-size: 0.85rem;
+            color: var(--text);
+            line-height: 1.4;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text);
+            opacity: 0.7;
+        }
+        
+        .notification-close:hover {
+            opacity: 1;
+        }
+
+        /* Coffee reading info */
+        .coffee-reading-info {
+            background: #f8f4e9;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .coffee-reading-info p {
+            margin: 4px 0;
+            font-size: 0.85rem;
+        }
+
+        /* Sound notification */
+        .sound-notification {
+            display: none;
+        }
+
+        /* Success animation */
+        .success-animation {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .success-animation i {
+            font-size: 3rem;
+            color: var(--success);
+            margin-bottom: 15px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Authentication system */
+        .auth-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.15);
+            margin-bottom: 25px;
+            border: 1px solid rgba(210, 105, 30, 0.2);
+            max-width: 500px;
+            margin: 0 auto 25px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: #f8f4e9;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .auth-tab.active {
+            background: white;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .auth-content {
+            display: none;
+        }
+        
+        .auth-content.active {
+            display: block;
+        }
+
+        .auth-form {
+            max-width: 100%;
+        }
+
+        .admin-setup-info {
+            background: linear-gradient(to right, #e8f5e8, #d0e9d0);
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .admin-setup-info h3 {
+            color: var(--success);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-credentials {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid var(--success);
+        }
+
+        .admin-credentials h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .credential-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .credential-item:last-child {
+            border-bottom: none;
+        }
+
+        .credential-label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .credential-value {
+            color: var(--primary);
+            font-family: monospace;
+        }
+
+        .reset-section {
+            background: #fff3e0;
+            border: 2px solid #ff9800;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .reset-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .reset-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .reset-danger {
+            background: #ffebee;
+            color: #d32f2f;
+            border: 2px solid #f44336;
+        }
+
+        .reset-danger:hover {
+            background: #f44336;
+            color: white;
+        }
+
+        .reset-warning {
+            background: #fff3e0;
+            color: #f57c00;
+            border: 2px solid #ff9800;
+        }
+
+        .reset-warning:hover {
+            background: #ff9800;
+            color: white;
+        }
+
+        .reset-info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 2px solid #2196f3;
+        }
+
+        .reset-info:hover {
+            background: #2196f3;
+            color: white;
+        }
+        
+        /* Email notification status */
+        .email-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .email-sent {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .email-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Modal for enlarged photos */
+        .photo-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .photo-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .close-photo-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 2001;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 5px;
+            }
+            
+            header {
+                padding: 16px 12px;
+                margin-bottom: 16px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .logo {
+                font-size: 1.8rem;
+            }
+            
+            .admin-info {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .admin-actions {
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                min-width: 100%;
+            }
+            
+            .content-section {
+                padding: 16px 12px;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .submission-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .submission-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .photos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            
+            .photo-image {
+                height: 120px;
+            }
+
+            .url-preview {
+                padding: 8px;
+            }
+
+            .url-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .url-note {
+                white-space: normal;
+            }
+            
+            .users-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .user-actions {
+                flex-direction: column;
+            }
+            
+            .notification-toast {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+
+            .auth-section {
+                padding: 20px 15px;
+            }
+
+            .reset-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .photos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .submission-actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <i class="fas fa-mug-hot logo"></i>
+            <h1>Πίνακας Διαχειριστή Cafedium</h1>
+            <p class="subtitle">Διαχείριση υποβολών και μηνυμάτων από επισκέπτες • Email: info.franklydear@gmail.com</p>
+        </header>
+        
+        <!-- Authentication Section -->
+        <div id="authSection" class="auth-section">
+            <div class="admin-setup-info">
+                <h3><i class="fas fa-info-circle"></i> Πληροφορίες Διαχειριστή</h3>
+                <p>Για να χρησιμοποιήσετε τον πίνακα διαχειριστή, πρέπει να δημιουργήσετε λογαριασμό.</p>
+                
+                <div class="admin-credentials">
+                    <h4><i class="fas fa-key"></i> Προτεινόμενα Διαπιστευτήρια:</h4>
+                    <div class="credential-item">
+                        <span class="credential-label">Email:</span>
+                        <span class="credential-value">info.franklydear@gmail.com</span>
+                    </div>
+                    <div class="credential-item">
+                        <span class="credential-label">Κωδικός:</span>
+                        <span class="credential-value">admin123</span>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 0.85rem; color: #666;">
+                        <i class="fas fa-envelope"></i> Όλες οι ειδοποιήσεις θα σταλθούν στο: <strong>info.franklydear@gmail.com</strong>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-auth-tab="login-tab">
+                    <i class="fas fa-sign-in-alt"></i> Σύνδεση
+                </button>
+                <button class="auth-tab" data-auth-tab="register-tab">
+                    <i class="fas fa-user-plus"></i> Εγγραφή
+                </button>
+                <button class="auth-tab" data-auth-tab="reset-tab">
+                    <i class="fas fa-sync"></i> Επαναφορά
+                </button>
+            </div>
+            
+            <div id="login-tab" class="auth-content active">
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email"><i class="fas fa-envelope"></i> Διεύθυνση E-mail:</label>
+                        <input type="email" id="login-email" name="email" placeholder="info.franklydear@gmail.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password"><i class="fas fa-lock"></i> Κωδικός Πρόσβασης:</label>
+                        <input type="password" id="login-password" name="password" placeholder="Ο κωδικός πρόσβασής σας" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-sign-in-alt"></i> Σύνδεση
+                    </button>
+                    
+                    <div class="message" id="loginMessage"></div>
+                </form>
+            </div>
+            
+            <div id="register-tab" class="auth-content">
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="register-name"><i class="fas fa-user"></i> Ονοματεπώνυμο:</label>
+                        <input type="text" id="register-name" name="name" placeholder="Το ονοματεπώνυμό σας" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-email"><i class="fas fa-envelope"></i> Διεύθυνση E-mail:</label>
+                        <input type="email" id="register-email" name="email" placeholder="info.franklydear@gmail.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-password"><i class="fas fa-lock"></i> Κωδικός Πρόσβασης:</label>
+                        <input type="password" id="register-password" name="password" placeholder="Δημιουργήστε έναν κωδικό πρόσβασης" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-confirm-password"><i class="fas fa-lock"></i> Επιβεβαίωση Κωδικού:</label>
+                        <input type="password" id="register-confirm-password" name="confirmPassword" placeholder="Εισάγετε ξανά τον κωδικό πρόσβασης" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-user-plus"></i> Εγγραφή
+                    </button>
+                    
+                    <div class="message" id="registerMessage"></div>
+                </form>
+            </div>
+
+            <div id="reset-tab" class="auth-content">
+                <div class="reset-section">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Επαναφορά Συστήματος</h3>
+                    <p><strong>Προσοχή:</strong> Αυτές οι ενέργειες θα διαγράψουν δεδομένα. Χρημοποιήστε τις μόνο αν έχετε πρόβλημα με σύνδεση.</p>
+                    
+                    <div class="reset-buttons">
+                        <button class="reset-btn reset-danger" id="hardResetBtn">
+                            <i class="fas fa-bomb"></i> Πλήρης Επαναφορά
+                        </button>
+                        <button class="reset-btn reset-warning" id="resetUsersBtn">
+                            <i class="fas fa-users-slash"></i> Διαγραφή Χρηστών
+                        </button>
+                        <button class="reset-btn reset-info" id="resetAdminBtn">
+                            <i class="fas fa-user-cog"></i> Επαναφορά Διαχειριστή
+                        </button>
+                    </div>
+
+                    <div id="resetInstructions" style="margin-top: 20px; display: none;">
+                        <div class="admin-setup-info">
+                            <h4><i class="fas fa-info-circle"></i> Οδηγίες Μετά την Επαναφορά:</h4>
+                            <ol>
+                                <li>Κάντε εγγραφή ξανά ως διαχειριστής</li>
+                                <li>Χρησιμοποιήστε τα ίδια ή νέα διαπιστευτήρια</li>
+                                <li>Οι χρήστες θα εμφανίζονται αυτόματα όταν κάνουν νέες εγγραφές</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="message" id="resetMessage"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Admin Panel (shown after login) -->
+        <div id="adminPanel" style="display: none;">
+            <div class="admin-info">
+                <div class="admin-welcome">
+                    <i class="fas fa-user-shield"></i> Καλώς ήρθες, <span id="adminName">Διαχειριστή</span>!
+                    <span class="email-status email-sent" id="emailStatus" style="display: none;">
+                        <i class="fas fa-envelope"></i> Email ενεργό
+                    </span>
+                </div>
+                <div class="admin-actions">
+                    <button class="main-app-btn" id="mainAppBtn">
+                        <i class="fas fa-home"></i> Κύρια Εφαρμογή
+                    </button>
+                    <button class="sync-btn" id="syncUsersBtn">
+                        <i class="fas fa-sync"></i> Συγχρονισμός
+                    </button>
+                    <button class="email-test-btn" id="testEmailNowBtn">
+                        <i class="fas fa-paper-plane"></i> Δοκιμή Email
+                    </button>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Αποσύνδεση
+                    </button>
+                </div>
+            </div>
+            
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <div class="stat-number" id="total-submissions">0</div>
+                    <div class="stat-label">Συνολικές Υποβολές</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-number" id="pending-submissions">0</div>
+                    <div class="stat-label">Υποβολές σε Εκκρεμότητα</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-number" id="answered-submissions">0</div>
+                    <div class="stat-label">Απαντημένες Υποβολές</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number" id="registered-users">0</div>
+                    <div class="stat-label">Εγγεγραμμένοι Χρήστες</div>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" data-tab="photos-tab">
+                    <i class="fas fa-camera"></i> Υποβολές
+                </button>
+                <button class="tab" data-tab="messages-tab">
+                    <i class="fas fa-envelope"></i> Μηνύματα
+                </button>
+                <button class="tab" data-tab="users-tab">
+                    <i class="fas fa-users"></i> Χρήστες
+                </button>
+                <button class="tab" data-tab="offers-tab">
+                    <i class="fas fa-gift"></i> Προσφορές
+                </button>
+                <button class="tab" data-tab="notifications-tab" id="notificationsTab">
+                    <i class="fas fa-bell"></i> Ειδοποιήσεις
+                    <span class="notifications-badge" id="notificationsBadge" style="display: none;">0</span>
+                </button>
+            </div>
+            
+            <main>
+                <!-- Photo Submissions Tab -->
+                <section id="photos-tab" class="tab-content active">
+                    <div class="content-section">
+                        <h2><i class="fas fa-images"></i> Υποβολές Φωτογραφιών Καφέ</h2>
+                        
+                        <div class="filters">
+                            <select class="filter-select" id="status-filter">
+                                <option value="all">Όλες οι Καταστάσεις</option>
+                                <option value="pending">Σε Εκκρεμότητα</option>
+                                <option value="reviewed">Εξετασμένες</option>
+                                <option value="answered">Απαντημένες</option>
+                            </select>
+                            
+                            <select class="filter-select" id="date-filter">
+                                <option value="all">Όλες οι Ημερομηνίες</option>
+                                <option value="today">Σήμερα</option>
+                                <option value="week">Τελευταία 7 Ημέρες</option>
+                                <option value="month">Τελευταίος Μήνας</option>
+                            </select>
+                            
+                            <input type="text" class="search-input" id="search-input" placeholder="Αναζήτηση με email...">
+                        </div>
+                        
+                        <div class="submissions-list" id="photo-submissions-list">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Messages Tab -->
+                <section id="messages-tab" class="tab-content">
+                    <div class="content-section">
+                        <h2><i class="fas fa-comments"></i> Μηνύματα Επικοινωνίας</h2>
+                        
+                        <div class="filters">
+                            <select class="filter-select" id="message-status-filter">
+                                <option value="all">Όλα τα Μηνύματα</option>
+                                <option value="pending">Σε Εκκρεμότητα</option>
+                                <option value="answered">Απαντημένα</option>
+                            </select>
+                            
+                            <input type="text" class="search-input" id="message-search-input" placeholder="Αναζήτηση με όνομα ή email...">
+                        </div>
+                        
+                        <div class="submissions-list" id="message-submissions-list">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Users Tab -->
+                <section id="users-tab" class="tab-content">
+                    <div class="content-section">
+                        <h2><i class="fas fa-users"></i> Διαχείριση Εγγεγραμμένων Χρηστών</h2>
+                        
+                        <div class="filters">
+                            <input type="text" class="search-input" id="user-search-input" placeholder="Αναζήτηση με όνομα ή email...">
+                        </div>
+                        
+                        <div class="users-list" id="users-list">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Offers Tab -->
+                <section id="offers-tab" class="tab-content">
+                    <div class="content-section">
+                        <h2><i class="fas fa-gift"></i> Διαχείριση Προσφορών</h2>
+                        
+                        <div class="offer-management">
+                            <div class="offer-item">
+                                <h3>Προσφορά 1+1 Δώρο</h3>
+                                <p>Ενεργοποίηση της προσφοράς 1+1 δώρο για όλους τους χρήστες.</p>
+                                
+                                <div class="offer-controls">
+                                    <div class="form-group">
+                                        <label for="offer-1plus1-status">Κατάσταση:</label>
+                                        <select class="filter-select" id="offer-1plus1-status">
+                                            <option value="active">Ενεργή</option>
+                                            <option value="inactive">Ανενεργή</option>
+                                        </select>
+                                    </div>
+                                        
+                                    <div class="form-group">
+                                        <label for="offer-1plus1-duration">Διάρκεια (ώρες):</label>
+                                        <input type="number" id="offer-1plus1-duration" class="filter-select" min="1" max="168" value="24">
+                                    </div>
+                                        
+                                    <button class="action-btn btn-reply" id="save-offer-1plus1">
+                                        <i class="fas fa-save"></i> Αποθήκευση Ρυθμίσεων
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Notifications Tab -->
+                <section id="notifications-tab" class="tab-content">
+                    <div class="content-section">
+                        <h2><i class="fas fa-bell"></i> Ειδοποιήσεις Ανταλλαγών</h2>
+                        
+                        <div class="submissions-list" id="notifications-list">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+        
+        <footer>
+            <p>
+                Cafedium <span class="coffee-icon">☕</span> 
+                Πίνακας Διαχειριστή
+            </p>
+            <p>© 2023 - Όλα τα δικαιώματα διατηρούνται • Email: info.franklydear@gmail.com</p>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="submission-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Προβολή Υποβολής</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="reply-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Απάντηση στον Χρήστη</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="reply-user-info">
+                    <!-- Dynamic content -->
+                </div>
+                
+                <div class="reply-form">
+                    <div class="form-group">
+                        <label for="reply-message">Μήνυμα Απάντησης:</label>
+                        <textarea id="reply-message" placeholder="Γράψτε το μήνυμα απάντησής σας εδώ...&#10;&#10;Μπορείτε να επικολλήσετε URLs που θα μετατραπούν αυτόματα σε clickable links για τον χρήστη."></textarea>
+                    </div>
+                    
+                    <div class="url-preview" id="url-preview" style="display: none;">
+                        <h4>Προεπισκόπηση URLs:</h4>
+                        <div id="url-preview-content"></div>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button class="action-btn btn-view" id="cancel-reply">
+                            <i class="fas fa-times"></i> Ακύρωση
+                        </button>
+                        <button class="action-btn btn-reply" id="send-reply">
+                            <i class="fas fa-paper-plane"></i> Αποστολή Απάντησης
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="points-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Διαχείριση Πόντων Χρήστη</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="points-user-info">
+                    <!-- Dynamic content -->
+                </div>
+                
+                <div class="points-management">
+                    <div class="form-group">
+                        <label for="current-points">Τρέχοντες Πόντοι:</label>
+                        <input type="number" id="current-points" class="filter-select" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="points-action">Ενέργεια:</label>
+                        <select class="filter-select" id="points-action">
+                            <option value="add">Προσθήκη Πόντων</option>
+                            <option value="remove">Αφαίρεση Πόντων</option>
+                            <option value="set">Ορισμός Πόντων</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="points-amount">Ποσότητα Πόντων:</label>
+                        <input type="number" id="points-amount" class="filter-select" min="0" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="points-reason">Αιτιολογία (προαιρετικά):</label>
+                        <textarea id="points-reason" placeholder="Προσθέστε μια σύντομη αιτιολογία για την αλλαγή των πόντων..."></textarea>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button class="action-btn btn-view" id="cancel-points">
+                            <i class="fas fa-times"></i> Ακύρωση
+                        </button>
+                        <button class="action-btn btn-reply" id="save-points">
+                            <i class="fas fa-save"></i> Αποθήκευση Αλλαγών
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Επιτυχία!</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-animation">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Το μήνυμα στάλθηκε επιτυχώς!</h3>
+                    <p>Ο χρήστης θα ενημερωθεί για την απάντησή σας.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for enlarged photos -->
+    <div class="photo-modal" id="photoModal">
+        <button class="close-photo-modal">&times;</button>
+        <img id="enlargedPhoto" src="" alt="Μεγεθυσμένη φωτογραφία">
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="notification-toast" id="notification-toast">
+        <div class="notification-icon">
+            <i class="fas fa-bell"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title" id="notification-title">Νέα Ειδοποίηση</div>
+            <div class="notification-message" id="notification-message">Έχετε νέα μηνύματα</div>
+        </div>
+        <button class="notification-close" id="notification-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Sound Notification -->
+    <audio id="notification-sound" class="sound-notification">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Προσθήκη στυλ για submit button
+        const style = document.createElement('style');
+        style.textContent = `
+            .submit-btn {
+                background: linear-gradient(to right, var(--primary), var(--primary-light));
+                color: white;
+                border: none;
+                padding: 16px 25px;
+                font-size: 1.1rem;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.3s;
+                width: 100%;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+                margin-top: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .submit-btn:hover {
+                background: linear-gradient(to right, var(--primary-light), var(--secondary));
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+            }
+            
+            .submit-btn:active {
+                transform: translateY(0);
+            }
+            
+            .submit-btn:disabled {
+                background: linear-gradient(to right, #cccccc, #aaaaaa);
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+            
+            .message {
+                padding: 15px;
+                border-radius: 10px;
+                margin-top: 20px;
+                text-align: center;
+                display: none;
+                font-weight: 500;
+            }
+            
+            .success {
+                background-color: #e8f5e9;
+                color: var(--success);
+                border: 1px solid #c8e6c9;
+            }
+            
+            .error {
+                background-color: #ffebee;
+                color: var(--error);
+                border: 1px solid #ffcdd2;
+            }
+            
+            .info {
+                background-color: #e3f2fd;
+                color: var(--info);
+                border: 1px solid #bbdefb;
+            }
+
+            .reset-section {
+                background: #fff3e0;
+                border: 2px solid #ff9800;
+                border-radius: 10px;
+                padding: 20px;
+                margin: 20px 0;
+            }
+
+            .reset-buttons {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 10px;
+                margin-top: 15px;
+            }
+
+            .reset-btn {
+                padding: 12px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                transition: all 0.3s;
+            }
+
+            .reset-danger {
+                background: #ffebee;
+                color: #d32f2f;
+                border: 2px solid #f44336;
+            }
+
+            .reset-danger:hover {
+                background: #f44336;
+                color: white;
+            }
+
+            .reset-warning {
+                background: #fff3e0;
+                color: #f57c00;
+                border: 2px solid #ff9800;
+            }
+
+            .reset-warning:hover {
+                background: #ff9800;
+                color: white;
+            }
+
+            .reset-info {
+                background: #e3f2fd;
+                color: #1976d2;
+                border: 2px solid #2196f3;
+            }
+
+            .reset-info:hover {
+                background: #2196f3;
+                color: white;
+            }
+        `;
+        document.head.appendChild(style);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Cafedium Admin Panel Loading...');
+            console.log('📧 Email Notifications will be sent to: info.franklydear@gmail.com');
+            console.log('🔑 EmailJS Public Key: 2a_9Pufk5U23tZ0Vg');
+            
+            let currentAdmin = null;
+            let emailTested = false;
+
+            // ============================================
+            // EMAIL NOTIFICATION SYSTEM
+            // ============================================
+
+            // 1. EMAIL SENDING FUNCTION
+            function sendAdminEmail(subject, message, type) {
+                const serviceID = 'service_64rk8d9';
+                const templateID = 'template_fb1n18d';
+                const adminEmail = 'info.franklydear@gmail.com';
+                
+                console.log('📧 =================================');
+                console.log('📧 SENDING EMAIL NOTIFICATION');
+                console.log('📧 =================================');
+                console.log('To:', adminEmail);
+                console.log('Subject:', subject);
+                console.log('Type:', type);
+                console.log('Service:', serviceID);
+                
+                const templateParams = {
+                    to_email: adminEmail,
+                    to_name: 'Διαχειριστής Cafedium',
+                    subject: subject,
+                    message: message,
+                    notification_type: type,
+                    date: new Date().toLocaleString('el-GR')
+                };
+                
+                return emailjs.send(serviceID, templateID, templateParams)
+                    .then(function(response) {
+                        console.log('✅ EMAIL SENT SUCCESSFULLY!');
+                        console.log('Status:', response.status);
+                        console.log('Time:', new Date().toLocaleTimeString());
+                        console.log('📧 =================================');
+                        
+                        emailTested = true;
+                        document.getElementById('emailStatus').style.display = 'inline-block';
+                        
+                        showToast('✅ Email ειδοποίησης στάλθηκε!', 'success');
+                        return response;
+                    })
+                    .catch(function(error) {
+                        console.error('❌ EMAIL SENDING FAILED');
+                        console.error('Error:', error.text || error.message);
+                        console.error('Status:', error.status);
+                        console.error('📧 =================================');
+                        
+                        let errorMsg = 'Σφάλμα αποστολής email: ';
+                        if (error.text) {
+                            errorMsg += error.text;
+                        } else if (error.message) {
+                            errorMsg += error.message;
+                        } else {
+                            errorMsg += 'Άγνωστο σφάλμα';
+                        }
+                        
+                        showToast(errorMsg, 'error');
+                        throw error;
+                    });
+            }
+
+            // 2. CHECK FOR NEW DATA AND SEND EMAILS
+            function checkForNewDataAndSendEmail() {
+                console.log('🔍 Checking for new data...');
+                
+                try {
+                    const allSubmissions = JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]');
+                    const users = JSON.parse(localStorage.getItem('users') || '[]');
+                    
+                    // Find new submissions without email notification
+                    const newSubmissions = allSubmissions.filter(sub => 
+                        !sub.emailNotified && sub.status === 'pending'
+                    );
+                    
+                    // Find new users (last 24 hours)
+                    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                    const newUsers = users.filter(user => {
+                        const userDate = new Date(user.registrationDate || user.date || Date.now());
+                        return !user.emailNotified && userDate > twentyFourHoursAgo;
+                    });
+                    
+                    console.log('📊 Found:', {
+                        newSubmissions: newSubmissions.length,
+                        newUsers: newUsers.length
+                    });
+                    
+                    // Send email for new submissions
+                    if (newSubmissions.length > 0) {
+                        console.log(`📧 Sending email for ${newSubmissions.length} new submissions`);
+                        
+                        const emailSubject = `☕ ${newSubmissions.length} Νέα Υποβολή(ές) στο Cafedium`;
+                        let emailMessage = `Έχετε ${newSubmissions.length} νέα μηνύματα προς επεξεργασία:\n\n`;
+                        
+                        newSubmissions.forEach((submission, index) => {
+                            emailMessage += `${index + 1}. ${submission.type === 'photo' ? '📸 Φωτογραφίες Καφέ' : '✉️ Μήνυμα'}\n`;
+                            emailMessage += `   👤 Χρήστης: ${submission.userEmail || submission.email || 'Άγνωστος'}\n`;
+                            emailMessage += `   📅 Ημερομηνία: ${formatDate(submission.date)}\n`;
+                            if (submission.desire) {
+                                emailMessage += `   💭 Επιθυμία: ${submission.desire.substring(0, 80)}${submission.desire.length > 80 ? '...' : ''}\n`;
+                            }
+                            emailMessage += '\n';
+                            
+                            // Mark as notified
+                            markSubmissionAsNotified(submission.id);
+                        });
+                        
+                        emailMessage += `🔗 Σύνδεσμος: ${window.location.href}\n`;
+                        emailMessage += `⏰ Έλεγχος: ${new Date().toLocaleString('el-GR')}`;
+                        
+                        sendAdminEmail(emailSubject, emailMessage, 'new_submissions');
+                        
+                    } else if (newUsers.length > 0) {
+                        // Send email for new users
+                        console.log(`📧 Sending email for ${newUsers.length} new users`);
+                        
+                        const emailSubject = `👥 ${newUsers.length} Νέοι Χρήστες στο Cafedium`;
+                        let emailMessage = `Έχετε ${newUsers.length} νέους χρήστες:\n\n`;
+                        
+                        newUsers.forEach((user, index) => {
+                            emailMessage += `${index + 1}. ${user.name || 'Χωρίς όνομα'}\n`;
+                            emailMessage += `   📧 Email: ${user.email}\n`;
+                            emailMessage += `   📅 Εγγραφή: ${formatDate(user.registrationDate || user.date)}\n\n`;
+                            
+                            // Mark as notified
+                            markUserAsNotified(user.email);
+                        });
+                        
+                        emailMessage += `📊 Σύνολο χρηστών: ${users.length}\n`;
+                        emailMessage += `⏰ Έλεγχος: ${new Date().toLocaleString('el-GR')}`;
+                        
+                        sendAdminEmail(emailSubject, emailMessage, 'new_users');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error checking data:', error);
+                }
+            }
+
+            // 3. MARK SUBMISSION AS NOTIFIED
+            function markSubmissionAsNotified(id) {
+                try {
+                    const allSubmissions = JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]');
+                    const submissionIndex = allSubmissions.findIndex(sub => sub.id === id);
+                    if (submissionIndex !== -1) {
+                        allSubmissions[submissionIndex].emailNotified = true;
+                        localStorage.setItem('coffeeSubmissions', JSON.stringify(allSubmissions));
+                    }
+                } catch (e) {
+                    console.error('Error marking submission:', e);
+                }
+            }
+
+            // 4. MARK USER AS NOTIFIED
+            function markUserAsNotified(email) {
+                try {
+                    const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+                    const userIndex = allUsers.findIndex(user => user.email === email);
+                    if (userIndex !== -1) {
+                        allUsers[userIndex].emailNotified = true;
+                        localStorage.setItem('users', JSON.stringify(allUsers));
+                    }
+                } catch (e) {
+                    console.error('Error marking user:', e);
+                }
+            }
+
+            // ============================================
+            // AUTHENTICATION SYSTEM
+            // ============================================
+
+            // Check admin session
+            function checkAdminSession() {
+                try {
+                    const savedAdmin = localStorage.getItem('currentAdmin');
+                    if (savedAdmin) {
+                        currentAdmin = JSON.parse(savedAdmin);
+                        const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+                        const adminExists = admins.find(a => a.email === currentAdmin.email);
+                        
+                        if (adminExists) {
+                            showAdminPanel();
+                            return true;
+                        } else {
+                            localStorage.removeItem('currentAdmin');
+                            currentAdmin = null;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Session error:', e);
+                    localStorage.removeItem('currentAdmin');
+                }
+                return false;
+            }
+
+            function showAuthSection() {
+                document.getElementById('authSection').style.display = 'block';
+                document.getElementById('adminPanel').style.display = 'none';
+            }
+
+            function showAdminPanel() {
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                document.getElementById('adminName').textContent = currentAdmin.name;
+                
+                // Load data and check for new submissions
+                loadAllData();
+                
+                // Check for new data and send email if needed
+                setTimeout(() => {
+                    checkForNewDataAndSendEmail();
+                }, 2000);
+            }
+
+            // Auth tabs
+            const authTabs = document.querySelectorAll('.auth-tab');
+            const authContents = document.querySelectorAll('.auth-content');
+            
+            authTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const authTabId = tab.getAttribute('data-auth-tab');
+                    authTabs.forEach(t => t.classList.remove('active'));
+                    authContents.forEach(tc => tc.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(authTabId).classList.add('active');
+                });
+            });
+
+            // Registration
+            const registerForm = document.getElementById('registerForm');
+            const registerMessage = document.getElementById('registerMessage');
+            
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm-password').value;
+                
+                if (!name || !email || !password || !confirmPassword) {
+                    showMessage(registerMessage, 'Παρακαλώ συμπληρώστε όλα τα πεδία.', 'error');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    showMessage(registerMessage, 'Οι κωδικοί δεν ταιριάζουν.', 'error');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    showMessage(registerMessage, 'Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες.', 'error');
+                    return;
+                }
+                
+                try {
+                    showMessage(registerMessage, 'Δημιουργία λογαριασμού...', 'info');
+                    
+                    const newAdmin = {
+                        id: Date.now().toString(),
+                        name: name,
+                        email: email,
+                        password: password,
+                        registrationDate: new Date().toISOString(),
+                        role: 'admin'
+                    };
+                    
+                    const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+                    const existingAdmin = admins.find(a => a.email === email);
+                    if (existingAdmin) {
+                        showMessage(registerMessage, 'Υπάρχει ήδη διαχειριστής με αυτό το email.', 'error');
+                        return;
+                    }
+                    
+                    admins.push(newAdmin);
+                    localStorage.setItem('admins', JSON.stringify(admins));
+                    
+                    currentAdmin = newAdmin;
+                    localStorage.setItem('currentAdmin', JSON.stringify(currentAdmin));
+                    showAdminPanel();
+                    
+                    showMessage(registerMessage, 'Ο λογαριασμός δημιουργήθηκε επιτυχώς!', 'success');
+                    
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    showMessage(registerMessage, 'Προέκυψε σφάλμα κατά την εγγραφή.', 'error');
+                }
+            });
+
+            // Login
+            const loginForm = document.getElementById('loginForm');
+            const loginMessage = document.getElementById('loginMessage');
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                if (!email || !password) {
+                    showMessage(loginMessage, 'Παρακαλώ συμπληρώστε όλα τα πεδία.', 'error');
+                    return;
+                }
+                
+                try {
+                    showMessage(loginMessage, 'Σύνδεση...', 'info');
+                    
+                    const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+                    const admin = admins.find(a => a.email === email && a.password === password);
+                    
+                    if (admin) {
+                        currentAdmin = admin;
+                        localStorage.setItem('currentAdmin', JSON.stringify(currentAdmin));
+                        showAdminPanel();
+                        showMessage(loginMessage, 'Σύνδεση επιτυχής!', 'success');
+                    } else {
+                        showMessage(loginMessage, 'Λάθος email ή κωδικός πρόσβασης.', 'error');
+                    }
+                    
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showMessage(loginMessage, 'Προέκυψε σφάλμα κατά τη σύνδεση.', 'error');
+                }
+            });
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                if (confirm('Θέλετε να αποσυνδεθείτε;')) {
+                    currentAdmin = null;
+                    localStorage.removeItem('currentAdmin');
+                    showAuthSection();
+                }
+            });
+
+            // Test Email Button
+            document.getElementById('testEmailNowBtn').addEventListener('click', function() {
+                console.log('🧪 Manual email test requested');
+                
+                if (confirm('Θέλετε να στείλετε δοκιμαστικό email τώρα; Θα σταλεί στο info.franklydear@gmail.com')) {
+                    sendAdminEmail(
+                        '🧪 ΔΟΚΙΜΗ: Cafedium Admin Panel',
+                        '🎉 ΣΥΓΧΑΡΗΤΗΡΙΑ!\n\nΤο σύστημα ειδοποιήσεων του Cafedium λειτουργεί πλήρως!\n\n' +
+                        'Από τώρα θα λαμβάνετε αυτόματα ειδοποιήσεις όταν:\n' +
+                        '✅ Υπάρχουν νέες υποβολές φωτογραφιών καφέ\n' +
+                        '✅ Υπάρχουν νέα μηνύματα από χρήστες\n' +
+                        '✅ Εγγράφονται νέοι χρήστες\n\n' +
+                        '📧 Παραλήπτης: info.franklydear@gmail.com\n' +
+                        '🔗 Σύνδεσμος Admin Panel: ' + window.location.href + '\n' +
+                        '⏰ Χρόνος αποστολής: ' + new Date().toLocaleString('el-GR'),
+                        'system_test'
+                    ).then(() => {
+                        console.log('✅ Manual email test completed successfully');
+                    }).catch(error => {
+                        console.error('❌ Manual email test failed:', error);
+                    });
+                }
+            });
+
+            // Utility function for messages
+            function showMessage(element, text, type) {
+                if (!element) return;
+                element.textContent = text;
+                element.className = `message ${type}`;
+                element.style.display = 'block';
+                setTimeout(() => element.style.display = 'none', 5000);
+            }
+
+            // ============================================
+            // MAIN APPLICATION FUNCTIONS
+            // ============================================
+
+            // Go to main app
+            document.getElementById('mainAppBtn').addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+
+            // Sync users
+            document.getElementById('syncUsersBtn').addEventListener('click', function() {
+                manualUserSync();
+            });
+
+            function manualUserSync() {
+                const allUsers = [];
+                const userPoints = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                const submissions = JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]');
+                const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+                const redemptions = JSON.parse(localStorage.getItem('offerRedemptions') || '[]');
+                
+                // Collect all users
+                userPoints.forEach(up => {
+                    if (up.email && !allUsers.find(u => u.email === up.email)) {
+                        allUsers.push({
+                            id: up.userId || Date.now(),
+                            name: up.name || 'Χρήστης',
+                            email: up.email,
+                            registrationDate: up.registrationDate || new Date().toISOString(),
+                            points: up.points || 0
+                        });
+                    }
+                });
+                
+                submissions.forEach(sub => {
+                    if (sub.userEmail && !allUsers.find(u => u.email === sub.userEmail)) {
+                        allUsers.push({
+                            id: sub.userId || Date.now(),
+                            name: sub.userName || 'Χρήστης',
+                            email: sub.userEmail,
+                            registrationDate: sub.date || new Date().toISOString(),
+                            points: 0
+                        });
+                    }
+                });
+
+                notifications.forEach(notif => {
+                    if (notif.userEmail && !allUsers.find(u => u.email === notif.userEmail)) {
+                        allUsers.push({
+                            id: Date.now(),
+                            name: notif.userName || 'Χρήστης',
+                            email: notif.userEmail,
+                            registrationDate: notif.date || new Date().toISOString(),
+                            points: 0
+                        });
+                    }
+                });
+
+                redemptions.forEach(redemption => {
+                    if (redemption.email && !allUsers.find(u => u.email === redemption.email)) {
+                        allUsers.push({
+                            id: redemption.userId || Date.now(),
+                            name: 'Χρήστης',
+                            email: redemption.email,
+                            registrationDate: redemption.date || new Date().toISOString(),
+                            points: 0
+                        });
+                    }
+                });
+                
+                localStorage.setItem('users', JSON.stringify(allUsers));
+                showToast(`Συγχρονίστηκαν ${allUsers.length} χρήστες!`, 'success');
+                loadUsers();
+                updateStats();
+            }
+
+            // Tabs system
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(tc => tc.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+
+                    if (tabId === 'notifications-tab') {
+                        loadNotifications();
+                    }
+                    
+                    if (tabId === 'offers-tab') {
+                        loadOffersManagement();
+                    }
+                });
+            });
+            
+            // Load all data
+            function loadAllData() {
+                loadPhotoSubmissions();
+                loadMessageSubmissions();
+                loadUsers();
+                loadOffersManagement();
+                loadNotifications();
+                updateStats();
+            }
+            
+            // Filter real users
+            function filterRealUsers(data) {
+                return data.filter(item => {
+                    if (item.userEmail && item.userEmail.includes('example.com')) return false;
+                    if (item.email && item.email.includes('example.com')) return false;
+                    if (!item.userEmail && !item.email) return false;
+                    if (item.userEmail && item.userEmail === 'test@test.com') return false;
+                    if (item.email && item.email === 'test@test.com') return false;
+                    return true;
+                });
+            }
+            
+            // Load photo submissions
+            function loadPhotoSubmissions() {
+                const allSubmissions = getAllSubmissions();
+                const realSubmissions = filterRealUsers(allSubmissions);
+                const photoSubmissions = realSubmissions.filter(sub => sub.type === 'photo');
+                const listContainer = document.getElementById('photo-submissions-list');
+                
+                if (photoSubmissions.length === 0) {
+                    listContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-images"></i>
+                            </div>
+                            <h3>Δεν βρέθηκαν υποβολές φωτογραφιών</h3>
+                            <p>Δεν υπάρχουν διαθέσιμες υποβολές προς το παρόν.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                listContainer.innerHTML = '';
+                photoSubmissions.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                photoSubmissions.forEach(submission => {
+                    const statusClass = `status-${submission.status || 'pending'}`;
+                    const statusText = getStatusText(submission.status || 'pending');
+                    
+                    // ΔΙΟΡΘΩΣΗ: Σωστή φόρτωση φωτογραφιών
+                    let photosHTML = '<p>Δεν υπάρχουν φωτογραφίες</p>';
+                    
+                    if (submission.photos && submission.photos.length > 0) {
+                        photosHTML = '<div class="photos-grid">';
+                        
+                        submission.photos.forEach((photo, index) => {
+                            let imageUrl = '';
+                            
+                            // ΔΙΟΡΘΩΣΗ: Χειρισμός διαφορετικών μορφών δεδομένων φωτογραφιών
+                            if (typeof photo === 'string') {
+                                imageUrl = photo;
+                            } else if (photo.data) {
+                                imageUrl = photo.data;
+                            } else if (photo.url) {
+                                imageUrl = photo.url;
+                            } else if (photo.base64) {
+                                imageUrl = photo.base64;
+                            } else if (photo.image) {
+                                imageUrl = photo.image;
+                            }
+                            
+                            // Βεβαιώνουμε ότι έχει σωστό prefix για base64
+                            if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('data:image')) {
+                                imageUrl = `data:image/jpeg;base64,${imageUrl}`;
+                            }
+                            
+                            // Ασφάλεια: escape quotes για onclick
+                            const safeImageUrl = imageUrl ? imageUrl.replace(/'/g, "\\'") : '#';
+                            
+                            photosHTML += `
+                                <div class="photo-item">
+                                    <img src="${imageUrl || '#'}" 
+                                         alt="Φωτογραφία καφέ ${index + 1}" 
+                                         class="photo-image"
+                                         data-full="${imageUrl}"
+                                         onclick="enlargePhoto('${safeImageUrl}')">
+                                </div>
+                            `;
+                        });
+                        
+                        photosHTML += '</div>';
+                    }
+                    
+                    const fortuneTellerBadge = submission.fortuneTellerName ? `
+                        <div style="margin-top: 8px;">
+                            <span style="background: var(--primary); color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem;">
+                                <i class="fas fa-crystal-ball"></i> ${submission.fortuneTellerName}
+                            </span>
+                        </div>
+                    ` : '';
+                    
+                    const submissionCard = document.createElement('div');
+                    submissionCard.className = 'submission-card';
+                    submissionCard.innerHTML = `
+                        <div class="submission-header">
+                            <div class="submission-user">
+                                ${submission.userEmail || submission.email || 'Άγνωστος Χρήστης'}
+                                ${fortuneTellerBadge}
+                            </div>
+                            <div class="submission-date">${formatDate(submission.date)}</div>
+                            <div class="submission-status ${statusClass}">${statusText}</div>
+                        </div>
+                        
+                        <div class="submission-content">
+                            <div class="submission-message">
+                                <strong>Τύπος:</strong> ${submission.coffeeTypeText || 'Γραπτή Ερμηνεία'}<br>
+                                ${submission.desire ? `<strong>Επιθυμία:</strong> ${submission.desire}` : ''}
+                            </div>
+                            
+                            ${photosHTML}
+                        </div>
+                        
+                        <div class="submission-actions">
+                            <button class="action-btn btn-view" data-id="${submission.id}">
+                                <i class="fas fa-eye"></i> Προβολή
+                            </button>
+                            <button class="action-btn btn-reply" data-id="${submission.id}">
+                                <i class="fas fa-reply"></i> Απάντηση
+                            </button>
+                            ${submission.photos && submission.photos.length > 0 ? `
+                            <button class="action-btn btn-download" data-id="${submission.id}">
+                                <i class="fas fa-download"></i> Λήψη
+                            </button>
+                            ` : ''}
+                            <button class="action-btn btn-delete" data-id="${submission.id}">
+                                <i class="fas fa-trash"></i> Διαγραφή
+                            </button>
+                        </div>
+                    `;
+                    
+                    listContainer.appendChild(submissionCard);
+                });
+                
+                addActionEventListeners();
+            }
+            
+            // Συνάρτηση για μεγέθυνση φωτογραφίας
+            window.enlargePhoto = function(imageUrl) {
+                const modal = document.getElementById('photoModal');
+                const img = document.getElementById('enlargedPhoto');
+                
+                if (imageUrl && imageUrl !== '#') {
+                    img.src = imageUrl;
+                    modal.style.display = 'flex';
+                }
+            };
+            
+            // Κλείσιμο modal φωτογραφίας
+            document.querySelector('.close-photo-modal').addEventListener('click', function() {
+                document.getElementById('photoModal').style.display = 'none';
+            });
+            
+            // Κλείσιμο με κλικ έξω
+            document.getElementById('photoModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+            
+            // Load message submissions
+            function loadMessageSubmissions() {
+                const allSubmissions = getAllSubmissions();
+                const realSubmissions = filterRealUsers(allSubmissions);
+                const messageSubmissions = realSubmissions.filter(sub => sub.type === 'message');
+                const listContainer = document.getElementById('message-submissions-list');
+                
+                if (messageSubmissions.length === 0) {
+                    listContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h3>Δεν βρέθηκαν μηνύματα</h3>
+                            <p>Δεν υπάρχουν διαθέσιμα μηνύματα προς το παρόν.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                listContainer.innerHTML = '';
+                messageSubmissions.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                messageSubmissions.forEach(submission => {
+                    const statusClass = `status-${submission.status || 'pending'}`;
+                    const statusText = getStatusText(submission.status || 'pending');
+                    
+                    const submissionCard = document.createElement('div');
+                    submissionCard.className = 'submission-card';
+                    submissionCard.innerHTML = `
+                        <div class="submission-header">
+                            <div>
+                                <div class="submission-user">${submission.userName || 'Άγνωστος Χρήστης'}</div>
+                                <div class="submission-date">${submission.userEmail || submission.email || 'Χωρίς email'}</div>
+                            </div>
+                            <div class="submission-date">${formatDate(submission.date)}</div>
+                            <div class="submission-status ${statusClass}">${statusText}</div>
+                        </div>
+                        
+                        <div class="submission-content">
+                            <div><strong>Θέμα:</strong> ${submission.subject || 'Χωρίς θέμα'}</div>
+                            <div class="submission-message">${submission.message || 'Δεν υπάρχει μήνυμα'}</div>
+                        </div>
+                        
+                        <div class="submission-actions">
+                            <button class="action-btn btn-view" data-id="${submission.id}">
+                                <i class="fas fa-eye"></i> Προβολή
+                            </button>
+                            <button class="action-btn btn-reply" data-id="${submission.id}">
+                                <i class="fas fa-reply"></i> Απάντηση
+                            </button>
+                            <button class="action-btn btn-delete" data-id="${submission.id}">
+                                <i class="fas fa-trash"></i> Διαγραφή
+                            </button>
+                        </div>
+                    `;
+                    
+                    listContainer.appendChild(submissionCard);
+                });
+                
+                addActionEventListeners();
+            }
+            
+            // Load users
+            function loadUsers() {
+                const users = getAllUsers();
+                const realUsers = filterRealUsers(users);
+                const userPoints = getAllUserPoints();
+                const listContainer = document.getElementById('users-list');
+                
+                if (realUsers.length === 0) {
+                    listContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3>Δεν βρέθηκαν εγγεγραμμένοι χρήστες</h3>
+                            <p>Δεν υπάρχουν εγγεγραμμένοι χρήστες προς το παρόν.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                realUsers.sort((a, b) => new Date(b.registrationDate || b.date) - new Date(a.registrationDate || a.date));
+                
+                let usersHTML = `
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Όνομα</th>
+                                <th>Email</th>
+                                <th>Πόντοι</th>
+                                <th>Επίπεδο</th>
+                                <th>Ημερομηνία Εγγραφής</th>
+                                <th>Ενέργειες</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                realUsers.forEach(user => {
+                    const userPointData = userPoints.find(p => p.email === user.email) || { points: 0, level: 'Αρχάριος' };
+                    const userCategory = getUserCategory(userPointData.points);
+                    
+                    usersHTML += `
+                        <tr>
+                            <td>${user.name || 'Χωρίς όνομα'}</td>
+                            <td>${user.email}</td>
+                            <td>${userPointData.points}</td>
+                            <td>${userPointData.level} <span class="user-category ${userCategory.class}">${userCategory.name}</span></td>
+                            <td>${formatDate(user.registrationDate || user.date)}</td>
+                            <td>
+                                <div class="user-actions">
+                                    <button class="action-btn btn-view view-user" data-id="${user.id}" data-email="${user.email}">
+                                        <i class="fas fa-eye"></i> Προβολή
+                                    </button>
+                                    <button class="action-btn btn-reply manage-points" data-id="${user.id}" data-email="${user.email}">
+                                        <i class="fas fa-coins"></i> Πόντοι
+                                    </button>
+                                    <button class="action-btn btn-delete delete-user" data-id="${user.id}" data-email="${user.email}">
+                                        <i class="fas fa-trash"></i> Διαγραφή
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                usersHTML += `
+                        </tbody>
+                    </table>
+                `;
+                
+                listContainer.innerHTML = usersHTML;
+                
+                document.querySelectorAll('.view-user').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const userId = this.getAttribute('data-id');
+                        const userEmail = this.getAttribute('data-email');
+                        viewUser(userId, userEmail);
+                    });
+                });
+                
+                document.querySelectorAll('.manage-points').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const userId = this.getAttribute('data-id');
+                        const userEmail = this.getAttribute('data-email');
+                        manageUserPoints(userId, userEmail);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-user').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const userId = this.getAttribute('data-id');
+                        const userEmail = this.getAttribute('data-email');
+                        deleteUser(userId, userEmail);
+                    });
+                });
+            }
+
+            function getUserCategory(points) {
+                if (points < 50) return { class: 'category-beginner', name: 'Αρχάριος' };
+                if (points < 150) return { class: 'category-regular', name: 'Τακτικός' };
+                if (points < 300) return { class: 'category-vip', name: 'VIP' };
+                return { class: 'category-master', name: 'Master' };
+            }
+
+            function loadOffersManagement() {
+                const offersStatus = JSON.parse(localStorage.getItem('offersStatus') || '{"1plus1": false}');
+                const offerExpiry = JSON.parse(localStorage.getItem('offerExpiry') || '{}');
+                
+                document.getElementById('offer-1plus1-status').value = offersStatus['1plus1'] ? 'active' : 'inactive';
+                
+                if (offerExpiry['1plus1'] && new Date() > new Date(offerExpiry['1plus1'])) {
+                    offersStatus['1plus1'] = false;
+                    localStorage.setItem('offersStatus', JSON.stringify(offersStatus));
+                    document.getElementById('offer-1plus1-status').value = 'inactive';
+                }
+            }
+
+            document.getElementById('save-offer-1plus1').addEventListener('click', function() {
+                const status = document.getElementById('offer-1plus1-status').value;
+                const duration = parseInt(document.getElementById('offer-1plus1-duration').value);
+                
+                const offersStatus = JSON.parse(localStorage.getItem('offersStatus') || '{}');
+                const offerExpiry = JSON.parse(localStorage.getItem('offerExpiry') || '{}');
+                
+                offersStatus['1plus1'] = status === 'active';
+                
+                if (status === 'active') {
+                    const expiryDate = new Date();
+                    expiryDate.setHours(expiryDate.getHours() + duration);
+                    offerExpiry['1plus1'] = expiryDate.toISOString();
+                } else {
+                    delete offerExpiry['1plus1'];
+                }
+                
+                localStorage.setItem('offersStatus', JSON.stringify(offersStatus));
+                localStorage.setItem('offerExpiry', JSON.stringify(offerExpiry));
+                
+                showToast(`Η προσφορά 1+1 ${status === 'active' ? 'ενεργοποιήθηκε' : 'απενεργοποιήθηκε'}!`, 'success');
+            });
+
+            function loadNotifications() {
+                const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+                const realNotifications = filterRealUsers(notifications);
+                const listContainer = document.getElementById('notifications-list');
+                const badge = document.getElementById('notificationsBadge');
+                
+                const pendingNotifications = realNotifications.filter(n => n.status === 'pending');
+                if (pendingNotifications.length > 0) {
+                    badge.textContent = pendingNotifications.length;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+                
+                if (realNotifications.length === 0) {
+                    listContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-bell-slash"></i>
+                            </div>
+                            <h3>Δεν υπάρχουν ειδοποιήσεις</h3>
+                            <p>Όλες οι ειδοποιήσεις έχουν επεξεργαστεί.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                listContainer.innerHTML = '';
+                realNotifications.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                realNotifications.forEach(notification => {
+                    const statusClass = `status-${notification.status || 'pending'}`;
+                    const statusText = getNotificationStatusText(notification.status || 'pending');
+                    
+                    const notificationCard = document.createElement('div');
+                    notificationCard.className = 'submission-card';
+                    notificationCard.innerHTML = `
+                        <div class="submission-header">
+                            <div class="submission-user">${notification.userName || notification.userEmail || 'Άγνωστος Χρήστης'}</div>
+                            <div class="submission-date">${formatDate(notification.date)}</div>
+                            <div class="submission-status ${statusClass}">${statusText}</div>
+                        </div>
+                        
+                        <div class="submission-content">
+                            <div class="submission-message">
+                                <strong>Τύπος:</strong> ${getNotificationTypeText(notification.type)}<br>
+                                ${notification.coffeeTypeText ? `<strong>Τύπος Καφεμαντείας:</strong> ${notification.coffeeTypeText}<br>` : ''}
+                                ${notification.desire ? `<strong>Επιθυμία Χρήστη:</strong> ${notification.desire}<br>` : ''}
+                                ${notification.offerTitle ? `<strong>Προσφορά:</strong> ${notification.offerTitle}<br>` : ''}
+                                ${notification.character ? `<strong>Επιλεγμένος Χαρακτήρας:</strong> ${notification.character}<br>` : ''}
+                                <strong>Χρήστης:</strong> ${notification.userEmail || 'Χωρίς email'}
+                            </div>
+                        </div>
+                        
+                        <div class="submission-actions">
+                            <button class="action-btn btn-view view-notification" data-id="${notification.date}">
+                                <i class="fas fa-eye"></i> Προβολή
+                            </button>
+                            ${notification.status === 'pending' ? `
+                            <button class="action-btn btn-reply mark-processed" data-id="${notification.date}">
+                                <i class="fas fa-check"></i> Επεξεργασμένη
+                            </button>
+                            ` : ''}
+                            <button class="action-btn btn-delete delete-notification" data-id="${notification.date}">
+                                <i class="fas fa-trash"></i> Διαγραφή
+                            </button>
+                        </div>
+                    `;
+                    
+                    listContainer.appendChild(notificationCard);
+                });
+                
+                document.querySelectorAll('.view-notification').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const notificationId = this.getAttribute('data-id');
+                        viewNotification(notificationId);
+                    });
+                });
+                
+                document.querySelectorAll('.mark-processed').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const notificationId = this.getAttribute('data-id');
+                        markNotificationProcessed(notificationId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-notification').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const notificationId = this.getAttribute('data-id');
+                        deleteNotification(notificationId);
+                    });
+                });
+            }
+            
+            function getAllSubmissions() {
+                return JSON.parse(localStorage.getItem('coffeeSubmissions') || '[]');
+            }
+            
+            function getAllUsers() {
+                return JSON.parse(localStorage.getItem('users') || '[]');
+            }
+            
+            function getAllUserPoints() {
+                return JSON.parse(localStorage.getItem('userPoints') || '[]');
+            }
+            
+            function getStatusText(status) {
+                const statusMap = {
+                    'pending': 'Σε Εκκρεμότητα',
+                    'reviewed': 'Εξετασμένη',
+                    'answered': 'Απαντημένη'
+                };
+                return statusMap[status] || status;
+            }
+
+            function getNotificationStatusText(status) {
+                const statusMap = {
+                    'pending': 'Σε Εκκρεμότητα',
+                    'processed': 'Επεξεργασμένη'
+                };
+                return statusMap[status] || status;
+            }
+
+            function getNotificationTypeText(type) {
+                const typeMap = {
+                    'offer_redemption': 'Ανταλλαγή Προσφοράς',
+                    'coffee_reading': 'Υποβολή Καφεμαντείας',
+                    'character_selection': 'Επιλογή Χαρακτήρα'
+                };
+                return typeMap[type] || type;
+            }
+            
+            function formatDate(dateString) {
+                try {
+                    if (!dateString) return 'Άγνωστη ημερομηνία';
+                    const options = { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    };
+                    return new Date(dateString).toLocaleDateString('el-GR', options);
+                } catch (e) {
+                    return 'Άγνωστη ημερομηνία';
+                }
+            }
+            
+            function addActionEventListeners() {
+                document.querySelectorAll('.btn-view').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const submissionId = parseInt(this.getAttribute('data-id'));
+                        viewSubmission(submissionId);
+                    });
+                });
+                
+                document.querySelectorAll('.btn-reply').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const submissionId = parseInt(this.getAttribute('data-id'));
+                        openReplyModal(submissionId);
+                    });
+                });
+                
+                document.querySelectorAll('.btn-download').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const submissionId = parseInt(this.getAttribute('data-id'));
+                        downloadSubmission(submissionId);
+                    });
+                });
+                
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const submissionId = parseInt(this.getAttribute('data-id'));
+                        deleteSubmission(submissionId);
+                    });
+                });
+            }
+            
+            // ============================================
+            // ΣΥΣΤΗΜΑ ΠΟΝΤΩΝ - ΣΥΝΑΡΤΗΣΕΙΣ
+            // ============================================
+            
+            // Έλεγχος πόντων χρήστη
+            function checkUserPoints(userEmail) {
+                try {
+                    const userPoints = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                    const user = userPoints.find(p => p.email === userEmail);
+                    
+                    if (user && user.points >= 50) {
+                        return {
+                            hasEnoughPoints: true,
+                            currentPoints: user.points,
+                            userData: user
+                        };
+                    } else {
+                        return {
+                            hasEnoughPoints: false,
+                            currentPoints: user ? user.points : 0,
+                            userData: user
+                        };
+                    }
+                } catch (e) {
+                    console.error('Error checking points:', e);
+                    return {
+                        hasEnoughPoints: false,
+                        currentPoints: 0,
+                        userData: null
+                    };
+                }
+            }
+            
+            // Αφαίρεση πόντων από χρήστη
+            function deductPointsFromUser(userEmail, points, reason) {
+                try {
+                    const userPoints = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                    const userIndex = userPoints.findIndex(p => p.email === userEmail);
+                    
+                    if (userIndex !== -1) {
+                        const currentPoints = userPoints[userIndex].points;
+                        if (currentPoints >= points) {
+                            userPoints[userIndex].points = currentPoints - points;
+                            
+                            // Ενημέρωση επιπέδου
+                            const newPoints = userPoints[userIndex].points;
+                            let level = 'Αρχάριος';
+                            if (newPoints >= 100) level = 'Ειδικός';
+                            if (newPoints >= 300) level = 'Μάστερ';
+                            if (newPoints >= 500) level = 'Grand Master';
+                            
+                            userPoints[userIndex].level = level;
+                            
+                            localStorage.setItem('userPoints', JSON.stringify(userPoints));
+                            
+                            // Καταγραφή συναλλαγής
+                            const pointsHistory = JSON.parse(localStorage.getItem('pointsHistory') || '[]');
+                            pointsHistory.push({
+                                userEmail: userEmail,
+                                action: 'deduct',
+                                amount: points,
+                                reason: reason,
+                                date: new Date().toISOString(),
+                                admin: currentAdmin ? currentAdmin.email : 'system'
+                            });
+                            localStorage.setItem('pointsHistory', JSON.stringify(pointsHistory));
+                            
+                            console.log(`✅ Αφαιρέθηκαν ${points} πόντοι από ${userEmail}. Νέοι πόντοι: ${newPoints}`);
+                            return true;
+                        } else {
+                            console.error(`❌ Ο χρήστης ${userEmail} δεν έχει αρκετούς πόντους`);
+                            return false;
+                        }
+                    } else {
+                        console.error(`❌ Χρήστης ${userEmail} δεν βρέθηκε`);
+                        return false;
+                    }
+                } catch (e) {
+                    console.error('Error deducting points:', e);
+                    return false;
+                }
+            }
+            
+            // ============================================
+            
+            // Modals
+            const submissionModal = document.getElementById('submission-modal');
+            const replyModal = document.getElementById('reply-modal');
+            const pointsModal = document.getElementById('points-modal');
+            const successModal = document.getElementById('success-modal');
+            const closeModalButtons = document.querySelectorAll('.close-modal');
+            
+            closeModalButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    submissionModal.style.display = 'none';
+                    replyModal.style.display = 'none';
+                    pointsModal.style.display = 'none';
+                    successModal.style.display = 'none';
+                });
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target === submissionModal) submissionModal.style.display = 'none';
+                if (event.target === replyModal) replyModal.style.display = 'none';
+                if (event.target === pointsModal) pointsModal.style.display = 'none';
+                if (event.target === successModal) successModal.style.display = 'none';
+            });
+            
+            function viewSubmission(id) {
+                const allSubmissions = getAllSubmissions();
+                const submission = allSubmissions.find(sub => sub.id === id);
+                if (!submission) return;
+                
+                const modalBody = document.getElementById('modal-body');
+                
+                if (submission.type === 'photo') {
+                    // ΔΙΟΡΘΩΣΗ: Σωστή προβολή φωτογραφιών στο modal
+                    let photosHTML = '<p>Δεν υπάρχουν φωτογραφίες</p>';
+                    
+                    if (submission.photos && submission.photos.length > 0) {
+                        photosHTML = '<div class="photos-grid">';
+                        
+                        submission.photos.forEach((photo, index) => {
+                            let imageUrl = '';
+                            
+                            if (typeof photo === 'string') {
+                                imageUrl = photo;
+                            } else if (photo.data) {
+                                imageUrl = photo.data;
+                            } else if (photo.url) {
+                                imageUrl = photo.url;
+                            } else if (photo.base64) {
+                                imageUrl = photo.base64;
+                            } else if (photo.image) {
+                                imageUrl = photo.image;
+                            }
+                            
+                            if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('data:image')) {
+                                imageUrl = `data:image/jpeg;base64,${imageUrl}`;
+                            }
+                            
+                            const safeImageUrl = imageUrl ? imageUrl.replace(/'/g, "\\'") : '#';
+                            
+                            photosHTML += `
+                                <div class="photo-item">
+                                    <img src="${imageUrl || '#'}" 
+                                         alt="Φωτογραφία καφέ ${index + 1}" 
+                                         class="photo-image"
+                                         data-full="${imageUrl}"
+                                         onclick="enlargePhoto('${safeImageUrl}')">
+                                </div>
+                            `;
+                        });
+                        
+                        photosHTML += '</div>';
+                    }
+                    
+                    const fortuneTellerInfo = submission.fortuneTellerName ? `
+                        <div class="coffee-reading-info">
+                            <p><strong>Επιλεγμένος Καφεμάντης:</strong> ${submission.fortuneTellerName}</p>
+                            ${submission.fortuneTellerImage ? `<img src="${submission.fortuneTellerImage}" alt="${submission.fortuneTellerName}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-top: 5px;">` : ''}
+                            <p><strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText}</p>
+                            <p><strong>Email Χρήστη:</strong> ${submission.userEmail || submission.email || 'Δεν παρέχεται'}</p>
+                            ${submission.desire ? `<p><strong>Επιθυμία Χρήστη:</strong> ${submission.desire}</p>` : ''}
+                        </div>
+                    ` : '';
+                    
+                    modalBody.innerHTML = `
+                        <div class="submission-header">
+                            <div class="submission-user">${submission.userEmail || submission.email || 'Άγνωστος Χρήστης'}</div>
+                            <div class="submission-date">${formatDate(submission.date)}</div>
+                        </div>
+                        
+                        ${fortuneTellerInfo}
+                        
+                        <div class="submission-content">
+                            <div class="submission-message">
+                                <strong>Μήνυμα:</strong><br>
+                                ${submission.message || 'Δεν υπάρχει μήνυμα'}
+                            </div>
+                            
+                            <div class="preview-title">
+                                <i class="fas fa-images"></i> Φωτογραφίες:
+                            </div>
+                            ${photosHTML}
+                        </div>
+                    `;
+                } else {
+                    modalBody.innerHTML = `
+                        <div class="submission-header">
+                            <div>
+                                <div class="submission-user">${submission.userName || 'Άγνωστος Χρήστης'}</div>
+                                <div class="submission-date">${submission.userEmail || submission.email || 'Χωρίς email'}</div>
+                            </div>
+                            <div class="submission-date">${formatDate(submission.date)}</div>
+                        </div>
+                        
+                        <div class="submission-content">
+                            <div><strong>Θέμα:</strong> ${submission.subject || 'Χωρίς θέμα'}</div>
+                            <div class="submission-message">
+                                <strong>Μήνυμα:</strong><br>
+                                ${submission.message || 'Δεν υπάρχει μήνυμα'}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                submissionModal.style.display = 'flex';
+            }
+            
+            function viewUser(id, email) {
+                const users = getAllUsers();
+                const user = users.find(u => u.email === email);
+                if (!user) return;
+                
+                const userPoints = getAllUserPoints();
+                const userPointData = userPoints.find(p => p.email === email) || { points: 0, level: 'Αρχάριος' };
+                
+                const modalBody = document.getElementById('modal-body');
+                
+                modalBody.innerHTML = `
+                    <div class="submission-header">
+                        <div class="submission-user">${user.name || 'Χωρίς όνομα'}</div>
+                        <div class="submission-date">${formatDate(user.registrationDate)}</div>
+                    </div>
+                    
+                    <div class="submission-content">
+                        <div><strong>Email:</strong> ${user.email}</div>
+                        <div><strong>Πόντοι:</strong> ${userPointData.points}</div>
+                        <div><strong>Επίπεδο:</strong> ${userPointData.level}</div>
+                        <div><strong>Ημερομηνία Εγγραφής:</strong> ${formatDate(user.registrationDate)}</div>
+                        <div><strong>ID Χρήστη:</strong> ${user.id}</div>
+                    </div>
+                `;
+                
+                submissionModal.style.display = 'flex';
+            }
+
+            function viewNotification(id) {
+                const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+                const notification = notifications.find(n => n.date === id);
+                if (!notification) return;
+                
+                const modalBody = document.getElementById('modal-body');
+                
+                modalBody.innerHTML = `
+                    <div class="submission-header">
+                        <div class="submission-user">${notification.userName || notification.userEmail || 'Άγνωστος Χρήστης'}</div>
+                        <div class="submission-date">${formatDate(notification.date)}</div>
+                    </div>
+                    
+                    <div class="submission-content">
+                        <div><strong>Τύπος:</strong> ${getNotificationTypeText(notification.type)}</div>
+                        ${notification.coffeeTypeText ? `<div><strong>Τύπος Καφεμαντείας:</strong> ${notification.coffeeTypeText}</div>` : ''}
+                        ${notification.desire ? `<div><strong>Επιθυμία Χρήστη:</strong> ${notification.desire}</div>` : ''}
+                        ${notification.offerTitle ? `<div><strong>Προσφορά:</strong> ${notification.offerTitle}</div>` : ''}
+                        ${notification.character ? `<div><strong>Επιλεγμένος Χαρακτήρας:</strong> ${notification.character}</div>` : ''}
+                        <div><strong>Χρήστης:</strong> ${notification.userEmail || 'Χωρίς email'}</div>
+                        <div><strong>Ημερομηνία:</strong> ${formatDate(notification.date)}</div>
+                        <div><strong>Κατάσταση:</strong> ${getNotificationStatusText(notification.status)}</div>
+                    </div>
+                `;
+                
+                submissionModal.style.display = 'flex';
+            }
+
+            function markNotificationProcessed(id) {
+                const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+                const notificationIndex = notifications.findIndex(n => n.date === id);
+                
+                if (notificationIndex !== -1) {
+                    notifications[notificationIndex].status = 'processed';
+                    localStorage.setItem('adminNotifications', JSON.stringify(notifications));
+                    showToast('Η ειδοποίηση σημάνθηκε ως επεξεργασμένη!', 'success');
+                    loadNotifications();
+                }
+            }
+
+            function deleteNotification(id) {
+                if (confirm('Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την ειδοποίηση;')) {
+                    const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+                    const updatedNotifications = notifications.filter(n => n.date !== id);
+                    localStorage.setItem('adminNotifications', JSON.stringify(updatedNotifications));
+                    showToast('Η ειδοποίηση διαγράφηκε επιτυχώς!', 'success');
+                    loadNotifications();
+                }
+            }
+            
+            function manageUserPoints(userId, userEmail) {
+                const users = getAllUsers();
+                const user = users.find(u => u.email === userEmail);
+                const userPoints = getAllUserPoints();
+                const userPointData = userPoints.find(p => p.email === userEmail) || { points: 0, level: 'Αρχάριος' };
+                
+                if (!user) return;
+                
+                const pointsUserInfo = document.getElementById('points-user-info');
+                pointsUserInfo.innerHTML = `
+                    <div class="submission-header">
+                        <div class="submission-user">${user.name || 'Χωρίς όνομα'}</div>
+                        <div class="submission-date">${user.email}</div>
+                    </div>
+                    
+                    <div class="submission-content">
+                        <div><strong>Τρέχοντες Πόντοι:</strong> ${userPointData.points}</div>
+                        <div><strong>Τρέχον Επίπεδο:</strong> ${userPointData.level}</div>
+                    </div>
+                `;
+                
+                document.getElementById('current-points').value = userPointData.points;
+                document.getElementById('points-amount').value = 0;
+                document.getElementById('points-reason').value = '';
+                
+                pointsModal.style.display = 'flex';
+                document.getElementById('save-points').setAttribute('data-email', userEmail);
+            }
+            
+            document.getElementById('save-points').addEventListener('click', function() {
+                const userEmail = this.getAttribute('data-email');
+                const currentPoints = parseInt(document.getElementById('current-points').value);
+                const action = document.getElementById('points-action').value;
+                const amount = parseInt(document.getElementById('points-amount').value);
+                const reason = document.getElementById('points-reason').value;
+                
+                if (isNaN(amount) || amount < 0) {
+                    alert('Παρακαλώ εισάγετε έγκυρη ποσότητα πόντων.');
+                    return;
+                }
+                
+                let newPoints = currentPoints;
+                
+                switch(action) {
+                    case 'add': newPoints += amount; break;
+                    case 'remove': newPoints = Math.max(0, currentPoints - amount); break;
+                    case 'set': newPoints = amount; break;
+                }
+                
+                const userPoints = getAllUserPoints();
+                const userPointIndex = userPoints.findIndex(p => p.email === userEmail);
+                
+                if (userPointIndex !== -1) {
+                    userPoints[userPointIndex].points = newPoints;
+                    
+                    let level = 'Αρχάριος';
+                    if (newPoints >= 100) level = 'Ειδικός';
+                    if (newPoints >= 300) level = 'Μάστερ';
+                    if (newPoints >= 500) level = 'Grand Master';
+                    
+                    userPoints[userPointIndex].level = level;
+                    localStorage.setItem('userPoints', JSON.stringify(userPoints));
+                    
+                    const pointsHistory = JSON.parse(localStorage.getItem('pointsHistory') || '[]');
+                    pointsHistory.push({
+                        userEmail: userEmail,
+                        action: action,
+                        amount: amount,
+                        previousPoints: currentPoints,
+                        newPoints: newPoints,
+                        reason: reason,
+                        date: new Date().toISOString(),
+                        admin: 'Διαχειριστής'
+                    });
+                    localStorage.setItem('pointsHistory', JSON.stringify(pointsHistory));
+                    
+                    showToast(`Οι πόντοι του χρήστη ενημερώθηκαν επιτυχώς! Νέοι πόντοι: ${newPoints}`, 'success');
+                    pointsModal.style.display = 'none';
+                    loadUsers();
+                } else {
+                    userPoints.push({
+                        userId: userEmail,
+                        email: userEmail,
+                        points: newPoints,
+                        level: 'Αρχάριος',
+                        registrationDate: new Date().toISOString()
+                    });
+                    localStorage.setItem('userPoints', JSON.stringify(userPoints));
+                    showToast(`Δημιουργήθηκε νέος χρήστης με ${newPoints} πόντους!`, 'success');
+                    pointsModal.style.display = 'none';
+                    loadUsers();
+                }
+            });
+            
+            document.getElementById('cancel-points').addEventListener('click', function() {
+                pointsModal.style.display = 'none';
+            });
+            
+            const replyMessageTextarea = document.getElementById('reply-message');
+            const urlPreview = document.getElementById('url-preview');
+            const urlPreviewContent = document.getElementById('url-preview-content');
+            
+            replyMessageTextarea.addEventListener('input', function() {
+                const text = this.value;
+                const urls = extractUrls(text);
+                
+                if (urls.length > 0) {
+                    urlPreviewContent.innerHTML = urls.map(url => `
+                        <div class="url-item">
+                            <i class="fas fa-link"></i>
+                            <a href="${url}" target="_blank" class="preview-link">${url}</a>
+                            <span class="url-note">(θα ανοίξει σε νέα καρτέλα)</span>
+                        </div>
+                    `).join('');
+                    urlPreview.style.display = 'block';
+                } else {
+                    urlPreview.style.display = 'none';
+                }
+            });
+            
+            function extractUrls(text) {
+                const urlRegex = /(https?:\/\/[^\s]+)/g;
+                return text.match(urlRegex) || [];
+            }
+            
+            function convertUrlsToLinks(text) {
+                const urlRegex = /(https?:\/\/[^\s]+)/g;
+                return text.replace(urlRegex, function(url) {
+                    return `<a href="${url}" target="_blank" class="message-link">${url}</a>`;
+                });
+            }
+            
+            function openReplyModal(id) {
+                const allSubmissions = getAllSubmissions();
+                const submission = allSubmissions.find(sub => sub.id === id);
+                if (!submission) return;
+                
+                const userEmail = submission.userEmail || submission.email;
+                
+                // Έλεγχος πόντων χρήστη
+                const pointsCheck = checkUserPoints(userEmail);
+                
+                const userInfo = document.getElementById('reply-user-info');
+                
+                // Προσθήκη πληροφορίας πόντων
+                const pointsInfo = userEmail ? `
+                    <div style="margin: 10px 0; padding: 8px; background: ${pointsCheck.hasEnoughPoints ? '#e8f5e9' : '#ffebee'}; border-radius: 6px;">
+                        <strong>Πόντοι Χρήστη:</strong> ${pointsCheck.currentPoints}/50
+                        ${pointsCheck.hasEnoughPoints ? 
+                            '<span style="color: #4CAF50; margin-left: 10px;"><i class="fas fa-check-circle"></i> Επαρκείς πόντοι</span>' : 
+                            '<span style="color: #f44336; margin-left: 10px;"><i class="fas fa-exclamation-circle"></i> Ανεπαρκείς πόντοι</span>'
+                        }
+                    </div>
+                ` : '';
+                
+                if (submission.type === 'photo') {
+                    userInfo.innerHTML = `
+                        <div class="submission-header">
+                            <div class="submission-user">Απάντηση σε: ${submission.userEmail || submission.email || 'Άγνωστος Χρήστης'}</div>
+                            <div class="submission-date">${formatDate(submission.date)}</div>
+                        </div>
+                        
+                        ${pointsInfo}
+                        
+                        <div class="submission-content">
+                            <div class="submission-message">
+                                <strong>Τύπος Καφεμαντείας:</strong> ${submission.coffeeTypeText || 'Γραπτή Ερμηνεία'}<br>
+                                ${submission.desire ? `<strong>Επιθυμία Χρήστη:</strong><br>${submission.desire}<br><br>` : ''}
+                                <strong>Αρχικό Μήνυμα:</strong><br>
+                                ${submission.message || 'Δεν υπάρχει μήνυμα'}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    userInfo.innerHTML = `
+                        <div class="submission-header">
+                            <div>
+                                <div class="submission-user">Απάντηση σε: ${submission.userName || 'Άγνωστος Χρήστης'}</div>
+                                <div class="submission-date">${submission.userEmail || submission.email || 'Χωρίς email'}</div>
+                            </div>
+                            <div class="submission-date">${formatDate(submission.date)}</div>
+                        </div>
+                        
+                        ${pointsInfo}
+                        
+                        <div class="submission-content">
+                            <div><strong>Θέμα:</strong> ${submission.subject || 'Χωρίς θέμα'}</div>
+                            <div class="submission-message">
+                                <strong>Αρχικό Μήνυμα:</strong><br>
+                                ${submission.message || 'Δεν υπάρχει μήνυμα'}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('reply-message').value = '';
+                urlPreview.style.display = 'none';
+                replyModal.style.display = 'flex';
+                document.getElementById('send-reply').setAttribute('data-id', id);
+                document.getElementById('send-reply').setAttribute('data-email', userEmail);
+            }
+            
+            document.getElementById('send-reply').addEventListener('click', function() {
+                const replyMessage = document.getElementById('reply-message').value;
+                const submissionId = parseInt(this.getAttribute('data-id'));
+                const userEmail = this.getAttribute('data-email');
+                
+                if (!replyMessage.trim()) {
+                    alert('Παρακαλώ εισάγετε μήνυμα απάντησης.');
+                    return;
+                }
+                
+                // Έλεγχος πόντων πριν την απάντηση
+                if (userEmail) {
+                    const pointsCheck = checkUserPoints(userEmail);
+                    if (!pointsCheck.hasEnoughPoints) {
+                        alert('Ο χρήστης δεν έχει αρκετούς πόντους (50 απαιτούνται). Η απάντηση δεν μπορεί να σταλθεί.');
+                        return;
+                    }
+                }
+                
+                const formattedMessage = convertUrlsToLinks(replyMessage);
+                const allSubmissions = getAllSubmissions();
+                const submission = allSubmissions.find(sub => sub.id === submissionId);
+                
+                if (!submission) {
+                    alert('Δεν βρέθηκε η υποβολή!');
+                    return;
+                }
+                
+                // Αφαίρεση 50 πόντων από τον χρήστη (μόνο αν έχει email)
+                if (userEmail) {
+                    const deductionSuccess = deductPointsFromUser(userEmail, 50, `Απάντηση σε υποβολή #${submissionId}`);
+                    
+                    if (!deductionSuccess) {
+                        alert('Αποτυχία αφαίρεσης πόντων. Η απάντηση δεν μπορεί να σταλθεί.');
+                        return;
+                    }
+                }
+                
+                const response = {
+                    id: Date.now(),
+                    submissionId: submissionId,
+                    userEmail: userEmail,
+                    adminMessage: formattedMessage,
+                    originalMessage: submission.message || submission.subject,
+                    date: new Date().toISOString(),
+                    status: 'sent',
+                    pointsDeducted: userEmail ? 50 : 0
+                };
+                
+                saveResponse(response);
+                updateSubmissionStatus(submissionId, 'answered');
+                
+                this.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Αποστολή...';
+                
+                setTimeout(() => {
+                    playNotificationSound();
+                    replyModal.style.display = 'none';
+                    successModal.style.display = 'flex';
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-paper-plane"></i> Αποστολή Απάντησης';
+                    loadAllData();
+                    setTimeout(() => successModal.style.display = 'none', 3000);
+                }, 1500);
+            });
+            
+            function playNotificationSound() {
+                const sound = document.getElementById('notification-sound');
+                sound.play().catch(e => console.log('Αποτυχία αναπαραγωγής ήχου:', e));
+            }
+            
+            function saveResponse(response) {
+                const existingResponses = JSON.parse(localStorage.getItem('coffeeResponses') || '[]');
+                existingResponses.push(response);
+                localStorage.setItem('coffeeResponses', JSON.stringify(existingResponses));
+            }
+            
+            function updateSubmissionStatus(id, newStatus) {
+                const allSubmissions = getAllSubmissions();
+                const submissionIndex = allSubmissions.findIndex(sub => sub.id === id);
+                if (submissionIndex !== -1) {
+                    allSubmissions[submissionIndex].status = newStatus;
+                    localStorage.setItem('coffeeSubmissions', JSON.stringify(allSubmissions));
+                }
+            }
+            
+            document.getElementById('cancel-reply').addEventListener('click', function() {
+                replyModal.style.display = 'none';
+            });
+            
+            function downloadSubmission(id) {
+                const allSubmissions = getAllSubmissions();
+                const submission = allSubmissions.find(sub => sub.id === id);
+                
+                if (submission && submission.type === 'photo' && submission.photos && submission.photos.length > 0) {
+                    // Δημιουργία zip αρχείου με όλες τις φωτογραφίες
+                    alert(`Λήψη ${submission.photos.length} φωτογραφιών από τον χρήστη ${submission.userEmail || submission.email}`);
+                    
+                    // Για Safari και Chrome, ανοίγουμε κάθε φωτογραφία σε νέα καρτέλα
+                    submission.photos.forEach((photo, index) => {
+                        let imageUrl = '';
+                        
+                        if (typeof photo === 'string') {
+                            imageUrl = photo;
+                        } else if (photo.data) {
+                            imageUrl = photo.data;
+                        } else if (photo.url) {
+                            imageUrl = photo.url;
+                        } else if (photo.base64) {
+                            imageUrl = photo.base64;
+                        }
+                        
+                        if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('data:image')) {
+                            imageUrl = `data:image/jpeg;base64,${imageUrl}`;
+                        }
+                        
+                        if (imageUrl) {
+                            const link = document.createElement('a');
+                            link.href = imageUrl;
+                            link.download = `cafedium_photo_${index + 1}.jpg`;
+                            link.target = '_blank';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }
+                    });
+                } else {
+                    alert('Δεν βρέθηκαν φωτογραφίες για λήψη');
+                }
+            }
+            
+            function deleteSubmission(id) {
+                if (confirm('Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την υποβολή;')) {
+                    const allSubmissions = getAllSubmissions();
+                    const updatedSubmissions = allSubmissions.filter(sub => sub.id !== id);
+                    localStorage.setItem('coffeeSubmissions', JSON.stringify(updatedSubmissions));
+                    showToast('Η υποβολή διαγράφηκε επιτυχώς!', 'success');
+                    loadAllData();
+                }
+            }
+            
+            function deleteUser(id, email) {
+                if (confirm('Είστε σίγουρος ότι θέλετε να διαγράψετε αυτόν τον χρήστη;')) {
+                    const allUsers = getAllUsers();
+                    const updatedUsers = allUsers.filter(user => user.email !== email);
+                    localStorage.setItem('users', JSON.stringify(updatedUsers));
+                    
+                    const userPoints = getAllUserPoints();
+                    const updatedPoints = userPoints.filter(p => p.email !== email);
+                    localStorage.setItem('userPoints', JSON.stringify(updatedPoints));
+                    
+                    showToast('Ο χρήστης διαγράφηκε επιτυχώς!', 'success');
+                    loadAllData();
+                }
+            }
+            
+            function updateStats() {
+                const allSubmissions = getAllSubmissions();
+                const realSubmissions = filterRealUsers(allSubmissions);
+                const allUsers = getAllUsers();
+                const realUsers = filterRealUsers(allUsers);
+                
+                document.getElementById('total-submissions').textContent = realSubmissions.length;
+                document.getElementById('pending-submissions').textContent = realSubmissions.filter(sub => sub.status === 'pending').length;
+                document.getElementById('answered-submissions').textContent = realSubmissions.filter(sub => sub.status === 'answered').length;
+                document.getElementById('registered-users').textContent = realUsers.length;
+            }
+            
+            // Toast notification
+            const notificationToast = document.getElementById('notification-toast');
+            const notificationTitle = document.getElementById('notification-title');
+            const notificationMessage = document.getElementById('notification-message');
+            const notificationClose = document.getElementById('notification-close');
+            
+            notificationClose.addEventListener('click', function() {
+                notificationToast.classList.remove('show');
+            });
+            
+            function showToast(message, type) {
+                let icon = 'fas fa-bell';
+                let color = 'var(--info)';
+                
+                switch(type) {
+                    case 'success': icon = 'fas fa-check-circle'; color = 'var(--success)'; break;
+                    case 'error': icon = 'fas fa-exclamation-circle'; color = 'var(--error)'; break;
+                    case 'warning': icon = 'fas fa-exclamation-triangle'; color = 'var(--warning)'; break;
+                }
+                
+                notificationTitle.textContent = type === 'success' ? 'Επιτυχία' : 
+                                               type === 'error' ? 'Σφάλμα' : 
+                                               type === 'warning' ? 'Προσοχή' : 'Ειδοποίηση';
+                notificationMessage.textContent = message;
+                notificationToast.querySelector('.notification-icon i').className = icon;
+                notificationToast.style.borderLeftColor = color;
+                notificationToast.classList.add('show');
+                
+                setTimeout(() => notificationToast.classList.remove('show'), 5000);
+            }
+            
+            // Auto-check every 10 minutes
+            setInterval(function() {
+                if (currentAdmin) {
+                    console.log('🔄 Auto-check for new data...');
+                    checkForNewDataAndSendEmail();
+                    loadAllData();
+                }
+            }, 600000);
+            
+            // Auto-refresh data every 30 seconds
+            setInterval(function() {
+                if (currentAdmin) {
+                    loadAllData();
+                }
+            }, 30000);
+
+            // Initialize
+            if (!checkAdminSession()) {
+                showAuthSection();
+            } else {
+                setTimeout(() => {
+                    checkForNewDataAndSendEmail();
+                }, 2000);
+            }
+            
+            console.log('✅ Admin Panel loaded successfully!');
+            console.log('📧 Email notifications enabled for: info.franklydear@gmail.com');
+        });
+    </script>
+</body>
+</html>
