@@ -392,22 +392,31 @@
         
         .photos-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 8px;
-            margin-top: 8px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
         }
         
         .photo-item {
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid #fff;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .photo-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
         
         .photo-image {
             width: 100%;
-            height: 100px;
+            height: 150px;
             object-fit: cover;
             display: block;
+            background: #f5f5dc;
         }
         
         .submission-actions {
@@ -1099,6 +1108,39 @@
             background: #fff3cd;
             color: #856404;
         }
+
+        /* Modal for enlarged photos */
+        .photo-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .photo-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .close-photo-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 2001;
+        }
         
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -1165,7 +1207,7 @@
             }
             
             .photo-image {
-                height: 80px;
+                height: 120px;
             }
 
             .url-preview {
@@ -1320,7 +1362,7 @@
             <div id="reset-tab" class="auth-content">
                 <div class="reset-section">
                     <h3><i class="fas fa-exclamation-triangle"></i> Επαναφορά Συστήματος</h3>
-                    <p><strong>Προσοχή:</strong> Αυτές οι ενέργειες θα διαγράψουν δεδομένα. Χρησιμοποιήστε τις μόνο αν έχετε πρόβλημα με σύνδεση.</p>
+                    <p><strong>Προσοχή:</strong> Αυτές οι ενέργειες θα διαγράψουν δεδομένα. Χρημοποιήστε τις μόνο αν έχετε πρόβλημα με σύνδεση.</p>
                     
                     <div class="reset-buttons">
                         <button class="reset-btn reset-danger" id="hardResetBtn">
@@ -1660,6 +1702,12 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Modal for enlarged photos -->
+    <div class="photo-modal" id="photoModal">
+        <button class="close-photo-modal">&times;</button>
+        <img id="enlargedPhoto" src="" alt="Μεγεθυσμένη φωτογραφία">
     </div>
 
     <!-- Toast Notification -->
@@ -2212,7 +2260,8 @@
                             id: up.userId || Date.now(),
                             name: up.name || 'Χρήστης',
                             email: up.email,
-                            registrationDate: up.registrationDate || new Date().toISOString()
+                            registrationDate: up.registrationDate || new Date().toISOString(),
+                            points: up.points || 0
                         });
                     }
                 });
@@ -2223,7 +2272,8 @@
                             id: sub.userId || Date.now(),
                             name: sub.userName || 'Χρήστης',
                             email: sub.userEmail,
-                            registrationDate: sub.date || new Date().toISOString()
+                            registrationDate: sub.date || new Date().toISOString(),
+                            points: 0
                         });
                     }
                 });
@@ -2234,7 +2284,8 @@
                             id: Date.now(),
                             name: notif.userName || 'Χρήστης',
                             email: notif.userEmail,
-                            registrationDate: notif.date || new Date().toISOString()
+                            registrationDate: notif.date || new Date().toISOString(),
+                            points: 0
                         });
                     }
                 });
@@ -2245,7 +2296,8 @@
                             id: redemption.userId || Date.now(),
                             name: 'Χρήστης',
                             email: redemption.email,
-                            registrationDate: redemption.date || new Date().toISOString()
+                            registrationDate: redemption.date || new Date().toISOString(),
+                            points: 0
                         });
                     }
                 });
@@ -2294,6 +2346,8 @@
                     if (item.userEmail && item.userEmail.includes('example.com')) return false;
                     if (item.email && item.email.includes('example.com')) return false;
                     if (!item.userEmail && !item.email) return false;
+                    if (item.userEmail && item.userEmail === 'test@test.com') return false;
+                    if (item.email && item.email === 'test@test.com') return false;
                     return true;
                 });
             }
@@ -2325,12 +2379,49 @@
                     const statusClass = `status-${submission.status || 'pending'}`;
                     const statusText = getStatusText(submission.status || 'pending');
                     
-                    const photosHTML = submission.photos && submission.photos.length > 0 ? 
-                        submission.photos.map(photo => `
-                            <div class="photo-item">
-                                <img src="${photo.data}" alt="Φωτογραφία καφέ" class="photo-image">
-                            </div>
-                        `).join('') : '<p>Δεν υπάρχουν φωτογραφίες</p>';
+                    // ΔΙΟΡΘΩΣΗ: Σωστή φόρτωση φωτογραφιών
+                    let photosHTML = '<p>Δεν υπάρχουν φωτογραφίες</p>';
+                    
+                    if (submission.photos && submission.photos.length > 0) {
+                        photosHTML = '<div class="photos-grid">';
+                        
+                        submission.photos.forEach((photo, index) => {
+                            let imageUrl = '';
+                            
+                            // ΔΙΟΡΘΩΣΗ: Χειρισμός διαφορετικών μορφών δεδομένων φωτογραφιών
+                            if (typeof photo === 'string') {
+                                imageUrl = photo;
+                            } else if (photo.data) {
+                                imageUrl = photo.data;
+                            } else if (photo.url) {
+                                imageUrl = photo.url;
+                            } else if (photo.base64) {
+                                imageUrl = photo.base64;
+                            } else if (photo.image) {
+                                imageUrl = photo.image;
+                            }
+                            
+                            // Βεβαιώνουμε ότι έχει σωστό prefix για base64
+                            if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('data:image')) {
+                                imageUrl = `data:image/jpeg;base64,${imageUrl}`;
+                            }
+                            
+                            // Ασφάλεια: escape quotes για onclick
+                            const safeImageUrl = imageUrl ? imageUrl.replace(/'/g, "\\'") : '#';
+                            
+                            photosHTML += `
+                                <div class="photo-item">
+                                    <img src="${imageUrl || '#'}" 
+                                         alt="Φωτογραφία καφέ ${index + 1}" 
+                                         class="photo-image"
+                                         data-full="${imageUrl}"
+                                         onclick="enlargePhoto('${safeImageUrl}')">
+                                </div>
+                            `;
+                        });
+                        
+                        photosHTML += '</div>';
+                    }
                     
                     const fortuneTellerBadge = submission.fortuneTellerName ? `
                         <div style="margin-top: 8px;">
@@ -2358,9 +2449,7 @@
                                 ${submission.desire ? `<strong>Επιθυμία:</strong> ${submission.desire}` : ''}
                             </div>
                             
-                            <div class="photos-grid">
-                                ${photosHTML}
-                            </div>
+                            ${photosHTML}
                         </div>
                         
                         <div class="submission-actions">
@@ -2386,6 +2475,29 @@
                 
                 addActionEventListeners();
             }
+            
+            // Συνάρτηση για μεγέθυνση φωτογραφίας
+            window.enlargePhoto = function(imageUrl) {
+                const modal = document.getElementById('photoModal');
+                const img = document.getElementById('enlargedPhoto');
+                
+                if (imageUrl && imageUrl !== '#') {
+                    img.src = imageUrl;
+                    modal.style.display = 'flex';
+                }
+            };
+            
+            // Κλείσιμο modal φωτογραφίας
+            document.querySelector('.close-photo-modal').addEventListener('click', function() {
+                document.getElementById('photoModal').style.display = 'none';
+            });
+            
+            // Κλείσιμο με κλικ έξω
+            document.getElementById('photoModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
             
             // Load message submissions
             function loadMessageSubmissions() {
@@ -2768,6 +2880,91 @@
                 });
             }
             
+            // ============================================
+            // ΣΥΣΤΗΜΑ ΠΟΝΤΩΝ - ΣΥΝΑΡΤΗΣΕΙΣ
+            // ============================================
+            
+            // Έλεγχος πόντων χρήστη
+            function checkUserPoints(userEmail) {
+                try {
+                    const userPoints = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                    const user = userPoints.find(p => p.email === userEmail);
+                    
+                    if (user && user.points >= 50) {
+                        return {
+                            hasEnoughPoints: true,
+                            currentPoints: user.points,
+                            userData: user
+                        };
+                    } else {
+                        return {
+                            hasEnoughPoints: false,
+                            currentPoints: user ? user.points : 0,
+                            userData: user
+                        };
+                    }
+                } catch (e) {
+                    console.error('Error checking points:', e);
+                    return {
+                        hasEnoughPoints: false,
+                        currentPoints: 0,
+                        userData: null
+                    };
+                }
+            }
+            
+            // Αφαίρεση πόντων από χρήστη
+            function deductPointsFromUser(userEmail, points, reason) {
+                try {
+                    const userPoints = JSON.parse(localStorage.getItem('userPoints') || '[]');
+                    const userIndex = userPoints.findIndex(p => p.email === userEmail);
+                    
+                    if (userIndex !== -1) {
+                        const currentPoints = userPoints[userIndex].points;
+                        if (currentPoints >= points) {
+                            userPoints[userIndex].points = currentPoints - points;
+                            
+                            // Ενημέρωση επιπέδου
+                            const newPoints = userPoints[userIndex].points;
+                            let level = 'Αρχάριος';
+                            if (newPoints >= 100) level = 'Ειδικός';
+                            if (newPoints >= 300) level = 'Μάστερ';
+                            if (newPoints >= 500) level = 'Grand Master';
+                            
+                            userPoints[userIndex].level = level;
+                            
+                            localStorage.setItem('userPoints', JSON.stringify(userPoints));
+                            
+                            // Καταγραφή συναλλαγής
+                            const pointsHistory = JSON.parse(localStorage.getItem('pointsHistory') || '[]');
+                            pointsHistory.push({
+                                userEmail: userEmail,
+                                action: 'deduct',
+                                amount: points,
+                                reason: reason,
+                                date: new Date().toISOString(),
+                                admin: currentAdmin ? currentAdmin.email : 'system'
+                            });
+                            localStorage.setItem('pointsHistory', JSON.stringify(pointsHistory));
+                            
+                            console.log(`✅ Αφαιρέθηκαν ${points} πόντοι από ${userEmail}. Νέοι πόντοι: ${newPoints}`);
+                            return true;
+                        } else {
+                            console.error(`❌ Ο χρήστης ${userEmail} δεν έχει αρκετούς πόντους`);
+                            return false;
+                        }
+                    } else {
+                        console.error(`❌ Χρήστης ${userEmail} δεν βρέθηκε`);
+                        return false;
+                    }
+                } catch (e) {
+                    console.error('Error deducting points:', e);
+                    return false;
+                }
+            }
+            
+            // ============================================
+            
             // Modals
             const submissionModal = document.getElementById('submission-modal');
             const replyModal = document.getElementById('reply-modal');
@@ -2799,12 +2996,46 @@
                 const modalBody = document.getElementById('modal-body');
                 
                 if (submission.type === 'photo') {
-                    const photosHTML = submission.photos && submission.photos.length > 0 ? 
-                        submission.photos.map(photo => `
-                            <div class="photo-item">
-                                <img src="${photo.data}" alt="Φωτογραφία καφέ" class="photo-image">
-                            </div>
-                        `).join('') : '<p>Δεν υπάρχουν φωτογραφίες</p>';
+                    // ΔΙΟΡΘΩΣΗ: Σωστή προβολή φωτογραφιών στο modal
+                    let photosHTML = '<p>Δεν υπάρχουν φωτογραφίες</p>';
+                    
+                    if (submission.photos && submission.photos.length > 0) {
+                        photosHTML = '<div class="photos-grid">';
+                        
+                        submission.photos.forEach((photo, index) => {
+                            let imageUrl = '';
+                            
+                            if (typeof photo === 'string') {
+                                imageUrl = photo;
+                            } else if (photo.data) {
+                                imageUrl = photo.data;
+                            } else if (photo.url) {
+                                imageUrl = photo.url;
+                            } else if (photo.base64) {
+                                imageUrl = photo.base64;
+                            } else if (photo.image) {
+                                imageUrl = photo.image;
+                            }
+                            
+                            if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('data:image')) {
+                                imageUrl = `data:image/jpeg;base64,${imageUrl}`;
+                            }
+                            
+                            const safeImageUrl = imageUrl ? imageUrl.replace(/'/g, "\\'") : '#';
+                            
+                            photosHTML += `
+                                <div class="photo-item">
+                                    <img src="${imageUrl || '#'}" 
+                                         alt="Φωτογραφία καφέ ${index + 1}" 
+                                         class="photo-image"
+                                         data-full="${imageUrl}"
+                                         onclick="enlargePhoto('${safeImageUrl}')">
+                                </div>
+                            `;
+                        });
+                        
+                        photosHTML += '</div>';
+                    }
                     
                     const fortuneTellerInfo = submission.fortuneTellerName ? `
                         <div class="coffee-reading-info">
@@ -2833,9 +3064,7 @@
                             <div class="preview-title">
                                 <i class="fas fa-images"></i> Φωτογραφίες:
                             </div>
-                            <div class="photos-grid">
-                                ${photosHTML}
-                            </div>
+                            ${photosHTML}
                         </div>
                     `;
                 } else {
@@ -3076,7 +3305,23 @@
                 const submission = allSubmissions.find(sub => sub.id === id);
                 if (!submission) return;
                 
+                const userEmail = submission.userEmail || submission.email;
+                
+                // Έλεγχος πόντων χρήστη
+                const pointsCheck = checkUserPoints(userEmail);
+                
                 const userInfo = document.getElementById('reply-user-info');
+                
+                // Προσθήκη πληροφορίας πόντων
+                const pointsInfo = userEmail ? `
+                    <div style="margin: 10px 0; padding: 8px; background: ${pointsCheck.hasEnoughPoints ? '#e8f5e9' : '#ffebee'}; border-radius: 6px;">
+                        <strong>Πόντοι Χρήστη:</strong> ${pointsCheck.currentPoints}/50
+                        ${pointsCheck.hasEnoughPoints ? 
+                            '<span style="color: #4CAF50; margin-left: 10px;"><i class="fas fa-check-circle"></i> Επαρκείς πόντοι</span>' : 
+                            '<span style="color: #f44336; margin-left: 10px;"><i class="fas fa-exclamation-circle"></i> Ανεπαρκείς πόντοι</span>'
+                        }
+                    </div>
+                ` : '';
                 
                 if (submission.type === 'photo') {
                     userInfo.innerHTML = `
@@ -3084,6 +3329,8 @@
                             <div class="submission-user">Απάντηση σε: ${submission.userEmail || submission.email || 'Άγνωστος Χρήστης'}</div>
                             <div class="submission-date">${formatDate(submission.date)}</div>
                         </div>
+                        
+                        ${pointsInfo}
                         
                         <div class="submission-content">
                             <div class="submission-message">
@@ -3104,6 +3351,8 @@
                             <div class="submission-date">${formatDate(submission.date)}</div>
                         </div>
                         
+                        ${pointsInfo}
+                        
                         <div class="submission-content">
                             <div><strong>Θέμα:</strong> ${submission.subject || 'Χωρίς θέμα'}</div>
                             <div class="submission-message">
@@ -3118,15 +3367,26 @@
                 urlPreview.style.display = 'none';
                 replyModal.style.display = 'flex';
                 document.getElementById('send-reply').setAttribute('data-id', id);
+                document.getElementById('send-reply').setAttribute('data-email', userEmail);
             }
             
             document.getElementById('send-reply').addEventListener('click', function() {
                 const replyMessage = document.getElementById('reply-message').value;
                 const submissionId = parseInt(this.getAttribute('data-id'));
+                const userEmail = this.getAttribute('data-email');
                 
                 if (!replyMessage.trim()) {
                     alert('Παρακαλώ εισάγετε μήνυμα απάντησης.');
                     return;
+                }
+                
+                // Έλεγχος πόντων πριν την απάντηση
+                if (userEmail) {
+                    const pointsCheck = checkUserPoints(userEmail);
+                    if (!pointsCheck.hasEnoughPoints) {
+                        alert('Ο χρήστης δεν έχει αρκετούς πόντους (50 απαιτούνται). Η απάντηση δεν μπορεί να σταλθεί.');
+                        return;
+                    }
                 }
                 
                 const formattedMessage = convertUrlsToLinks(replyMessage);
@@ -3138,14 +3398,25 @@
                     return;
                 }
                 
+                // Αφαίρεση 50 πόντων από τον χρήστη (μόνο αν έχει email)
+                if (userEmail) {
+                    const deductionSuccess = deductPointsFromUser(userEmail, 50, `Απάντηση σε υποβολή #${submissionId}`);
+                    
+                    if (!deductionSuccess) {
+                        alert('Αποτυχία αφαίρεσης πόντων. Η απάντηση δεν μπορεί να σταλθεί.');
+                        return;
+                    }
+                }
+                
                 const response = {
                     id: Date.now(),
                     submissionId: submissionId,
-                    userEmail: submission.userEmail || submission.email,
+                    userEmail: userEmail,
                     adminMessage: formattedMessage,
                     originalMessage: submission.message || submission.subject,
                     date: new Date().toISOString(),
-                    status: 'sent'
+                    status: 'sent',
+                    pointsDeducted: userEmail ? 50 : 0
                 };
                 
                 saveResponse(response);
@@ -3194,7 +3465,37 @@
                 const submission = allSubmissions.find(sub => sub.id === id);
                 
                 if (submission && submission.type === 'photo' && submission.photos && submission.photos.length > 0) {
+                    // Δημιουργία zip αρχείου με όλες τις φωτογραφίες
                     alert(`Λήψη ${submission.photos.length} φωτογραφιών από τον χρήστη ${submission.userEmail || submission.email}`);
+                    
+                    // Για Safari και Chrome, ανοίγουμε κάθε φωτογραφία σε νέα καρτέλα
+                    submission.photos.forEach((photo, index) => {
+                        let imageUrl = '';
+                        
+                        if (typeof photo === 'string') {
+                            imageUrl = photo;
+                        } else if (photo.data) {
+                            imageUrl = photo.data;
+                        } else if (photo.url) {
+                            imageUrl = photo.url;
+                        } else if (photo.base64) {
+                            imageUrl = photo.base64;
+                        }
+                        
+                        if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('data:image')) {
+                            imageUrl = `data:image/jpeg;base64,${imageUrl}`;
+                        }
+                        
+                        if (imageUrl) {
+                            const link = document.createElement('a');
+                            link.href = imageUrl;
+                            link.download = `cafedium_photo_${index + 1}.jpg`;
+                            link.target = '_blank';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }
+                    });
                 } else {
                     alert('Δεν βρέθηκαν φωτογραφίες για λήψη');
                 }
