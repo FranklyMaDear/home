@@ -2890,7 +2890,7 @@
                     const userPoints = JSON.parse(localStorage.getItem('userPoints') || '[]');
                     const user = userPoints.find(p => p.email === userEmail);
                     
-                    if (user && user.points >= 50) {
+                    if (user && user.points >= 0) {
                         return {
                             hasEnoughPoints: true,
                             currentPoints: user.points,
