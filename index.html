@@ -143,10 +143,11 @@
             <!-- AdSense Code - Header Banner -->
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
                 crossorigin="anonymous"></script>
+            <!-- Frankly Ma Dear - Top Banner -->
             <ins class="adsbygoogle"
                 style="display:block"
                 data-ad-client="ca-pub-3186700611266549"
-                data-ad-slot="YOUR_FIRST_AD_SLOT_HERE"
+                data-ad-slot="4586034963"
                 data-ad-format="auto"
                 data-full-width-responsive="true"></ins>
             <script>
@@ -173,10 +174,13 @@
             <!-- AdSense Code - Leaderboard -->
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
                 crossorigin="anonymous"></script>
+            <!-- Games - After Hero -->
             <ins class="adsbygoogle"
-                style="display:inline-block;width:728px;height:90px"
+                style="display:block"
                 data-ad-client="ca-pub-3186700611266549"
-                data-ad-slot="YOUR_SECOND_AD_SLOT_HERE"></ins>
+                data-ad-slot="6125539150"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
             <script>
                 (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
@@ -232,12 +236,13 @@
                     <!-- AdSense Code - Between Games 1 -->
                     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
                         crossorigin="anonymous"></script>
+                    <!-- Frankly Ma Dear - Between Games -->
                     <ins class="adsbygoogle"
                         style="display:block"
-                        data-ad-format="fluid"
-                        data-ad-layout-key="-gw-3+1f-3d+2z"
                         data-ad-client="ca-pub-3186700611266549"
-                        data-ad-slot="YOUR_THIRD_AD_SLOT_HERE"></ins>
+                        data-ad-slot="4586034963"
+                        data-ad-format="auto"
+                        data-full-width-responsive="true"></ins>
                     <script>
                         (adsbygoogle = window.adsbygoogle || []).push({});
                     </script>
@@ -302,10 +307,11 @@
                     <!-- AdSense Code - Between Games 2 -->
                     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
                         crossorigin="anonymous"></script>
+                    <!-- Games - Between Games -->
                     <ins class="adsbygoogle"
                         style="display:block"
                         data-ad-client="ca-pub-3186700611266549"
-                        data-ad-slot="YOUR_FOURTH_AD_SLOT_HERE"
+                        data-ad-slot="6125539150"
                         data-ad-format="auto"
                         data-full-width-responsive="true"></ins>
                     <script>
@@ -408,12 +414,13 @@
             <!-- AdSense Code - In-Article -->
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
                 crossorigin="anonymous"></script>
+            <!-- Frankly Ma Dear - Before Quick Access -->
             <ins class="adsbygoogle"
-                style="display:block; text-align:center;"
-                data-ad-layout="in-article"
-                data-ad-format="fluid"
+                style="display:block"
                 data-ad-client="ca-pub-3186700611266549"
-                data-ad-slot="YOUR_FIFTH_AD_SLOT_HERE"></ins>
+                data-ad-slot="4586034963"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
             <script>
                 (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
@@ -501,10 +508,11 @@
             <!-- AdSense Code - Footer -->
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
                 crossorigin="anonymous"></script>
+            <!-- Games - Footer -->
             <ins class="adsbygoogle"
                 style="display:block"
                 data-ad-client="ca-pub-3186700611266549"
-                data-ad-slot="YOUR_SIXTH_AD_SLOT_HERE"
+                data-ad-slot="6125539150"
                 data-ad-format="auto"
                 data-full-width-responsive="true"></ins>
             <script>
@@ -581,6 +589,7 @@
             // This will automatically push any adsbygoogle scripts
             if (typeof adsbygoogle !== 'undefined') {
                 adsbygoogle = adsbygoogle || [];
+                // Push ads for all ad units
                 adsbygoogle.push({});
             }
         }
@@ -588,6 +597,11 @@
         // Load ads when page is ready
         document.addEventListener('DOMContentLoaded', function() {
             loadAdsenseAds();
+            
+            // Also load ads when language changes
+            document.getElementById('language-select').addEventListener('change', function() {
+                setTimeout(loadAdsenseAds, 100);
+            });
         });
 
         // Language translations
