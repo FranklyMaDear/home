@@ -358,7 +358,7 @@
             width: 100%;
         }
         
-        /* ΝΕΟ ΣΤΥΛ ΓΙΑ ΚΙΝΟΥΜΕΝΕΣ ΣΑΠΟΥΝΟΦΟΥΣΚΕΣ */
+        /* ΜΙΚΡΕΣ ΔΙΑΚΡΙΤΙΚΕΣ ΦΟΥΣΚΕΣ */
         .bubble-container {
             position: fixed;
             top: 0;
@@ -366,98 +366,176 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 999;
+            z-index: 998;
         }
         
-        .bubble {
+        .mini-bubble {
             position: absolute;
             pointer-events: auto;
             cursor: pointer;
             border-radius: 50%;
-            background: rgba(209, 154, 76, 0.85);
+            background: rgba(255, 255, 255, 0.15);
             box-shadow: 
-                0 0 20px rgba(255, 203, 46, 0.7),
-                inset 0 5px 15px rgba(255, 255, 255, 0.3);
+                0 0 8px rgba(255, 203, 46, 0.4),
+                inset 0 2px 8px rgba(255, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             transition: all 0.3s ease;
-            animation: floatUp 15s ease-in infinite;
-            z-index: 1000;
-            border: 2px solid rgba(255, 203, 46, 0.5);
+            animation: miniFloatUp 20s linear infinite;
+            z-index: 999;
+            border: 1px solid rgba(255, 203, 46, 0.2);
+            backdrop-filter: blur(2px);
         }
         
-        .bubble:hover {
-            background: rgba(255, 203, 46, 0.95);
-            transform: scale(1.15);
+        .mini-bubble:hover {
+            background: rgba(255, 203, 46, 0.3);
+            transform: scale(1.2);
             box-shadow: 
-                0 0 30px rgba(255, 203, 46, 0.9),
-                inset 0 5px 20px rgba(255, 255, 255, 0.5);
+                0 0 12px rgba(255, 203, 46, 0.6),
+                inset 0 2px 10px rgba(255, 255, 255, 0.3);
         }
         
-        .bubble:active {
-            transform: scale(0.95);
-        }
-        
-        .bubble-content {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-weight: bold;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        .mini-bubble:active {
+            transform: scale(0.9);
         }
         
         .bubble-icon {
-            font-size: 24px;
-            margin-bottom: 5px;
-            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3));
-        }
-        
-        .bubble-text {
             font-size: 12px;
-            line-height: 1.2;
-            max-width: 100%;
-            word-wrap: break-word;
+            color: rgba(255, 255, 255, 0.9);
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
         }
         
-        @keyframes floatUp {
+        @keyframes miniFloatUp {
             0% {
-                transform: translateY(100vh) rotate(0deg) scale(0.8);
+                transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.7);
                 opacity: 0;
             }
             10% {
-                opacity: 0.8;
-                transform: translateY(90vh) rotate(10deg) scale(1);
+                opacity: 0.7;
+                transform: translateY(90vh) translateX(10px) rotate(5deg) scale(1);
             }
             90% {
-                opacity: 0.8;
+                opacity: 0.7;
             }
             100% {
-                transform: translateY(-100px) rotate(360deg) scale(0.8);
+                transform: translateY(-50px) translateX(20px) rotate(360deg) scale(0.7);
                 opacity: 0;
             }
         }
         
-        @keyframes bubblePulse {
-            0%, 100% {
-                transform: scale(1);
-                box-shadow: 
-                    0 0 20px rgba(255, 203, 46, 0.7),
-                    inset 0 5px 15px rgba(255, 255, 255, 0.3);
+        @keyframes miniFloatUp2 {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.6);
+                opacity: 0;
             }
-            50% {
-                transform: scale(1.05);
-                box-shadow: 
-                    0 0 25px rgba(255, 203, 46, 0.8),
-                    inset 0 5px 20px rgba(255, 255, 255, 0.4);
+            10% {
+                opacity: 0.6;
+                transform: translateY(90vh) translateX(-15px) rotate(-5deg) scale(0.9);
             }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-50px) translateX(-20px) rotate(-360deg) scale(0.6);
+                opacity: 0;
+            }
+        }
+        
+        /* ΜΠΑΝΕΡ ΑΠΟ ΚΑΤΩ ΠΡΟΣ ΤΑ ΠΑΝΩ */
+        .bottom-banner {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, rgba(58, 46, 22, 0.95), rgba(38, 30, 14, 0.95));
+            color: white;
+            padding: 12px 20px;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 90%;
+            width: 400px;
+            border: 1px solid rgba(209, 154, 76, 0.3);
+            border-bottom: none;
+            backdrop-filter: blur(10px);
+            transition: bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+        }
+        
+        .bottom-banner.show {
+            bottom: 0;
+            opacity: 1;
+        }
+        
+        .banner-icon {
+            font-size: 24px;
+            color: #ffcb2e;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        
+        .banner-content {
+            flex: 1;
+        }
+        
+        .banner-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffcb2e;
+            margin: 0 0 5px 0;
+        }
+        
+        .banner-text {
+            font-size: 12px;
+            margin: 0;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .banner-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #d19a4c, #e0ad61);
+            color: white;
+            text-decoration: none;
+            padding: 6px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.3s;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(209, 154, 76, 0.4);
+        }
+        
+        .banner-link:hover {
+            background: linear-gradient(135deg, #e0ad61, #ffcb2e);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(209, 154, 76, 0.6);
+        }
+        
+        .banner-close {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .banner-close:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
         }
         
         .thank-you-message {
@@ -503,8 +581,21 @@
         </div>
     </div>
     
-    <!-- Bubble Container για τις σαπουνοφούσκες -->
+    <!-- Bubble Container για μικρές φούσκες -->
     <div class="bubble-container" id="bubbleContainer"></div>
+    
+    <!-- Bottom Banner -->
+    <div class="bottom-banner" id="bottomBanner">
+        <div class="banner-icon">⭐</div>
+        <div class="banner-content">
+            <h4 class="banner-title">Υποστήριξε το Σκάκι Deluxe Pro</h4>
+            <p class="banner-text">Απολαμβάνεις το παιχνίδι δωρεάν; Βοήθησέ μας με μία μικρή επισκεψή!</p>
+        </div>
+        <a href="https://otieu.com/4/10274068" target="_blank" class="banner-link" id="bannerLink">
+            Υποστήριξη
+        </a>
+        <button class="banner-close" id="bannerClose">&times;</button>
+    </div>
     
     <div class="thinking" id="thinkingIndicator">Το AI σκέφτεται...</div>
     
@@ -557,10 +648,13 @@
         const winnerTextEl = document.getElementById("winnerText");
         const celebrationEl = document.getElementById("celebration");
         const bubbleContainer = document.getElementById("bubbleContainer");
+        const bottomBanner = document.getElementById("bottomBanner");
+        const bannerLink = document.getElementById("bannerLink");
+        const bannerClose = document.getElementById("bannerClose");
         const thankYouMessage = document.getElementById("thankYouMessage");
         
-        // Διεύθυνση για τις φούσκες
-        const BUBBLE_LINK = "https://otieu.com/4/10274068";
+        // Διεύθυνση για το banner και τις φούσκες
+        const SUPPORT_LINK = "https://otieu.com/4/10274068";
         
         let board = [];
         let whiteToMove = true;
@@ -574,14 +668,20 @@
         let kingInCheck = false;
         let promotionPending = null;
         
-        // Ρυθμίσεις για τις φούσκες
+        // Ρυθμίσεις για τις ΜΙΚΡΕΣ φούσκες
         let bubbleInterval;
         let isBubbleActive = false;
-        const BUBBLE_INTERVAL = 45000; // 45 δευτερόλεπτα ανάμεσα σε φούσκες
-        const BUBBLE_DURATION = 15000; // 15 δευτερόλεπτα διάρκεια κινούμενης φούσκας
-        const MIN_BUBBLES = 1; // Ελάχιστος αριθμός ταυτόχρονων φούσκες
-        const MAX_BUBBLES = 3; // Μέγιστος αριθμός ταυτόχρονων φούσκες
-        let activeBubbles = 0;
+        const MINI_BUBBLE_INTERVAL = 30000; // 30 δευτερόλεπτα ανάμεσα σε ομάδες φούσκες
+        const MINI_BUBBLE_DURATION = 20000; // 20 δευτερόλεπτα διάρκεια ανά φούσκα
+        const MINI_MIN_BUBBLES = 2; // Ελάχιστος αριθμός ταυτόχρονων φούσκες
+        const MINI_MAX_BUBBLES = 5; // Μέγιστος αριθμός ταυτόχρονων φούσκες
+        
+        // Ρυθμίσεις για το BOTTOM BANNER
+        let bannerTimer;
+        let bannerShown = false;
+        const BANNER_INTERVAL = 60000; // 1 λεπτό ανάμεσα σε εμφανίσεις banner
+        const BANNER_DELAY = 30000; // 30 δευτερόλεπτα πρώτη εμφάνιση
+        const BANNER_DURATION = 15000; // 15 δευτερόλεπτα διάρκεια banner
         
         const START = [
             ['r','n','b','q','k','b','n','r'],
@@ -692,10 +792,11 @@
             updateGameInfo();
             render();
             
-            // Ξεκίνα το σύστημα φούσκες
+            // Ξεκίνα τα συστήματα φούσκες και banner
             if (!isBubbleActive) {
                 startBubbleSystem();
             }
+            startBannerSystem();
         }
         
         // Απόδοση σκακιέρας
@@ -1157,96 +1258,108 @@
             return false;
         }
         
-        // ΣΥΣΤΗΜΑ ΚΙΝΟΥΜΕΝΩΝ ΣΑΠΟΥΝΟΦΟΥΣΚΩΝ
+        // ΣΥΣΤΗΜΑ ΜΙΚΡΩΝ ΔΙΑΚΡΙΤΙΚΩΝ ΦΟΥΣΚΩΝ
         function startBubbleSystem() {
             isBubbleActive = true;
             
-            // Πρώτη φούσκα μετά από καθυστέρηση
-            setTimeout(createRandomBubbles, BUBBLE_INTERVAL / 2);
+            // Πρώτη ομάδα φούσκες μετά από καθυστέρηση
+            setTimeout(createMiniBubbles, 10000);
             
             // Ρύθμιση interval για τακτικές φούσκες
-            bubbleInterval = setInterval(createRandomBubbles, BUBBLE_INTERVAL);
+            bubbleInterval = setInterval(createMiniBubbles, MINI_BUBBLE_INTERVAL);
         }
         
-        function createRandomBubbles() {
-            // Έλεγχος αν υπάρχουν ήδη πολλές ενεργές φούσκες
-            if (activeBubbles >= MAX_BUBBLES) return;
-            
-            // Τυχαίος αριθμός φούσκες (μεταξύ MIN_BUBBLES και MAX_BUBBLES)
-            const numBubbles = Math.floor(Math.random() * (MAX_BUBBLES - MIN_BUBBLES + 1)) + MIN_BUBBLES;
+        function createMiniBubbles() {
+            // Τυχαίος αριθμός φούσκες
+            const numBubbles = Math.floor(Math.random() * (MINI_MAX_BUBBLES - MINI_MIN_BUBBLES + 1)) + MINI_MIN_BUBBLES;
             
             for (let i = 0; i < numBubbles; i++) {
-                if (activeBubbles < MAX_BUBBLES) {
-                    setTimeout(() => {
-                        createBubble();
-                    }, i * 1000); // Χρονική καθυστέρηση μεταξύ φούσκες
-                }
+                setTimeout(() => {
+                    createMiniBubble();
+                }, i * 500); // Χρονική καθυστέρηση μεταξύ φούσκες
             }
         }
         
-        function createBubble() {
-            activeBubbles++;
-            
+        function createMiniBubble() {
             // Δημιουργία στοιχείου φούσκας
             const bubble = document.createElement('div');
-            bubble.className = 'bubble';
+            bubble.className = 'mini-bubble';
             
-            // Τυχαίο μέγεθος φούσκας
-            const size = Math.floor(Math.random() * 80) + 60; // 60-140px
+            // Πολύ μικρό μέγεθος (20-40px)
+            const size = Math.floor(Math.random() * 20) + 20;
             bubble.style.width = `${size}px`;
             bubble.style.height = `${size}px`;
             
-            // Τυχαία θέση έναρξης
-            const startX = Math.random() * 80 + 10; // 10-90%
+            // Τυχαία θέση έναρξης στο κάτω μέρος
+            const startX = Math.random() * 90 + 5;
             bubble.style.left = `${startX}%`;
             
-            // Τυχαίος χρόνος κίνησης
-            const animationDuration = Math.random() * 10 + 10; // 10-20 δευτερόλεπτα
+            // Τυχαίος χρόνος κίνησης και animation style
+            const animationDuration = Math.random() * 10 + 15;
             bubble.style.animationDuration = `${animationDuration}s`;
             
-            // Περιεχόμενο φούσκας
-            const bubbleContent = document.createElement('div');
-            bubbleContent.className = 'bubble-content';
+            // Εναλλαγή μεταξύ δύο διαφορετικών animations για ποικιλία
+            if (Math.random() > 0.5) {
+                bubble.style.animationName = 'miniFloatUp2';
+            }
             
-            // Εικονίδιο φούσκας
+            // Προσθήκη μικρού εικονιδίου
             const bubbleIcon = document.createElement('div');
             bubbleIcon.className = 'bubble-icon';
             bubbleIcon.innerHTML = '⭐';
-            
-            // Κείμενο φούσκας
-            const bubbleText = document.createElement('div');
-            bubbleText.className = 'bubble-text';
-            bubbleText.textContent = 'Υποστήριξέ μας!';
-            
-            // Προσθήκη στοιχείων
-            bubbleContent.appendChild(bubbleIcon);
-            bubbleContent.appendChild(bubbleText);
-            bubble.appendChild(bubbleContent);
-            bubbleContainer.appendChild(bubble);
+            bubble.appendChild(bubbleIcon);
             
             // Event listener για κλικ στη φούσκα
             bubble.addEventListener('click', handleBubbleClick);
+            
+            bubbleContainer.appendChild(bubble);
             
             // Αυτόματη κατάργηση της φούσκας μετά το τέλος της κίνησης
             setTimeout(() => {
                 if (bubble.parentNode) {
                     bubble.remove();
-                    activeBubbles--;
                 }
             }, animationDuration * 1000);
+        }
+        
+        // ΣΥΣΤΗΜΑ BOTTOM BANNER
+        function startBannerSystem() {
+            // Πρώτο banner μετά από καθυστέρηση
+            setTimeout(() => {
+                showBanner();
+            }, BANNER_DELAY);
+            
+            // Ρύθμιση interval για τακτικά banners
+            bannerTimer = setInterval(showBanner, BANNER_INTERVAL);
+        }
+        
+        function showBanner() {
+            // Έλεγχος αν το banner έχει ήδη εμφανιστεί πρόσφατα
+            if (bannerShown) return;
+            
+            // Εμφάνιση banner
+            bottomBanner.classList.add('show');
+            bannerShown = true;
+            
+            // Αυτόματη απόκρυψη μετά από διάστημα
+            setTimeout(() => {
+                hideBanner();
+            }, BANNER_DURATION);
+        }
+        
+        function hideBanner() {
+            bottomBanner.classList.remove('show');
+            bannerShown = false;
         }
         
         function handleBubbleClick(e) {
             e.preventDefault();
             
             // Άνοιγμα του link σε νέα καρτέλα
-            window.open(BUBBLE_LINK, '_blank');
+            window.open(SUPPORT_LINK, '_blank');
             
             // Εμφάνιση ευχαριστήριου μηνύματος
             showThankYou();
-            
-            // Καταγραφή κλικ
-            console.log('Bubble clicked - support link opened');
             
             // Αφαίρεση της φούσκας
             const bubble = e.currentTarget;
@@ -1257,7 +1370,6 @@
             setTimeout(() => {
                 if (bubble.parentNode) {
                     bubble.remove();
-                    activeBubbles--;
                 }
             }, 300);
         }
@@ -1273,6 +1385,31 @@
                 }, 500);
             }, 3000);
         }
+        
+        // Event listeners για το banner
+        bannerLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Άνοιγμα link σε νέα καρτέλα
+            window.open(SUPPORT_LINK, '_blank');
+            
+            // Κλείσιμο banner
+            hideBanner();
+            
+            // Εμφάνιση ευχαριστήριου μηνύματος
+            setTimeout(showThankYou, 500);
+            
+            // Καταγραφή κλικ
+            console.log('Banner link clicked');
+        });
+        
+        bannerClose.addEventListener('click', () => {
+            hideBanner();
+            
+            // Επόμενη εμφάνιση σε διπλάσιο χρόνο
+            clearInterval(bannerTimer);
+            bannerTimer = setInterval(showBanner, BANNER_INTERVAL * 2);
+        });
         
         // Συναρτήσεις UI παιχνιδιού
         document.getElementById("resetBtn").addEventListener("click", () => {
