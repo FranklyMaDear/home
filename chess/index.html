@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Σκάκι Deluxe Pro</title>
-    <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <!-- Favicons από το index.png -->
+    <link rel="apple-touch-icon" sizes="180x180" href="index.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="index.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="index.png">
     <link rel="manifest" href="site.webmanifest">
     <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
@@ -26,7 +26,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); /* Νέα βαθιά μπλε κλίση */
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -358,113 +358,108 @@
             width: 100%;
         }
         
-        /* Banner διαφήμισης */
-        .ad-banner {
+        /* ΜΙΝΙΜΑΛ POP-UP BANNER */
+        .mini-ad-banner {
             position: fixed;
-            bottom: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            bottom: 20px;
+            right: 20px;
+            background: rgba(58, 46, 22, 0.95);
             color: white;
-            padding: 15px 30px;
-            border-radius: 10px 10px 0 0;
-            box-shadow: 0 -2px 20px rgba(0,0,0,0.3);
-            z-index: 1000;
+            padding: 12px 18px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 999;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 300px;
+            border: 1px solid #d19a4c;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .mini-ad-banner.show {
             display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .mini-ad-banner-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 15px;
-            transition: bottom 0.5s ease;
-            max-width: 90%;
-            border: 2px solid #d19a4c;
         }
-
-        .ad-banner.show {
-            bottom: 0;
-        }
-
-        .ad-banner-content {
-            flex: 1;
-            text-align: center;
-        }
-
-        .ad-banner h3 {
-            margin: 0 0 5px 0;
-            font-size: 18px;
-            color: #ffcb2e;
-        }
-
-        .ad-banner p {
+        
+        .mini-ad-banner h4 {
             margin: 0;
             font-size: 14px;
+            color: #ffcb2e;
         }
-
-        .ad-banner .support-btn {
-            background: #d19a4c;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
-            white-space: nowrap;
-        }
-
-        .ad-banner .support-btn:hover {
-            background: #e0ad61;
-        }
-
-        .close-banner {
+        
+        .mini-close-btn {
             background: transparent;
             border: none;
             color: white;
-            font-size: 20px;
+            font-size: 16px;
             cursor: pointer;
-            padding: 0 5px;
-        }
-
-        /* Overlay για διαφήμιση */
-        .ad-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 2000;
+            padding: 0;
+            width: 20px;
+            height: 20px;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+        }
+        
+        .mini-ad-banner p {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .support-link {
+            display: inline-block;
+            background: #d19a4c;
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            transition: background 0.3s;
+            margin-top: 5px;
+        }
+        
+        .support-link:hover {
+            background: #e0ad61;
+        }
+        
+        .thank-you-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1001;
+            font-weight: bold;
+            animation: slideInRight 0.5s ease;
             display: none;
         }
-
-        .ad-overlay.active {
-            display: flex;
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
-
-        .ad-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 90%;
-            max-height: 90%;
-            overflow: auto;
-            position: relative;
-        }
-
-        .close-overlay {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #ff0000;
-            color: white;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
+        
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
         }
     </style>
 </head>
@@ -513,33 +508,21 @@
         </div>
     </div>
     
-    <!-- Banner διαφήμισης -->
-    <div class="ad-banner" id="adBanner">
-        <div class="ad-banner-content">
-            <h3>Βοήθησε μας να συνεχίσουμε!</h3>
-            <p>Απολαμβάνεις το Σκάκι Deluxe Pro δωρεάν; Υποστήριξε μας βλέποντας μια σύντομη διαφήμιση.</p>
+    <!-- ΜΙΝΙΜΑΛ POP-UP BANNER -->
+    <div class="mini-ad-banner" id="miniAdBanner">
+        <div class="mini-ad-banner-header">
+            <h4>⭐ Υποστήριξε μας!</h4>
+            <button class="mini-close-btn" id="miniCloseBtn">&times;</button>
         </div>
-        <button class="support-btn" id="supportBtn">Υποστήριξε Τώρα</button>
-        <button class="close-banner" id="closeBanner">&times;</button>
+        <p>Απολαμβάνεις το Σκάκι Deluxe Pro δωρεάν; Βοήθησε μας με μία μικρή επισκεψή στη διαφήμιση.</p>
+        <a href="https://otieu.com/4/10274068" target="_blank" class="support-link" id="supportLink">
+            Επισκέψου τη Διαφήμιση
+        </a>
     </div>
-
-    <!-- Overlay για διαφήμιση -->
-    <div class="ad-overlay" id="adOverlay">
-        <div class="ad-container">
-            <button class="close-overlay" id="closeOverlay">&times;</button>
-            <h2>Ευχαριστούμε για την υποστήριξή σου! ❤️</h2>
-            <p>Η παρακάτω διαφήμιση μας βοηθά να συντηρήσουμε και να βελτιώσουμε το παιχνίδι.</p>
-            
-            <!-- Αντικατέστησε το παρακάτω div με τον κώδικα από τη Monetag -->
-            <div id="monetag-ad-container" style="min-height: 600px; width: 100%; background: #f5f5f5; border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center;">
-                <p style="color: #666;">🚀 Εδώ θα εμφανίζεται η διαφήμιση Monetag</p>
-            </div>
-            
-            <p style="margin-top: 15px; font-size: 14px; color: #666;">
-                Αφού δεις τη διαφήμιση, μπορείς να κλείσεις αυτό το παράθυρο.
-                <br>Ευχαριστούμε πολύ για τη συνεισφορά σου!
-            </p>
-        </div>
+    
+    <!-- Μήνυμα ευχαριστιών -->
+    <div class="thank-you-message" id="thankYouMessage">
+        Ευχαριστούμε για την υποστήριξή σου! ♥
     </div>
     
     <div id="celebration" class="celebration"></div>
@@ -549,31 +532,6 @@
     </div>
 
     <script>
-        // Δυναμικό favicon από την εικόνα σου
-        document.addEventListener('DOMContentLoaded', function() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 32;
-            canvas.height = 32;
-            const ctx = canvas.getContext('2d');
-            
-            // Χρώματα από το σκάκι
-            ctx.fillStyle = '#1e3c72';
-            ctx.fillRect(0, 0, 32, 32);
-            ctx.fillStyle = '#d19a4c';
-            ctx.fillRect(8, 8, 16, 16);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 20px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('♔', 16, 16);
-            
-            // Δημιουργία favicon
-            const favicon = document.createElement('link');
-            favicon.rel = 'icon';
-            favicon.href = canvas.toDataURL('image/png');
-            document.head.appendChild(favicon);
-        });
-
         // Βασικές μεταβλητές παιχνιδιού
         const boardEl = document.getElementById("board");
         const gameInfoEl = document.getElementById("gameInfo");
@@ -585,12 +543,11 @@
         const winnerTextEl = document.getElementById("winnerText");
         const celebrationEl = document.getElementById("celebration");
         
-        // Banner διαφήμισης
-        const adBanner = document.getElementById('adBanner');
-        const adOverlay = document.getElementById('adOverlay');
-        const supportBtn = document.getElementById('supportBtn');
-        const closeBanner = document.getElementById('closeBanner');
-        const closeOverlay = document.getElementById('closeOverlay');
+        // Μίνιμαλ banner μεταβλητές
+        const miniAdBanner = document.getElementById('miniAdBanner');
+        const miniCloseBtn = document.getElementById('miniCloseBtn');
+        const supportLink = document.getElementById('supportLink');
+        const thankYouMessage = document.getElementById('thankYouMessage');
         
         let board = [];
         let whiteToMove = true;
@@ -604,11 +561,12 @@
         let kingInCheck = false;
         let promotionPending = null;
         
-        // Ρυθμίσεις για το banner
-        let bannerShown = false;
-        let adTimer;
-        const BANNER_DELAY = 30000; // 30 δευτερόλεπτα
-        const BANNER_INTERVAL = 300000; // 5 λεπτά
+        // Ρυθμίσεις για το μίνιμαλ banner
+        let miniBannerShown = false;
+        let miniBannerTimer;
+        const MINI_BANNER_DELAY = 45000; // 45 δευτερόλεπτα
+        const MINI_BANNER_INTERVAL = 360000; // 6 λεπτά
+        const MINI_BANNER_DURATION = 20000; // 20 δευτερόλεπτα εμφάνιση
         
         const START = [
             ['r','n','b','q','k','b','n','r'],
@@ -1179,7 +1137,66 @@
             return false;
         }
         
-        // Συναρτήσεις UI
+        // ΜΙΝΙΜΑΛ BANNER ΛΕΙΤΟΥΡΓΙΕΣ
+        function showMiniAdBanner() {
+            if (!miniBannerShown) {
+                setTimeout(() => {
+                    miniAdBanner.classList.add('show');
+                    miniBannerShown = true;
+                    
+                    // Απόκρυψη μετά από προκαθορισμένο χρόνο
+                    setTimeout(() => {
+                        miniAdBanner.classList.remove('show');
+                    }, MINI_BANNER_DURATION);
+                    
+                    // Πρόγραμμα επόμενης εμφάνισης
+                    miniBannerTimer = setTimeout(showMiniAdBanner, MINI_BANNER_INTERVAL);
+                }, MINI_BANNER_DELAY);
+            }
+        }
+        
+        function hideMiniAdBanner() {
+            miniAdBanner.classList.remove('show');
+            clearTimeout(miniBannerTimer);
+            // Επόμενη εμφάνιση σε διπλάσιο χρόνο
+            miniBannerTimer = setTimeout(showMiniAdBanner, MINI_BANNER_INTERVAL * 2);
+        }
+        
+        function showThankYou() {
+            thankYouMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                thankYouMessage.style.animation = 'slideOutRight 0.5s ease forwards';
+                setTimeout(() => {
+                    thankYouMessage.style.display = 'none';
+                    thankYouMessage.style.animation = 'slideInRight 0.5s ease';
+                }, 500);
+            }, 3000);
+        }
+        
+        // Εκκίνηση timer για πρώτη εμφάνιση banner
+        showMiniAdBanner();
+        
+        // Event listeners για το μίνιμαλ banner
+        miniCloseBtn.addEventListener('click', hideMiniAdBanner);
+        
+        supportLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Ανοίγει το link σε νέα καρτέλα
+            window.open('https://otieu.com/4/10274068', '_blank');
+            
+            // Κλείσιμο banner
+            hideMiniAdBanner();
+            
+            // Εμφάνιση ευχαριστήριου μηνύματος
+            setTimeout(showThankYou, 500);
+            
+            // Καταγραφή κλικ (προσαρμόστε ανάλογα)
+            console.log('Support link clicked');
+        });
+        
+        // Συναρτήσεις UI παιχνιδιού
         document.getElementById("resetBtn").addEventListener("click", () => {
             init();
         });
@@ -1254,123 +1271,6 @@
                 celebrationEl.appendChild(confetti);
             }
         }
-        
-        // Banner διαφήμισης - Συναρτήσεις
-        // Συνάρτηση εμφάνισης banner
-        function showAdBanner() {
-            if (!bannerShown) {
-                setTimeout(() => {
-                    adBanner.classList.add('show');
-                    bannerShown = true;
-                    
-                    // Απόκρυψη μετά από 30 δευτερόλεπτα
-                    setTimeout(() => {
-                        adBanner.classList.remove('show');
-                    }, 30000);
-                    
-                    // Πρόγραμμα επόμενης εμφάνισης
-                    adTimer = setTimeout(showAdBanner, BANNER_INTERVAL);
-                }, BANNER_DELAY);
-            }
-        }
-        
-        // Εκκίνηση timer για πρώτη εμφάνιση
-        showAdBanner();
-        
-        // Event listeners για το banner
-        supportBtn.addEventListener('click', () => {
-            // Κλείσιμο banner
-            adBanner.classList.remove('show');
-            
-            // Εμφάνιση overlay με διαφήμιση
-            adOverlay.classList.add('active');
-            
-            // Εδώ πρόσθεσε τον κώδικα από τη Monetag:
-            // https://otieu.com/4/10274068
-            
-            // Παράδειγμα (αντικατέστησέ το με τον πραγματικό κώδικα):
-            /*
-            const script = document.createElement('script');
-            script.src = 'https://your-monetag-script-url.js';
-            script.async = true;
-            document.getElementById('monetag-ad-container').appendChild(script);
-            */
-        });
-        
-        closeBanner.addEventListener('click', () => {
-            adBanner.classList.remove('show');
-            clearTimeout(adTimer);
-            // Επόμενη εμφάνιση σε 10 λεπτά
-            adTimer = setTimeout(showAdBanner, 600000);
-        });
-        
-        closeOverlay.addEventListener('click', () => {
-            adOverlay.classList.remove('active');
-            
-            // Απόρριψη banner για το υπόλοιπο της συνεδρίας
-            clearTimeout(adTimer);
-            bannerShown = true;
-            
-            // Εμφάνιση ευχαριστιών
-            setTimeout(() => {
-                showThankYouMessage();
-            }, 500);
-        });
-        
-        function showThankYouMessage() {
-            const thankYou = document.createElement('div');
-            thankYou.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                background: #4CAF50;
-                color: white;
-                padding: 15px 25px;
-                border-radius: 10px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-                z-index: 1001;
-                font-weight: bold;
-                animation: slideIn 0.5s ease;
-            `;
-            
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            thankYou.innerHTML = 'Ευχαριστούμε για την υποστήριξή σου! ♥';
-            document.body.appendChild(thankYou);
-            
-            setTimeout(() => {
-                thankYou.style.animation = 'slideOut 0.5s ease forwards';
-                setTimeout(() => thankYou.remove(), 500);
-                
-                const slideOutStyle = document.createElement('style');
-                slideOutStyle.textContent = `
-                    @keyframes slideOut {
-                        from { transform: translateX(0); opacity: 1; }
-                        to { transform: translateX(100%); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(slideOutStyle);
-            }, 3000);
-        }
-        
-        // Απόκρυψη overlay με ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && adOverlay.classList.contains('active')) {
-                adOverlay.classList.remove('active');
-            }
-        });
-        
-        // Εμφάνιση banner κατά τη φόρτωση παιχνιδιού
-        window.addEventListener('load', () => {
-            setTimeout(showAdBanner, 10000);
-        });
         
         // Αρχικοποίηση παιχνιδιού
         init();
