@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Σκάκι Deluxe Pro</title>
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#1e3c72">
+    <style>
+        :root {
+            --board-size: min(95vw, 95vh, 800px);
+            --square-size: calc(var(--board-size) / 8);
+            --piece-size: calc(var(--square-size) * 0.85);
+            --dot-size: calc(var(--square-size) * 0.25);
+        }
+        
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); /* Νέα βαθιά μπλε κλίση */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            font-family: "Segoe UI", sans-serif;
+            overflow: auto;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1400px;
+            gap: 20px;
+        }
+
+        .board-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #3a2e16;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.4);
+            width: var(--board-size);
+            flex-shrink: 0;
+        }
+
+        .board {
+            width: var(--board-size);
+            height: var(--board-size);
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            border: 6px solid #3a2e16;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .square {
+            position: relative;
+            width: var(--square-size);
+            height: var(--square-size);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform .1s ease;
+        }
+
+        .sq-light { background: #f0d9b5; }
+        .sq-dark { background: #b58863; }
+
+        .piece {
+            width: var(--piece-size);
+            height: var(--piece-size);
+            cursor: grab;
+            transition: transform 0.1s;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+        .piece:active {
+            cursor: grabbing;
+            transform: scale(1.1);
+        }
+
+        .highlight {
+            box-shadow: inset 0 0 0 4px #ffcb2e;
+        }
+
+        .move-dot::after {
+            content: '';
+            position: absolute;
+            width: var(--dot-size);
+            height: var(--dot-size);
+            border-radius: 50%;
+            background: rgba(0,0,0,0.25);
+        }
+
+        .check {
+            box-shadow: inset 0 0 0 4px #ff0000;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: inset 0 0 0 4px rgba(255, 0, 0, 0.7); }
+            50% { box-shadow: inset 0 0 0 4px rgba(255, 0, 0, 1); }
+            100% { box-shadow: inset 0 0 0 4px rgba(255, 0, 0, 0.7); }
+        }
+
+        h1 {
+            color: #fff;
+            font-size: clamp(18px, 5vw, 24px);
+            margin: 5px 0;
+            text-align: center;
+        }
+
+        .controls {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            background: #d19a4c;
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            font-size: clamp(14px, 4vw, 16px);
+            min-width: 120px;
+            transition: all 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        button:hover, button:active { 
+            background: #e0ad61; 
+        }
+        
+        .game-info {
+            color: white;
+            margin: 8px 0;
+            font-size: clamp(14px, 4vw, 16px);
+            text-align: center;
+            min-height: 24px;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .modal-content {
+            background: #3a2e16;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+        }
+        
+        .modal h2 {
+            color: white;
+            margin-top: 0;
+        }
+        
+        .modal-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .modal-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+        
+        .close-btn {
+            background: #8b4513;
+        }
+        
+        .thinking {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 18px;
+            z-index: 10;
+            display: none;
+        }
+        
+        .difficulty-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .difficulty-btn {
+            background: #5d4037;
+        }
+        
+        .difficulty-btn.active {
+            background: #d19a4c;
+        }
+        
+        .status-check {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        
+        .status-mate {
+            color: #ff0000;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        /* Στυλ για πανηγυρισμούς */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 200;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #f00;
+            opacity: 0.8;
+            animation: fall linear forwards;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .victory-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 201;
+            text-align: center;
+            display: none;
+            box-shadow: 0 0 30px rgba(255,215,0,0.5);
+            border: 2px solid gold;
+        }
+        
+        .victory-message h2 {
+            margin: 0 0 10px 0;
+            color: gold;
+        }
+        
+        .victory-message p {
+            margin: 0;
+        }
+        
+        /* Στυλ για προαγωγή πιονιού */
+        .promotion-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .promotion-options {
+            display: flex;
+            gap: 10px;
+            background: #3a2e16;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        
+        .promotion-piece {
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #5d4037;
+        }
+        
+        .promotion-piece:hover {
+            transform: scale(1.1);
+            background: #d19a4c;
+        }
+        
+        .promotion-piece img {
+            width: 80%;
+            height: 80%;
+        }
+        
+        /* Στυλ για ευθυγράμμιση */
+        .board-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+        
+        /* Banner διαφήμισης */
+        .ad-banner {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 -2px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: bottom 0.5s ease;
+            max-width: 90%;
+            border: 2px solid #d19a4c;
+        }
+
+        .ad-banner.show {
+            bottom: 0;
+        }
+
+        .ad-banner-content {
+            flex: 1;
+            text-align: center;
+        }
+
+        .ad-banner h3 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+            color: #ffcb2e;
+        }
+
+        .ad-banner p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .ad-banner .support-btn {
+            background: #d19a4c;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+
+        .ad-banner .support-btn:hover {
+            background: #e0ad61;
+        }
+
+        .close-banner {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+
+        /* Overlay για διαφήμιση */
+        .ad-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+
+        .ad-overlay.active {
+            display: flex;
+        }
+
+        .ad-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            position: relative;
+        }
+
+        .close-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Κεντρική σκακιέρα -->
+        <div class="board-wrapper">
+            <div class="board-container">
+                <h1>♕ Σκάκι Deluxe Pro ♛</h1>
+                <div class="game-info" id="gameInfo">Παίζουν τα Λευκά</div>
+                <div id="board" class="board"></div>
+                <div class="controls">
+                    <button id="resetBtn">Νέα Παρτίδα</button>
+                    <button id="flipBtn">Αντιστροφή</button>
+                    <button id="aiBtn">Παίξτε με AI</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="thinking" id="thinkingIndicator">Το AI σκέφτεται...</div>
+    
+    <!-- Modals -->
+    <div class="modal" id="gameModeModal" style="display: none;">
+        <div class="modal-content">
+            <h2>Επιλογή Τρόπου Παιχνιδιού</h2>
+            <p>Πώς θέλετε να παίξετε;</p>
+            <div class="modal-options">
+                <button class="modal-btn" id="twoPlayersBtn">Δύο Παίκτες</button>
+                <button class="modal-btn" id="vsAiBtn">Παίξτε με AI</button>
+            </div>
+            <div class="difficulty-selector" id="difficultySelector" style="display: none;">
+                <h3 style="color: white; margin: 10px 0;">Επιλογή Δυσκολίας</h3>
+                <button class="modal-btn difficulty-btn" data-depth="3">Μέτριο</button>
+                <button class="modal-btn difficulty-btn active" data-depth="4">Δύσκολο</button>
+                <button class="modal-btn difficulty-btn" data-depth="5">Πολύ Δύσκολο</button>
+            </div>
+            <button class="modal-btn close-btn" id="closeModalBtn">Κλείσιμο</button>
+        </div>
+    </div>
+    
+    <!-- Modal για προαγωγή πιονιού -->
+    <div class="promotion-modal" id="promotionModal" style="display: none;">
+        <div class="promotion-options" id="promotionOptions">
+            <!-- Τα κομμάτια προαγωγής θα προστεθούν δυναμικά -->
+        </div>
+    </div>
+    
+    <!-- Banner διαφήμισης -->
+    <div class="ad-banner" id="adBanner">
+        <div class="ad-banner-content">
+            <h3>Βοήθησε μας να συνεχίσουμε!</h3>
+            <p>Απολαμβάνεις το Σκάκι Deluxe Pro δωρεάν; Υποστήριξε μας βλέποντας μια σύντομη διαφήμιση.</p>
+        </div>
+        <button class="support-btn" id="supportBtn">Υποστήριξε Τώρα</button>
+        <button class="close-banner" id="closeBanner">&times;</button>
+    </div>
+
+    <!-- Overlay για διαφήμιση -->
+    <div class="ad-overlay" id="adOverlay">
+        <div class="ad-container">
+            <button class="close-overlay" id="closeOverlay">&times;</button>
+            <h2>Ευχαριστούμε για την υποστήριξή σου! ❤️</h2>
+            <p>Η παρακάτω διαφήμιση μας βοηθά να συντηρήσουμε και να βελτιώσουμε το παιχνίδι.</p>
+            
+            <!-- Αντικατέστησε το παρακάτω div με τον κώδικα από τη Monetag -->
+            <div id="monetag-ad-container" style="min-height: 600px; width: 100%; background: #f5f5f5; border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center;">
+                <p style="color: #666;">🚀 Εδώ θα εμφανίζεται η διαφήμιση Monetag</p>
+            </div>
+            
+            <p style="margin-top: 15px; font-size: 14px; color: #666;">
+                Αφού δεις τη διαφήμιση, μπορείς να κλείσεις αυτό το παράθυρο.
+                <br>Ευχαριστούμε πολύ για τη συνεισφορά σου!
+            </p>
+        </div>
+    </div>
+    
+    <div id="celebration" class="celebration"></div>
+    <div id="victoryMessage" class="victory-message">
+        <h2>Νίκη!</h2>
+        <p id="winnerText"></p>
+    </div>
+
+    <script>
+        // Δυναμικό favicon από την εικόνα σου
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            
+            // Χρώματα από το σκάκι
+            ctx.fillStyle = '#1e3c72';
+            ctx.fillRect(0, 0, 32, 32);
+            ctx.fillStyle = '#d19a4c';
+            ctx.fillRect(8, 8, 16, 16);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('♔', 16, 16);
+            
+            // Δημιουργία favicon
+            const favicon = document.createElement('link');
+            favicon.rel = 'icon';
+            favicon.href = canvas.toDataURL('image/png');
+            document.head.appendChild(favicon);
+        });
+
+        // Βασικές μεταβλητές παιχνιδιού
+        const boardEl = document.getElementById("board");
+        const gameInfoEl = document.getElementById("gameInfo");
+        const thinkingIndicator = document.getElementById("thinkingIndicator");
+        const gameModeModal = document.getElementById("gameModeModal");
+        const promotionModal = document.getElementById("promotionModal");
+        const promotionOptions = document.getElementById("promotionOptions");
+        const victoryMessageEl = document.getElementById("victoryMessage");
+        const winnerTextEl = document.getElementById("winnerText");
+        const celebrationEl = document.getElementById("celebration");
+        
+        // Banner διαφήμισης
+        const adBanner = document.getElementById('adBanner');
+        const adOverlay = document.getElementById('adOverlay');
+        const supportBtn = document.getElementById('supportBtn');
+        const closeBanner = document.getElementById('closeBanner');
+        const closeOverlay = document.getElementById('closeOverlay');
+        
+        let board = [];
+        let whiteToMove = true;
+        let selected = null;
+        let legalMoves = [];
+        let flipped = false;
+        let vsAI = false;
+        let aiColor = 'b';
+        let gameActive = true;
+        let aiDepth = 4;
+        let kingInCheck = false;
+        let promotionPending = null;
+        
+        // Ρυθμίσεις για το banner
+        let bannerShown = false;
+        let adTimer;
+        const BANNER_DELAY = 30000; // 30 δευτερόλεπτα
+        const BANNER_INTERVAL = 300000; // 5 λεπτά
+        
+        const START = [
+            ['r','n','b','q','k','b','n','r'],
+            ['p','p','p','p','p','p','p','p'],
+            [null,null,null,null,null,null,null,null],
+            [null,null,null,null,null,null,null,null],
+            [null,null,null,null,null,null,null,null],
+            [null,null,null,null,null,null,null,null],
+            ['P','P','P','P','P','P','P','P'],
+            ['R','N','B','Q','K','B','N','R']
+        ];
+        
+        // Τιμές κομματιών για αξιολόγηση
+        const PIECE_VALUES = {
+            'p': 10,
+            'n': 30,
+            'b': 30,
+            'r': 50,
+            'q': 90,
+            'k': 900
+        };
+        
+        // Ηχητικά εφέ
+        function playSound(soundType) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                switch(soundType) {
+                    case 'move':
+                        // Ήχος για απλή κίνηση
+                        oscillator.frequency.value = 400;
+                        oscillator.type = 'sine';
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.3);
+                        break;
+                    case 'capture':
+                        // Ήχος για κατάληψη πιονιού
+                        oscillator.frequency.value = 200;
+                        oscillator.type = 'square';
+                        gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.2);
+                        break;
+                    case 'check':
+                        // Προφορά "Σαχ"
+                        if ('speechSynthesis' in window) {
+                            const utterance = new SpeechSynthesisUtterance();
+                            utterance.lang = 'el-GR';
+                            utterance.text = "Σάχ";
+                            utterance.rate = 0.9;
+                            speechSynthesis.speak(utterance);
+                        }
+                        break;
+                    case 'checkmate':
+                        // Προφορά "Σάχ Ματ"
+                        if ('speechSynthesis' in window) {
+                            const utterance = new SpeechSynthesisUtterance();
+                            utterance.lang = 'el-GR';
+                            utterance.text = "Σάχ Ματ";
+                            utterance.rate = 0.9;
+                            speechSynthesis.speak(utterance);
+                        }
+                        break;
+                    case 'victory':
+                        // Ήχος για νίκη
+                        oscillator.frequency.value = 600;
+                        oscillator.type = 'sine';
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 1);
+                        break;
+                }
+            } catch (e) {
+                console.log("Αδυναμία αναπαραγωγής ήχου:", e);
+            }
+        }
+        
+        // Αρχικοποίηση παιχνιδιού
+        function init() {
+            board = [];
+            for (let r=0;r<8;r++) {
+                board[r]=[];
+                for (let c=0;c<8;c++) {
+                    const ch=START[r][c];
+                    if (!ch) board[r][c]=null;
+                    else {
+                        const color = ch===ch.toUpperCase()?'w':'b';
+                        const type = ch.toLowerCase();
+                        board[r][c]={type,color};
+                    }
+                }
+            }
+            whiteToMove=true;
+            selected=null;
+            legalMoves=[];
+            gameActive = true;
+            kingInCheck = false;
+            promotionPending = null;
+            updateGameInfo();
+            render();
+        }
+        
+        // Απόδοση σκακιέρας
+        function render() {
+            boardEl.innerHTML="";
+            const rows=[...Array(8).keys()];
+            if(flipped) rows.reverse();
+            
+            // Βρες τη θέση του βασιλιά που είναι σε σαχ
+            let kingInCheckPos = null;
+            if (kingInCheck) {
+                const currentColor = whiteToMove ? 'w' : 'b';
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const piece = board[r][c];
+                        if (piece && piece.type === 'k' && piece.color === currentColor) {
+                            kingInCheckPos = {r, c};
+                            break;
+                        }
+                    }
+                    if (kingInCheckPos) break;
+                }
+            }
+            
+            for(let rr of rows){
+                const row=rr;
+                const cols=flipped?[7,6,5,4,3,2,1,0]:[0,1,2,3,4,5,6,7];
+                for(let cc of cols){
+                    const col=cc;
+                    const sq=document.createElement("div");
+                    sq.className="square "+((row+col)%2===0?"sq-dark":"sq-light");
+                    sq.dataset.r=row; sq.dataset.c=col;
+                    
+                    // Προσθήκη κλάσης check αν ο βασιλιάς είναι σε σαχ
+                    if (kingInCheckPos && kingInCheckPos.r === row && kingInCheckPos.c === col) {
+                        sq.classList.add("check");
+                    }
+                    
+                    const move=legalMoves.find(m=>m.r===row && m.c===col);
+                    if(move) sq.classList.add("move-dot");
+                    
+                    if(selected && selected.r === row && selected.c === col) {
+                        sq.classList.add("highlight");
+                    }
+                    
+                    const p=board[row][col];
+                    if(p){
+                        const img=document.createElement("img");
+                        img.src=getPieceImg(p.type,p.color);
+                        img.className="piece";
+                        img.draggable=true;
+                        
+                        // Προσθήκη event listeners μόνο αν είναι η σειρά του χρήστη
+                        if (!vsAI || (vsAI && whiteToMove !== (aiColor === 'w'))) {
+                            img.addEventListener("click", (e) => {
+                                e.stopPropagation();
+                                onSquareTap(row, col);
+                            });
+                            }
+                        
+                        sq.appendChild(img);
+                    }
+                    
+                    // Προσθήκη event listener για το τετράγωνο
+                    if (!vsAI || (vsAI && whiteToMove !== (aiColor === 'w'))) {
+                        sq.addEventListener("click", () => onSquareTap(row, col));
+                    }
+                    
+                    boardEl.appendChild(sq);
+                }
+            }
+            
+            // Αν είναι η σειρά του AI και το παιχνίδι είναι ενεργό, κάνε κίνηση AI
+            if (vsAI && gameActive && whiteToMove === (aiColor === 'w')) {
+                setTimeout(makeAIMove, 500);
+            }
+        }
+        
+        function onSquareTap(r, c) {
+            // Έλεγχος αν ο χρήστης μπορεί να παίξει
+            if (vsAI && whiteToMove === (aiColor === 'w')) {
+                return;
+            }
+            
+            if(selected && legalMoves.find(m=>m.r===r&&m.c===c)){
+                movePiece(selected.r,selected.c,r,c);
+                selected=null;
+                legalMoves=[];
+                render();
+                return;
+            }
+            const p=board[r][c];
+            if(p && p.color===(whiteToMove?'w':'b')){
+                selected={r,c};
+                legalMoves=generateLegalMoves(r,c);
+            } else {
+                selected=null; legalMoves=[];
+            }
+            render();
+        }
+        
+        function movePiece(sr,sc,tr,tc){
+            // Έλεγχος για κατάληψη
+            const capturedPiece = board[tr][tc];
+            
+            // Εκτέλεση της κίνησης
+            board[tr][tc]=board[sr][sc];
+            board[sr][sc]=null;
+            
+            // Αναπαραγωγή ήχου
+            if (capturedPiece) {
+                playSound('capture'); // Ήχος για κατάληψη
+            } else {
+                playSound('move'); // Ήχος για απλή κίνηση
+            }
+            
+            whiteToMove=!whiteToMove;
+            
+            // Έλεγχος για προαγωγή πιονιού
+            const piece = board[tr][tc];
+            if (piece && piece.type === 'p') {
+                if ((piece.color === 'w' && tr === 0) || (piece.color === 'b' && tr === 7)) {
+                    promotionPending = {r: tr, c: tc};
+                    showPromotionOptions(piece.color);
+                    return; // Σταματάμε εδώ μέχρι να επιλεγεί κομμάτι προαγωγής
+                }
+            }
+            
+            // Έλεγχος για σαχ και ματ
+            checkGameState();
+            updateGameInfo();
+        }
+        
+        function showPromotionOptions(color) {
+            promotionOptions.innerHTML = '';
+            
+            const pieces = ['q', 'r', 'b', 'n'];
+            pieces.forEach(pieceType => {
+                const pieceOption = document.createElement("div");
+                pieceOption.className = "promotion-piece";
+                pieceOption.innerHTML = `<img src="${getPieceImg(pieceType, color)}" alt="${pieceType}">`;
+                pieceOption.addEventListener("click", () => {
+                    promotePawn(promotionPending.r, promotionPending.c, pieceType);
+                    promotionModal.style.display = 'none';
+                });
+                promotionOptions.appendChild(pieceOption);
+            });
+            
+            promotionModal.style.display = 'flex';
+        }
+        
+        function promotePawn(r, c, pieceType) {
+            board[r][c].type = pieceType;
+            promotionPending = null;
+            
+            // Συνεχίζουμε με τον έλεγχο κατάστασης παιχνιδιού
+            checkGameState();
+            updateGameInfo();
+            render();
+        }
+        
+        function checkGameState() {
+            const currentColor = whiteToMove ? 'w' : 'b';
+            const wasInCheck = kingInCheck;
+            kingInCheck = isKingInCheck(currentColor);
+            
+            // Έλεγχος για ματ ή πατ
+            const hasLegalMoves = hasAnyLegalMoves(currentColor);
+            
+            if (!hasLegalMoves) {
+                gameActive = false;
+                if (kingInCheck) {
+                    // Ματ
+                    playSound('checkmate'); // Προφορά "Σάχ Ματ"
+                    
+                    setTimeout(() => {
+                        playSound('victory');
+                        showVictoryMessage(currentColor === 'w' ? "Μαύρα" : "Λευκά");
+                    }, 500);
+                    
+                    gameInfoEl.innerHTML = `<span class="status-mate">${currentColor === 'w' ? "Ματ! Νικάν τα Μαύρα" : "Ματ! Νικάν τα Λευκά"}</span>`;
+                } else {
+                    // Πατ
+                    gameInfoEl.textContent = "Πατ! Ισοπαλία";
+                }
+            } else if (kingInCheck && !wasInCheck) {
+                // Σαχ (μόνο όταν γίνεται για πρώτη φορά)
+                playSound('check'); // Προφορά "Σάχ"
+                gameInfoEl.innerHTML = `<span class="status-check">${currentColor === 'w' ? "Σαχ στα Λευκά!" : "Σαχ στα Μαύρα!"}</span>`;
+            }
+        }
+        
+        function isKingInCheck(color) {
+            // Βρες τη θέση του βασιλιά
+            let kingPos = null;
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r][c];
+                    if (piece && piece.type === 'k' && piece.color === color) {
+                        kingPos = {r, c};
+                        break;
+                    }
+                }
+                if (kingPos) break;
+            }
+            
+            if (!kingPos) return false;
+            
+            // Έλεγξε αν οποιοδήποτε αντίπαλο κομμάτι μπορεί να πιάσει τον βασιλιά
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r][c];
+                    if (piece && piece.color !== color) {
+                        const moves = generateMoves(r, c);
+                        if (moves.some(move => move.r === kingPos.r && move.c === kingPos.c)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+            return false;
+        }
+        
+        function hasAnyLegalMoves(color) {
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r][c];
+                    if (piece && piece.color === color) {
+                        const moves = generateLegalMoves(r, c);
+                        if (moves.length > 0) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        
+        function generateLegalMoves(r, c) {
+            const moves = generateMoves(r, c);
+            return moves.filter(move => {
+                // Δοκιμαστική κίνηση για έλεγχο σαχ
+                const originalPiece = board[move.r][move.c];
+                const movingPiece = board[r][c];
+                
+                // Εκτέλεση προσωρινής κίνησης
+                board[move.r][move.c] = movingPiece;
+                board[r][c] = null;
+                
+                // Έλεγχος αν ο βασιλιάς βρίσκεται σε σαχ μετά την κίνηση
+                const inCheck = isKingInCheck(movingPiece.color);
+                
+                // Αναίρεση της προσωρινής κίνησης
+                board[r][c] = movingPiece;
+                board[move.r][move.c] = originalPiece;
+                
+                // Η κίνηση είναι νόμιμη μόνο αν δεν αφήνει τον βασιλιά σε σαχ
+                return !inCheck;
+            });
+        }
+        
+        function generateMoves(r,c){
+            const p=board[r][c];
+            const moves=[];
+            const color=p.color;
+            const dir=color==='w'?-1:1;
+            function inB(rr,cc){return rr>=0&&rr<8&&cc>=0&&cc<8;}
+            function empty(rr,cc){return inB(rr,cc)&&!board[rr][cc];}
+            function enemy(rr,cc){return inB(rr,cc)&&board[rr][cc]&&board[rr][cc].color!==color;}
+
+            if(p.type==='p'){
+                if(empty(r+dir,c)) moves.push({r:r+dir,c});
+                if((color==='w'&&r===6||color==='b'&&r===1)&&empty(r+dir,c)&&empty(r+2*dir,c))
+                    moves.push({r:r+2*dir,c});
+                [-1,1].forEach(dc=>{
+                    if(enemy(r+dir,c+dc)) moves.push({r:r+dir,c:c+dc});
+                });
+            }
+            if(p.type==='n'){
+                [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]].forEach(([dr,dc])=>{
+                    const rr=r+dr,cc=c+dc;
+                    if(inB(rr,cc)){
+                        if(!board[rr][cc]||enemy(rr,cc)) moves.push({r:rr,c:cc});
+                    }
+                });
+            }
+            if(['b','r','q'].includes(p.type)){
+                const dirs=[];
+                if(['b','q'].includes(p.type)) dirs.push([-1,-1],[-1,1],[1,-1],[1,1]);
+                if(['r','q'].includes(p.type)) dirs.push([-1,0],[1,0],[0,-1],[0,1]);
+                dirs.forEach(([dr,dc])=>{
+                    let rr=r+dr,cc=c+dc;
+                    while(inB(rr,cc)){
+                        if(!board[rr][cc]) moves.push({r:rr,c:cc});
+                        else { if(enemy(rr,cc)) moves.push({r:rr,c:cc}); break; }
+                        rr+=dr; cc+=dc;
+                    }
+                });
+            }
+            if(p.type==='k'){
+                for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){
+                    if(dr||dc){
+                        const rr=r+dr,cc=c+dc;
+                        if(inB(rr,cc)&&(!board[rr][cc]||enemy(rr,cc))) moves.push({r:rr,c:cc});
+                    }
+                }
+            }
+            return moves;
+        }
+        
+        function getPieceImg(t,c){
+            return `https://upload.wikimedia.org/wikipedia/commons/${{
+                'pw':'4/45/Chess_plt45.svg',
+                'pb':'c/c7/Chess_pdt45.svg',
+                'rw':'7/72/Chess_rlt45.svg',
+                'rb':'f/ff/Chess_rdt45.svg',
+                'nw':'7/70/Chess_nlt45.svg',
+                'nb':'e/ef/Chess_ndt45.svg',
+                'bw':'b/b1/Chess_blt45.svg',
+                'bb':'9/98/Chess_bdt45.svg',
+                'qw':'1/15/Chess_qlt45.svg',
+                'qb':'4/47/Chess_qdt45.svg',
+                'kw':'4/42/Chess_klt45.svg',
+                'kb':'f/f0/Chess_kdt45.svg'
+            }[t+c]}`;
+        }
+        
+        function updateGameInfo() {
+            if (!gameActive) return;
+            
+            if (kingInCheck) {
+                gameInfoEl.innerHTML = `<span class="status-check">${whiteToMove ? "Σαχ στα Λευκά!" : "Σαχ στα Μαύρα!"}</span>`;
+            } else {
+                gameInfoEl.textContent = whiteToMove ? "Παίζουν τα Λευκά" : "Παίζουν τα Μαύρα";
+            }
+        }
+        
+        // AI ΚΙΝΗΣΕΙΣ - Βελτιωμένο AI
+        function makeAIMove() {
+            thinkingIndicator.style.display = 'block';
+            
+            setTimeout(() => {
+                const bestMove = findBestMove();
+                if (bestMove) {
+                    movePiece(bestMove.from.r, bestMove.from.c, bestMove.to.r, bestMove.to.c);
+                    render();
+                }
+                thinkingIndicator.style.display = 'none';
+            }, 800);
+        }
+        
+        function findBestMove() {
+            const possibleMoves = [];
+            
+            // Βρες όλες τις πιθανές κινήσεις για το AI
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r][c];
+                    if (piece && piece.color === aiColor) {
+                        const moves = generateLegalMoves(r, c);
+                        moves.forEach(move => {
+                            possibleMoves.push({
+                                from: {r, c},
+                                to: move
+                            });
+                        });
+                    }
+                }
+            }
+            
+            // Αν δεν υπάρχουν κινήσεις, επέστρεψε null
+            if (possibleMoves.length === 0) return null;
+            
+            // Αξιολόγηση κινήσεων με βάση την τρέχουσα δυσκολία
+            let bestScore = -Infinity;
+            let bestMoves = [];
+            
+            for (const move of possibleMoves) {
+                // Προσωρινή εκτέλεση κίνησης
+                const originalPiece = board[move.to.r][move.to.c];
+                const movingPiece = board[move.from.r][move.from.c];
+                
+                board[move.to.r][move.to.c] = movingPiece;
+                board[move.from.r][move.from.c] = null;
+                
+                // Αξιολόγηση θέσης
+                let score = evaluatePosition();
+                
+                // Αν η κίνηση καταλαμβάνει κομμάτι, προσθέτουμε επιπλέον πόντους
+                if (originalPiece) {
+                    score += PIECE_VALUES[originalPiece.type] * 2;
+                }
+                
+                // Αν η κίνηση προστατεύει βασικό κομμάτι
+                if (protectsImportantPiece(move)) {
+                    score += 10;
+                }
+                
+                // Αν η κίνηση απειλεί βασικό κομμάτι
+                if (threatensImportantPiece(move)) {
+                    score += 15;
+                }
+                
+                // Αν η κίνηση βάζει τον αντίπαλο βασιλιά σε σαχ
+                const tempWhiteToMove = whiteToMove;
+                whiteToMove = !whiteToMove;
+                if (isKingInCheck(whiteToMove ? 'w' : 'b')) {
+                    score += 50;
+                }
+                whiteToMove = tempWhiteToMove;
+                
+                // Ανάκτηση προηγούμενης κατάστασης
+                board[move.from.r][move.from.c] = movingPiece;
+                board[move.to.r][move.to.c] = originalPiece;
+                
+                // Ενημέρωση καλύτερης κίνησης
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMoves = [move];
+                } else if (score === bestScore) {
+                    bestMoves.push(move);
+                }
+            }
+            
+            // Επέλεξε τυχαία από τις καλύτερες κινήσεις
+            return bestMoves[Math.floor(Math.random() * bestMoves.length)];
+        }
+        
+        function evaluatePosition() {
+            let score = 0;
+            
+            // Βασική αξιολόγηση βάσει υλικού
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r][c];
+                    if (piece) {
+                        const value = PIECE_VALUES[piece.type];
+                        score += piece.color === aiColor ? value : -value;
+                    }
+                }
+            }
+            
+            // Προσθήκη τυχαίας διακύμανσης για λιγότερο προβλέψιμο AI
+            score += Math.random() * 10 - 5;
+            
+            return score;
+        }
+        
+        function protectsImportantPiece(move) {
+            // Έλεγχος αν η κίνηση προστατεύει βασικό κομμάτι
+            // Απλοποιημένη υλοποίηση
+            return false;
+        }
+        
+        function threatensImportantPiece(move) {
+            // Έλεγχος αν η κίνηση απειλεί βασικό κομμάτι
+            // Απλοποιημένη υλοποίηση
+            return false;
+        }
+        
+        // Συναρτήσεις UI
+        document.getElementById("resetBtn").addEventListener("click", () => {
+            init();
+        });
+        
+        document.getElementById("flipBtn").addEventListener("click", () => {
+            flipped = !flipped;
+            render();
+        });
+        
+        document.getElementById("aiBtn").addEventListener("click", () => {
+            gameModeModal.style.display = 'flex';
+        });
+        
+        document.getElementById("twoPlayersBtn").addEventListener("click", () => {
+            vsAI = false;
+            gameModeModal.style.display = 'none';
+            init();
+        });
+        
+        document.getElementById("vsAiBtn").addEventListener("click", () => {
+            document.getElementById("difficultySelector").style.display = 'flex';
+        });
+        
+        document.getElementById("closeModalBtn").addEventListener("click", () => {
+            gameModeModal.style.display = 'none';
+            document.getElementById("difficultySelector").style.display = 'none';
+        });
+        
+        // Επιλογή δυσκολίας
+        document.querySelectorAll(".difficulty-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".difficulty-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                aiDepth = parseInt(btn.dataset.depth);
+                
+                // Επιλογή χρώματος για AI
+                aiColor = Math.random() > 0.5 ? 'b' : 'w';
+                vsAI = true;
+                gameModeModal.style.display = 'none';
+                document.getElementById("difficultySelector").style.display = 'none';
+                init();
+            });
+        });
+        
+        function showVictoryMessage(winner) {
+            winnerTextEl.textContent = `Νίκη για τα ${winner}!`;
+            victoryMessageEl.style.display = 'block';
+            
+            // Δημιουργία πανηγυρισμών
+            createConfetti();
+            
+            // Απόκρυψη μηνύματος μετά από 5 δευτερόλεπτα
+            setTimeout(() => {
+                victoryMessageEl.style.display = 'none';
+            }, 5000);
+        }
+        
+        function createConfetti() {
+            celebrationEl.innerHTML = '';
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff'];
+            
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement("div");
+                confetti.className = "confetti";
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = `${-Math.random() * 20}%`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = `${Math.random() * 10 + 5}px`;
+                confetti.style.height = `${Math.random() * 10 + 5}px`;
+                confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                confetti.style.animationDelay = `${Math.random() * 2}s`;
+                celebrationEl.appendChild(confetti);
+            }
+        }
+        
+        // Banner διαφήμισης - Συναρτήσεις
+        // Συνάρτηση εμφάνισης banner
+        function showAdBanner() {
+            if (!bannerShown) {
+                setTimeout(() => {
+                    adBanner.classList.add('show');
+                    bannerShown = true;
+                    
+                    // Απόκρυψη μετά από 30 δευτερόλεπτα
+                    setTimeout(() => {
+                        adBanner.classList.remove('show');
+                    }, 30000);
+                    
+                    // Πρόγραμμα επόμενης εμφάνισης
+                    adTimer = setTimeout(showAdBanner, BANNER_INTERVAL);
+                }, BANNER_DELAY);
+            }
+        }
+        
+        // Εκκίνηση timer για πρώτη εμφάνιση
+        showAdBanner();
+        
+        // Event listeners για το banner
+        supportBtn.addEventListener('click', () => {
+            // Κλείσιμο banner
+            adBanner.classList.remove('show');
+            
+            // Εμφάνιση overlay με διαφήμιση
+            adOverlay.classList.add('active');
+            
+            // Εδώ πρόσθεσε τον κώδικα από τη Monetag:
+            // https://otieu.com/4/10274068
+            
+            // Παράδειγμα (αντικατέστησέ το με τον πραγματικό κώδικα):
+            /*
+            const script = document.createElement('script');
+            script.src = 'https://your-monetag-script-url.js';
+            script.async = true;
+            document.getElementById('monetag-ad-container').appendChild(script);
+            */
+        });
+        
+        closeBanner.addEventListener('click', () => {
+            adBanner.classList.remove('show');
+            clearTimeout(adTimer);
+            // Επόμενη εμφάνιση σε 10 λεπτά
+            adTimer = setTimeout(showAdBanner, 600000);
+        });
+        
+        closeOverlay.addEventListener('click', () => {
+            adOverlay.classList.remove('active');
+            
+            // Απόρριψη banner για το υπόλοιπο της συνεδρίας
+            clearTimeout(adTimer);
+            bannerShown = true;
+            
+            // Εμφάνιση ευχαριστιών
+            setTimeout(() => {
+                showThankYouMessage();
+            }, 500);
+        });
+        
+        function showThankYouMessage() {
+            const thankYou = document.createElement('div');
+            thankYou.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: #4CAF50;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                z-index: 1001;
+                font-weight: bold;
+                animation: slideIn 0.5s ease;
+            `;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            thankYou.innerHTML = 'Ευχαριστούμε για την υποστήριξή σου! ♥';
+            document.body.appendChild(thankYou);
+            
+            setTimeout(() => {
+                thankYou.style.animation = 'slideOut 0.5s ease forwards';
+                setTimeout(() => thankYou.remove(), 500);
+                
+                const slideOutStyle = document.createElement('style');
+                slideOutStyle.textContent = `
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(slideOutStyle);
+            }, 3000);
+        }
+        
+        // Απόκρυψη overlay με ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && adOverlay.classList.contains('active')) {
+                adOverlay.classList.remove('active');
+            }
+        });
+        
+        // Εμφάνιση banner κατά τη φόρτωση παιχνιδιού
+        window.addEventListener('load', () => {
+            setTimeout(showAdBanner, 10000);
+        });
+        
+        // Αρχικοποίηση παιχνιδιού
+        init();
+    </script>
+</body>
+</html>
