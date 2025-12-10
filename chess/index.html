@@ -35,6 +35,7 @@
             padding: 10px;
             font-family: "Segoe UI", sans-serif;
             overflow: auto;
+            padding-bottom: 0; /* Αφαίρεση padding για banner */
         }
 
         .container {
@@ -44,6 +45,7 @@
             width: 100%;
             max-width: 1400px;
             gap: 20px;
+            margin-bottom: 10px; /* Μικρό margin για απόσταση από banner */
         }
 
         .board-container {
@@ -358,7 +360,7 @@
             width: 100%;
         }
         
-        /* ΜΙΚΡΕΣ ΔΙΑΚΡΙΤΙΚΕΣ ΦΟΥΣΚΕΣ */
+        /* ΜΕΓΑΛΥΤΕΡΕΣ ΔΙΑΚΡΙΤΙΚΕΣ ΦΟΥΣΚΕΣ */
         .bubble-container {
             position: fixed;
             top: 0;
@@ -376,8 +378,8 @@
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.15);
             box-shadow: 
-                0 0 8px rgba(255, 203, 46, 0.4),
-                inset 0 2px 8px rgba(255, 255, 255, 0.2);
+                0 0 12px rgba(255, 203, 46, 0.5),
+                inset 0 3px 12px rgba(255, 255, 255, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -385,86 +387,84 @@
             transition: all 0.3s ease;
             animation: miniFloatUp 20s linear infinite;
             z-index: 999;
-            border: 1px solid rgba(255, 203, 46, 0.2);
-            backdrop-filter: blur(2px);
+            border: 1.5px solid rgba(255, 203, 46, 0.25);
+            backdrop-filter: blur(3px);
         }
         
         .mini-bubble:hover {
-            background: rgba(255, 203, 46, 0.3);
-            transform: scale(1.2);
+            background: rgba(255, 203, 46, 0.35);
+            transform: scale(1.15);
             box-shadow: 
-                0 0 12px rgba(255, 203, 46, 0.6),
-                inset 0 2px 10px rgba(255, 255, 255, 0.3);
+                0 0 18px rgba(255, 203, 46, 0.7),
+                inset 0 3px 15px rgba(255, 255, 255, 0.35);
         }
         
         .mini-bubble:active {
-            transform: scale(0.9);
+            transform: scale(0.95);
         }
         
         .bubble-icon {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.9);
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.95);
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
         }
         
         @keyframes miniFloatUp {
             0% {
-                transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.7);
+                transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.8);
                 opacity: 0;
             }
             10% {
-                opacity: 0.7;
+                opacity: 0.75;
                 transform: translateY(90vh) translateX(10px) rotate(5deg) scale(1);
             }
             90% {
-                opacity: 0.7;
+                opacity: 0.75;
             }
             100% {
-                transform: translateY(-50px) translateX(20px) rotate(360deg) scale(0.7);
+                transform: translateY(-100px) translateX(20px) rotate(360deg) scale(0.8);
                 opacity: 0;
             }
         }
         
         @keyframes miniFloatUp2 {
             0% {
-                transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.6);
+                transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.7);
                 opacity: 0;
             }
             10% {
-                opacity: 0.6;
-                transform: translateY(90vh) translateX(-15px) rotate(-5deg) scale(0.9);
+                opacity: 0.7;
+                transform: translateY(90vh) translateX(-15px) rotate(-5deg) scale(0.95);
             }
             90% {
-                opacity: 0.6;
+                opacity: 0.7;
             }
             100% {
-                transform: translateY(-50px) translateX(-20px) rotate(-360deg) scale(0.6);
+                transform: translateY(-100px) translateX(-20px) rotate(-360deg) scale(0.7);
                 opacity: 0;
             }
         }
         
-        /* ΜΠΑΝΕΡ ΑΠΟ ΚΑΤΩ ΠΡΟΣ ΤΑ ΠΑΝΩ */
+        /* FULL WIDTH BOTTOM BANNER - ΚΑΛΥΠΤΕΙ ΟΛΟ ΤΟ ΚΑΤΩ ΜΕΡΟΣ */
         .bottom-banner {
             position: fixed;
-            bottom: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, rgba(58, 46, 22, 0.95), rgba(38, 30, 14, 0.95));
+            bottom: -120px; /* Αρχικά κρυμμένο */
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(58, 46, 22, 0.98), rgba(38, 30, 14, 0.98));
             color: white;
-            padding: 12px 20px;
-            border-radius: 15px 15px 0 0;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+            padding: 20px 15px;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
             z-index: 1000;
             display: flex;
+            flex-direction: column;
             align-items: center;
             gap: 15px;
-            max-width: 90%;
-            width: 400px;
-            border: 1px solid rgba(209, 154, 76, 0.3);
-            border-bottom: none;
-            backdrop-filter: blur(10px);
+            border-top: 3px solid rgba(209, 154, 76, 0.4);
+            backdrop-filter: blur(15px);
             transition: bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             opacity: 0;
+            text-align: center;
         }
         
         .bottom-banner.show {
@@ -472,28 +472,48 @@
             opacity: 1;
         }
         
-        .banner-icon {
-            font-size: 24px;
-            color: #ffcb2e;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        .banner-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            max-width: 600px;
+            width: 100%;
         }
         
-        .banner-content {
-            flex: 1;
+        .banner-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .banner-icon {
+            font-size: 28px;
+            color: #ffcb2e;
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4));
         }
         
         .banner-title {
-            font-size: 14px;
+            font-size: 18px;
             font-weight: bold;
             color: #ffcb2e;
-            margin: 0 0 5px 0;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .banner-text {
-            font-size: 12px;
+            font-size: 14px;
             margin: 0;
-            line-height: 1.4;
-            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.95);
+            max-width: 500px;
+        }
+        
+        .banner-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 5px;
         }
         
         .banner-link {
@@ -501,46 +521,42 @@
             background: linear-gradient(135deg, #d19a4c, #e0ad61);
             color: white;
             text-decoration: none;
-            padding: 6px 15px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 10px 25px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: bold;
             text-align: center;
             transition: all 0.3s;
             white-space: nowrap;
-            box-shadow: 0 2px 8px rgba(209, 154, 76, 0.4);
+            box-shadow: 0 3px 10px rgba(209, 154, 76, 0.5);
         }
         
         .banner-link:hover {
             background: linear-gradient(135deg, #e0ad61, #ffcb2e);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(209, 154, 76, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(209, 154, 76, 0.7);
         }
         
         .banner-close {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 20px;
             cursor: pointer;
-            padding: 0;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
+            padding: 8px 16px;
+            border-radius: 8px;
             transition: all 0.3s;
+            font-weight: bold;
         }
         
         .banner-close:hover {
             color: white;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.2);
         }
         
         .thank-you-message {
             position: fixed;
-            bottom: 20px;
+            bottom: 120px; /* Μετακίνηση πιο πάνω για να μην καλύπτεται από banner */
             right: 20px;
             background: #4CAF50;
             color: white;
@@ -581,20 +597,24 @@
         </div>
     </div>
     
-    <!-- Bubble Container για μικρές φούσκες -->
+    <!-- Bubble Container για μεγαλύτερες φούσκες -->
     <div class="bubble-container" id="bubbleContainer"></div>
     
-    <!-- Bottom Banner -->
+    <!-- Full Width Bottom Banner - Καλύπτει όλο το κάτω μέρος -->
     <div class="bottom-banner" id="bottomBanner">
-        <div class="banner-icon">⭐</div>
         <div class="banner-content">
-            <h4 class="banner-title">Υποστήριξε το Σκάκι Deluxe Pro</h4>
-            <p class="banner-text">Απολαμβάνεις το παιχνίδι δωρεάν; Βοήθησέ μας με μία μικρή επισκεψή!</p>
+            <div class="banner-header">
+                <div class="banner-icon">⭐</div>
+                <h4 class="banner-title">Υποστήριξε το Σκάκι Deluxe Pro</h4>
+            </div>
+            <p class="banner-text">Απολαμβάνεις το παιχνίδι δωρεάν; Βοήθησέ μας να συνεχίσουμε με μία μικρή επισκεψή στη διαφήμιση!</p>
+            <div class="banner-buttons">
+                <a href="https://otieu.com/4/10274068" target="_blank" class="banner-link" id="bannerLink">
+                    Επισκέψου τη Διαφήμιση
+                </a>
+                <button class="banner-close" id="bannerClose">Χ</button>
+            </div>
         </div>
-        <a href="https://otieu.com/4/10274068" target="_blank" class="banner-link" id="bannerLink">
-            Υποστήριξη
-        </a>
-        <button class="banner-close" id="bannerClose">&times;</button>
     </div>
     
     <div class="thinking" id="thinkingIndicator">Το AI σκέφτεται...</div>
@@ -668,20 +688,20 @@
         let kingInCheck = false;
         let promotionPending = null;
         
-        // Ρυθμίσεις για τις ΜΙΚΡΕΣ φούσκες
+        // Ρυθμίσεις για τις ΜΕΓΑΛΥΤΕΡΕΣ φούσκες
         let bubbleInterval;
         let isBubbleActive = false;
-        const MINI_BUBBLE_INTERVAL = 30000; // 30 δευτερόλεπτα ανάμεσα σε ομάδες φούσκες
+        const MINI_BUBBLE_INTERVAL = 35000; // 35 δευτερόλεπτα ανάμεσα σε ομάδες φούσκες
         const MINI_BUBBLE_DURATION = 20000; // 20 δευτερόλεπτα διάρκεια ανά φούσκα
-        const MINI_MIN_BUBBLES = 2; // Ελάχιστος αριθμός ταυτόχρονων φούσκες
-        const MINI_MAX_BUBBLES = 5; // Μέγιστος αριθμός ταυτόχρονων φούσκες
+        const MINI_MIN_BUBBLES = 1; // Ελάχιστος αριθμός ταυτόχρονων φούσκες
+        const MINI_MAX_BUBBLES = 4; // Μέγιστος αριθμός ταυτόχρονων φούσκες
         
-        // Ρυθμίσεις για το BOTTOM BANNER
+        // Ρυθμίσεις για το FULL WIDTH BANNER
         let bannerTimer;
         let bannerShown = false;
-        const BANNER_INTERVAL = 60000; // 1 λεπτό ανάμεσα σε εμφανίσεις banner
-        const BANNER_DELAY = 30000; // 30 δευτερόλεπτα πρώτη εμφάνιση
-        const BANNER_DURATION = 15000; // 15 δευτερόλεπτα διάρκεια banner
+        const BANNER_INTERVAL = 90000; // 1.5 λεπτό ανάμεσα σε εμφανίσεις banner
+        const BANNER_DELAY = 45000; // 45 δευτερόλεπτα πρώτη εμφάνιση
+        const BANNER_DURATION = 20000; // 20 δευτερόλεπτα διάρκεια banner
         
         const START = [
             ['r','n','b','q','k','b','n','r'],
@@ -1258,12 +1278,12 @@
             return false;
         }
         
-        // ΣΥΣΤΗΜΑ ΜΙΚΡΩΝ ΔΙΑΚΡΙΤΙΚΩΝ ΦΟΥΣΚΩΝ
+        // ΣΥΣΤΗΜΑ ΜΕΓΑΛΥΤΕΡΩΝ ΦΟΥΣΚΩΝ
         function startBubbleSystem() {
             isBubbleActive = true;
             
             // Πρώτη ομάδα φούσκες μετά από καθυστέρηση
-            setTimeout(createMiniBubbles, 10000);
+            setTimeout(createMiniBubbles, 15000);
             
             // Ρύθμιση interval για τακτικές φούσκες
             bubbleInterval = setInterval(createMiniBubbles, MINI_BUBBLE_INTERVAL);
@@ -1276,7 +1296,7 @@
             for (let i = 0; i < numBubbles; i++) {
                 setTimeout(() => {
                     createMiniBubble();
-                }, i * 500); // Χρονική καθυστέρηση μεταξύ φούσκες
+                }, i * 800); // Χρονική καθυστέρηση μεταξύ φούσκες
             }
         }
         
@@ -1285,17 +1305,17 @@
             const bubble = document.createElement('div');
             bubble.className = 'mini-bubble';
             
-            // Πολύ μικρό μέγεθος (20-40px)
-            const size = Math.floor(Math.random() * 20) + 20;
+            // Μεγαλύτερο μέγεθος (40-70px)
+            const size = Math.floor(Math.random() * 30) + 40;
             bubble.style.width = `${size}px`;
             bubble.style.height = `${size}px`;
             
             // Τυχαία θέση έναρξης στο κάτω μέρος
-            const startX = Math.random() * 90 + 5;
+            const startX = Math.random() * 85 + 7.5;
             bubble.style.left = `${startX}%`;
             
             // Τυχαίος χρόνος κίνησης και animation style
-            const animationDuration = Math.random() * 10 + 15;
+            const animationDuration = Math.random() * 10 + 20;
             bubble.style.animationDuration = `${animationDuration}s`;
             
             // Εναλλαγή μεταξύ δύο διαφορετικών animations για ποικιλία
@@ -1303,7 +1323,7 @@
                 bubble.style.animationName = 'miniFloatUp2';
             }
             
-            // Προσθήκη μικρού εικονιδίου
+            // Προσθήκη μεγαλύτερου εικονιδίου
             const bubbleIcon = document.createElement('div');
             bubbleIcon.className = 'bubble-icon';
             bubbleIcon.innerHTML = '⭐';
@@ -1322,7 +1342,7 @@
             }, animationDuration * 1000);
         }
         
-        // ΣΥΣΤΗΜΑ BOTTOM BANNER
+        // ΣΥΣΤΗΜΑ FULL WIDTH BOTTOM BANNER
         function startBannerSystem() {
             // Πρώτο banner μετά από καθυστέρηση
             setTimeout(() => {
