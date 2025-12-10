@@ -358,83 +358,106 @@
             width: 100%;
         }
         
-        /* ΜΙΝΙΜΑΛ POP-UP BANNER */
-        .mini-ad-banner {
+        /* ΝΕΟ ΣΤΥΛ ΓΙΑ ΚΙΝΟΥΜΕΝΕΣ ΣΑΠΟΥΝΟΦΟΥΣΚΕΣ */
+        .bubble-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(58, 46, 22, 0.95);
-            color: white;
-            padding: 12px 18px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
             z-index: 999;
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-            max-width: 300px;
-            border: 1px solid #d19a4c;
-            backdrop-filter: blur(5px);
-            animation: fadeIn 0.5s ease;
         }
         
-        .mini-ad-banner.show {
-            display: flex;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .mini-ad-banner-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .mini-ad-banner h4 {
-            margin: 0;
-            font-size: 14px;
-            color: #ffcb2e;
-        }
-        
-        .mini-close-btn {
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 16px;
+        .bubble {
+            position: absolute;
+            pointer-events: auto;
             cursor: pointer;
-            padding: 0;
-            width: 20px;
-            height: 20px;
+            border-radius: 50%;
+            background: rgba(209, 154, 76, 0.85);
+            box-shadow: 
+                0 0 20px rgba(255, 203, 46, 0.7),
+                inset 0 5px 15px rgba(255, 255, 255, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: floatUp 15s ease-in infinite;
+            z-index: 1000;
+            border: 2px solid rgba(255, 203, 46, 0.5);
         }
         
-        .mini-ad-banner p {
-            margin: 0;
-            font-size: 12px;
-            line-height: 1.4;
+        .bubble:hover {
+            background: rgba(255, 203, 46, 0.95);
+            transform: scale(1.15);
+            box-shadow: 
+                0 0 30px rgba(255, 203, 46, 0.9),
+                inset 0 5px 20px rgba(255, 255, 255, 0.5);
         }
         
-        .support-link {
-            display: inline-block;
-            background: #d19a4c;
+        .bubble:active {
+            transform: scale(0.95);
+        }
+        
+        .bubble-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             color: white;
-            text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: bold;
+            padding: 15px;
             text-align: center;
-            transition: background 0.3s;
-            margin-top: 5px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
         
-        .support-link:hover {
-            background: #e0ad61;
+        .bubble-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3));
+        }
+        
+        .bubble-text {
+            font-size: 12px;
+            line-height: 1.2;
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+        
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+                transform: translateY(90vh) rotate(10deg) scale(1);
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg) scale(0.8);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes bubblePulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 
+                    0 0 20px rgba(255, 203, 46, 0.7),
+                    inset 0 5px 15px rgba(255, 255, 255, 0.3);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 
+                    0 0 25px rgba(255, 203, 46, 0.8),
+                    inset 0 5px 20px rgba(255, 255, 255, 0.4);
+            }
         }
         
         .thank-you-message {
@@ -480,6 +503,9 @@
         </div>
     </div>
     
+    <!-- Bubble Container για τις σαπουνοφούσκες -->
+    <div class="bubble-container" id="bubbleContainer"></div>
+    
     <div class="thinking" id="thinkingIndicator">Το AI σκέφτεται...</div>
     
     <!-- Modals -->
@@ -508,18 +534,6 @@
         </div>
     </div>
     
-    <!-- ΜΙΝΙΜΑΛ POP-UP BANNER -->
-    <div class="mini-ad-banner" id="miniAdBanner">
-        <div class="mini-ad-banner-header">
-            <h4>⭐ Υποστήριξε μας!</h4>
-            <button class="mini-close-btn" id="miniCloseBtn">&times;</button>
-        </div>
-        <p>Απολαμβάνεις το Σκάκι Deluxe Pro δωρεάν; Βοήθησε μας με μία μικρή επισκεψή στη διαφήμιση.</p>
-        <a href="https://otieu.com/4/10274068" target="_blank" class="support-link" id="supportLink">
-            Επισκέψου τη Διαφήμιση
-        </a>
-    </div>
-    
     <!-- Μήνυμα ευχαριστιών -->
     <div class="thank-you-message" id="thankYouMessage">
         Ευχαριστούμε για την υποστήριξή σου! ♥
@@ -542,12 +556,11 @@
         const victoryMessageEl = document.getElementById("victoryMessage");
         const winnerTextEl = document.getElementById("winnerText");
         const celebrationEl = document.getElementById("celebration");
+        const bubbleContainer = document.getElementById("bubbleContainer");
+        const thankYouMessage = document.getElementById("thankYouMessage");
         
-        // Μίνιμαλ banner μεταβλητές
-        const miniAdBanner = document.getElementById('miniAdBanner');
-        const miniCloseBtn = document.getElementById('miniCloseBtn');
-        const supportLink = document.getElementById('supportLink');
-        const thankYouMessage = document.getElementById('thankYouMessage');
+        // Διεύθυνση για τις φούσκες
+        const BUBBLE_LINK = "https://otieu.com/4/10274068";
         
         let board = [];
         let whiteToMove = true;
@@ -561,12 +574,14 @@
         let kingInCheck = false;
         let promotionPending = null;
         
-        // Ρυθμίσεις για το μίνιμαλ banner
-        let miniBannerShown = false;
-        let miniBannerTimer;
-        const MINI_BANNER_DELAY = 45000; // 45 δευτερόλεπτα
-        const MINI_BANNER_INTERVAL = 360000; // 6 λεπτά
-        const MINI_BANNER_DURATION = 20000; // 20 δευτερόλεπτα εμφάνιση
+        // Ρυθμίσεις για τις φούσκες
+        let bubbleInterval;
+        let isBubbleActive = false;
+        const BUBBLE_INTERVAL = 45000; // 45 δευτερόλεπτα ανάμεσα σε φούσκες
+        const BUBBLE_DURATION = 15000; // 15 δευτερόλεπτα διάρκεια κινούμενης φούσκας
+        const MIN_BUBBLES = 1; // Ελάχιστος αριθμός ταυτόχρονων φούσκες
+        const MAX_BUBBLES = 3; // Μέγιστος αριθμός ταυτόχρονων φούσκες
+        let activeBubbles = 0;
         
         const START = [
             ['r','n','b','q','k','b','n','r'],
@@ -676,6 +691,11 @@
             promotionPending = null;
             updateGameInfo();
             render();
+            
+            // Ξεκίνα το σύστημα φούσκες
+            if (!isBubbleActive) {
+                startBubbleSystem();
+            }
         }
         
         // Απόδοση σκακιέρας
@@ -1137,29 +1157,109 @@
             return false;
         }
         
-        // ΜΙΝΙΜΑΛ BANNER ΛΕΙΤΟΥΡΓΙΕΣ
-        function showMiniAdBanner() {
-            if (!miniBannerShown) {
-                setTimeout(() => {
-                    miniAdBanner.classList.add('show');
-                    miniBannerShown = true;
-                    
-                    // Απόκρυψη μετά από προκαθορισμένο χρόνο
+        // ΣΥΣΤΗΜΑ ΚΙΝΟΥΜΕΝΩΝ ΣΑΠΟΥΝΟΦΟΥΣΚΩΝ
+        function startBubbleSystem() {
+            isBubbleActive = true;
+            
+            // Πρώτη φούσκα μετά από καθυστέρηση
+            setTimeout(createRandomBubbles, BUBBLE_INTERVAL / 2);
+            
+            // Ρύθμιση interval για τακτικές φούσκες
+            bubbleInterval = setInterval(createRandomBubbles, BUBBLE_INTERVAL);
+        }
+        
+        function createRandomBubbles() {
+            // Έλεγχος αν υπάρχουν ήδη πολλές ενεργές φούσκες
+            if (activeBubbles >= MAX_BUBBLES) return;
+            
+            // Τυχαίος αριθμός φούσκες (μεταξύ MIN_BUBBLES και MAX_BUBBLES)
+            const numBubbles = Math.floor(Math.random() * (MAX_BUBBLES - MIN_BUBBLES + 1)) + MIN_BUBBLES;
+            
+            for (let i = 0; i < numBubbles; i++) {
+                if (activeBubbles < MAX_BUBBLES) {
                     setTimeout(() => {
-                        miniAdBanner.classList.remove('show');
-                    }, MINI_BANNER_DURATION);
-                    
-                    // Πρόγραμμα επόμενης εμφάνισης
-                    miniBannerTimer = setTimeout(showMiniAdBanner, MINI_BANNER_INTERVAL);
-                }, MINI_BANNER_DELAY);
+                        createBubble();
+                    }, i * 1000); // Χρονική καθυστέρηση μεταξύ φούσκες
+                }
             }
         }
         
-        function hideMiniAdBanner() {
-            miniAdBanner.classList.remove('show');
-            clearTimeout(miniBannerTimer);
-            // Επόμενη εμφάνιση σε διπλάσιο χρόνο
-            miniBannerTimer = setTimeout(showMiniAdBanner, MINI_BANNER_INTERVAL * 2);
+        function createBubble() {
+            activeBubbles++;
+            
+            // Δημιουργία στοιχείου φούσκας
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            
+            // Τυχαίο μέγεθος φούσκας
+            const size = Math.floor(Math.random() * 80) + 60; // 60-140px
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            
+            // Τυχαία θέση έναρξης
+            const startX = Math.random() * 80 + 10; // 10-90%
+            bubble.style.left = `${startX}%`;
+            
+            // Τυχαίος χρόνος κίνησης
+            const animationDuration = Math.random() * 10 + 10; // 10-20 δευτερόλεπτα
+            bubble.style.animationDuration = `${animationDuration}s`;
+            
+            // Περιεχόμενο φούσκας
+            const bubbleContent = document.createElement('div');
+            bubbleContent.className = 'bubble-content';
+            
+            // Εικονίδιο φούσκας
+            const bubbleIcon = document.createElement('div');
+            bubbleIcon.className = 'bubble-icon';
+            bubbleIcon.innerHTML = '⭐';
+            
+            // Κείμενο φούσκας
+            const bubbleText = document.createElement('div');
+            bubbleText.className = 'bubble-text';
+            bubbleText.textContent = 'Υποστήριξέ μας!';
+            
+            // Προσθήκη στοιχείων
+            bubbleContent.appendChild(bubbleIcon);
+            bubbleContent.appendChild(bubbleText);
+            bubble.appendChild(bubbleContent);
+            bubbleContainer.appendChild(bubble);
+            
+            // Event listener για κλικ στη φούσκα
+            bubble.addEventListener('click', handleBubbleClick);
+            
+            // Αυτόματη κατάργηση της φούσκας μετά το τέλος της κίνησης
+            setTimeout(() => {
+                if (bubble.parentNode) {
+                    bubble.remove();
+                    activeBubbles--;
+                }
+            }, animationDuration * 1000);
+        }
+        
+        function handleBubbleClick(e) {
+            e.preventDefault();
+            
+            // Άνοιγμα του link σε νέα καρτέλα
+            window.open(BUBBLE_LINK, '_blank');
+            
+            // Εμφάνιση ευχαριστήριου μηνύματος
+            showThankYou();
+            
+            // Καταγραφή κλικ
+            console.log('Bubble clicked - support link opened');
+            
+            // Αφαίρεση της φούσκας
+            const bubble = e.currentTarget;
+            bubble.style.animation = 'none';
+            bubble.style.opacity = '0';
+            bubble.style.transform = 'scale(0.5)';
+            
+            setTimeout(() => {
+                if (bubble.parentNode) {
+                    bubble.remove();
+                    activeBubbles--;
+                }
+            }, 300);
         }
         
         function showThankYou() {
@@ -1173,28 +1273,6 @@
                 }, 500);
             }, 3000);
         }
-        
-        // Εκκίνηση timer για πρώτη εμφάνιση banner
-        showMiniAdBanner();
-        
-        // Event listeners για το μίνιμαλ banner
-        miniCloseBtn.addEventListener('click', hideMiniAdBanner);
-        
-        supportLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            // Ανοίγει το link σε νέα καρτέλα
-            window.open('https://otieu.com/4/10274068', '_blank');
-            
-            // Κλείσιμο banner
-            hideMiniAdBanner();
-            
-            // Εμφάνιση ευχαριστήριου μηνύματος
-            setTimeout(showThankYou, 500);
-            
-            // Καταγραφή κλικ (προσαρμόστε ανάλογα)
-            console.log('Support link clicked');
-        });
         
         // Συναρτήσεις UI παιχνιδιού
         document.getElementById("resetBtn").addEventListener("click", () => {
