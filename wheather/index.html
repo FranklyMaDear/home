@@ -3,137 +3,554 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Εφαρμογή Καιρού - FranklyMaDear</title>
+    <title>Weather App με Animated Ads</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 20px; }
-        .app-container { max-width: 500px; margin: 0 auto; }
-        .weather-card { background: white; border-radius: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden; margin-bottom: 25px; }
-        .card-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 25px; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .app-title { font-size: 24px; font-weight: 700; }
-        .back-btn { background: rgba(255,255,255,0.2); color: white; padding: 10px 20px; border-radius: 50px; text-decoration: none; font-weight: 600; }
-        .search-container { position: relative; }
-        .search-input { width: 100%; padding: 18px 20px 18px 50px; border: none; border-radius: 50px; font-size: 16px; background: rgba(255,255,255,0.2); color: white; }
-        .search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: white; }
-        .weather-body { padding: 30px; }
-        .city-name { font-size: 32px; color: #333; text-align: center; margin-bottom: 10px; }
-        .current-date { color: #666; text-align: center; margin-bottom: 30px; font-size: 16px; }
-        .weather-icon-large { font-size: 90px; text-align: center; margin: 20px 0; }
-        .temperature { font-size: 84px; font-weight: 800; color: #333; text-align: center; margin-bottom: 10px; line-height: 1; }
-        .weather-desc { font-size: 22px; color: #667eea; font-weight: 600; text-align: center; margin-bottom: 30px; }
-        .weather-details { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 30px; }
-        .detail-box { background: #f8f9ff; border-radius: 15px; padding: 20px; text-align: center; }
-        .detail-icon { font-size: 28px; color: #667eea; margin-bottom: 12px; }
-        .detail-value { font-size: 24px; font-weight: 700; color: #333; }
-        .detail-label { font-size: 14px; color: #888; margin-top: 5px; }
-        
-        /* Ad Slot Styling */
-        .ad-slot { background: white; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); overflow: hidden; margin-bottom: 25px; border: 2px solid #ffcc00; }
-        .ad-header { background: #2c3e50; color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; }
-        .ad-title { font-size: 16px; font-weight: 600; }
-        .ad-label { background: #ffcc00; color: #2c3e50; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .ad-content { padding: 30px; text-align: center; }
-        
-        /* Επιλογή 1: Κουμπί */
-        .ad-button { display: inline-block; background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%); color: white; text-decoration: none; padding: 18px 40px; border-radius: 50px; font-size: 18px; font-weight: 700; margin: 15px 0; box-shadow: 0 8px 20px rgba(255, 126, 95, 0.3); transition: all 0.3s; }
-        .ad-button:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(255, 126, 95, 0.4); }
-        .ad-button i { margin-right: 10px; }
-        
-        /* Επιλογή 2: Iframe */
-        .ad-frame { width: 100%; height: 250px; border: 1px solid #eee; border-radius: 10px; overflow: hidden; margin: 15px 0; }
-        
-        .ad-note { background: #f8f9fa; border-left: 4px solid #667eea; padding: 15px; margin-top: 20px; border-radius: 0 10px 10px 0; font-size: 14px; color: #666; }
-        .app-footer { text-align: center; color: #888; padding: 20px; font-size: 14px; }
-        .brand { color: #667eea; font-weight: 700; }
-        @media (max-width: 480px) { .weather-details { grid-template-columns: 1fr; } .temperature { font-size: 72px; } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c2461, #1e3799);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Pop-up Banner */
+        .popup-banner {
+            position: fixed;
+            top: -100px;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: top 0.8s ease-in-out;
+        }
+
+        .popup-banner.show {
+            top: 0;
+        }
+
+        .popup-banner .close-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Κύριο περιεχόμενο */
+        .weather-app {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* Header */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            font-size: 36px;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 30px;
+            width: 250px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-btn {
+            background: #ff9f43;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #ff7f00;
+            transform: scale(1.05);
+        }
+
+        /* Κύριο περιεχόμενο */
+        .main-content {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            height: calc(100vh - 150px);
+        }
+
+        /* Πλευρικό μενού */
+        .sidebar {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .menu-item i {
+            font-size: 20px;
+            width: 30px;
+        }
+
+        /* Δεδομένα καιρού */
+        .weather-data {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .current-weather {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .city-name {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .current-date {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+
+        .weather-icon-large {
+            font-size: 100px;
+            margin: 20px 0;
+        }
+
+        .temperature {
+            font-size: 72px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .weather-desc {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffdd59;
+            margin-bottom: 40px;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .detail-box {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .detail-box:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .detail-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .detail-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .detail-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Windy χάρτης */
+        .windy-map {
+            margin-top: 40px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            height: 350px;
+        }
+
+        .windy-map iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Floating Ads με το σύνδεσμό σου */
+        .floating-ads {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 900;
+        }
+
+        .ad-circle {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #ff9f43, #ffdd59, #1dd1a1, #54a0ff, #5f27cd);
+            background-size: 400% 400%;
+            animation: gradient 3s ease infinite, float 6s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            pointer-events: auto;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .ad-circle:hover {
+            transform: scale(1.2);
+            z-index: 950;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .weather-details {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                height: auto;
+            }
+            
+            .menu-item {
+                flex-direction: column;
+                min-width: 100px;
+            }
+            
+            .search-container {
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .temperature {
+                font-size: 60px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- WEATHER APP -->
-        <div class="weather-card">
-            <div class="card-header">
-                <div class="header-top">
-                    <div class="app-title"><i class="fas fa-cloud-sun"></i> Weather App</div>
-                    <a href="/" class="back-btn"><i class="fas fa-arrow-left"></i> Πίσω</a>
-                </div>
-                <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-input" id="cityInput" placeholder="Πληκτρολόγησε πόλη..." value="Αθήνα">
-                </div>
-            </div>
-            <div class="weather-body">
-                <h1 class="city-name" id="cityName">Αθήνα</h1>
-                <div class="current-date" id="currentDate">Τρίτη, 14 Απριλίου 2024</div>
-                <div class="weather-icon-large" id="weatherIcon">☀️</div>
-                <div class="temperature" id="temperature">24°C</div>
-                <div class="weather-desc" id="weatherDesc">Ηλιόλουστο</div>
-                <div class="weather-details">
-                    <div class="detail-box"><div class="detail-icon">💨</div><div class="detail-value" id="windSpeed">12 km/h</div><div class="detail-label">Άνεμος</div></div>
-                    <div class="detail-box"><div class="detail-icon">💧</div><div class="detail-value" id="humidity">65%</div><div class="detail-label">Υγρασία</div></div>
-                    <div class="detail-box"><div class="detail-icon">📊</div><div class="detail-value" id="pressure">1013 hPa</div><div class="detail-label">Πίεση</div></div>
-                    <div class="detail-box"><div class="detail-icon">👁️</div><div class="detail-value" id="visibility">10 km</div><div class="detail-label">Ορατότητα</div></div>
-                </div>
-            </div>
-        </div>
+    <!-- Pop-up Banner -->
+    <div class="popup-banner" id="popupBanner">
+        <span>🔥 Ειδική προσφορά! Έκπτωση 30% σε όλα τα προϊόντα. Ισχύει για 24 ώρες!</span>
+        <button class="close-btn" id="closeBanner">×</button>
+    </div>
 
-        <!-- AD SLOT - ΤΟΠΟΘΕΤΗΣΕ ΤΟ LINK ΣΟΥ ΕΔΩ -->
-        <div class="ad-slot">
-            <div class="ad-header">
-                <div class="ad-title"><i class="fas fa-ad"></i> Διαφημιστική Θέση</div>
-                <div class="ad-label">SPONSORED</div>
+    <!-- Κύριο περιεχόμενο -->
+    <div class="weather-app">
+        <header class="app-header">
+            <div class="logo">
+                <div class="logo-icon">🌤️</div>
+                <h1>Weather Pro</h1>
             </div>
-            <div class="ad-content">
-                <h3 style="color: #2c3e50; margin-bottom: 15px;">Ειδική Προσφορά</h3>
-                <p style="color: #666; margin-bottom: 25px;">Κάντε κλικ στο κουμπί για να δείτε αυτήν την εξαιρετική προσφορά!</p>
-                
-                <!-- ============================================= -->
-                <!-- ΕΠΙΛΟΓΗ 1: ΚΟΥΜΠΙ (Προτεινόμενη - πιο ασφαλής) -->
-                <!-- Αντικατέστησε το YOUR_LINK_HERE με το δικό σου link -->
-                <a href="https://otieu.com/4/10274068" target="_blank" class="ad-button">
-                    <i class="fas fa-bolt"></i> ΔΕΙΤΕ ΤΗΝ ΠΡΟΣΦΟΡΑ
-                </a>
-                <!-- ============================================= -->
-                
-                <!-- ΕΠΙΛΟΓΗ 2: IFRAME (Μπορεί να μην λειτουργεί) -->
-                <!--
-                <div class="ad-frame">
-                    <iframe src="https://otieu.com/4/10274068" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>
-                </div>
-                -->
-                
-                <div class="ad-note">
-                    <i class="fas fa-info-circle"></i> Αυτή είναι μια διαφημιστική θέση. Το περιεχόμενο φιλτραρίστηκε για ασφάλεια.
-                </div>
+            <div class="search-container">
+                <input type="text" class="search-input" id="cityInput" placeholder="Αναζήτηση πόλης..." value="Αθήνα">
+                <button class="search-btn" id="searchBtn">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
-        </div>
+        </header>
 
-        <div class="app-footer">
-            Powered by <span class="brand">FranklyMaDear</span> | Weather Data © 2024
+        <div class="main-content">
+            <!-- Πλευρικό μενού -->
+            <nav class="sidebar">
+                <div class="menu-item active" data-view="current">
+                    <i class="fas fa-sun"></i>
+                    <span>Τρέχων καιρός</span>
+                </div>
+                <div class="menu-item" data-view="hourly">
+                    <i class="fas fa-clock"></i>
+                    <span>Ωριαία πρόβλεψη</span>
+                </div>
+                <div class="menu-item" data-view="weekly">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Εβδομαδιαία</span>
+                </div>
+                <div class="menu-item" data-view="radar">
+                    <i class="fas fa-satellite"></i>
+                    <span>Ραντάρ καιρού</span>
+                </div>
+                <div class="menu-item" data-view="alerts">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Ειδοποιήσεις</span>
+                </div>
+                <div class="menu-item" data-view="maps">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Χάρτες</span>
+                </div>
+            </nav>
+
+            <!-- Δεδομένα καιρού -->
+            <div class="weather-data">
+                <div class="current-weather">
+                    <h1 class="city-name" id="cityName">Αθήνα</h1>
+                    <div class="current-date" id="currentDate">Τρίτη, 14 Απριλίου 2024</div>
+                    
+                    <div class="weather-icon-large" id="weatherIcon">☀️</div>
+                    <div class="temperature" id="temperature">24°C</div>
+                    <div class="weather-desc" id="weatherDesc">Ηλιόλουστο</div>
+                    
+                    <div class="weather-details">
+                        <div class="detail-box">
+                            <div class="detail-icon">💨</div>
+                            <div class="detail-value" id="windSpeed">12 km/h</div>
+                            <div class="detail-label">Άνεμος</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-icon">💧</div>
+                            <div class="detail-value" id="humidity">65%</div>
+                            <div class="detail-label">Υγρασία</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-icon">📊</div>
+                            <div class="detail-value" id="pressure">1013 hPa</div>
+                            <div class="detail-label">Πίεση</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-icon">👁️</div>
+                            <div class="detail-value" id="visibility">10 km</div>
+                            <div class="detail-label">Ορατότητα</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Windy χάρτης -->
+                <div class="windy-map">
+                    <iframe width="100%" height="100%" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=5&overlay=wind&product=ecmwf&level=surface&lat=37.984&lon=23.735" frameborder="0"></iframe>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Floating Ads με το σύνδεσμό σου -->
+    <div class="floating-ads" id="floatingAds">
+        <!-- Ad 1 -->
+        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="top: 15%; left: 10%; animation-delay: 0s;">
+            AD 1
+        </a>
+        
+        <!-- Ad 2 -->
+        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="top: 25%; right: 15%; animation-delay: 1s;">
+            AD 2
+        </a>
+        
+        <!-- Ad 3 -->
+        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="top: 60%; left: 5%; animation-delay: 2s;">
+            AD 3
+        </a>
+        
+        <!-- Ad 4 -->
+        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="top: 70%; right: 10%; animation-delay: 3s;">
+            AD 4
+        </a>
+        
+        <!-- Ad 5 -->
+        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="bottom: 20%; left: 20%; animation-delay: 4s;">
+            AD 5
+        </a>
+    </div>
+
     <script>
-        // Ενημέρωση ημερομηνίας
+        // ==================== ΔΕΔΟΜΕΝΑ ΚΑΙΡΟΥ ====================
+        const weatherData = {
+            'Αθήνα': {
+                temp: 24,
+                desc: 'Ηλιόλουστο',
+                icon: '☀️',
+                wind: '12 km/h',
+                humidity: '65%',
+                pressure: '1013 hPa',
+                visibility: '10 km'
+            },
+            'Θεσσαλονίκη': {
+                temp: 22,
+                desc: 'Λίγο συννεφιά',
+                icon: '⛅',
+                wind: '15 km/h',
+                humidity: '70%',
+                pressure: '1010 hPa',
+                visibility: '8 km'
+            },
+            'Πάτρα': {
+                temp: 23,
+                desc: 'Ηλιόλουστο',
+                icon: '☀️',
+                wind: '10 km/h',
+                humidity: '68%',
+                pressure: '1012 hPa',
+                visibility: '12 km'
+            },
+            'Ηράκλειο': {
+                temp: 26,
+                desc: 'Έντονο ηλιοφάνεια',
+                icon: '☀️',
+                wind: '8 km/h',
+                humidity: '60%',
+                pressure: '1014 hPa',
+                visibility: '15 km'
+            },
+            'Λάρισα': {
+                temp: 25,
+                desc: 'Καθαρός ουρανός',
+                icon: '☀️',
+                wind: '14 km/h',
+                humidity: '55%',
+                pressure: '1011 hPa',
+                visibility: '20 km'
+            }
+        };
+
+        // ==================== ΛΕΙΤΟΥΡΓΙΕΣ ΚΑΙΡΟΥ ====================
         function updateDate() {
             const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', locale: 'el-GR' };
-            document.getElementById('currentDate').textContent = now.toLocaleDateString('el-GR', options);
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                locale: 'el-GR'
+            };
+            document.getElementById('currentDate').textContent = 
+                now.toLocaleDateString('el-GR', options);
         }
-        
-        // Δεδομένα καιρού
-        const weatherData = {
-            'Αθήνα': { temp: 24, desc: 'Ηλιόλουστο', icon: '☀️', wind: '12 km/h', humidity: '65%', pressure: '1013 hPa', visibility: '10 km' },
-            'Θεσσαλονίκη': { temp: 22, desc: 'Λίγο συννεφιά', icon: '⛅', wind: '15 km/h', humidity: '70%', pressure: '1010 hPa', visibility: '8 km' },
-            'Πάτρα': { temp: 23, desc: 'Ηλιόλουστο', icon: '☀️', wind: '10 km/h', humidity: '68%', pressure: '1012 hPa', visibility: '12 km' },
-            'Ηράκλειο': { temp: 26, desc: 'Έντονο ηλιοφάνεια', icon: '☀️', wind: '8 km/h', humidity: '60%', pressure: '1014 hPa', visibility: '15 km' }
-        };
-        
-        // Ενημέρωση καιρού
+
         function updateWeather(city) {
             const data = weatherData[city] || weatherData['Αθήνα'];
+            
             document.getElementById('cityName').textContent = city;
             document.getElementById('temperature').textContent = `${data.temp}°C`;
             document.getElementById('weatherDesc').textContent = data.desc;
@@ -143,15 +560,93 @@
             document.getElementById('pressure').textContent = data.pressure;
             document.getElementById('visibility').textContent = data.visibility;
         }
-        
+
         // Αναζήτηση πόλης
-        document.getElementById('cityInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && this.value.trim()) updateWeather(this.value.trim());
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const city = document.getElementById('cityInput').value.trim();
+            if (city) {
+                updateWeather(city);
+            }
         });
+
+        document.getElementById('cityInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('searchBtn').click();
+            }
+        });
+
+        // Πλευρικό μενού
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Αφαίρεση active από όλα
+                document.querySelectorAll('.menu-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                
+                // Προσθήκη active στο επιλεγμένο
+                this.classList.add('active');
+                
+                // Εδώ μπορείς να προσθέσεις λειτουργικότητα αλλαγής view
+                const view = this.getAttribute('data-view');
+                console.log(`Αλλαγή σε view: ${view}`);
+            });
+        });
+
+        // ==================== POP-UP BANNER ====================
+        const popupBanner = document.getElementById('popupBanner');
+        let isBannerVisible = false;
         
-        // Αρχικοποίηση
+        function toggleBanner() {
+            if (isBannerVisible) {
+                popupBanner.classList.remove('show');
+            } else {
+                popupBanner.classList.add('show');
+            }
+            isBannerVisible = !isBannerVisible;
+        }
+        
+        // Αρχική εμφάνιση banner μετά από 2 δευτερόλεπτα
+        setTimeout(() => {
+            toggleBanner();
+        }, 2000);
+        
+        // Αυτόματη αλλαγή κάθε 30 δευτερόλεπτα
+        setInterval(toggleBanner, 30000);
+        
+        // Κλείσιμο banner με το κουμπί
+        document.getElementById('closeBanner').addEventListener('click', function() {
+            popupBanner.classList.remove('show');
+            isBannerVisible = false;
+        });
+
+        // ==================== FLOATING ADS ====================
+        // Δυναμική κίνηση για τα ads
+        function moveAdsRandomly() {
+            const ads = document.querySelectorAll('.ad-circle');
+            ads.forEach(ad => {
+                // Τυχαίες νέες θέσεις
+                const newTop = Math.random() * 80 + 10; // 10% έως 90%
+                const newLeft = Math.random() * 80 + 10; // 10% έως 90%
+                
+                // Ομαλή μετάβαση
+                ad.style.transition = 'all 15s linear';
+                ad.style.top = `${newTop}%`;
+                ad.style.left = `${newLeft}%`;
+            });
+        }
+        
+        // Μετακίνηση ads κάθε 30 δευτερόλεπτα
+        setInterval(moveAdsRandomly, 30000);
+        
+        // Αρχική κλήση για να ξεκινήσει η κίνηση
+        setTimeout(moveAdsRandomly, 5000);
+
+        // ==================== ΑΡΧΙΚΟΠΟΙΗΣΗ ====================
         updateDate();
         updateWeather('Αθήνα');
+        
+        // Console message για τον ad link
+        console.log('Ad links οδηγούν στο: https://otieu.com/4/10274068');
     </script>
 </body>
 </html>
