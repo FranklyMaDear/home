@@ -10,7 +10,6 @@
     <meta name="theme-color" content="#667eea">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="google-adsense-account" content="ca-pub-3186700611266549">
     <link rel="stylesheet" href="style.css">
     <style>
         /* Quick Access Grid Styles */
@@ -155,8 +154,6 @@
             }
         }
     </style>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549" crossorigin="anonymous"></script>
 </head>
 <body>
     <!-- Floating Ads -->
@@ -193,8 +190,7 @@
             </div>
             <ul class="nav-links">
                 <li><a href="/" data-key="home">Αρχική</a></li>
-                <li><a href="#games" data-key="games">Παιχνίδια</a></li>
-                <li><a href="#features" data-key="features">Πλεονεκτήματα</a></li>
+                <li><a href="https://games.franklymadear.com" data-key="games">Παιχνίδια</a></li>
                 <!-- ΒLOG LINK ΠΡΟΣΤΕΘΗΚΕ -->
                 <li><a href="http://blog.franklymadear.com/" data-key="blog">Blog</a></li>
                 <!-- SUPPORT LINK ΠΡΟΣΤΕΘΗΚΕ -->
@@ -221,8 +217,8 @@
             <h1 data-key="welcome">Καλώς Ηρθες στο FranklyMaDear</h1>
             <p data-key="subtitle">Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!</p>
             <div class="cta-buttons">
-                <a href="sudoku/sudoku.html" class="btn btn-primary" data-key="playSudoku">Παίξε Sudoku</a>
-                <a href="#games" class="btn btn-secondary" data-key="viewAllGames">Δες Όλα τα Παιχνίδια</a>
+                <a href="https://games.franklymadear.com" class="btn btn-primary" data-key="playGames">Παίξε Τώρα</a>
+                <a href="https://games.franklymadear.com" class="btn btn-secondary" data-key="viewAllGames">Δες Όλα τα Παιχνίδια</a>
             </div>
         </div>
     </section>
@@ -250,38 +246,6 @@
                     <h3 data-key="blogTitle">Blog</h3>
                     <p data-key="blogDesc">Ανακάλυψε χρήσιμα άρθρα, συμβουλές για παιχνίδια, νέα χαρακτηριστικά και πολλά άλλα στο επίσημο blog μας!</p>
                     <a href="https://blog.franklymadear.com" class="quick-access-btn" target="_blank" data-key="goToBlog">Μετάβαση στο Blog</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features">
-        <div class="container">
-            <div class="section-title">
-                <h2 data-key="whyPlay">Γιατί να παίξεις με εμάς;</h2>
-                <p data-key="advantages">Ολα τα πλεονεκτήματα των παιχνιδιών μας</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3 data-key="free">Δωρεάν</h3>
-                    <p data-key="freeDesc">Όλα τα παιχνίδια είναι 100% δωρεάν</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📱</div>
-                    <h3 data-key="responsive">Responsive</h3>
-                    <p data-key="responsiveDesc">Δουλεύουν σε όλες τις συσκευές</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3 data-key="fast">Γρήγορα</h3>
-                    <p data-key="fastDesc">Φορτώνονται αμέσως χωρίς εγκατάσταση</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎮</div>
-                    <h3 data-key="variety">Ποικιλία</h3>
-                    <p data-key="varietyDesc">Συνεχώς νέα παιχνίδια προστίθενται</p>
                 </div>
             </div>
         </div>
@@ -360,11 +324,6 @@
             
             // Close popup
             popupModal.style.display = 'none';
-            
-            // Optional: Show thank you message
-            setTimeout(() => {
-                alert('Ευχαριστούμε για την υποστήριξή σας!');
-            }, 500);
         });
         
         // Close pop-up when clicking outside the content
@@ -381,9 +340,6 @@
             script.src = 'https://otieu.com/4/10274068';
             script.async = true;
             document.head.appendChild(script);
-            
-            // Show confirmation
-            alert('Σας ευχαριστούμε! Η υποστήριξή σας είναι σημαντική για εμάς!');
         }
 
         // Language translations
@@ -391,12 +347,11 @@
             el: {
                 home: "Αρχική",
                 games: "Παιχνίδια",
-                features: "Πλεονεκτήματα",
                 blog: "Blog",
                 support: "Υποστήριξη",
                 welcome: "Καλώς Ηρθες στο FranklyMaDear",
                 subtitle: "Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!",
-                playSudoku: "Παίξε Sudoku",
+                playGames: "Παίξε Τώρα",
                 viewAllGames: "Δες Όλα τα Παιχνίδια",
                 quickAccess: "Γρήγορη Πρόσβαση",
                 quickAccessSub: "Απευθείας πρόσβαση στις πλατφόρμες μας",
@@ -406,28 +361,17 @@
                 blogTitle: "Blog",
                 blogDesc: "Ανακάλυψε χρήσιμα άρθρα, συμβουλές για παιχνίδια, νέα χαρακτηριστικά και πολλά άλλα στο επίσημο blog μας!",
                 goToBlog: "Μετάβαση στο Blog",
-                whyPlay: "Γιατί να παίξεις με εμάς;",
-                advantages: "Ολα τα πλεονεκτήματα των παιχνιδιών μας",
-                free: "Δωρεάν",
-                freeDesc: "Όλα τα παιχνίδια είναι 100% δωρεάν",
-                responsive: "Responsive",
-                responsiveDesc: "Δουλεύουν σε όλες τις συσκευές",
-                fast: "Γρήγορα",
-                fastDesc: "Φορτώνονται αμέσως χωρίς εγκατάσταση",
-                variety: "Ποικιλία",
-                varietyDesc: "Συνεχώς νέα παιχνίδια προστίθενται",
                 footerDesc: "Η καλύτερη πλατφόρμα για δωρεάν HTML5 παιχνίδια online.",
                 contact: "Επικοινωνία"
             },
             en: {
                 home: "Home",
                 games: "Games",
-                features: "Features",
                 blog: "Blog",
                 support: "Support",
                 welcome: "Welcome to FranklyMaDear",
                 subtitle: "Discover the best free HTML5 games online!",
-                playSudoku: "Play Sudoku",
+                playGames: "Play Now",
                 viewAllGames: "View All Games",
                 quickAccess: "Quick Access",
                 quickAccessSub: "Direct access to our platforms",
@@ -437,28 +381,17 @@
                 blogTitle: "Blog",
                 blogDesc: "Discover useful articles, game tips, new features and much more on our official blog!",
                 goToBlog: "Go to Blog",
-                whyPlay: "Why Play With Us?",
-                advantages: "All the advantages of our games",
-                free: "Free",
-                freeDesc: "All games are 100% free",
-                responsive: "Responsive",
-                responsiveDesc: "Work on all devices",
-                fast: "Fast",
-                fastDesc: "Load immediately without installation",
-                variety: "Variety",
-                varietyDesc: "New games are constantly added",
                 footerDesc: "The best platform for free HTML5 games online.",
                 contact: "Contact"
             },
             de: {
                 home: "Startseite",
                 games: "Spiele",
-                features: "Funktionen",
                 blog: "Blog",
                 support: "Unterstützung",
                 welcome: "Willkommen bei FranklyMaDear",
                 subtitle: "Entdecken Sie die besten kostenlosen HTML5-Spiele online!",
-                playSudoku: "Sudoku spielen",
+                playGames: "Jetzt spielen",
                 viewAllGames: "Alle Spiele ansehen",
                 quickAccess: "Schneller Zugriff",
                 quickAccessSub: "Direkter Zugang zu unseren Plattformen",
@@ -468,28 +401,17 @@
                 blogTitle: "Blog",
                 blogDesc: "Entdecken Sie nützliche Artikel, Spieltipps, neue Funktionen und vieles mehr in unserem offiziellen Blog!",
                 goToBlog: "Zum Blog",
-                whyPlay: "Warum mit uns spielen?",
-                advantages: "Alle Vorteile unserer Spiele",
-                free: "Kostenlos",
-                freeDesc: "Alle Spiele sind 100% kostenlos",
-                responsive: "Responsive",
-                responsiveDesc: "Funktionieren auf allen Geräten",
-                fast: "Schnell",
-                fastDesc: "Laden sofort ohne Installation",
-                variety: "Vielfalt",
-                varietyDesc: "Ständig werden neue Spiele hinzugefügt",
                 footerDesc: "Die beste Plattform für kostenlose HTML5-Spiele online.",
                 contact: "Kontakt"
             },
             es: {
                 home: "Inicio",
                 games: "Juegos",
-                features: "Características",
                 blog: "Blog",
                 support: "Soporte",
                 welcome: "Bienvenido a FranklyMaDear",
                 subtitle: "¡Descubre los mejores juegos HTML5 gratuitos en línea!",
-                playSudoku: "Jugar Sudoku",
+                playGames: "Jugar Ahora",
                 viewAllGames: "Ver Todos los Juegos",
                 quickAccess: "Acceso Rápido",
                 quickAccessSub: "Acceso directo a nuestras plataformas",
@@ -499,28 +421,17 @@
                 blogTitle: "Blog",
                 blogDesc: "¡Descubre artículos útiles, consejos de juegos, nuevas características y mucho más en nuestro blog oficial!",
                 goToBlog: "Ir al Blog",
-                whyPlay: "¿Por qué jugar con nosotros?",
-                advantages: "Todas las ventajas de nuestros juegos",
-                free: "Gratis",
-                freeDesc: "Todos los juegos son 100% gratuitos",
-                responsive: "Responsive",
-                responsiveDesc: "Funcionan en todos los dispositivos",
-                fast: "Rápido",
-                fastDesc: "Se cargan inmediatamente sin instalación",
-                variety: "Variedad",
-                varietyDesc: "Constantemente se añaden nuevos juegos",
                 footerDesc: "La mejor plataforma para juegos HTML5 gratuitos en línea.",
                 contact: "Contacto"
             },
             it: {
                 home: "Home",
                 games: "Giochi",
-                features: "Caratteristiche",
                 blog: "Blog",
                 support: "Supporto",
                 welcome: "Benvenuto su FranklyMaDear",
                 subtitle: "Scopri i migliori giochi HTML5 gratuiti online!",
-                playSudoku: "Gioca a Sudoku",
+                playGames: "Gioca Ora",
                 viewAllGames: "Vedi Tutti i Giochi",
                 quickAccess: "Accesso Veloce",
                 quickAccessSub: "Accesso diretto alle nostre piattaforme",
@@ -530,28 +441,17 @@
                 blogTitle: "Blog",
                 blogDesc: "Scopri articoli utili, suggerimenti sui giochi, nuove funzionalità e molto altro nel nostro blog ufficiale!",
                 goToBlog: "Vai al Blog",
-                whyPlay: "Perché giocare con noi?",
-                advantages: "Tutti i vantaggi dei nostri giochi",
-                free: "Gratuito",
-                freeDesc: "Tutti i giochi sono 100% gratuiti",
-                responsive: "Responsive",
-                responsiveDesc: "Funzionano su tutti i dispositivi",
-                fast: "Veloce",
-                fastDesc: "Si caricano immediatamente senza installazione",
-                variety: "Varietà",
-                varietyDesc: "Nuovi giochi vengono costantemente aggiunti",
                 footerDesc: "La migliore piattaforma per giochi HTML5 gratuiti online.",
                 contact: "Contatto"
             },
             ar: {
                 home: "الرئيسية",
                 games: "الألعاب",
-                features: "الميزات",
                 blog: "مدونة",
                 support: "الدعم",
                 welcome: "مرحبًا بك في FranklyMaDear",
                 subtitle: "اكتشف أفضل ألعاب HTML5 المجانية عبر الإنترنت!",
-                playSudoku: "العب سودوكو",
+                playGames: "العب الآن",
                 viewAllGames: "عرض جميع الألعاب",
                 quickAccess: "وصول سريع",
                 quickAccessSub: "وصول مباشر إلى منصاتنا",
@@ -561,28 +461,17 @@
                 blogTitle: "المدونة",
                 blogDesc: "اكتشف مقالات مفيدة، نصائح للألعاب، ميزات جديدة والمزيد في مدونتنا الرسمية!",
                 goToBlog: "اذهب إلى المدونة",
-                whyPlay: "لماذا تلعب معنا؟",
-                advantages: "جميع مزايا ألعابنا",
-                free: "مجاني",
-                freeDesc: "جميع الألعاب مجانية 100%",
-                responsive: "متجاوب",
-                responsiveDesc: "تعمل على جميع الأجهزة",
-                fast: "سريع",
-                fastDesc: "تحمّل فورًا بدون تثبيت",
-                variety: "تنوع",
-                varietyDesc: "يتم إضافة ألعاب جديدة باستمرار",
                 footerDesc: "أفضل منصة لألعاب HTML5 المجانية عبر الإنترنت.",
                 contact: "اتصال"
             },
             ru: {
                 home: "Главная",
                 games: "Игры",
-                features: "Особенности",
                 blog: "Блог",
                 support: "Поддержка",
                 welcome: "Добро пожаловать в FranklyMaDear",
                 subtitle: "Откройте для себя лучшие бесплатные HTML5 игры онлайн!",
-                playSudoku: "Играть в Судоку",
+                playGames: "Играть Сейчас",
                 viewAllGames: "Посмотреть Все Игры",
                 quickAccess: "Быстрый доступ",
                 quickAccessSub: "Прямой доступ к нашим платформам",
@@ -592,28 +481,17 @@
                 blogTitle: "Блог",
                 blogDesc: "Откройте для себя полезные статьи, советы по играм, новые функции и многое другое в нашем официальном блоге!",
                 goToBlog: "Перейти в блог",
-                whyPlay: "Почему стоит играть с нами?",
-                advantages: "Все преимущества наших игр",
-                free: "Бесплатно",
-                freeDesc: "Все игры на 100% бесплатны",
-                responsive: "Адаптивный",
-                responsiveDesc: "Работают на всех устройствах",
-                fast: "Быстро",
-                fastDesc: "Загружаются мгновенно без установки",
-                variety: "Разнообразие",
-                varietyDesc: "Постоянно добавляются новые игры",
                 footerDesc: "Лучшая платформа для бесплатных HTML5 игр онлайн.",
                 contact: "Контакт"
             },
             hi: {
                 home: "होम",
                 games: "गेम्स",
-                features: "फीचर्स",
                 blog: "ब्लॉग",
                 support: "सहायता",
                 welcome: "FranklyMaDear में आपका स्वागत है",
                 subtitle: "ऑनलाइन सर्वश्रेष्ठ मुफ्त HTML5 गेम्स खोजें!",
-                playSudoku: "सुडोकू खेलें",
+                playGames: "अभी खेलें",
                 viewAllGames: "सभी गेम्स देखें",
                 quickAccess: "त्वरित पहुंच",
                 quickAccessSub: "हमारे प्लेटफार्मों तक सीधी पहुंच",
@@ -623,16 +501,6 @@
                 blogTitle: "ब्लॉग",
                 blogDesc: "हमारे आधिकारिक ब्लॉग पर उपयोगी लेख, गेम टिप्स, नई सुविधाएं और बहुत कुछ खोजें!",
                 goToBlog: "ब्लॉग पर जाएं",
-                whyPlay: "हमारे साथ क्यों खेलें?",
-                advantages: "हमारे गेम्स के सभी फायदे",
-                free: "मुफ्त",
-                freeDesc: "सभी गेम्स 100% मुफ्त हैं",
-                responsive: "रिस्पॉन्सिव",
-                responsiveDesc: "सभी डिवाइस पर काम करते हैं",
-                fast: "तेज़",
-                fastDesc: "बिना इंस्टॉलेशन के तुरंत लोड होते हैं",
-                variety: "विविधता",
-                varietyDesc: "नए गेम्स लगातार जोड़े जाते हैं",
                 footerDesc: "मुफ्त HTML5 गेम्स के लिए सर्वश्रेष्ठ प्लेटफॉर्म।",
                 contact: "संपर्क"
             }
