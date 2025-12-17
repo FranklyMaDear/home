@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App με Animated Ads</title>
+    <title>Weather App με Διακριτικά Ads</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -21,21 +21,22 @@
             position: relative;
         }
 
-        /* Pop-up Banner */
+        /* Μικρό διακριτικό banner */
         .popup-banner {
             position: fixed;
-            top: -100px;
+            top: -50px;
             left: 0;
             width: 100%;
-            background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+            background: rgba(255, 107, 107, 0.85);
             color: white;
             text-align: center;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: 600;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: 500;
             z-index: 1000;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: top 0.8s ease-in-out;
+            backdrop-filter: blur(5px);
+            transition: top 0.5s ease-in-out;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .popup-banner.show {
@@ -44,17 +45,18 @@
 
         .popup-banner .close-btn {
             position: absolute;
-            right: 15px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             border: none;
             color: white;
-            width: 30px;
-            height: 30px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 12px;
+            line-height: 1;
         }
 
         /* Κύριο περιεχόμενο */
@@ -63,7 +65,8 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 15px;
+            padding-top: 0;
         }
 
         /* Header */
@@ -71,198 +74,190 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
-            margin-bottom: 20px;
+            padding: 15px 0;
+            margin-top: 10px;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .logo h1 {
-            font-size: 28px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 600;
         }
 
         .logo-icon {
-            font-size: 36px;
-            animation: rotate 10s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            font-size: 28px;
         }
 
         .search-container {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .search-input {
-            padding: 12px 20px;
+            padding: 10px 15px;
             border: none;
-            border-radius: 30px;
-            width: 250px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            width: 180px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.08);
             color: white;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(5px);
         }
 
         .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .search-btn {
-            background: #ff9f43;
+            background: rgba(255, 159, 67, 0.7);
             border: none;
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             color: white;
-            font-size: 18px;
+            font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
         .search-btn:hover {
-            background: #ff7f00;
-            transform: scale(1.05);
+            background: rgba(255, 127, 0, 0.8);
         }
 
         /* Κύριο περιεχόμενο */
         .main-content {
             display: flex;
             flex: 1;
-            gap: 20px;
-            height: calc(100vh - 150px);
+            gap: 15px;
+            height: calc(100vh - 120px);
         }
 
         /* Πλευρικό μενού */
         .sidebar {
-            width: 250px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
+            width: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
         }
 
         .menu-item {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 15px;
-            border-radius: 15px;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.03);
+            font-size: 14px;
         }
 
         .menu-item:hover, .menu-item.active {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .menu-item i {
-            font-size: 20px;
-            width: 30px;
+            font-size: 16px;
+            width: 24px;
         }
 
         /* Δεδομένα καιρού */
         .weather-data {
             flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 20px;
             overflow-y: auto;
         }
 
         .current-weather {
             text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .city-name {
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
         }
 
         .current-date {
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 30px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
         }
 
         .weather-icon-large {
-            font-size: 100px;
-            margin: 20px 0;
+            font-size: 70px;
+            margin: 15px 0;
         }
 
         .temperature {
-            font-size: 72px;
-            font-weight: 800;
-            margin-bottom: 10px;
+            font-size: 54px;
+            font-weight: 700;
+            margin-bottom: 5px;
         }
 
         .weather-desc {
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 500;
             color: #ffdd59;
-            margin-bottom: 40px;
+            margin-bottom: 25px;
         }
 
         .weather-details {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            gap: 12px;
         }
 
         .detail-box {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
             text-align: center;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
         .detail-box:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .detail-icon {
-            font-size: 30px;
-            margin-bottom: 10px;
+            font-size: 20px;
+            margin-bottom: 8px;
         }
 
         .detail-value {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 5px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 3px;
         }
 
         .detail-label {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.7);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
         }
 
-        /* Windy χάρτης */
+        /* Windy χάρτης - με το δικό σου iframe */
         .windy-map {
-            margin-top: 40px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
+            margin-top: 25px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
             overflow: hidden;
-            height: 350px;
+            height: 300px;
         }
 
         .windy-map iframe {
@@ -271,7 +266,7 @@
             border: none;
         }
 
-        /* Floating Ads με το σύνδεσμό σου */
+        /* Πολύ μικρά και διακριτικά floating ads */
         .floating-ads {
             position: fixed;
             top: 0;
@@ -284,47 +279,43 @@
 
         .ad-circle {
             position: absolute;
-            width: 80px;
-            height: 80px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #ff6b6b, #ff9f43, #ffdd59, #1dd1a1, #54a0ff, #5f27cd);
-            background-size: 400% 400%;
-            animation: gradient 3s ease infinite, float 6s ease-in-out infinite;
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.6), rgba(255, 159, 67, 0.6));
+            animation: float 8s ease-in-out infinite;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 24px;
-            font-weight: 700;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            font-size: 12px;
+            font-weight: 500;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
             pointer-events: auto;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             text-decoration: none;
             text-align: center;
-            padding: 10px;
+            padding: 5px;
+            opacity: 0.7;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .ad-circle:hover {
-            transform: scale(1.2);
+            opacity: 1;
+            transform: scale(1.1);
             z-index: 950;
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
+            50% { transform: translateY(-10px) rotate(90deg); }
         }
 
         /* Responsive */
         @media (max-width: 1024px) {
             .sidebar {
-                width: 200px;
+                width: 160px;
             }
             
             .weather-details {
@@ -342,11 +333,19 @@
                 flex-direction: row;
                 overflow-x: auto;
                 height: auto;
+                padding: 10px;
             }
             
             .menu-item {
                 flex-direction: column;
-                min-width: 100px;
+                min-width: 80px;
+                padding: 8px;
+                font-size: 12px;
+            }
+            
+            .menu-item i {
+                font-size: 14px;
+                width: 20px;
             }
             
             .search-container {
@@ -358,15 +357,25 @@
             }
             
             .temperature {
-                font-size: 60px;
+                font-size: 46px;
+            }
+            
+            .windy-map {
+                height: 250px;
+            }
+            
+            .ad-circle {
+                width: 35px;
+                height: 35px;
+                font-size: 10px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Pop-up Banner -->
+    <!-- Μικρό διακριτικό banner -->
     <div class="popup-banner" id="popupBanner">
-        <span>🔥 Ειδική προσφορά! Έκπτωση 30% σε όλα τα προϊόντα. Ισχύει για 24 ώρες!</span>
+        <span>📢 Ειδική προσφορά - Ισχύει για λίγες ώρες</span>
         <button class="close-btn" id="closeBanner">×</button>
     </div>
 
@@ -375,10 +384,10 @@
         <header class="app-header">
             <div class="logo">
                 <div class="logo-icon">🌤️</div>
-                <h1>Weather Pro</h1>
+                <h1>Weather</h1>
             </div>
             <div class="search-container">
-                <input type="text" class="search-input" id="cityInput" placeholder="Αναζήτηση πόλης..." value="Αθήνα">
+                <input type="text" class="search-input" id="cityInput" placeholder="Πόλη..." value="Αθήνα">
                 <button class="search-btn" id="searchBtn">
                     <i class="fas fa-search"></i>
                 </button>
@@ -390,11 +399,11 @@
             <nav class="sidebar">
                 <div class="menu-item active" data-view="current">
                     <i class="fas fa-sun"></i>
-                    <span>Τρέχων καιρός</span>
+                    <span>Τρέχων</span>
                 </div>
                 <div class="menu-item" data-view="hourly">
                     <i class="fas fa-clock"></i>
-                    <span>Ωριαία πρόβλεψη</span>
+                    <span>Ωριαία</span>
                 </div>
                 <div class="menu-item" data-view="weekly">
                     <i class="fas fa-calendar-alt"></i>
@@ -402,15 +411,7 @@
                 </div>
                 <div class="menu-item" data-view="radar">
                     <i class="fas fa-satellite"></i>
-                    <span>Ραντάρ καιρού</span>
-                </div>
-                <div class="menu-item" data-view="alerts">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span>Ειδοποιήσεις</span>
-                </div>
-                <div class="menu-item" data-view="maps">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <span>Χάρτες</span>
+                    <span>Ραντάρ</span>
                 </div>
             </nav>
 
@@ -448,39 +449,39 @@
                     </div>
                 </div>
 
-                <!-- Windy χάρτης -->
+                <!-- Windy χάρτης με το δικό σου iframe -->
                 <div class="windy-map">
-                    <iframe width="100%" height="100%" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=5&overlay=wind&product=ecmwf&level=surface&lat=37.984&lon=23.735" frameborder="0"></iframe>
+                    <iframe width="100%" height="100%" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=5&overlay=wind&product=ecmwf&level=surface&lat=27.294&lon=20.479&detailLat=37.984&detailLon=23.735&detail=true&pressure=true" frameborder="0"></iframe>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Floating Ads με το σύνδεσμό σου -->
+    <!-- Πολύ μικρά και διακριτικά floating ads -->
     <div class="floating-ads" id="floatingAds">
         <!-- Ad 1 -->
-        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="top: 15%; left: 10%; animation-delay: 0s;">
-            AD 1
+        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="top: 12%; left: 8%; animation-delay: 0s;">
+            AD
         </a>
         
         <!-- Ad 2 -->
-        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="top: 25%; right: 15%; animation-delay: 1s;">
-            AD 2
+        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="top: 20%; right: 12%; animation-delay: 1s;">
+            AD
         </a>
         
         <!-- Ad 3 -->
-        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="top: 60%; left: 5%; animation-delay: 2s;">
-            AD 3
+        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="top: 65%; left: 4%; animation-delay: 2s;">
+            AD
         </a>
         
         <!-- Ad 4 -->
-        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="top: 70%; right: 10%; animation-delay: 3s;">
-            AD 4
+        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="top: 75%; right: 8%; animation-delay: 3s;">
+            AD
         </a>
         
         <!-- Ad 5 -->
-        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="bottom: 20%; left: 20%; animation-delay: 4s;">
-            AD 5
+        <a href="https://otieu.com/4/10274068" target="_blank" class="ad-circle" style="bottom: 15%; left: 15%; animation-delay: 4s;">
+            AD
         </a>
     </div>
 
@@ -522,15 +523,6 @@
                 humidity: '60%',
                 pressure: '1014 hPa',
                 visibility: '15 km'
-            },
-            'Λάρισα': {
-                temp: 25,
-                desc: 'Καθαρός ουρανός',
-                icon: '☀️',
-                wind: '14 km/h',
-                humidity: '55%',
-                pressure: '1011 hPa',
-                visibility: '20 km'
             }
         };
 
@@ -578,21 +570,16 @@
         // Πλευρικό μενού
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', function() {
-                // Αφαίρεση active από όλα
                 document.querySelectorAll('.menu-item').forEach(i => {
                     i.classList.remove('active');
                 });
-                
-                // Προσθήκη active στο επιλεγμένο
                 this.classList.add('active');
-                
-                // Εδώ μπορείς να προσθέσεις λειτουργικότητα αλλαγής view
                 const view = this.getAttribute('data-view');
                 console.log(`Αλλαγή σε view: ${view}`);
             });
         });
 
-        // ==================== POP-UP BANNER ====================
+        // ==================== ΜΙΚΡΟ BANNER ====================
         const popupBanner = document.getElementById('popupBanner');
         let isBannerVisible = false;
         
@@ -605,10 +592,10 @@
             isBannerVisible = !isBannerVisible;
         }
         
-        // Αρχική εμφάνιση banner μετά από 2 δευτερόλεπτα
+        // Αρχική εμφάνιση banner μετά από 1 δευτερόλεπτο
         setTimeout(() => {
             toggleBanner();
-        }, 2000);
+        }, 1000);
         
         // Αυτόματη αλλαγή κάθε 30 δευτερόλεπτα
         setInterval(toggleBanner, 30000);
@@ -619,34 +606,34 @@
             isBannerVisible = false;
         });
 
-        // ==================== FLOATING ADS ====================
-        // Δυναμική κίνηση για τα ads
+        // ==================== ΜΙΚΡΑ ΚΑΙ ΔΙΑΚΡΙΤΙΚΑ ADS ====================
+        // Πολύ αργή και διακριτική κίνηση για τα ads
         function moveAdsRandomly() {
             const ads = document.querySelectorAll('.ad-circle');
             ads.forEach(ad => {
-                // Τυχαίες νέες θέσεις
-                const newTop = Math.random() * 80 + 10; // 10% έως 90%
-                const newLeft = Math.random() * 80 + 10; // 10% έως 90%
+                // Πολύ μικρές τυχαίες αλλαγές θέσης
+                const currentTop = parseFloat(ad.style.top) || Math.random() * 80 + 10;
+                const currentLeft = parseFloat(ad.style.left) || Math.random() * 80 + 10;
                 
-                // Ομαλή μετάβαση
-                ad.style.transition = 'all 15s linear';
+                const newTop = Math.max(5, Math.min(85, currentTop + (Math.random() * 10 - 5)));
+                const newLeft = Math.max(5, Math.min(85, currentLeft + (Math.random() * 10 - 5)));
+                
+                // Πολύ αργή και ομαλή μετάβαση
+                ad.style.transition = 'all 20s ease-in-out';
                 ad.style.top = `${newTop}%`;
                 ad.style.left = `${newLeft}%`;
             });
         }
         
-        // Μετακίνηση ads κάθε 30 δευτερόλεπτα
-        setInterval(moveAdsRandomly, 30000);
+        // Μετακίνηση ads κάθε 45 δευτερόλεπτα (πιο σπάνια)
+        setInterval(moveAdsRandomly, 45000);
         
-        // Αρχική κλήση για να ξεκινήσει η κίνηση
-        setTimeout(moveAdsRandomly, 5000);
+        // Αρχική κλήση με καθυστέρηση
+        setTimeout(moveAdsRandomly, 3000);
 
         // ==================== ΑΡΧΙΚΟΠΟΙΗΣΗ ====================
         updateDate();
         updateWeather('Αθήνα');
-        
-        // Console message για τον ad link
-        console.log('Ad links οδηγούν στο: https://otieu.com/4/10274068');
     </script>
 </body>
 </html>
