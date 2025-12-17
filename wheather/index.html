@@ -251,19 +251,21 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        /* Windy χάρτης - με το δικό σου iframe */
+        /* Windy χάρτης - με το ΝΕΟ σου iframe (330x600) */
         .windy-map {
             margin-top: 25px;
             background: rgba(0, 0, 0, 0.1);
             border-radius: 12px;
             overflow: hidden;
-            height: 300px;
+            height: 600px; /* Αυξήθηκε για το νέο ύψος */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .windy-map iframe {
-            width: 100%;
-            height: 100%;
             border: none;
+            border-radius: 10px;
         }
 
         /* Πολύ μικρά και διακριτικά floating ads */
@@ -321,6 +323,10 @@
             .weather-details {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            .windy-map {
+                height: 500px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -361,13 +367,19 @@
             }
             
             .windy-map {
-                height: 250px;
+                height: 400px;
             }
             
             .ad-circle {
                 width: 35px;
                 height: 35px;
                 font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .windy-map {
+                height: 350px;
             }
         }
     </style>
@@ -449,9 +461,9 @@
                     </div>
                 </div>
 
-                <!-- Windy χάρτης με το δικό σου iframe -->
+                <!-- Windy χάρτης με το ΝΕΟ σου iframe -->
                 <div class="windy-map">
-                    <iframe width="100%" height="100%" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=5&overlay=wind&product=ecmwf&level=surface&lat=27.294&lon=20.479&detailLat=37.984&detailLon=23.735&detail=true&pressure=true" frameborder="0"></iframe>
+                    <iframe width="330" height="600" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&metricWind=m/s&zoom=5&overlay=wind&product=ecmwf&level=surface&lat=44.903&lon=23.73&detailLat=37.984&detailLon=23.735&detail=true&pressure=true" frameborder="0"></iframe>
                 </div>
             </div>
         </div>
