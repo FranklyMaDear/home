@@ -177,29 +177,16 @@
 </head>
 <body>
     <!-- Floating Ads -->
-    <div class="floating-ad floating-ad-1" id="floatingAd1" onclick="showAd()">ADS</div>
-    <div class="floating-ad floating-ad-2" id="floatingAd2" onclick="showAd()">ADS</div>
+    <div class="floating-ad floating-ad-1" onclick="showAd()">ADS</div>
+    <div class="floating-ad floating-ad-2" onclick="showAd()">ADS</div>
 
     <!-- Roll-up Banner -->
-    <div class="roll-up-banner" id="rollUpBanner">
+    <div class="roll-up-banner" id="rollUpBanner" onclick="showAd()">
         <div class="banner-content">
             <span class="banner-icon">👉</span>
             <span class="banner-text">Ένα κλικ αρκεί! Στηρίξτε μας να συνεχίσουμε!</span>
         </div>
-        <button class="close-banner" id="closeBanner">×</button>
-    </div>
-
-    <!-- Pop-up Modal -->
-    <div class="popup-modal" id="popupModal">
-        <div class="popup-content">
-            <button class="close-popup" id="closePopup">×</button>
-            <h2 class="popup-title">Βοήθησέ μας να συνεχίσουμε!</h2>
-            <p class="popup-text">Η υποστήριξή σας μας βοηθά να προσφέρουμε δωρεάν παιχνίδια για όλους. Κάντε κλικ σε μία από τις διαφημίσεις. Είναι ο καλύτερος τρόπος να μας ενισχύσετε, χωρίς κανένα κόστος για εσάς! </p>
-            <div class="popup-buttons">
-                <button class="btn btn-primary" id="supportBtn">Βοήθησε τώρα</button>
-                <button class="btn btn-secondary" id="closePopupBtn">Όχι τώρα</button>
-            </div>
-        </div>
+        <!-- Το κουμπί κλεισίματος έχει αφαιρεθεί -->
     </div>
 
     <!-- Header -->
@@ -307,13 +294,8 @@
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="franklymadear" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 
     <script>
-        // Banner and Pop-up functionality
+        // Banner functionality
         const rollUpBanner = document.getElementById('rollUpBanner');
-        const closeBanner = document.getElementById('closeBanner');
-        const popupModal = document.getElementById('popupModal');
-        const closePopup = document.getElementById('closePopup');
-        const closePopupBtn = document.getElementById('closePopupBtn');
-        const supportBtn = document.getElementById('supportBtn');
         const mainHeader = document.getElementById('mainHeader');
         const mainHero = document.getElementById('mainHero');
         
@@ -324,41 +306,6 @@
             mainHero.classList.add('with-banner');
         }, 1500);
         
-        // Close banner
-        closeBanner.addEventListener('click', (e) => {
-            e.stopPropagation();
-            rollUpBanner.classList.remove('show');
-            mainHeader.classList.remove('with-banner');
-            mainHero.classList.remove('with-banner');
-        });
-        
-        // Open pop-up when banner is clicked
-        rollUpBanner.addEventListener('click', () => {
-            popupModal.style.display = 'flex';
-        });
-        
-        // Close pop-up
-        closePopup.addEventListener('click', () => {
-            popupModal.style.display = 'none';
-        });
-        
-        closePopupBtn.addEventListener('click', () => {
-            popupModal.style.display = 'none';
-        });
-        
-        // Support button - Προβολή διαφήμισης Google AdSense
-        supportBtn.addEventListener('click', () => {
-            showAd();
-            popupModal.style.display = 'none';
-        });
-        
-        // Close pop-up when clicking outside the content
-        popupModal.addEventListener('click', (e) => {
-            if (e.target === popupModal) {
-                popupModal.style.display = 'none';
-            }
-        });
-
         // Function to show Google AdSense ad
         function showAd() {
             // Προσπάθεια προβολής Google AdSense διαφήμισης
