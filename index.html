@@ -10,8 +10,9 @@
     <meta name="theme-color" content="#667eea">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <!-- Monetag Ad Script -->
-    <script src="https://otieu.com/4/10274068"></script>
+    <!-- Google AdSense Script -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
+     crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
     <style>
         /* Quick Access Grid Styles */
@@ -176,8 +177,8 @@
 </head>
 <body>
     <!-- Floating Ads -->
-    <div class="floating-ad floating-ad-1" id="floatingAd1" onclick="showMonetagAd()">ADS</div>
-    <div class="floating-ad floating-ad-2" id="floatingAd2" onclick="showMonetagAd()">ADS</div>
+    <div class="floating-ad floating-ad-1" id="floatingAd1" onclick="showAd()">ADS</div>
+    <div class="floating-ad floating-ad-2" id="floatingAd2" onclick="showAd()">ADS</div>
 
     <!-- Roll-up Banner -->
     <div class="roll-up-banner" id="rollUpBanner">
@@ -333,9 +334,9 @@
             popupModal.style.display = 'none';
         });
         
-        // Support button - Προβολή Monetag διαφήμισης
+        // Support button - Προβολή διαφήμισης
         supportBtn.addEventListener('click', () => {
-            showMonetagAd();
+            showAd();
             popupModal.style.display = 'none';
         });
         
@@ -346,32 +347,15 @@
             }
         });
 
-        // Function to show Monetag ad
-        function showMonetagAd() {
-            // Έλεγχος αν το Monetag script έχει φορτωθεί
-            if (typeof monetag !== 'undefined' && typeof monetag.cmd !== 'undefined') {
-                // Προβολή διαφήμισης
-                monetag.cmd.push(function() {
-                    monetag.displayAd();
-                });
-            } else {
-                // Αν το Monetag δεν είναι διαθέσιμο, ανοίγουμε το link σε νέα καρτέλα
-                window.open('https://otieu.com/4/10274068', '_blank');
-                
-                // Εναλλακτικά, φορτώνουμε το script
-                const script = document.createElement('script');
-                script.src = 'https://otieu.com/4/10274068';
-                script.async = true;
-                document.head.appendChild(script);
-                
-                // Προσπάθεια να εμφανιστεί η διαφήμιση μετά από λίγο
-                setTimeout(() => {
-                    if (typeof monetag !== 'undefined' && typeof monetag.cmd !== 'undefined') {
-                        monetag.cmd.push(function() {
-                            monetag.displayAd();
-                        });
-                    }
-                }, 1000);
+        // Function to show ad
+        function showAd() {
+            // Εδώ μπορείτε να προσθέσετε τη λογική για την προβολή Google AdSense διαφημίσεων
+            // Για παράδειγμα:
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+                console.log('Ad requested');
+            } catch (error) {
+                console.error('Error showing ad:', error);
             }
         }
 
