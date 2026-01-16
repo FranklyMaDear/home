@@ -110,25 +110,25 @@
         .floating-ad-1 {
             top: 20%;
             left: 20px;
-            animation: floatBubble1 15s infinite ease-in-out; /* Από 20s σε 15s - ΠΙΟ ΓΡΗΓΟΡΟ */
+            animation: floatBubble1 15s infinite ease-in-out;
         }
         
         .floating-ad-2 {
             bottom: 20%;
             right: 20px;
-            animation: floatBubble2 18s infinite ease-in-out; /* Από 25s σε 18s - ΠΙΟ ΓΡΗΓΟΡΟ */
+            animation: floatBubble2 18s infinite ease-in-out;
         }
         
         @keyframes floatBubble1 {
             0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-30px) rotate(8deg); } /* ΠΙΟ ΓΡΗΓΟΡΗ ΚΙΝΗΣΗ */
+            25% { transform: translateY(-30px) rotate(8deg); }
             50% { transform: translateY(15px) rotate(-6deg); }
             75% { transform: translateY(-20px) rotate(5deg); }
         }
         
         @keyframes floatBubble2 {
             0%, 100% { transform: translateY(0) rotate(0deg); }
-            30% { transform: translateY(-35px) rotate(-10deg); } /* ΠΙΟ ΓΡΗΓΟΡΗ ΚΙΝΗΣΗ */
+            30% { transform: translateY(-35px) rotate(-10deg); }
             60% { transform: translateY(20px) rotate(8deg); }
             80% { transform: translateY(-25px) rotate(-6deg); }
         }
@@ -151,12 +151,12 @@
             
             .floating-ad-1 {
                 left: 10px;
-                animation: floatBubble1Mobile 12s infinite ease-in-out; /* Ακόμα πιο γρήγορα για mobile */
+                animation: floatBubble1Mobile 12s infinite ease-in-out;
             }
             
             .floating-ad-2 {
                 right: 10px;
-                animation: floatBubble2Mobile 14s infinite ease-in-out; /* Ακόμα πιο γρήγορα για mobile */
+                animation: floatBubble2Mobile 14s infinite ease-in-out;
             }
             
             @keyframes floatBubble1Mobile {
@@ -211,9 +211,7 @@
             <ul class="nav-links">
                 <li><a href="/" data-key="home">Αρχική</a></li>
                 <li><a href="https://games.franklymadear.com" data-key="games">Παιχνίδια</a></li>
-                <!-- ΒLOG LINK ΠΡΟΣΤΕΘΗΚΕ -->
                 <li><a href="http://blog.franklymadear.com/" data-key="blog">Blog</a></li>
-                <!-- SUPPORT LINK ΠΡΟΣΤΕΘΗΚΕ -->
                 <li><a href="https://blog.franklymadear.com/support/index.html" data-key="support">Υποστήριξη</a></li>
                 <li class="language-selector">
                     <select id="language-select" class="language-dropdown">
@@ -348,7 +346,7 @@
             popupModal.style.display = 'none';
         });
         
-        // Support button - Προβολή διαφήμισης
+        // Support button - Προβολή διαφήμισης Google AdSense
         supportBtn.addEventListener('click', () => {
             showAd();
             popupModal.style.display = 'none';
@@ -361,15 +359,14 @@
             }
         });
 
-        // Function to show ad
+        // Function to show Google AdSense ad
         function showAd() {
-            // Εδώ μπορείτε να προσθέσετε τη λογική για την προβολή Google AdSense διαφημίσεων
-            // Για παράδειγμα:
+            // Προσπάθεια προβολής Google AdSense διαφήμισης
             try {
                 (adsbygoogle = window.adsbygoogle || []).push({});
-                console.log('Ad requested');
+                console.log('Google AdSense ad requested via showAd() function');
             } catch (error) {
-                console.error('Error showing ad:', error);
+                console.error('Error showing Google AdSense ad:', error);
             }
         }
 
