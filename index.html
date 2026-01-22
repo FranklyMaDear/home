@@ -174,23 +174,28 @@
         }
         
         .modal-header {
-            padding: 20px 30px;
+            padding: 15px 25px;
             border-bottom: 1px solid #eaeaea;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: #f9f9f9;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
         }
         
         .modal-header h3 {
             margin: 0;
             color: #333;
-            font-size: 20px;
+            font-size: 16px; /* Μικρότερη γραμματοσειρά */
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
         
         .close-modal {
             background: none;
             border: none;
-            font-size: 28px;
+            font-size: 24px;
             cursor: pointer;
             color: #666;
             line-height: 1;
@@ -201,36 +206,63 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
         
         .close-modal:hover {
-            background: #f5f5f5;
+            background: #eaeaea;
             color: #333;
         }
         
         .modal-ad-container {
-            padding: 30px;
+            padding: 25px;
             min-height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: #fff;
         }
         
         .modal-ad-content {
             width: 100%;
             text-align: center;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Βελτιώσεις για το AdSense στο modal */
+        .modal-adsbygoogle {
+            width: 100% !important;
+            max-width: 728px;
+            margin: 0 auto;
+            min-height: 250px;
         }
         
         .modal-footer {
-            padding: 20px 30px;
+            padding: 15px 25px;
             border-top: 1px solid #eaeaea;
             text-align: center;
             color: #666;
-            font-size: 14px;
+            font-size: 13px;
             background: #f9f9f9;
             border-bottom-left-radius: 16px;
             border-bottom-right-radius: 16px;
+            line-height: 1.4;
+        }
+        
+        .modal-loading {
+            padding: 40px;
+            text-align: center;
+            color: #666;
+        }
+        
+        .modal-loading-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            display: block;
         }
         
         @keyframes fadeIn {
@@ -274,14 +306,40 @@
             
             .modal-content {
                 margin: 10px;
+                max-height: 95vh;
             }
             
             .modal-header {
-                padding: 15px 20px;
+                padding: 12px 20px;
+            }
+            
+            .modal-header h3 {
+                font-size: 15px;
             }
             
             .modal-ad-container {
-                padding: 20px;
+                padding: 15px;
+                min-height: 250px;
+            }
+            
+            .modal-adsbygoogle {
+                min-height: 200px;
+            }
+            
+            .modal-footer {
+                padding: 12px 20px;
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .modal-header h3 {
+                font-size: 14px;
+            }
+            
+            .modal-ad-container {
+                padding: 10px;
+                min-height: 200px;
             }
         }
     </style>
@@ -305,16 +363,16 @@
             </div>
             <div class="modal-ad-container">
                 <div class="modal-ad-content" id="modalAdContent">
-                    <!-- Ad will be loaded here -->
-                    <ins class="adsbygoogle"
-                         style="display:block; text-align:center;"
-                         data-ad-layout="in-article"
-                         data-ad-format="fluid"
-                         data-ad-client="ca-pub-3186700611266549"
-                         data-ad-slot="6330498148"></ins>
-                    <script>
-                         (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
+                    <!-- Loading indicator -->
+                    <div class="modal-loading" id="modalLoading">
+                        <div class="modal-loading-icon">⏳</div>
+                        <p>Φόρτωση διαφήμισης...</p>
+                    </div>
+                    
+                    <!-- Ad container -->
+                    <div id="modalAdContainer" style="display: none; width: 100%;">
+                        <!-- AdSense ad will be inserted here -->
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -450,6 +508,56 @@
         const supportAdModal = document.getElementById('supportAdModal');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const modalAdContent = document.getElementById('modalAdContent');
+        const modalLoading = document.getElementById('modalLoading');
+        const modalAdContainer = document.getElementById('modalAdContainer');
+        
+        // Function to load AdSense ad in modal
+        function loadModalAd() {
+            // Clear previous ad
+            modalAdContainer.innerHTML = '';
+            
+            // Show loading
+            modalLoading.style.display = 'block';
+            modalAdContainer.style.display = 'none';
+            
+            // Create new ad element
+            const adElement = document.createElement('ins');
+            adElement.className = 'adsbygoogle modal-adsbygoogle';
+            adElement.style.cssText = 'display:block; text-align:center; min-height: 250px; width: 100%;';
+            adElement.setAttribute('data-ad-layout', 'in-article');
+            adElement.setAttribute('data-ad-format', 'fluid');
+            adElement.setAttribute('data-ad-client', 'ca-pub-3186700611266549');
+            adElement.setAttribute('data-ad-slot', '6330498148');
+            
+            modalAdContainer.appendChild(adElement);
+            
+            // Try to load the ad with a delay to ensure Google scripts are ready
+            setTimeout(() => {
+                try {
+                    // Push the ad
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                    
+                    // Check if ad loads after 2 seconds
+                    setTimeout(() => {
+                        const iframes = modalAdContainer.querySelectorAll('iframe');
+                        if (iframes.length > 0) {
+                            // Ad loaded successfully
+                            modalLoading.style.display = 'none';
+                            modalAdContainer.style.display = 'block';
+                            console.log('Modal ad loaded successfully');
+                        } else {
+                            // Ad not loaded, try again
+                            modalLoading.innerHTML = '<div class="modal-loading-icon">⚠️</div><p>Η διαφήμιση δεν φορτώθηκε. Προσπάθεια ξανά...</p>';
+                            setTimeout(loadModalAd, 2000);
+                        }
+                    }, 2000);
+                    
+                } catch (error) {
+                    console.error('Error loading modal ad:', error);
+                    modalLoading.innerHTML = '<div class="modal-loading-icon">⚠️</div><p>Σφάλμα φόρτωσης διαφήμισης. Δοκιμάστε ξανά.</p>';
+                }
+            }, 100);
+        }
         
         // When user clicks on the banner, show the modal with ad
         rollUpBanner.addEventListener('click', () => {
@@ -457,12 +565,7 @@
             document.body.style.overflow = 'hidden'; // Prevent scrolling
             
             // Load the ad in the modal
-            try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-                console.log('Support banner ad loaded in modal');
-            } catch (error) {
-                console.error('Error loading modal ad:', error);
-            }
+            loadModalAd();
         });
         
         // Close modal when X is clicked
