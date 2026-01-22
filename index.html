@@ -146,11 +146,30 @@
         .roll-up-banner {
             cursor: pointer;
             transition: all 0.3s ease;
+            transform-origin: top;
         }
         
         .roll-up-banner:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .roll-up-banner.scrolled {
+            transform: scale(0.85);
+            opacity: 0.9;
+        }
+        
+        .roll-up-banner.scrolled .banner-content {
+            padding: 8px 20px;
+        }
+        
+        .roll-up-banner.scrolled .banner-text {
+            font-size: 14px;
+        }
+        
+        .roll-up-banner.scrolled .banner-buy-coffee {
+            padding: 6px 15px;
+            font-size: 13px;
         }
         
         /* Buy Me a Coffee Button in Banner */
@@ -214,6 +233,23 @@
                 justify-content: center;
                 gap: 10px;
             }
+            
+            .roll-up-banner.scrolled {
+                transform: scale(0.9);
+            }
+            
+            .roll-up-banner.scrolled .banner-content {
+                padding: 6px 15px;
+                flex-wrap: nowrap;
+            }
+            
+            .roll-up-banner.scrolled .banner-text {
+                font-size: 13px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 60%;
+            }
         }
     </style>
 </head>
@@ -221,7 +257,6 @@
     <!-- Roll-up Banner -->
     <div class="roll-up-banner" id="rollUpBanner">
         <div class="banner-content">
-            <span class="banner-icon">👉</span>
             <span class="banner-text">Ένα κλικ αρκεί! Στηρίξτε μας να συνεχίσουμε!</span>
             <!-- Buy Me a Coffee Button -->
             <button class="banner-buy-coffee" id="bannerCoffeeBtn">
@@ -355,6 +390,22 @@
             mainHeader.classList.add('with-banner');
             mainHero.classList.add('with-banner');
         }, 1500);
+        
+        // Scroll detection for banner shrinking
+        let lastScrollTop = 0;
+        const bannerShrinkThreshold = 100; // Pixels to scroll before shrinking
+        
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > bannerShrinkThreshold) {
+                rollUpBanner.classList.add('scrolled');
+            } else {
+                rollUpBanner.classList.remove('scrolled');
+            }
+            
+            lastScrollTop = scrollTop;
+        });
         
         // When user clicks on the main banner area, trigger AdSense refresh
         rollUpBanner.addEventListener('click', (e) => {
@@ -591,7 +642,7 @@
                 contact: "Контакт"
             },
             hi: {
-                home: "होम",
+                home: "هوم",
                 games: "गेम्स",
                 blog: "ब्लॉग",
                 support: "सहायता",
