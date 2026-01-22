@@ -142,6 +142,113 @@
             line-height: 1.4;
         }
         
+        /* Modal for Support Banner Ad */
+        .ad-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .ad-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 20px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #666;
+            line-height: 1;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+        
+        .close-modal:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .modal-ad-container {
+            padding: 30px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-ad-content {
+            width: 100%;
+            text-align: center;
+        }
+        
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #eaeaea;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            background: #f9f9f9;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Banner styling */
+        .roll-up-banner {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .roll-up-banner:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
         @media (max-width: 768px) {
             .quick-access-grid {
                 grid-template-columns: 1fr;
@@ -164,17 +271,56 @@
             .placeholder-icon {
                 font-size: 36px;
             }
+            
+            .modal-content {
+                margin: 10px;
+            }
+            
+            .modal-header {
+                padding: 15px 20px;
+            }
+            
+            .modal-ad-container {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Roll-up Banner -->
-    <div class="roll-up-banner" id="rollUpBanner" onclick="showAd()">
+    <div class="roll-up-banner" id="rollUpBanner">
         <div class="banner-content">
             <span class="banner-icon">👉</span>
             <span class="banner-text">Ένα κλικ αρκεί! Στηρίξτε μας να συνεχίσουμε!</span>
         </div>
         <!-- Το κουμπί κλεισίματος έχει αφαιρεθεί -->
+    </div>
+
+    <!-- Modal for Support Banner Ad -->
+    <div class="ad-modal" id="supportAdModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Υποστηρίξτε το FranklyMaDear</h3>
+                <button class="close-modal" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-ad-container">
+                <div class="modal-ad-content" id="modalAdContent">
+                    <!-- Ad will be loaded here -->
+                    <ins class="adsbygoogle"
+                         style="display:block; text-align:center;"
+                         data-ad-layout="in-article"
+                         data-ad-format="fluid"
+                         data-ad-client="ca-pub-3186700611266549"
+                         data-ad-slot="6330498148"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <p>Ευχαριστούμε για την υποστήριξή σας! Η προβολή αυτής της διαφήμισης μας βοηθά να συνεχίσουμε να προσφέρουμε δωρεάν παιχνίδια.</p>
+            </div>
+        </div>
     </div>
 
     <!-- Header -->
@@ -300,16 +446,46 @@
             mainHero.classList.add('with-banner');
         }, 1500);
         
-        // Function to show Google AdSense ad
-        function showAd() {
-            // Προσπάθεια προβολής Google AdSense διαφήμισης
+        // Modal functionality
+        const supportAdModal = document.getElementById('supportAdModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalAdContent = document.getElementById('modalAdContent');
+        
+        // When user clicks on the banner, show the modal with ad
+        rollUpBanner.addEventListener('click', () => {
+            supportAdModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            
+            // Load the ad in the modal
             try {
                 (adsbygoogle = window.adsbygoogle || []).push({});
-                console.log('Google AdSense ad requested via showAd() function');
+                console.log('Support banner ad loaded in modal');
             } catch (error) {
-                console.error('Error showing Google AdSense ad:', error);
+                console.error('Error loading modal ad:', error);
             }
-        }
+        });
+        
+        // Close modal when X is clicked
+        closeModalBtn.addEventListener('click', () => {
+            supportAdModal.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        });
+        
+        // Close modal when clicking outside the modal content
+        supportAdModal.addEventListener('click', (e) => {
+            if (e.target === supportAdModal) {
+                supportAdModal.classList.remove('active');
+                document.body.style.overflow = 'auto'; // Restore scrolling
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && supportAdModal.classList.contains('active')) {
+                supportAdModal.classList.remove('active');
+                document.body.style.overflow = 'auto'; // Restore scrolling
+            }
+        });
 
         // Enhanced AdSense functionality with placeholder
         function initAdSense() {
