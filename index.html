@@ -153,6 +153,33 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
         
+        /* Buy Me a Coffee Button in Banner */
+        .banner-buy-coffee {
+            background: linear-gradient(135deg, #5F7FFF 0%, #2a4ee0 100%);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 15px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(95, 127, 255, 0.3);
+        }
+        
+        .banner-buy-coffee:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(95, 127, 255, 0.4);
+        }
+        
+        .banner-buy-coffee .coffee-icon {
+            font-size: 18px;
+        }
+        
         @media (max-width: 768px) {
             .quick-access-grid {
                 grid-template-columns: 1fr;
@@ -175,6 +202,18 @@
             .placeholder-icon {
                 font-size: 36px;
             }
+            
+            .banner-buy-coffee {
+                margin-left: 10px;
+                padding: 6px 15px;
+                font-size: 13px;
+            }
+            
+            .banner-content {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -184,6 +223,11 @@
         <div class="banner-content">
             <span class="banner-icon">👉</span>
             <span class="banner-text">Ένα κλικ αρκεί! Στηρίξτε μας να συνεχίσουμε!</span>
+            <!-- Buy Me a Coffee Button -->
+            <button class="banner-buy-coffee" id="bannerCoffeeBtn">
+                <span class="coffee-icon">☕</span>
+                Buy Me a Coffee
+            </button>
         </div>
         <!-- Το κουμπί κλεισίματος έχει αφαιρεθεί -->
     </div>
@@ -303,6 +347,7 @@
         const rollUpBanner = document.getElementById('rollUpBanner');
         const mainHeader = document.getElementById('mainHeader');
         const mainHero = document.getElementById('mainHero');
+        const bannerCoffeeBtn = document.getElementById('bannerCoffeeBtn');
         
         // Show banner after a short delay
         setTimeout(() => {
@@ -311,25 +356,54 @@
             mainHero.classList.add('with-banner');
         }, 1500);
         
-        // When user clicks on the banner, trigger AdSense refresh
-        rollUpBanner.addEventListener('click', () => {
+        // When user clicks on the main banner area, trigger AdSense refresh
+        rollUpBanner.addEventListener('click', (e) => {
+            // Don't trigger if the click was on the Buy Me a Coffee button
+            if (e.target.closest('#bannerCoffeeBtn')) {
+                return;
+            }
+            
             // Try to refresh the existing AdSense ad
             try {
                 (adsbygoogle = window.adsbygoogle || []).push({});
                 console.log('AdSense ad refresh attempted via banner click');
                 
-                // Show a quick thank you message (optional)
-                const originalText = rollUpBanner.querySelector('.banner-text').textContent;
-                rollUpBanner.querySelector('.banner-text').textContent = 'Ευχαριστούμε για την υποστήριξη!';
+                // Show a quick thank you message
+                const bannerText = rollUpBanner.querySelector('.banner-text');
+                const originalText = bannerText.textContent;
+                bannerText.textContent = 'Ευχαριστούμε για την υποστήριξη!';
                 
                 // Revert back after 3 seconds
                 setTimeout(() => {
-                    rollUpBanner.querySelector('.banner-text').textContent = originalText;
+                    bannerText.textContent = originalText;
                 }, 3000);
                 
             } catch (error) {
                 console.error('Error refreshing AdSense ad:', error);
             }
+        });
+
+        // Buy Me a Coffee button functionality
+        bannerCoffeeBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent triggering the banner click
+            
+            // Trigger the Buy Me a Coffee widget
+            if (typeof BMcWidget !== 'undefined') {
+                BMcWidget.open();
+            } else {
+                // Fallback: Open Buy Me a Coffee page
+                window.open('https://www.buymeacoffee.com/franklymadear', '_blank');
+            }
+            
+            // Optional: Show thank you message
+            const bannerText = rollUpBanner.querySelector('.banner-text');
+            const originalText = bannerText.textContent;
+            bannerText.textContent = 'Ευχαριστούμε για την υποστήριξη! ☕';
+            
+            // Revert back after 3 seconds
+            setTimeout(() => {
+                bannerText.textContent = originalText;
+            }, 3000);
         });
 
         // Enhanced AdSense functionality with placeholder
@@ -428,7 +502,7 @@
                 quickAccess: "Schneller Zugriff",
                 quickAccessSub: "Direkter Zugang zu unseren Plattformen",
                 gamesTitle: "Spiele",
-                gamesDesc: "Besuchen Sie unsere vollständige Spielesammlung. Neue Herausforderungen, underhaltsame Spiele und endloser Spaß!",
+                gamesDesc: "Besuchen Sie unsere vollständige Spielesammlung. Neue Herausforderungen, unterhaltsame Spiele und endloser Spaß!",
                 goToGames: "Zu den Spielen",
                 blogTitle: "Blog",
                 blogDesc: "Entdecken Sie nützliche Artikel, Spieltipps, neue Funktionen und vieles mehr in unserem offiziellen Blog!",
