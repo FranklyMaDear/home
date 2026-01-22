@@ -187,7 +187,7 @@
         .modal-header h3 {
             margin: 0;
             color: #333;
-            font-size: 16px; /* Μικρότερη γραμματοσειρά */
+            font-size: 16px;
             font-weight: 600;
             letter-spacing: 0.5px;
         }
@@ -233,12 +233,13 @@
             justify-content: center;
         }
         
-        /* Βελτιώσεις για το AdSense στο modal */
+        /* AdSense styling for modal */
         .modal-adsbygoogle {
             width: 100% !important;
             max-width: 728px;
             margin: 0 auto;
             min-height: 250px;
+            display: block;
         }
         
         .modal-footer {
@@ -257,6 +258,11 @@
             padding: 40px;
             text-align: center;
             color: #666;
+            display: none;
+        }
+        
+        .modal-loading.active {
+            display: block;
         }
         
         .modal-loading-icon {
@@ -369,9 +375,9 @@
                         <p>Φόρτωση διαφήμισης...</p>
                     </div>
                     
-                    <!-- Ad container -->
-                    <div id="modalAdContainer" style="display: none; width: 100%;">
-                        <!-- AdSense ad will be inserted here -->
+                    <!-- Ad container - ΑΠΛΟ AdSense -->
+                    <div id="modalAdContainer">
+                        <!-- Το AdSense script θα εισαχθεί εδώ -->
                     </div>
                 </div>
             </div>
@@ -507,56 +513,62 @@
         // Modal functionality
         const supportAdModal = document.getElementById('supportAdModal');
         const closeModalBtn = document.getElementById('closeModalBtn');
-        const modalAdContent = document.getElementById('modalAdContent');
-        const modalLoading = document.getElementById('modalLoading');
         const modalAdContainer = document.getElementById('modalAdContainer');
+        const modalLoading = document.getElementById('modalLoading');
         
-        // Function to load AdSense ad in modal
+        // Function to load AdSense ad in modal - ΑΠΛΗ ΕΚΔΟΧΗ
         function loadModalAd() {
+            // Show loading
+            modalLoading.classList.add('active');
+            
             // Clear previous ad
             modalAdContainer.innerHTML = '';
             
-            // Show loading
-            modalLoading.style.display = 'block';
-            modalAdContainer.style.display = 'none';
+            // Create the simple AdSense code you provided
+            const adCode = `
+                <!-- Fmd -->
+                <ins class="adsbygoogle modal-adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3186700611266549"
+                     data-ad-slot="5407828554"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                <\/script>
+            `;
             
-            // Create new ad element
-            const adElement = document.createElement('ins');
-            adElement.className = 'adsbygoogle modal-adsbygoogle';
-            adElement.style.cssText = 'display:block; text-align:center; min-height: 250px; width: 100%;';
-            adElement.setAttribute('data-ad-layout', 'in-article');
-            adElement.setAttribute('data-ad-format', 'fluid');
-            adElement.setAttribute('data-ad-client', 'ca-pub-3186700611266549');
-            adElement.setAttribute('data-ad-slot', '6330498148');
+            // Insert the ad code
+            modalAdContainer.innerHTML = adCode;
             
-            modalAdContainer.appendChild(adElement);
-            
-            // Try to load the ad with a delay to ensure Google scripts are ready
-            setTimeout(() => {
-                try {
-                    // Push the ad
-                    (adsbygoogle = window.adsbygoogle || []).push({});
+            // Try to trigger the ad load
+            try {
+                // Wait a bit for the DOM to update
+                setTimeout(() => {
+                    if (window.adsbygoogle) {
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                        console.log('Modal ad loaded with simple method');
+                    }
                     
-                    // Check if ad loads after 2 seconds
+                    // Check if ad loaded after 2 seconds
                     setTimeout(() => {
                         const iframes = modalAdContainer.querySelectorAll('iframe');
                         if (iframes.length > 0) {
                             // Ad loaded successfully
-                            modalLoading.style.display = 'none';
-                            modalAdContainer.style.display = 'block';
-                            console.log('Modal ad loaded successfully');
+                            modalLoading.classList.remove('active');
+                            console.log('Modal ad displayed successfully');
                         } else {
-                            // Ad not loaded, try again
-                            modalLoading.innerHTML = '<div class="modal-loading-icon">⚠️</div><p>Η διαφήμιση δεν φορτώθηκε. Προσπάθεια ξανά...</p>';
-                            setTimeout(loadModalAd, 2000);
+                            // Ad not loaded
+                            modalLoading.innerHTML = '<div class="modal-loading-icon">⚠️</div><p>Δοκιμάστε να ανανεώσετε τη σελίδα</p>';
+                            console.log('Modal ad not loaded, showing fallback');
                         }
                     }, 2000);
-                    
-                } catch (error) {
-                    console.error('Error loading modal ad:', error);
-                    modalLoading.innerHTML = '<div class="modal-loading-icon">⚠️</div><p>Σφάλμα φόρτωσης διαφήμισης. Δοκιμάστε ξανά.</p>';
-                }
-            }, 100);
+                }, 100);
+                
+            } catch (error) {
+                console.error('Error loading modal ad:', error);
+                modalLoading.innerHTML = '<div class="modal-loading-icon">⚠️</div><p>Σφάλμα φόρτωσης διαφήμισης</p>';
+            }
         }
         
         // When user clicks on the banner, show the modal with ad
@@ -564,7 +576,7 @@
             supportAdModal.classList.add('active');
             document.body.style.overflow = 'hidden'; // Prevent scrolling
             
-            // Load the ad in the modal
+            // Load the ad in the modal - ΑΠΛΗ ΜΕΘΟΔΟΣ
             loadModalAd();
         });
         
@@ -777,7 +789,7 @@
             hi: {
                 home: "होम",
                 games: "गेम्स",
-                blog: "ब्लॉग",
+                blog: "ब्लॉグ",
                 support: "सहायता",
                 welcome: "FranklyMaDear में आपका स्वागत है",
                 subtitle: "ऑनलाइन सर्वश्रेष्ठ मुफ्त HTML5 गेम्स खोजें!",
