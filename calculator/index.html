@@ -252,13 +252,83 @@ padding: 0 10px;
 100% { opacity: 0.7; }
 }
 
-/* Στυλ για τη διαφήμιση */
+/* Slide-down Ad Banner */
+.ad-banner {
+position: fixed;
+top: -100%;
+left: 0;
+width: 100%;
+height: 50vh;
+background-color: rgba(0, 0, 0, 0.95);
+z-index: 1000;
+transition: top 0.5s ease-in-out;
+border-bottom: 3px solid var(--btn-orange);
+box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.ad-banner.show {
+top: 0;
+}
+
+.ad-banner-content {
+width: 100%;
+height: 100%;
+display: flex;
+flex-direction: column;
+padding: 10px;
+box-sizing: border-box;
+}
+
+.ad-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 10px 15px;
+border-bottom: 1px solid #333;
+margin-bottom: 10px;
+}
+
+.ad-header h3 {
+margin: 0;
+color: #ff9500;
+font-size: 18px;
+}
+
+.close-ad-btn {
+background: none;
+border: none;
+color: #fff;
+font-size: 28px;
+cursor: pointer;
+width: 40px;
+height: 40px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: background-color 0.2s;
+}
+
+.close-ad-btn:hover {
+background-color: #333;
+}
+
+.close-ad-btn:active {
+transform: scale(0.9);
+}
+
+.ad-body {
+flex: 1;
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 10px;
+overflow: hidden;
+}
+
 .ad-container {
 width: 100%;
-text-align: center;
-margin: 5px 0;
-padding: 0 10px;
-min-height: 90px;
+height: 100%;
 display: flex;
 justify-content: center;
 align-items: center;
@@ -269,6 +339,33 @@ display: block !important;
 margin: 0 auto;
 border-radius: 10px;
 overflow: hidden;
+max-width: 100%;
+max-height: 100%;
+}
+
+.ad-footer {
+text-align: center;
+padding: 10px;
+color: #aaa;
+font-size: 12px;
+border-top: 1px solid #333;
+margin-top: 10px;
+}
+
+/* Overlay για background όταν εμφανίζεται η διαφήμιση */
+.ad-overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.7);
+z-index: 999;
+display: none;
+}
+
+.ad-overlay.show {
+display: block;
 }
 
 /* Βελτιστοποίηση για tablet */
@@ -289,8 +386,8 @@ max-width: 500px;
 margin: 0 auto;
 }
 
-.ad-container {
-min-height: 120px;
+.ad-banner {
+height: 45vh;
 }
 }
 
@@ -322,8 +419,12 @@ margin: 2px 0;
 margin-top: 3px;
 }
 
-.ad-container {
-min-height: 80px;
+.ad-banner {
+height: 55vh;
+}
+
+.ad-header h3 {
+font-size: 16px;
 }
 }
 
@@ -349,8 +450,12 @@ margin: 2px 0;
 margin-top: 2px;
 }
 
-.ad-container {
-min-height: 70px;
+.ad-banner {
+height: 60vh;
+}
+
+.ad-header h3 {
+font-size: 14px;
 }
 }
 
@@ -375,8 +480,8 @@ margin-top: 3px;
 --font-size-op: 28px;
 }
 
-.ad-container {
-min-height: 60px;
+.ad-banner {
+height: 70vh;
 }
 }
 
@@ -391,8 +496,8 @@ font-size: 45px;
 margin-top: 2px;
 }
 
-.ad-container {
-min-height: 70px;
+.ad-banner {
+height: 65vh;
 }
 }
 
@@ -412,6 +517,31 @@ height: -webkit-fill-available;
 </head>
 
 <body>
+<!-- Ad Overlay -->
+<div class="ad-overlay" id="adOverlay"></div>
+
+<!-- Slide-down Ad Banner -->
+<div class="ad-banner" id="adBanner">
+<div class="ad-banner-content">
+<div class="ad-header">
+<h3>Advertisement</h3>
+<button class="close-ad-btn" id="closeAdBtn">×</button>
+</div>
+<div class="ad-body">
+<div class="ad-container">
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-3186700611266549"
+     data-ad-slot="9660744817"></ins>
+</div>
+</div>
+<div class="ad-footer">
+Close this ad to continue using the calculator
+</div>
+</div>
+</div>
+
 <main class="calc" id="calculatorApp">
 <div class="display" id="display">0</div>
 
@@ -438,19 +568,10 @@ height: -webkit-fill-available;
 <button class="btn-num" data-num="3">3</button>
 <button class="btn-op" data-op="+">+</button>
 
-<button class="ads-button" id="adsButton" onclick="window.open('https://otieu.com/4/10274068', '_blank')">ads</button>
+<button class="ads-button" id="adsButton">ads</button>
 <button class="btn-num" data-num="0">0</button>
 <button class="btn-num" id="dot">.</button>
 <button class="btn-op" id="equals">=</button>
-</div>
-
-<!-- Google AdSense Ad -->
-<div class="ad-container">
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-format="autorelaxed"
-     data-ad-client="ca-pub-3186700611266549"
-     data-ad-slot="9660744817"></ins>
 </div>
 
 <div class="support-text-bottom">Add to Home Screen</div>
@@ -460,18 +581,56 @@ height: -webkit-fill-available;
 (() => {
 const displayEl = document.getElementById('display');
 const btns = document.querySelectorAll('.pad button');
+const adsButton = document.getElementById('adsButton');
+const adBanner = document.getElementById('adBanner');
+const closeAdBtn = document.getElementById('closeAdBtn');
+const adOverlay = document.getElementById('adOverlay');
 let expression = "";
 let lastResult = null;
 let isResultDisplayed = false;
+let adShown = false;
 
 // Φόρτωση Google Ads
-(function loadGoogleAds() {
+function loadGoogleAd() {
 try {
 (adsbygoogle = window.adsbygoogle || []).push({});
+console.log('Ad loaded successfully');
 } catch (e) {
 console.log('Ad loading error:', e);
 }
-})();
+}
+
+// Εμφάνιση διαφήμισης
+function showAd() {
+adBanner.classList.add('show');
+adOverlay.classList.add('show');
+adShown = true;
+// Φόρτωση διαφήμισης μετά την εμφάνιση του banner
+setTimeout(loadGoogleAd, 300);
+}
+
+// Κλείσιμο διαφήμισης
+function closeAd() {
+adBanner.classList.remove('show');
+adOverlay.classList.remove('show');
+}
+
+// Εμφάνιση διαφήμισης μετά από 3 δευτερόλεπτα
+setTimeout(() => {
+if (!adShown) {
+showAd();
+}
+}, 3000);
+
+// Event Listeners
+adsButton.addEventListener('click', function() {
+window.open('https://otieu.com/4/10274068', '_blank');
+});
+
+closeAdBtn.addEventListener('click', closeAd);
+
+// Κλείσιμο διαφήμισης με κλικ στο overlay
+adOverlay.addEventListener('click', closeAd);
 
 // Απενεργοποίηση context menu σε κινητά
 document.addEventListener('contextmenu', function(e) {
