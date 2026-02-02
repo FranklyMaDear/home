@@ -200,10 +200,11 @@ color: var(--display-color);
 font-size: var(--font-size-op);
 }
 
-.ads-button {
-background-color: var(--btn-dark);
+.no-ads-button {
+background: linear-gradient(135deg, #4CAF50, #8BC34A);
 color: var(--display-color);
-font-size: 16px;
+font-size: 18px;
+font-weight: bold;
 width: 100%;
 height: 100%;
 border-radius: 50%;
@@ -211,14 +212,14 @@ display: flex;
 justify-content: center;
 align-items: center;
 cursor: pointer;
-animation: blink 2s infinite;
+animation: pulse 2s infinite;
 -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
-@keyframes blink {
-0% { opacity: 1; }
-50% { opacity: 0.7; }
-100% { opacity: 1; }
+@keyframes pulse {
+0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
 }
 
 .support-text {
@@ -252,93 +253,6 @@ padding: 0 10px;
 100% { opacity: 0.7; }
 }
 
-/* Modal Popup για διαφημίσεις */
-.ad-modal {
-display: none;
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background-color: rgba(0, 0, 0, 0.9);
-z-index: 1000;
-justify-content: center;
-align-items: center;
-flex-direction: column;
-}
-
-.ad-modal.active {
-display: flex;
-}
-
-.ad-content {
-background-color: #1a1a1a;
-border-radius: 20px;
-padding: 20px;
-width: 90%;
-max-width: 400px;
-text-align: center;
-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.ad-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 15px;
-padding-bottom: 10px;
-border-bottom: 1px solid #333;
-}
-
-.ad-header h3 {
-margin: 0;
-color: #ff9500;
-font-size: 18px;
-}
-
-.close-ad {
-background: none;
-border: none;
-color: #fff;
-font-size: 24px;
-cursor: pointer;
-width: 30px;
-height: 30px;
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-}
-
-.close-ad:hover {
-background-color: #333;
-}
-
-.ad-body {
-padding: 15px 0;
-min-height: 150px;
-display: flex;
-justify-content: center;
-align-items: center;
-}
-
-.ad-footer {
-margin-top: 15px;
-padding-top: 15px;
-border-top: 1px solid #333;
-color: #aaa;
-font-size: 12px;
-}
-
-/* Ad container styling */
-.ad-container {
-width: 100%;
-min-height: 150px;
-display: flex;
-justify-content: center;
-align-items: center;
-}
-
 /* Βελτιστοποίηση για tablet */
 @media (min-width: 768px) and (max-width: 1024px) {
 :root {
@@ -355,10 +269,6 @@ min-height: 20vh;
 .calc {
 max-width: 500px;
 margin: 0 auto;
-}
-
-.ad-content {
-max-width: 500px;
 }
 }
 
@@ -390,9 +300,8 @@ margin: 2px 0;
 margin-top: 3px;
 }
 
-.ad-content {
-width: 95%;
-padding: 15px;
+.no-ads-button {
+font-size: 16px;
 }
 }
 
@@ -417,6 +326,10 @@ margin: 2px 0;
 .pad {
 margin-top: 2px;
 }
+
+.no-ads-button {
+font-size: 14px;
+}
 }
 
 /* Απενεργοποίηση pull-to-refresh */
@@ -439,6 +352,10 @@ margin-top: 3px;
 --font-size-btn: 24px;
 --font-size-op: 28px;
 }
+
+.no-ads-button {
+font-size: 16px;
+}
 }
 
 /* Βελτιστοποίηση για πολύ μικρές οθόνες */
@@ -450,6 +367,10 @@ font-size: 45px;
 
 .pad {
 margin-top: 2px;
+}
+
+.no-ads-button {
+font-size: 16px;
 }
 }
 
@@ -469,7 +390,7 @@ height: -webkit-fill-available;
 <main class="calc" id="calculatorApp">
 <div class="display" id="display">0</div>
 
-<div class="support-text">One click on the ads button is enough. Support us to Continue</div>
+<div class="support-text">Buy us a coffee and get the app without ads</div>
 
 <div class="pad">
 <button class="btn-ac" id="ac">AC</button>
@@ -492,7 +413,7 @@ height: -webkit-fill-available;
 <button class="btn-num" data-num="3">3</button>
 <button class="btn-op" data-op="+">+</button>
 
-<button class="ads-button" id="adsButton">ads</button>
+<button class="no-ads-button" onclick="window.open('https://buymeacoffee.com/franklymadear', '_blank')">No Ads</button>
 <button class="btn-num" data-num="0">0</button>
 <button class="btn-num" id="dot">.</button>
 <button class="btn-op" id="equals">=</button>
@@ -501,32 +422,10 @@ height: -webkit-fill-available;
 <div class="support-text-bottom">Add to Home Screen</div>
 </main>
 
-<!-- Ad Modal Popup -->
-<div class="ad-modal" id="adModal">
-<div class="ad-content">
-<div class="ad-header">
-<h3>Support Our Calculator</h3>
-<button class="close-ad" id="closeAd">×</button>
-</div>
-<div class="ad-body">
-<div class="ad-container" id="adContainer">
-<!-- Η διαφήμιση θα εμφανιστεί εδώ -->
-</div>
-</div>
-<div class="ad-footer">
-Please support us by viewing this ad. Thank you!
-</div>
-</div>
-</div>
-
 <script>
 (() => {
 const displayEl = document.getElementById('display');
 const btns = document.querySelectorAll('.pad button');
-const adsButton = document.getElementById('adsButton');
-const adModal = document.getElementById('adModal');
-const closeAd = document.getElementById('closeAd');
-const adContainer = document.getElementById('adContainer');
 let expression = "";
 let lastResult = null;
 let isResultDisplayed = false;
@@ -553,63 +452,6 @@ if (e.touches.length > 1) {
 e.preventDefault();
 }
 }, { passive: false });
-
-// Λειτουργία για εμφάνιση διαφήμισης
-function showAd() {
-adModal.classList.add('active');
-loadMonetagAd();
-}
-
-// Λειτουργία για κλείσιμο διαφήμισης
-function closeAdModal() {
-adModal.classList.remove('active');
-}
-
-// Φόρτωση Monetag διαφήμισης
-function loadMonetagAd() {
-adContainer.innerHTML = '';
-  
-// Δημιουργία container για τη διαφήμιση
-const adScriptContainer = document.createElement('div');
-adScriptContainer.id = 'monetag-ad-script';
-  
-// Προσθήκη Monetag script
-const script = document.createElement('script');
-script.async = true;
-script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549';
-script.crossOrigin = 'anonymous';
-  
-const ins = document.createElement('ins');
-ins.className = 'adsbygoogle';
-ins.style.display = 'block';
-ins.setAttribute('data-ad-format', 'autorelaxed');
-ins.setAttribute('data-ad-client', 'ca-pub-3186700611266549');
-ins.setAttribute('data-ad-slot', '9660744817');
-  
-adScriptContainer.appendChild(script);
-adScriptContainer.appendChild(ins);
-adContainer.appendChild(adScriptContainer);
-  
-// Εκτέλεση του ad script μετά από μικρή καθυστέρηση
-setTimeout(() => {
-if (window.adsbygoogle) {
-(adsbygoogle = window.adsbygoogle || []).push({});
-} else {
-console.log('Ad script not loaded');
-}
-}, 100);
-}
-
-// Event listeners για διαφήμιση
-adsButton.addEventListener('click', showAd);
-closeAd.addEventListener('click', closeAdModal);
-
-// Κλείσιμο modal με κλικ έξω από το content
-adModal.addEventListener('click', function(e) {
-if (e.target === adModal) {
-closeAdModal();
-}
-});
 
 function updateDisplay() {
 displayEl.textContent = expression || "0";
@@ -744,7 +586,8 @@ updateDisplay();
 }
 
 btns.forEach(b => {
-if (b.id !== 'adsButton') {
+// Εξαίρεση για το κουμπί "No Ads" που έχει ήδη onclick
+if (!b.classList.contains('no-ads-button')) {
 b.addEventListener('click', () => {
 if (b.dataset.num) inputDigit(b.dataset.num);
 else if (b.id === 'dot') inputDot();
