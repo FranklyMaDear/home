@@ -200,11 +200,10 @@ color: var(--display-color);
 font-size: var(--font-size-op);
 }
 
-.no-ads-button {
-background: linear-gradient(135deg, #4CAF50, #8BC34A);
+.ads-button {
+background-color: var(--btn-dark);
 color: var(--display-color);
-font-size: 18px;
-font-weight: bold;
+font-size: 16px;
 width: 100%;
 height: 100%;
 border-radius: 50%;
@@ -212,14 +211,14 @@ display: flex;
 justify-content: center;
 align-items: center;
 cursor: pointer;
-animation: pulse 2s infinite;
+animation: blink 2s infinite;
 -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
-@keyframes pulse {
-0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
-50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
-100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+@keyframes blink {
+0% { opacity: 1; }
+50% { opacity: 0.7; }
+100% { opacity: 1; }
 }
 
 .support-text {
@@ -253,6 +252,25 @@ padding: 0 10px;
 100% { opacity: 0.7; }
 }
 
+/* Στυλ για τη διαφήμιση */
+.ad-container {
+width: 100%;
+text-align: center;
+margin: 5px 0;
+padding: 0 10px;
+min-height: 90px;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.ad-container ins.adsbygoogle {
+display: block !important;
+margin: 0 auto;
+border-radius: 10px;
+overflow: hidden;
+}
+
 /* Βελτιστοποίηση για tablet */
 @media (min-width: 768px) and (max-width: 1024px) {
 :root {
@@ -269,6 +287,10 @@ min-height: 20vh;
 .calc {
 max-width: 500px;
 margin: 0 auto;
+}
+
+.ad-container {
+min-height: 120px;
 }
 }
 
@@ -300,8 +322,8 @@ margin: 2px 0;
 margin-top: 3px;
 }
 
-.no-ads-button {
-font-size: 16px;
+.ad-container {
+min-height: 80px;
 }
 }
 
@@ -327,8 +349,8 @@ margin: 2px 0;
 margin-top: 2px;
 }
 
-.no-ads-button {
-font-size: 14px;
+.ad-container {
+min-height: 70px;
 }
 }
 
@@ -353,8 +375,8 @@ margin-top: 3px;
 --font-size-op: 28px;
 }
 
-.no-ads-button {
-font-size: 16px;
+.ad-container {
+min-height: 60px;
 }
 }
 
@@ -369,8 +391,8 @@ font-size: 45px;
 margin-top: 2px;
 }
 
-.no-ads-button {
-font-size: 16px;
+.ad-container {
+min-height: 70px;
 }
 }
 
@@ -384,13 +406,16 @@ height: -webkit-fill-available;
 }
 }
 </style>
+
+<!-- Google Ads Script -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549" crossorigin="anonymous"></script>
 </head>
 
 <body>
 <main class="calc" id="calculatorApp">
 <div class="display" id="display">0</div>
 
-<div class="support-text">Buy us a coffee and get the app without ads</div>
+<div class="support-text">One click on the ads button is enough. Support us to Continue</div>
 
 <div class="pad">
 <button class="btn-ac" id="ac">AC</button>
@@ -413,10 +438,19 @@ height: -webkit-fill-available;
 <button class="btn-num" data-num="3">3</button>
 <button class="btn-op" data-op="+">+</button>
 
-<button class="no-ads-button" onclick="window.open('https://buymeacoffee.com/franklymadear', '_blank')">No Ads</button>
+<button class="ads-button" id="adsButton" onclick="window.open('https://otieu.com/4/10274068', '_blank')">ads</button>
 <button class="btn-num" data-num="0">0</button>
 <button class="btn-num" id="dot">.</button>
 <button class="btn-op" id="equals">=</button>
+</div>
+
+<!-- Google AdSense Ad -->
+<div class="ad-container">
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-3186700611266549"
+     data-ad-slot="9660744817"></ins>
 </div>
 
 <div class="support-text-bottom">Add to Home Screen</div>
@@ -429,6 +463,15 @@ const btns = document.querySelectorAll('.pad button');
 let expression = "";
 let lastResult = null;
 let isResultDisplayed = false;
+
+// Φόρτωση Google Ads
+(function loadGoogleAds() {
+try {
+(adsbygoogle = window.adsbygoogle || []).push({});
+} catch (e) {
+console.log('Ad loading error:', e);
+}
+})();
 
 // Απενεργοποίηση context menu σε κινητά
 document.addEventListener('contextmenu', function(e) {
@@ -586,8 +629,6 @@ updateDisplay();
 }
 
 btns.forEach(b => {
-// Εξαίρεση για το κουμπί "No Ads" που έχει ήδη onclick
-if (!b.classList.contains('no-ads-button')) {
 b.addEventListener('click', () => {
 if (b.dataset.num) inputDigit(b.dataset.num);
 else if (b.id === 'dot') inputDot();
@@ -597,7 +638,6 @@ else if (b.id === 'percent') percent();
 else if (b.id === 'equals') calculateEquals();
 else if (b.dataset.op) inputOperator(b.dataset.op);
 });
-}
 });
 
 updateDisplay();
