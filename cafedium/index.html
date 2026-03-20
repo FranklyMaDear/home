@@ -438,7 +438,7 @@
             padding: 20px;
         }
         
-        /* BUY ME A COFFEE SECTION */
+        /* BUY ME A COFFEE SECTION - ΕΝΣΩΜΑΤΩΜΕΝΟ WIDGET */
         .bmc-container {
             margin: 25px 0;
             background: white;
@@ -468,10 +468,44 @@
             padding: 30px 20px;
             text-align: center;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, #fef9f0 0%, #fff9ef 100%);
-            min-height: 180px;
+            min-height: 200px;
+        }
+        
+        .bmc-content p {
+            margin-bottom: 20px;
+            color: var(--text);
+            font-size: 1rem;
+        }
+        
+        /* Ενσωματωμένο κουμπί Buy Me a Coffee */
+        .bmc-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #5F7FFF;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.2s, background-color 0.2s;
+            gap: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .bmc-button:hover {
+            background-color: #4a6be6;
+            transform: translateY(-2px);
+        }
+        
+        .bmc-button i {
+            font-size: 1.3rem;
         }
         
         iframe {
@@ -797,13 +831,18 @@
                 var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
             </script>
 
-            <!-- Buy Me a Coffee Section - Κέρασε μας έναν Καφέ -->
+            <!-- Buy Me a Coffee Section - Ενσωματωμένο Widget -->
             <div class="bmc-container">
                 <div class="bmc-header">
                     <h2><i class="fas fa-heart"></i> Κέρασε μας έναν Καφέ</h2>
                 </div>
                 <div class="bmc-content">
-                    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="franklymadear" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+                    <p>Αν σας άρεσε η εμπειρία και θέλετε να υποστηρίξετε το έργο μας, κεράστε μας έναν καφέ!</p>
+                    <a href="https://www.buymeacoffee.com/franklymadear" target="_blank" class="bmc-button">
+                        <i class="fas fa-mug-hot"></i>
+                        Κέρασε καφέ
+                        <i class="fas fa-coffee"></i>
+                    </a>
                 </div>
             </div>
 
