@@ -471,10 +471,7 @@
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, #fef9f0 0%, #fff9ef 100%);
-        }
-        
-        .bmc-content .bmc-widget-placeholder {
-            min-height: 60px;
+            min-height: 180px;
         }
         
         iframe {
@@ -806,7 +803,7 @@
                     <h2><i class="fas fa-heart"></i> Κέρασε μας έναν Καφέ</h2>
                 </div>
                 <div class="bmc-content">
-                    <div id="bmc-widget-container"></div>
+                    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="franklymadear" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
                 </div>
             </div>
 
@@ -902,26 +899,6 @@
                 });
             }
 
-            // Load Buy Me a Coffee widget
-            function loadBuyMeACoffee() {
-                const bmcContainer = document.getElementById('bmc-widget-container');
-                if (bmcContainer) {
-                    const script = document.createElement('script');
-                    script.setAttribute('data-name', 'BMC-Widget');
-                    script.setAttribute('data-cfasync', 'false');
-                    script.src = 'https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js';
-                    script.setAttribute('data-id', 'franklymadear');
-                    script.setAttribute('data-description', 'Support me on Buy me a coffee!');
-                    script.setAttribute('data-message', '');
-                    script.setAttribute('data-color', '#5F7FFF');
-                    script.setAttribute('data-position', 'Right');
-                    script.setAttribute('data-x_margin', '18');
-                    script.setAttribute('data-y_margin', '18');
-                    script.async = true;
-                    bmcContainer.appendChild(script);
-                }
-            }
-
             // Consent functionality
             const consentOverlay = document.getElementById('consentOverlay');
             const mainContent = document.getElementById('mainContent');
@@ -1015,9 +992,6 @@
                     // Απόκρυψη overlay και εμφάνιση περιεχομένου
                     consentOverlay.style.display = 'none';
                     mainContent.style.display = 'block';
-                    
-                    // Φόρτωση του Buy Me a Coffee widget μόλις εμφανιστεί το περιεχόμενο
-                    loadBuyMeACoffee();
                 }
             });
             
@@ -1026,7 +1000,6 @@
             if (hasConsent === 'true') {
                 consentOverlay.style.display = 'none';
                 mainContent.style.display = 'block';
-                loadBuyMeACoffee();
             } else {
                 consentOverlay.style.display = 'flex';
                 mainContent.style.display = 'none';
