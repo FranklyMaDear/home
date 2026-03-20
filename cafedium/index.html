@@ -288,18 +288,26 @@
             text-align: center;
         }
         
-        .consent-modal .info-box {
+        .terms-scroll-box {
             margin: 20px 0;
             max-height: 350px;
             overflow-y: auto;
+            border: 1px solid #e0d6c9;
+            border-radius: 12px;
+            padding: 15px;
+            background: #fefcf8;
         }
         
-        .consent-modal .info-box h4 {
+        .terms-scroll-box h4 {
             color: var(--primary);
             margin: 15px 0 8px 0;
         }
         
-        .consent-modal .info-box p {
+        .terms-scroll-box h4:first-child {
+            margin-top: 0;
+        }
+        
+        .terms-scroll-box p {
             margin-bottom: 10px;
             line-height: 1.5;
         }
@@ -333,6 +341,7 @@
         .checkbox-label a {
             color: var(--primary);
             text-decoration: underline;
+            cursor: pointer;
         }
         
         .checkbox-label a:hover {
@@ -361,26 +370,6 @@
             background: #cccccc;
             cursor: not-allowed;
             transform: none;
-        }
-        
-        /* BUTTONS */
-        .submit-btn {
-            background: linear-gradient(to right, var(--primary), var(--primary-light));
-            color: white;
-            border: none;
-            padding: 18px 30px;
-            font-size: 1.1rem;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            font-weight: 700;
-            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin: 25px 0 10px 0;
         }
         
         /* CALENDAR SECTION */
@@ -431,71 +420,25 @@
             min-height: 500px;
         }
         
-        /* TERMS LINKS */
-        .terms-links {
+        /* TERMS LINKS - ΜΟΝΟ ΣΤΟ FOOTER */
+        .footer-links {
             text-align: center;
             margin: 15px 0;
             padding: 10px;
         }
         
-        .terms-links a {
+        .footer-links a {
             color: var(--primary);
             text-decoration: none;
             margin: 0 10px;
             font-size: 0.9rem;
             transition: color 0.3s;
+            cursor: pointer;
         }
         
-        .terms-links a:hover {
+        .footer-links a:hover {
             color: var(--primary-light);
             text-decoration: underline;
-        }
-        
-        /* MODALS */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--text);
-            cursor: pointer;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-        
-        .close-modal:hover {
-            background: #f0f0f0;
         }
         
         /* FOOTER */
@@ -579,6 +522,76 @@
         .main-content {
             display: none;
         }
+        
+        /* Modal for terms/privacy popup inside consent */
+        .inner-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2500;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .inner-modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .inner-modal-content h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+        
+        .inner-modal-content .terms-text {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .inner-modal-content .terms-text h4 {
+            color: var(--primary);
+            margin: 15px 0 8px 0;
+        }
+        
+        .inner-modal-content .terms-text p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .close-inner-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text);
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .close-inner-modal:hover {
+            background: #f0f0f0;
+        }
     </style>
 </head>
 <body>
@@ -589,12 +602,12 @@
             <p class="subtitle">·«Καλώς ήρθες στο Cafedium, όπου ο καφές διηγείται ιστορίες»!</p>
         </header>
 
-        <!-- Consent Modal - Εμφανίζεται κατά την είσοδο με πλήρη όρους -->
+        <!-- Consent Modal - Εμφανίζεται κατά την είσοδο -->
         <div id="consentOverlay" class="consent-overlay">
             <div class="consent-modal">
                 <h2><i class="fas fa-file-contract"></i> Όροι και Προϋποθέσεις</h2>
                 
-                <div class="info-box">
+                <div class="terms-scroll-box" id="consentTermsBox">
                     <h4>1. Αποδοχή Όρων</h4>
                     <p>Χρησιμοποιώντας το Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις. Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας.</p>
                     
@@ -609,9 +622,6 @@
                     
                     <h4>5. Πολιτική Απορρήτου</h4>
                     <p>Συλλέγουμε το όνομα, το email και το περιεχόμενο της φόρμας που συμπληρώνετε αποκλειστικά για την παροχή της υπηρεσίας καφεμαντείας. Τα δεδομένα σας δεν διαμοιράζονται με τρίτους. Μπορείτε να ζητήσετε διαγραφή των δεδομένων σας ανά πάσα στιγμή.</p>
-                    
-                    <h4>6. Αναλυτική Πολιτική Απορρήτου</h4>
-                    <p>Για περισσότερες λεπτομέρειες σχετικά με τη συλλογή, χρήση και προστασία των προσωπικών σας δεδομένων, παρακαλούμε διαβάστε την <a href="#" id="showPrivacyFromConsentFull" style="color: var(--primary); text-decoration: underline;">Αναλυτική Πολιτική Απορρήτου</a>.</p>
                 </div>
                 
                 <div class="checkbox-group">
@@ -622,18 +632,70 @@
                     
                     <label class="checkbox-label">
                         <input type="checkbox" id="termsConsentCheckbox">
-                        <span>Έχω διαβάσει και αποδέχομαι τους <strong><a href="#" id="showTermsFromConsent">Όρους Χρήσης</a></strong></span>
+                        <span>Έχω διαβάσει και αποδέχομαι τους <strong><a id="showTermsLink">Όρους Χρήσης</a></strong></span>
                     </label>
                     
                     <label class="checkbox-label">
                         <input type="checkbox" id="privacyConsentCheckbox">
-                        <span>Έχω διαβάσει και αποδέχομαι την <strong><a href="#" id="showPrivacyFromConsent">Πολιτική Απορρήτου</a></strong></span>
+                        <span>Έχω διαβάσει και αποδέχομαι την <strong><a id="showPrivacyLink">Πολιτική Απορρήτου</a></strong></span>
                     </label>
                 </div>
                 
                 <button class="consent-btn" id="acceptConsentBtn" disabled>
                     <i class="fas fa-check"></i> Αποδοχή και Συνέχεια
                 </button>
+            </div>
+        </div>
+
+        <!-- Inner Modal για Όρους Χρήσης (αναδυόμενο) -->
+        <div id="termsInnerModal" class="inner-modal">
+            <div class="inner-modal-content">
+                <button class="close-inner-modal" id="closeTermsInnerModal">×</button>
+                <h3><i class="fas fa-file-contract"></i> Όροι Χρήσης</h3>
+                <div class="terms-text">
+                    <h4>1. Αποδοχή Όρων</h4>
+                    <p>Χρησιμοποιώντας το Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις. Η Συμφωνία ισχύει για όλους τους χρήστες («εσάς» ή «Χρήστη») που έχουν πρόσβαση ή/και χρησιμοποιούν την Υπηρεσία.</p>
+                    
+                    <h4>2. Υπηρεσίες Καφεμαντείας</h4>
+                    <p>Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας. Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση.</p>
+
+                    <h4>3. Αποποίηση Ευθύνης</h4>
+                    <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς.</p>
+                    
+                    <h4>4. Ηλικιακός Περιορισμός</h4>
+                    <p>Η χρήση της Υπηρεσίας περιορίζεται σε άτομα άνω των 18 ετών. Με τη χρήση της Υπηρεσίας δηλώνετε ρητά ότι είστε άνω των 18 ετών. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία.</p>
+                    
+                    <h4>5. Πνευματική Ιδιοκτησία</h4>
+                    <p>Όλο το περιεχόμενο της Υπηρεσίας, συμπεριλαμβανομένων κειμένων, γραφικών, λογότυπων, εικόνων, αποτελεί πνευματική ιδιοκτησία της Cafedium.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inner Modal για Πολιτική Απορρήτου (αναδυόμενο) -->
+        <div id="privacyInnerModal" class="inner-modal">
+            <div class="inner-modal-content">
+                <button class="close-inner-modal" id="closePrivacyInnerModal">×</button>
+                <h3><i class="fas fa-shield-alt"></i> Πολιτική Απορρήτου</h3>
+                <div class="terms-text">
+                    <h4>1. Συλλογή Πληροφοριών</h4>
+                    <p>Συλλέγουμε το όνομα, το email και το περιεχόμενο της φόρμας που συμπληρώνετε για την παροχή της υπηρεσίας καφεμαντείας.</p>
+                    
+                    <h4>2. Χρήση Πληροφοριών</h4>
+                    <p>Οι πληροφορίες σας χρησιμοποιούνται αποκλειστικά για την παροχή της υπηρεσίας καφεμαντείας και την επικοινωνία μαζί σας.</p>
+                    <p>Οι πληροφορίες σας δεν πωλούνται, ανταλλάσσονται ή δίνονται σε τρίτους.</p>
+                    
+                    <h4>3. Προστασία Δεδομένων</h4>
+                    <p>Εφαρμόζουμε μέτρα ασφαλείας για την προστασία των προσωπικών σας δεδομένων. Η πρόσβαση στα δεδομένα σας περιορίζεται μόνο σε εξουσιοδοτημένο προσωπικό.</p>
+                    
+                    <h4>4. Αποθήκευση Δεδομένων</h4>
+                    <p>Τα δεδομένα σας διατηρούνται για όσο διάστημα απαιτείται για την παροχή των υπηρεσιών μας. Μπορείτε να ζητήσετε διαγραφή των δεδομένων σας ανά πάσα στιγμή επικοινωνώντας μαζί μας.</p>
+                    
+                    <h4>5. Δικαιώματα Χρηστών</h4>
+                    <p>Έχετε το δικαίωμα να ενημερώνεστε για τα δεδομένα που διατηρούμε, να ζητάτε διόρθωση ή διαγραφή τους, καθώς και να ανακαλείτε τη συγκατάθεσή σας ανά πάσα στιγμή.</p>
+                    
+                    <h4>6. Cookies</h4>
+                    <p>Η ιστοσελίδα μας χρησιμοποιεί cookies για τη βελτίωση της εμπειρίας πλοήγησης. Μπορείτε να απενεργοποιήσετε τα cookies από τις ρυθμίσεις του browser σας.</p>
+                </div>
             </div>
         </div>
 
@@ -686,35 +748,11 @@
                     <!-- Οι καφεμάντεις θα προστεθούν δυναμικά -->
                 </div>
             </div>
-
-            <!-- Όροι και Προϋποθέσεις -->
-            <div class="form-section">
-                <h2><i class="fas fa-file-contract"></i> Όροι και Προϋποθέσεις</h2>
-                
-                <div class="info-box">
-                    <h3 style="margin-bottom: 10px;">1. Αποδοχή Όρων</h3>
-                    <p>Χρησιμοποιώντας το Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις. Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας.</p>
-                    
-                    <h3 style="margin: 15px 0 10px 0;">2. Υπηρεσίες Καφεμαντείας</h3>
-                    <p>Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση.</p>
-                    
-                    <h3 style="margin: 15px 0 10px 0;">3. Αποποίηση Ευθύνης</h3>
-                    <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς.</p>
-                    
-                    <h3 style="margin: 15px 0 10px 0;">4. Ηλικιακός Περιορισμός</h3>
-                    <p>Η χρήση της Υπηρεσίας περιορίζεται σε άτομα άνω των 18 ετών. Με τη χρήση της Υπηρεσίας δηλώνετε ρητά ότι είστε άνω των 18 ετών.</p>
-                </div>
-                
-                <div class="terms-links">
-                    <a href="#" id="showTermsFooter"><i class="fas fa-file-contract"></i> Αναλυτικοί Όροι Χρήσης</a>
-                    <a href="#" id="showPrivacyFooter"><i class="fas fa-shield-alt"></i> Αναλυτική Πολιτική Απορρήτου</a>
-                </div>
-            </div>
             
             <footer>
-                <div class="terms-links">
-                    <a href="#" id="showTermsFooterBottom"><i class="fas fa-file-contract"></i> Όροι Χρήσης</a>
-                    <a href="#" id="showPrivacyFooterBottom"><i class="fas fa-shield-alt"></i> Πολιτική Απορρήτου</a>
+                <div class="footer-links">
+                    <a id="showTermsFooterLink"><i class="fas fa-file-contract"></i> Όροι Χρήσης</a>
+                    <a id="showPrivacyFooterLink"><i class="fas fa-shield-alt"></i> Πολιτική Απορρήτου</a>
                 </div>
                 <p>
                     Cafedium by FmD<span class="coffee-icon">☕</span> «Το Φλιτζάνι σου μιλάει» - εδώ ξεκινά το ταξίδι σας στο μυστήριο του φλιτζανιού.
@@ -724,58 +762,6 @@
                     Cafedium - Η τέχνη της καφεμαντείας
                 </p>
             </footer>
-        </div>
-    </div>
-
-    <!-- Modal για αναλυτικούς όρους -->
-    <div id="termsModal" class="modal">
-        <div class="modal-content">
-            <button class="close-modal" id="closeTermsModal">×</button>
-            <h2><i class="fas fa-file-contract"></i> Αναλυτικοί Όροι Χρήσης</h2>
-            <div class="info-box" style="max-height: 70vh; overflow-y: auto;">
-                <h3>1. Αποδοχή Όρων</h3>
-                <p>Χρησιμοποιώντας το Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις. Η Συμφωνία ισχύει για όλους τους χρήστες («εσάς» ή «Χρήστη») που έχουν πρόσβαση ή/και χρησιμοποιούν την Υπηρεσία.</p>
-                
-                <h3>2. Υπηρεσίες Καφεμαντείας</h3>
-                <p>Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας. Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση.</p>
-
-                <h3>3. Αποποίηση Ευθύνης</h3>
-                <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς.</p>
-                
-                <h3>4. Ηλικιακός Περιορισμός</h3>
-                <p>Η χρήση της Υπηρεσίας περιορίζεται σε άτομα άνω των 18 ετών. Με τη χρήση της Υπηρεσίας δηλώνετε ρητά ότι είστε άνω των 18 ετών. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία.</p>
-                
-                <h3>5. Πνευματική Ιδιοκτησία</h3>
-                <p>Όλο το περιεχόμενο της Υπηρεσίας, συμπεριλαμβανομένων κειμένων, γραφικών, λογότυπων, εικόνων, αποτελεί πνευματική ιδιοκτησία της Cafedium.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal για αναλυτική πολιτική απορρήτου -->
-    <div id="privacyModal" class="modal">
-        <div class="modal-content">
-            <button class="close-modal" id="closePrivacyModal">×</button>
-            <h2><i class="fas fa-shield-alt"></i> Αναλυτική Πολιτική Απορρήτου</h2>
-            <div class="info-box" style="max-height: 70vh; overflow-y: auto;">
-                <h3>1. Συλλογή Πληροφοριών</h3>
-                <p>Συλλέγουμε το όνομα, το email και το περιεχόμενο της φόρμας που συμπληρώνετε για την παροχή της υπηρεσίας καφεμαντείας.</p>
-                
-                <h3>2. Χρήση Πληροφοριών</h3>
-                <p>Οι πληροφορίες σας χρησιμοποιούνται αποκλειστικά για την παροχή της υπηρεσίας καφεμαντείας και την επικοινωνία μαζί σας.</p>
-                <p>Οι πληροφορίες σας δεν πωλούνται, ανταλλάσσονται ή δίνονται σε τρίτους.</p>
-                
-                <h3>3. Προστασία Δεδομένων</h3>
-                <p>Εφαρμόζουμε μέτρα ασφαλείας για την προστασία των προσωπικών σας δεδομένων. Η πρόσβαση στα δεδομένα σας περιορίζεται μόνο σε εξουσιοδοτημένο προσωπικό.</p>
-                
-                <h3>4. Αποθήκευση Δεδομένων</h3>
-                <p>Τα δεδομένα σας διατηρούνται για όσο διάστημα απαιτείται για την παροχή των υπηρεσιών μας. Μπορείτε να ζητήσετε διαγραφή των δεδομένων σας ανά πάσα στιγμή επικοινωνώντας μαζί μας.</p>
-                
-                <h3>5. Δικαιώματα Χρηστών</h3>
-                <p>Έχετε το δικαίωμα να ενημερώνεστε για τα δεδομένα που διατηρούμε, να ζητάτε διόρθωση ή διαγραφή τους, καθώς και να ανακαλείτε τη συγκατάθεσή σας ανά πάσα στιγμή.</p>
-                
-                <h3>6. Cookies</h3>
-                <p>Η ιστοσελίδα μας χρησιμοποιεί cookies για τη βελτίωση της εμπειρίας πλοήγησης. Μπορείτε να απενεργοποιήσετε τα cookies από τις ρυθμίσεις του browser σας.</p>
-            </div>
         </div>
     </div>
 
@@ -849,6 +835,73 @@
             const privacyCheckbox = document.getElementById('privacyConsentCheckbox');
             const acceptBtn = document.getElementById('acceptConsentBtn');
             
+            // Inner modals
+            const termsInnerModal = document.getElementById('termsInnerModal');
+            const privacyInnerModal = document.getElementById('privacyInnerModal');
+            const showTermsLink = document.getElementById('showTermsLink');
+            const showPrivacyLink = document.getElementById('showPrivacyLink');
+            const closeTermsInnerModal = document.getElementById('closeTermsInnerModal');
+            const closePrivacyInnerModal = document.getElementById('closePrivacyInnerModal');
+            
+            // Footer links
+            const showTermsFooterLink = document.getElementById('showTermsFooterLink');
+            const showPrivacyFooterLink = document.getElementById('showPrivacyFooterLink');
+            
+            function showTermsModal() {
+                termsInnerModal.style.display = 'flex';
+            }
+            
+            function showPrivacyModal() {
+                privacyInnerModal.style.display = 'flex';
+            }
+            
+            function closeTermsModal() {
+                termsInnerModal.style.display = 'none';
+            }
+            
+            function closePrivacyModal() {
+                privacyInnerModal.style.display = 'none';
+            }
+            
+            // Event listeners for inner modals
+            showTermsLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showTermsModal();
+            });
+            
+            showPrivacyLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showPrivacyModal();
+            });
+            
+            closeTermsInnerModal.addEventListener('click', closeTermsModal);
+            closePrivacyInnerModal.addEventListener('click', closePrivacyModal);
+            
+            // Footer links
+            if (showTermsFooterLink) {
+                showTermsFooterLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showTermsModal();
+                });
+            }
+            
+            if (showPrivacyFooterLink) {
+                showPrivacyFooterLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showPrivacyModal();
+                });
+            }
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === termsInnerModal) {
+                    closeTermsModal();
+                }
+                if (e.target === privacyInnerModal) {
+                    closePrivacyModal();
+                }
+            });
+            
             function checkConsentStatus() {
                 const allChecked = ageCheckbox.checked && termsCheckbox.checked && privacyCheckbox.checked;
                 acceptBtn.disabled = !allChecked;
@@ -879,70 +932,6 @@
                 consentOverlay.style.display = 'flex';
                 mainContent.style.display = 'none';
             }
-
-            // Modal functionality for terms
-            const termsModal = document.getElementById('termsModal');
-            const privacyModal = document.getElementById('privacyModal');
-            
-            function showTermsModal() {
-                termsModal.style.display = 'flex';
-            }
-            
-            function showPrivacyModal() {
-                privacyModal.style.display = 'flex';
-            }
-            
-            document.getElementById('showTermsFromConsent').addEventListener('click', function(e) {
-                e.preventDefault();
-                showTermsModal();
-            });
-            
-            document.getElementById('showPrivacyFromConsent').addEventListener('click', function(e) {
-                e.preventDefault();
-                showPrivacyModal();
-            });
-            
-            document.getElementById('showPrivacyFromConsentFull').addEventListener('click', function(e) {
-                e.preventDefault();
-                showPrivacyModal();
-            });
-            
-            document.getElementById('showTermsFooter').addEventListener('click', function(e) {
-                e.preventDefault();
-                showTermsModal();
-            });
-            
-            document.getElementById('showPrivacyFooter').addEventListener('click', function(e) {
-                e.preventDefault();
-                showPrivacyModal();
-            });
-            
-            document.getElementById('showTermsFooterBottom').addEventListener('click', function(e) {
-                e.preventDefault();
-                showTermsModal();
-            });
-            
-            document.getElementById('showPrivacyFooterBottom').addEventListener('click', function(e) {
-                e.preventDefault();
-                showPrivacyModal();
-            });
-            
-            document.getElementById('closeTermsModal').addEventListener('click', function() {
-                termsModal.style.display = 'none';
-            });
-            
-            document.getElementById('closePrivacyModal').addEventListener('click', function() {
-                privacyModal.style.display = 'none';
-            });
-            
-            window.addEventListener('click', function(e) {
-                if (e.target === termsModal) {
-                    termsModal.style.display = 'none';
-                }
-                if (e.target === privacyModal) {
-                    privacyModal.style.display = 'none';
-                }
-            });
             
             // Initial load
             loadFortuneTellers();
