@@ -416,6 +416,27 @@
             box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
         }
         
+        .tally-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 20px 25px;
+            color: white;
+        }
+        
+        .tally-header h2 {
+            margin: 0;
+            padding: 0;
+            border: none;
+            color: white;
+        }
+        
+        .tally-header h2 i {
+            color: white;
+        }
+        
+        .tally-content {
+            padding: 20px;
+        }
+        
         iframe {
             min-height: 500px;
         }
@@ -707,10 +728,9 @@
                 <div class="info-box">
                     <p><strong>Πώς λειτουργεί η διαδικασία:</strong></p>
                     <ul>
-                        <li>Πρώτα κλείστε το ραντεβού σας μέσω Google Calendar</li>
-                        <li>Συμπληρώστε τη φόρμα Tally με τα στοιχεία σας</li>
-                        <li>Επιλέξτε τον Χαρακτήρα που θα ερμηνεύσει τον καφέ σας (παρακάτω)</li>
-                        <li>Θα λάβετε την ερμηνεία στο email σας εντός 24-48 ωρών</li>
+                        <li>1. Κλείστε το ραντεβού σας μέσω Google Calendar</li>
+                        <li>2. Το φλιτζάνι σου μιλάει. Συμπληρώστε τη φόρμα με τα στοιχεία σας. Επιλέξτε τον Χαρακτήρα γράψτε την επιθυμία σας.</li>
+                        <li>Θα λάβετε την ερμηνεία στο email σας στην ημερομηνία που δηλώσατε.</li>
                     </ul>
                     <p style="margin-top: 15px;"><strong>Σημαντικό:</strong> Βεβαιωθείτε ότι το email που δηλώνετε είναι σωστό, καθώς εκεί θα σταλεί η απάντηση.</p>
                 </div>
@@ -726,9 +746,14 @@
                 </div>
             </div>
 
-            <!-- Tally Form -->
+            <!-- Tally Form with Title -->
             <div class="tally-container">
-                <iframe data-tally-src="https://tally.so/embed/J90bPK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Cafedium"></iframe>
+                <div class="tally-header">
+                    <h2><i class="fas fa-mug-hot"></i> Το φλιτζάνι σου μιλάει</h2>
+                </div>
+                <div class="tally-content">
+                    <iframe data-tally-src="https://tally.so/embed/J90bPK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Cafedium"></iframe>
+                </div>
             </div>
             
             <script>
