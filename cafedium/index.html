@@ -147,7 +147,7 @@
             margin-bottom: 8px;
         }
         
-        /* FORTUNE TELLER OPTIONS */
+        /* FORTUNE TELLER OPTIONS - ΧΩΡΙΣ ΕΠΙΛΟΓΗ */
         .fortune-teller-options {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -155,51 +155,30 @@
             margin: 25px 0;
         }
         
-        .fortune-teller-option {
+        .fortune-teller-card {
             border: 3px solid #e8e0d5;
             border-radius: 16px;
             padding: 22px;
-            cursor: pointer;
-            transition: all 0.3s ease;
             background: white;
             text-align: center;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s ease;
         }
         
-        .fortune-teller-option:hover {
+        .fortune-teller-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
         
-        .fortune-teller-option.selected {
-            border-color: var(--primary);
-            background: linear-gradient(135deg, #f9f3ec, #f5e9d8);
-            box-shadow: 0 12px 30px rgba(139, 69, 19, 0.15);
-        }
-        
-        .fortune-teller-option.zaira {
+        .fortune-teller-card.zaira {
             border-color: var(--zaira);
         }
         
-        .fortune-teller-option.zaira.selected {
-            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
-        }
-        
-        .fortune-teller-option.sousou {
+        .fortune-teller-card.sousou {
             border-color: var(--sousou);
         }
         
-        .fortune-teller-option.sousou.selected {
-            background: linear-gradient(135deg, #fce4ec, #f8bbd9);
-        }
-        
-        .fortune-teller-option.ai {
+        .fortune-teller-card.ai {
             border-color: var(--ai);
-        }
-        
-        .fortune-teller-option.ai.selected {
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
         }
         
         .fortune-teller-image {
@@ -267,6 +246,92 @@
         
         .rating-stars {
             color: #ffd700;
+        }
+        
+        /* CONSENT MODAL */
+        .consent-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .consent-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        .consent-modal h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: none;
+        }
+        
+        .consent-modal .info-box {
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .checkbox-group {
+            margin: 20px 0;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+        
+        .checkbox-label input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .checkbox-label span {
+            flex: 1;
+        }
+        
+        .consent-btn {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        
+        .consent-btn:hover {
+            background: linear-gradient(to right, var(--primary-light), var(--secondary));
+            transform: translateY(-2px);
+        }
+        
+        .consent-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
         }
         
         /* BUTTONS */
@@ -415,6 +480,17 @@
             100% { transform: translateY(0px); }
         }
         
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .container {
@@ -458,6 +534,24 @@
         iframe {
             min-height: 500px;
         }
+        
+        /* Google Calendar */
+        .calendar-container {
+            margin: 25px 0;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
+        }
+        
+        .calendar-container iframe {
+            min-height: 600px;
+        }
+        
+        /* Main content hidden until consent */
+        .main-content {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -468,91 +562,126 @@
             <p class="subtitle">·«Καλώς ήρθες στο Cafedium, όπου ο καφές διηγείται ιστορίες»!</p>
         </header>
 
-        <!-- Tally Form -->
-        <div class="tally-container">
-            <iframe data-tally-src="https://tally.so/embed/J90bPK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Cafedium"></iframe>
-        </div>
-        
-        <script>
-            var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
-        </script>
-
-        <!-- Οδηγίες Υποβολής -->
-        <div class="form-section">
-            <h2><i class="fas fa-info-circle"></i> Οδηγίες Υποβολής</h2>
-            <div class="info-box">
-                <p><strong>Πώς λειτουργεί η διαδικασία:</strong></p>
-                <ul>
-                    <li>Συμπληρώστε τη φόρμα παραπάνω με τα στοιχεία σας</li>
-                    <li>Επιλέξτε τον Χαρακτήρα που θα ερμηνεύσει τον καφέ σας</li>
-                    <li>Ανεβάστε τις φωτογραφίες του φλιτζανιού σας</li>
-                    <li>Θα λάβετε την ερμηνεία στο email σας εντός 24-48 ωρών</li>
-                </ul>
-                <p style="margin-top: 15px;"><strong>Σημαντικό:</strong> Βεβαιωθείτε ότι το email που δηλώνετε είναι σωστό, καθώς εκεί θα σταλεί η απάντηση.</p>
-            </div>
-        </div>
-
-        <!-- Επιλογή Χαρακτήρα -->
-        <div class="form-section">
-            <h2><i class="fas fa-crystal-ball"></i> Επιλογή Χαρακτήρα</h2>
-            
-            <div class="info-box">
-                <p><strong>Επιλέξτε τον καφεμάντη που θα διαβάσει το φλιτζάνι σας:</strong></p>
-                <p>Κάθε χαρακτήρας έχει τη δική του μοναδική προσέγγιση στην τέχνη της καφεμαντείας.</p>
-            </div>
-            
-            <div class="fortune-teller-options" id="fortuneTellersList">
-                <!-- Οι καφεμάντεις θα προστεθούν δυναμικά -->
-            </div>
-            
-            <div id="fortuneTellerError" class="message error" style="display: none;">
-                Παρακαλώ επιλέξτε έναν Χαρακτήρα
+        <!-- Consent Modal - Εμφανίζεται κατά την είσοδο -->
+        <div id="consentOverlay" class="consent-overlay">
+            <div class="consent-modal">
+                <h2><i class="fas fa-file-contract"></i> Όροι και Προϋποθέσεις</h2>
+                
+                <div class="info-box">
+                    <p><strong>Πριν συνεχίσετε, παρακαλούμε διαβάστε και αποδεχτείτε τους όρους:</strong></p>
+                    <ul>
+                        <li>Η υπηρεσία προορίζεται αποκλειστικά για ψυχαγωγικούς σκοπούς</li>
+                        <li>Οι ερμηνείες δεν αποτελούν επαγγελματικές συμβουλές</li>
+                        <li>Τα προσωπικά δεδομένα προστατεύονται σύμφωνα με την Πολιτική Απορρήτου</li>
+                    </ul>
+                </div>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="ageConsentCheckbox">
+                        <span><strong>Δηλώνω υπεύθυνα ότι είμαι άνω των 18 ετών</strong></span>
+                    </label>
+                    
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="termsConsentCheckbox">
+                        <span>Αποδέχομαι τους <a href="#" id="showTermsFromConsent">Όρους Χρήσης</a></span>
+                    </label>
+                    
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="privacyConsentCheckbox">
+                        <span>Αποδέχομαι την <a href="#" id="showPrivacyFromConsent">Πολιτική Απορρήτου</a></span>
+                    </label>
+                </div>
+                
+                <button class="consent-btn" id="acceptConsentBtn" disabled>
+                    <i class="fas fa-check"></i> Αποδοχή και Συνέχεια
+                </button>
             </div>
         </div>
 
-        <!-- Όροι και Προϋποθέσεις -->
-        <div class="form-section">
-            <h2><i class="fas fa-file-contract"></i> Όροι και Προϋποθέσεις</h2>
-            
-            <div class="info-box">
-                <h3 style="margin-bottom: 10px;">1. Αποδοχή Όρων</h3>
-                <p>Χρησιμοποιώντας το Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις. Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας.</p>
-                
-                <h3 style="margin: 15px 0 10px 0;">2. Υπηρεσίες Καφεμαντείας</h3>
-                <p>Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση. Οποιαδήποτε χρήση κάνετε από τέτοιες απαντήσεις γίνεται με δικό σας κίνδυνο.</p>
-                
-                <h3 style="margin: 15px 0 10px 0;">3. Αποποίηση Ευθύνης</h3>
-                <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες που παρουσιάζονται προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς και δεν αποτελούν συμβουλές, καθοδήγηση ή επαγγελματική ενημέρωση.</p>
-                
-                <h3 style="margin: 15px 0 10px 0;">4. Ηλικιακός Περιορισμός</h3>
-                <p>Η χρήση της Υπηρεσίας περιορίζεται σε άτομα άνω των 18 ετών. Με τη χρήση της Υπηρεσίας δηλώνετε ρητά ότι είστε άνω των 18 ετών. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία.</p>
-                
-                <h3 style="margin: 15px 0 10px 0;">5. Πολιτική Απορρήτου</h3>
-                <p>Συλλέγουμε το όνομα, το email και τις φωτογραφίες που υποβάλλετε αποκλειστικά για την παροχή της υπηρεσίας καφεμαντείας. Τα δεδομένα σας δεν διαμοιράζονται με τρίτους. Οι φωτογραφίες διατηρούνται για όσο διάστημα απαιτείται για την εξυπηρέτησή σας. Μπορείτε να ζητήσετε διαγραφή των δεδομένων σας ανά πάσα στιγμή επικοινωνώντας μαζί μας.</p>
-                
-                <h3 style="margin: 15px 0 10px 0;">6. Επικοινωνία</h3>
-                <p>Για οποιαδήποτε ερώτηση ή απορία, μπορείτε να επικοινωνήσετε μαζί μας μέσω της φόρμας επικοινωνίας στην εφαρμογή.</p>
+        <!-- Κύριο Περιεχόμενο - Κρυφό μέχρι την αποδοχή -->
+        <div id="mainContent" class="main-content">
+            <!-- Google Calendar Appointment Scheduling -->
+            <div class="calendar-container">
+                <iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2W749ziDodCAof-hd2VaHeolH7c8qhF8eR4LGAAOG2FLZsK35mV1Eq48qR4z166rTvhiDfPwn-?gv=true" style="border: 0" width="100%" height="600" frameborder="0"></iframe>
+            </div>
+
+            <!-- Tally Form -->
+            <div class="tally-container">
+                <iframe data-tally-src="https://tally.so/embed/J90bPK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Cafedium"></iframe>
             </div>
             
-            <div class="terms-links">
-                <a href="#" id="showTermsFooter"><i class="fas fa-file-contract"></i> Αναλυτικοί Όροι Χρήσης</a>
-                <a href="#" id="showPrivacyFooter"><i class="fas fa-shield-alt"></i> Αναλυτική Πολιτική Απορρήτου</a>
+            <script>
+                var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
+            </script>
+
+            <!-- Οδηγίες Υποβολής -->
+            <div class="form-section">
+                <h2><i class="fas fa-info-circle"></i> Οδηγίες Υποβολής</h2>
+                <div class="info-box">
+                    <p><strong>Πώς λειτουργεί η διαδικασία:</strong></p>
+                    <ul>
+                        <li>Πρώτα κλείστε το ραντεβού σας μέσω Google Calendar</li>
+                        <li>Συμπληρώστε τη φόρμα Tally με τα στοιχεία σας</li>
+                        <li>Επιλέξτε τον Χαρακτήρα που θα ερμηνεύσει τον καφέ σας (παρακάτω)</li>
+                        <li>Θα λάβετε την ερμηνεία στο email σας εντός 24-48 ωρών</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Σημαντικό:</strong> Βεβαιωθείτε ότι το email που δηλώνετε είναι σωστό, καθώς εκεί θα σταλεί η απάντηση.</p>
+                </div>
             </div>
+
+            <!-- Χαρακτήρες (χωρίς επιλογή - μόνο πληροφόρηση) -->
+            <div class="form-section">
+                <h2><i class="fas fa-crystal-ball"></i> Χαρακτήρες</h2>
+                
+                <div class="info-box">
+                    <p><strong>Γνωρίστε τους καφεμάντεις που διαβάζουν το φλιτζάνι σας:</strong></p>
+                    <p>Κάθε χαρακτήρας έχει τη δική του μοναδική προσέγγιση στην τέχνη της καφεμαντείας.</p>
+                </div>
+                
+                <div class="fortune-teller-options" id="fortuneTellersList">
+                    <!-- Οι καφεμάντεις θα προστεθούν δυναμικά -->
+                </div>
+            </div>
+
+            <!-- Όροι και Προϋποθέσεις -->
+            <div class="form-section">
+                <h2><i class="fas fa-file-contract"></i> Όροι και Προϋποθέσεις</h2>
+                
+                <div class="info-box">
+                    <h3 style="margin-bottom: 10px;">1. Αποδοχή Όρων</h3>
+                    <p>Χρησιμοποιώντας το Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις. Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας.</p>
+                    
+                    <h3 style="margin: 15px 0 10px 0;">2. Υπηρεσίες Καφεμαντείας</h3>
+                    <p>Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση.</p>
+                    
+                    <h3 style="margin: 15px 0 10px 0;">3. Αποποίηση Ευθύνης</h3>
+                    <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς.</p>
+                    
+                    <h3 style="margin: 15px 0 10px 0;">4. Ηλικιακός Περιορισμός</h3>
+                    <p>Η χρήση της Υπηρεσίας περιορίζεται σε άτομα άνω των 18 ετών. Με τη χρήση της Υπηρεσίας δηλώνετε ρητά ότι είστε άνω των 18 ετών.</p>
+                </div>
+                
+                <div class="terms-links">
+                    <a href="#" id="showTermsFooter"><i class="fas fa-file-contract"></i> Αναλυτικοί Όροι Χρήσης</a>
+                    <a href="#" id="showPrivacyFooter"><i class="fas fa-shield-alt"></i> Αναλυτική Πολιτική Απορρήτου</a>
+                </div>
+            </div>
+            
+            <footer>
+                <div class="terms-links">
+                    <a href="#" id="showTermsFooterBottom"><i class="fas fa-file-contract"></i> Όροι Χρήσης</a>
+                    <a href="#" id="showPrivacyFooterBottom"><i class="fas fa-shield-alt"></i> Πολιτική Απορρήτου</a>
+                </div>
+                <p>
+                    Cafedium by FmD<span class="coffee-icon">☕</span> «Το Φλιτζάνι σου μιλάει» - εδώ ξεκινά το ταξίδι σας στο μυστήριο του φλιτζανιού.
+                </p>
+                <p>©2026 - Όλα τα δικαιώματα διατηρούνται</p>
+                <p style="font-size: 0.8rem; margin-top: 10px; color: var(--primary-light);">
+                    Cafedium - Η τέχνη της καφεμαντείας
+                </p>
+            </footer>
         </div>
-        
-        <footer>
-            <div class="terms-links">
-                <a href="#" id="showTermsFooterBottom"><i class="fas fa-file-contract"></i> Όροι Χρήσης</a>
-                <a href="#" id="showPrivacyFooterBottom"><i class="fas fa-shield-alt"></i> Πολιτική Απορρήτου</a>
-            </div>
-            <p>
-                Cafedium by FmD<span class="coffee-icon">☕</span> «Το Φλιτζάνι σου μιλάει» - εδώ ξεκινά το ταξίδι σας στο μυστήριο του φλιτζανιού.
-            </p>
-            <p>©2026 - Όλα τα δικαιώματα διατηρούνται</p>
-            <p style="font-size: 0.8rem; margin-top: 10px; color: var(--primary-light);">
-                Cafedium - Η τέχνη της καφεμαντείας
-            </p>
-        </footer>
     </div>
 
     <!-- Modal για αναλυτικούς όρους -->
@@ -562,19 +691,19 @@
             <h2><i class="fas fa-file-contract"></i> Αναλυτικοί Όροι Χρήσης</h2>
             <div class="info-box" style="max-height: 70vh; overflow-y: auto;">
                 <h3>1. Αποδοχή Όρων</h3>
-                <p>Χρησιμοποιώντας το Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις (αυτήν την «Συμφωνία»). Η Συμφωνία ισχύει για όλους τους χρήστες («εσάς» ή «Χρήστη») που έχουν πρόσβαση ή/και χρησιμοποιούν την Υπηρεσία. Εκτός εάν τροποποιηθεί, η Συμφωνία θα παραμένει σε ισχύ για όσο διάστημα είστε Χρήστης. Εάν δεν συμφωνείτε με τους παρόντες Όρους και Προϋποθέσεις, παρακαλούμε μην χρησιμοποιήσετε την Υπηρεσία.</p>
+                <p>Χρησιμοποιώντας το Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις. Η Συμφωνία ισχύει για όλους τους χρήστες («εσάς» ή «Χρήστη») που έχουν πρόσβαση ή/και χρησιμοποιούν την Υπηρεσία.</p>
                 
                 <h3>2. Υπηρεσίες Καφεμαντείας</h3>
-                <p>Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας. Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση· οποιαδήποτε χρήση κάνετε από τέτοιες απαντήσεις, συμβουλές ή υπηρεσίες γίνεται με δικό σας κίνδυνο και η FranklyMaDear δεν μπορεί να θεωρηθεί υπεύθυνη ή να φέρει ευθύνη για οποιεσδήποτε ζημίες ή απώλειες που προκύπτουν από την επαφή σας με τέτοιες απαντήσεις ή συμβουλές. Ο Ιστότοπος και οι υπηρεσίες που παρέχονται παρέχονται «ως είναι» χωρίς καμία εγγύηση.</p>
+                <p>Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας. Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση.</p>
 
                 <h3>3. Αποποίηση Ευθύνης</h3>
-                <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες που παρουσιάζονται προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς και δεν αποτελούν συμβουλές, καθοδήγηση, προτροπή λήψης αποφάσεων ή επιστημονική/επαγγελματική ενημέρωση. Κάθε επισκέπτης φέρει την πλήρη και αποκλειστική ευθύνη για τον τρόπο με τον οποίο θα χρησιμοποιήσει ή θα ερμηνεύσει το περιεχόμενο της σελίδας.</p>
+                <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς.</p>
                 
                 <h3>4. Ηλικιακός Περιορισμός</h3>
-                <p>Η χρήση της Υπηρεσίας περιορίζεται σε άτομα άνω των 18 ετών, σε χρήστες που έχουν απελευθερωθεί από την γονική μέριμνα, ή σε αυτά που διαθέτουν συγκατάθεση νόμιμου γονέα ή κηδεμόνα. Με τη χρήση της Υπηρεσίας δηλώνετε ρητά ότι είστε άνω των 18 ετών, έχετε απελευθερωθεί από τη γονική μέριμνα ή διαθέτετε συγκατάθεση νόμιμου γονέα ή κηδεμόνα. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία.</p>
+                <p>Η χρήση της Υπηρεσίας περιορίζεται σε άτομα άνω των 18 ετών. Με τη χρήση της Υπηρεσίας δηλώνετε ρητά ότι είστε άνω των 18 ετών. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία.</p>
                 
                 <h3>5. Πνευματική Ιδιοκτησία</h3>
-                <p>Όλο το περιεχόμενο της Υπηρεσίας, συμπεριλαμβανομένων κειμένων, γραφικών, λογότυπων, εικόνων, αποτελεί πνευματική ιδιοκτησία της Cafedium και προστατεύεται από τους νόμους περί πνευματικής ιδιοκτησίας.</p>
+                <p>Όλο το περιεχόμενο της Υπηρεσίας, συμπεριλαμβανομένων κειμένων, γραφικών, λογότυπων, εικόνων, αποτελεί πνευματική ιδιοκτησία της Cafedium.</p>
             </div>
         </div>
     </div>
@@ -586,34 +715,24 @@
             <h2><i class="fas fa-shield-alt"></i> Αναλυτική Πολιτική Απορρήτου</h2>
             <div class="info-box" style="max-height: 70vh; overflow-y: auto;">
                 <h3>1. Συλλογή Πληροφοριών</h3>
-                <p>Ποιες πληροφορίες συλλέγουμε; Συλλέγουμε πληροφορίες από εσάς όταν χρησιμοποιείτε υπηρεσίες που παρέχονται από τον ιστότοπο και/ή την εφαρμογή μας, συμπληρώνετε μια φόρμα ή ανεβάζετε φωτογραφίες.</p>
-                <p>Κατά τη χρήση υπηρεσιών, ενδέχεται να σας ζητηθεί, κατά περίπτωση, να εισάγετε: το όνομά σας, τη διεύθυνση ηλεκτρονικού ταχυδρομείου, καθώς και να ανεβάσετε φωτογραφίες του φλιτζανιού σας.</p>
+                <p>Συλλέγουμε το όνομα, το email και το περιεχόμενο της φόρμας που συμπληρώνετε για την παροχή της υπηρεσίας καφεμαντείας.</p>
                 
                 <h3>2. Χρήση Πληροφοριών</h3>
-                <p>Οποιεσδήποτε πληροφορίες συλλέγουμε από εσάς μπορούν να χρησιμοποιηθούν με έναν από τους ακόλουθους τρόπους:</p>
-                <ul>
-                    <li>Για να εξατομικεύσουμε την εμπειρία σας και να παρέχουμε καλύτερη υπηρεσία</li>
-                    <li>Για να βελτιώσουμε την εφαρμογή μας βάσει των πληροφοριών και των σχολίων που λαμβάνουμε από εσάς</li>
-                    <li>Για να βελτιώσουμε την εξυπηρέτηση πελατών</li>
-                    <li>Για την επεξεργασία των υποβολών σας</li>
-                </ul>
-                <p>Οι πληροφορίες σας, είτε είναι δημόσιες είτε ιδιωτικές, δεν θα πωλούνται, ανταλλάσσονται, μεταβιβάζονται ή δίνονται σε οποιαδήποτε άλλη εταιρεία για οποιονδήποτε λόγο, χωρίς τη συγκατάθεσή σας.</p>
+                <p>Οι πληροφορίες σας χρησιμοποιούνται αποκλειστικά για την παροχή της υπηρεσίας καφεμαντείας και την επικοινωνία μαζί σας.</p>
+                <p>Οι πληροφορίες σας δεν πωλούνται, ανταλλάσσονται ή δίνονται σε τρίτους.</p>
                 
                 <h3>3. Προστασία Δεδομένων</h3>
-                <p>Εφαρμόζουμε μέτρα ασφαλείας για την προστασία των προσωπικών σας δεδομένων. Η πρόσβαση στα δεδομένα σας περιορίζεται μόνο σε εξουσιοδοτημένο προσωπικό.</p>
+                <p>Εφαρμόζουμε μέτρα ασφαλείας για την προστασία των προσωπικών σας δεδομένων.</p>
                 
                 <h3>4. Αποθήκευση Δεδομένων</h3>
-                <p>Τα δεδομένα σας αποθηκεύονται με ασφάλεια και διατηρούνται για όσο διάστημα απαιτείται για την παροχή των υπηρεσιών μας. Μπορείτε να ζητήσετε διαγραφή των δεδομένων σας ανά πάσα στιγμή.</p>
-                
-                <h3>5. Δικαιώματα Χρηστών</h3>
-                <p>Έχετε το δικαίωμα να ενημερώνεστε για τα δεδομένα που διατηρούμε, να ζητάτε διόρθωση ή διαγραφή τους, καθώς και να ανακαλείτε τη συγκατάθεσή σας ανά πάσα στιγμή.</p>
+                <p>Τα δεδομένα σας διατηρούνται για όσο διάστημα απαιτείται για την παροχή των υπηρεσιών μας. Μπορείτε να ζητήσετε διαγραφή των δεδομένων σας ανά πάσα στιγμή.</p>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Καφεμάντεις data
+            // Καφεμάντεις data (μόνο για εμφάνιση, χωρίς επιλογή)
             const fortuneTellers = [
                 {
                     id: 'zaira',
@@ -629,7 +748,7 @@
                     id: 'sousou',
                     name: 'Μαντάμ Σουσού',
                     title: 'Η Σύγχρονη',
-                    description: 'Η Μαντάμ Σουσού συνδυάζει την αρχαία σοφία με σύγχρονες προσεγγίσεις. Οι προβλέψεις της είναι γεμάτες ενέργεια και πρακτικές συμβουλές για την καθημερινότητα.',
+                    description: 'Η Μαντάμ Σουσού συνδυάζει την αρχαία σοφία με σύγχρονες προσεγγίσεις. Οι προβλέψεις της είναι γεμάτες ενέργεια και πρακτικές συμβουλές.',
                     color: 'sousou',
                     image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
                     rating: 4.9,
@@ -647,16 +766,14 @@
                 }
             ];
 
-            let selectedFortuneTeller = null;
-
-            // Load fortune tellers
+            // Load fortune tellers (μόνο για εμφάνιση)
             function loadFortuneTellers() {
                 const fortuneTellersList = document.getElementById('fortuneTellersList');
                 fortuneTellersList.innerHTML = '';
 
                 fortuneTellers.forEach(teller => {
                     const tellerElement = document.createElement('div');
-                    tellerElement.className = `fortune-teller-option ${teller.color}`;
+                    tellerElement.className = `fortune-teller-card ${teller.color}`;
                     tellerElement.innerHTML = `
                         <img src="${teller.image}" alt="${teller.name}" class="fortune-teller-image">
                         <div class="fortune-teller-name">${teller.name}</div>
@@ -671,25 +788,47 @@
                         </div>
                     `;
 
-                    tellerElement.addEventListener('click', () => {
-                        selectFortuneTeller(teller, tellerElement);
-                    });
-
                     fortuneTellersList.appendChild(tellerElement);
                 });
             }
 
-            function selectFortuneTeller(teller, element) {
-                selectedFortuneTeller = teller;
-                
-                document.querySelectorAll('.fortune-teller-option').forEach(option => {
-                    option.classList.remove('selected');
-                });
-                
-                element.classList.add('selected');
-                document.getElementById('fortuneTellerError').style.display = 'none';
-                
-                console.log(`Επιλέχθηκε ο καφεμάντης: ${teller.name}`);
+            // Consent functionality
+            const consentOverlay = document.getElementById('consentOverlay');
+            const mainContent = document.getElementById('mainContent');
+            const ageCheckbox = document.getElementById('ageConsentCheckbox');
+            const termsCheckbox = document.getElementById('termsConsentCheckbox');
+            const privacyCheckbox = document.getElementById('privacyConsentCheckbox');
+            const acceptBtn = document.getElementById('acceptConsentBtn');
+            
+            function checkConsentStatus() {
+                const allChecked = ageCheckbox.checked && termsCheckbox.checked && privacyCheckbox.checked;
+                acceptBtn.disabled = !allChecked;
+            }
+            
+            ageCheckbox.addEventListener('change', checkConsentStatus);
+            termsCheckbox.addEventListener('change', checkConsentStatus);
+            privacyCheckbox.addEventListener('change', checkConsentStatus);
+            
+            acceptBtn.addEventListener('click', function() {
+                if (ageCheckbox.checked && termsCheckbox.checked && privacyCheckbox.checked) {
+                    // Αποθήκευση συγκατάθεσης στο localStorage
+                    localStorage.setItem('cafedium_consent', 'true');
+                    localStorage.setItem('cafedium_consent_date', new Date().toISOString());
+                    
+                    // Απόκρυψη overlay και εμφάνιση περιεχομένου
+                    consentOverlay.style.display = 'none';
+                    mainContent.style.display = 'block';
+                }
+            });
+            
+            // Έλεγχος αν έχει ήδη δώσει συγκατάθεση ο χρήστης
+            const hasConsent = localStorage.getItem('cafedium_consent');
+            if (hasConsent === 'true') {
+                consentOverlay.style.display = 'none';
+                mainContent.style.display = 'block';
+            } else {
+                consentOverlay.style.display = 'flex';
+                mainContent.style.display = 'none';
             }
 
             // Modal functionality for terms
@@ -703,6 +842,16 @@
             function showPrivacyModal() {
                 privacyModal.style.display = 'flex';
             }
+            
+            document.getElementById('showTermsFromConsent').addEventListener('click', function(e) {
+                e.preventDefault();
+                showTermsModal();
+            });
+            
+            document.getElementById('showPrivacyFromConsent').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPrivacyModal();
+            });
             
             document.getElementById('showTermsFooter').addEventListener('click', function(e) {
                 e.preventDefault();
