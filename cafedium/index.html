@@ -128,6 +128,12 @@
             color: var(--secondary);
         }
         
+        h3 {
+            color: var(--dark);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+        
         /* INFO BOXES */
         .info-box {
             background: linear-gradient(135deg, #fdf9f5 0%, #f9f2e9 100%);
@@ -255,7 +261,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.8);
+            background-color: rgba(0,0,0,0.85);
             z-index: 2000;
             display: flex;
             justify-content: center;
@@ -267,7 +273,7 @@
             background: white;
             border-radius: 20px;
             padding: 30px;
-            max-width: 500px;
+            max-width: 550px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
@@ -279,12 +285,23 @@
             color: var(--primary);
             margin-bottom: 20px;
             border-bottom: none;
+            text-align: center;
         }
         
         .consent-modal .info-box {
             margin: 20px 0;
-            max-height: 300px;
+            max-height: 350px;
             overflow-y: auto;
+        }
+        
+        .consent-modal .info-box h4 {
+            color: var(--primary);
+            margin: 15px 0 8px 0;
+        }
+        
+        .consent-modal .info-box p {
+            margin-bottom: 10px;
+            line-height: 1.5;
         }
         
         .checkbox-group {
@@ -293,9 +310,9 @@
         
         .checkbox-label {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
             cursor: pointer;
             font-weight: normal;
         }
@@ -304,10 +321,22 @@
             width: 20px;
             height: 20px;
             cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
         }
         
         .checkbox-label span {
             flex: 1;
+            line-height: 1.4;
+        }
+        
+        .checkbox-label a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        
+        .checkbox-label a:hover {
+            color: var(--primary-light);
         }
         
         .consent-btn {
@@ -354,32 +383,52 @@
             margin: 25px 0 10px 0;
         }
         
-        .submit-btn:hover {
-            background: linear-gradient(to right, var(--primary-light), var(--secondary));
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(139, 69, 19, 0.4);
+        /* CALENDAR SECTION */
+        .calendar-section {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
+            margin: 25px 0;
+            overflow: hidden;
         }
         
-        /* MESSAGES */
-        .message {
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            text-align: center;
-            display: none;
-            font-weight: 500;
+        .calendar-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 20px 25px;
+            color: white;
         }
         
-        .success {
-            background-color: #e8f5e9;
-            color: var(--success);
-            border: 1px solid #c8e6c9;
+        .calendar-header h2 {
+            margin: 0;
+            padding: 0;
+            border: none;
+            color: white;
         }
         
-        .error {
-            background-color: #ffebee;
-            color: var(--error);
-            border: 1px solid #ffcdd2;
+        .calendar-header h2 i {
+            color: white;
+        }
+        
+        .calendar-container {
+            padding: 20px;
+        }
+        
+        .calendar-container iframe {
+            border-radius: 12px;
+            min-height: 600px;
+        }
+        
+        /* TALLY IFRAME */
+        .tally-container {
+            margin: 25px 0;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
+        }
+        
+        iframe {
+            min-height: 500px;
         }
         
         /* TERMS LINKS */
@@ -520,32 +569,10 @@
             h2 {
                 font-size: 1.25rem;
             }
-        }
-        
-        /* TALLY IFRAME */
-        .tally-container {
-            margin: 25px 0;
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
-        }
-        
-        iframe {
-            min-height: 500px;
-        }
-        
-        /* Google Calendar */
-        .calendar-container {
-            margin: 25px 0;
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
-        }
-        
-        .calendar-container iframe {
-            min-height: 600px;
+            
+            .calendar-container iframe {
+                min-height: 500px;
+            }
         }
         
         /* Main content hidden until consent */
@@ -562,18 +589,29 @@
             <p class="subtitle">·«Καλώς ήρθες στο Cafedium, όπου ο καφές διηγείται ιστορίες»!</p>
         </header>
 
-        <!-- Consent Modal - Εμφανίζεται κατά την είσοδο -->
+        <!-- Consent Modal - Εμφανίζεται κατά την είσοδο με πλήρη όρους -->
         <div id="consentOverlay" class="consent-overlay">
             <div class="consent-modal">
                 <h2><i class="fas fa-file-contract"></i> Όροι και Προϋποθέσεις</h2>
                 
                 <div class="info-box">
-                    <p><strong>Πριν συνεχίσετε, παρακαλούμε διαβάστε και αποδεχτείτε τους όρους:</strong></p>
-                    <ul>
-                        <li>Η υπηρεσία προορίζεται αποκλειστικά για ψυχαγωγικούς σκοπούς</li>
-                        <li>Οι ερμηνείες δεν αποτελούν επαγγελματικές συμβουλές</li>
-                        <li>Τα προσωπικά δεδομένα προστατεύονται σύμφωνα με την Πολιτική Απορρήτου</li>
-                    </ul>
+                    <h4>1. Αποδοχή Όρων</h4>
+                    <p>Χρησιμοποιώντας το Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις. Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας.</p>
+                    
+                    <h4>2. Υπηρεσίες Καφεμαντείας</h4>
+                    <p>Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση.</p>
+                    
+                    <h4>3. Αποποίηση Ευθύνης</h4>
+                    <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς.</p>
+                    
+                    <h4>4. Ηλικιακός Περιορισμός</h4>
+                    <p>Η χρήση της Υπηρεσίας περιορίζεται σε άτομα άνω των 18 ετών. Με τη χρήση της Υπηρεσίας δηλώνετε ρητά ότι είστε άνω των 18 ετών.</p>
+                    
+                    <h4>5. Πολιτική Απορρήτου</h4>
+                    <p>Συλλέγουμε το όνομα, το email και το περιεχόμενο της φόρμας που συμπληρώνετε αποκλειστικά για την παροχή της υπηρεσίας καφεμαντείας. Τα δεδομένα σας δεν διαμοιράζονται με τρίτους. Μπορείτε να ζητήσετε διαγραφή των δεδομένων σας ανά πάσα στιγμή.</p>
+                    
+                    <h4>6. Αναλυτική Πολιτική Απορρήτου</h4>
+                    <p>Για περισσότερες λεπτομέρειες σχετικά με τη συλλογή, χρήση και προστασία των προσωπικών σας δεδομένων, παρακαλούμε διαβάστε την <a href="#" id="showPrivacyFromConsentFull" style="color: var(--primary); text-decoration: underline;">Αναλυτική Πολιτική Απορρήτου</a>.</p>
                 </div>
                 
                 <div class="checkbox-group">
@@ -584,12 +622,12 @@
                     
                     <label class="checkbox-label">
                         <input type="checkbox" id="termsConsentCheckbox">
-                        <span>Αποδέχομαι τους <a href="#" id="showTermsFromConsent">Όρους Χρήσης</a></span>
+                        <span>Έχω διαβάσει και αποδέχομαι τους <strong><a href="#" id="showTermsFromConsent">Όρους Χρήσης</a></strong></span>
                     </label>
                     
                     <label class="checkbox-label">
                         <input type="checkbox" id="privacyConsentCheckbox">
-                        <span>Αποδέχομαι την <a href="#" id="showPrivacyFromConsent">Πολιτική Απορρήτου</a></span>
+                        <span>Έχω διαβάσει και αποδέχομαι την <strong><a href="#" id="showPrivacyFromConsent">Πολιτική Απορρήτου</a></strong></span>
                     </label>
                 </div>
                 
@@ -601,21 +639,7 @@
 
         <!-- Κύριο Περιεχόμενο - Κρυφό μέχρι την αποδοχή -->
         <div id="mainContent" class="main-content">
-            <!-- Google Calendar Appointment Scheduling -->
-            <div class="calendar-container">
-                <iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2W749ziDodCAof-hd2VaHeolH7c8qhF8eR4LGAAOG2FLZsK35mV1Eq48qR4z166rTvhiDfPwn-?gv=true" style="border: 0" width="100%" height="600" frameborder="0"></iframe>
-            </div>
-
-            <!-- Tally Form -->
-            <div class="tally-container">
-                <iframe data-tally-src="https://tally.so/embed/J90bPK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Cafedium"></iframe>
-            </div>
-            
-            <script>
-                var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
-            </script>
-
-            <!-- Οδηγίες Υποβολής -->
+            <!-- Οδηγίες Υποβολής - Πάνω από το Google Calendar -->
             <div class="form-section">
                 <h2><i class="fas fa-info-circle"></i> Οδηγίες Υποβολής</h2>
                 <div class="info-box">
@@ -629,6 +653,25 @@
                     <p style="margin-top: 15px;"><strong>Σημαντικό:</strong> Βεβαιωθείτε ότι το email που δηλώνετε είναι σωστό, καθώς εκεί θα σταλεί η απάντηση.</p>
                 </div>
             </div>
+
+            <!-- Google Calendar Appointment Scheduling με τίτλο -->
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <h2><i class="fas fa-calendar-check"></i> Κλείσε Ραντεβού</h2>
+                </div>
+                <div class="calendar-container">
+                    <iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2W749ziDodCAof-hd2VaHeolH7c8qhF8eR4LGAAOG2FLZsK35mV1Eq48qR4z166rTvhiDfPwn-?gv=true" style="border: 0" width="100%" height="600" frameborder="0"></iframe>
+                </div>
+            </div>
+
+            <!-- Tally Form -->
+            <div class="tally-container">
+                <iframe data-tally-src="https://tally.so/embed/J90bPK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Cafedium"></iframe>
+            </div>
+            
+            <script>
+                var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
+            </script>
 
             <!-- Χαρακτήρες (χωρίς επιλογή - μόνο πληροφόρηση) -->
             <div class="form-section">
@@ -722,10 +765,16 @@
                 <p>Οι πληροφορίες σας δεν πωλούνται, ανταλλάσσονται ή δίνονται σε τρίτους.</p>
                 
                 <h3>3. Προστασία Δεδομένων</h3>
-                <p>Εφαρμόζουμε μέτρα ασφαλείας για την προστασία των προσωπικών σας δεδομένων.</p>
+                <p>Εφαρμόζουμε μέτρα ασφαλείας για την προστασία των προσωπικών σας δεδομένων. Η πρόσβαση στα δεδομένα σας περιορίζεται μόνο σε εξουσιοδοτημένο προσωπικό.</p>
                 
                 <h3>4. Αποθήκευση Δεδομένων</h3>
-                <p>Τα δεδομένα σας διατηρούνται για όσο διάστημα απαιτείται για την παροχή των υπηρεσιών μας. Μπορείτε να ζητήσετε διαγραφή των δεδομένων σας ανά πάσα στιγμή.</p>
+                <p>Τα δεδομένα σας διατηρούνται για όσο διάστημα απαιτείται για την παροχή των υπηρεσιών μας. Μπορείτε να ζητήσετε διαγραφή των δεδομένων σας ανά πάσα στιγμή επικοινωνώντας μαζί μας.</p>
+                
+                <h3>5. Δικαιώματα Χρηστών</h3>
+                <p>Έχετε το δικαίωμα να ενημερώνεστε για τα δεδομένα που διατηρούμε, να ζητάτε διόρθωση ή διαγραφή τους, καθώς και να ανακαλείτε τη συγκατάθεσή σας ανά πάσα στιγμή.</p>
+                
+                <h3>6. Cookies</h3>
+                <p>Η ιστοσελίδα μας χρησιμοποιεί cookies για τη βελτίωση της εμπειρίας πλοήγησης. Μπορείτε να απενεργοποιήσετε τα cookies από τις ρυθμίσεις του browser σας.</p>
             </div>
         </div>
     </div>
@@ -849,6 +898,11 @@
             });
             
             document.getElementById('showPrivacyFromConsent').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPrivacyModal();
+            });
+            
+            document.getElementById('showPrivacyFromConsentFull').addEventListener('click', function(e) {
                 e.preventDefault();
                 showPrivacyModal();
             });
