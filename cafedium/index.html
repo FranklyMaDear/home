@@ -35,6 +35,7 @@
             --zaira: #9C27B0;
             --sousou: #E91E63;
             --ai: #2196F3;
+            --bmc: #5F7FFF;
         }
         
         body {
@@ -437,6 +438,45 @@
             padding: 20px;
         }
         
+        /* BUY ME A COFFEE SECTION */
+        .bmc-container {
+            margin: 25px 0;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
+        }
+        
+        .bmc-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 20px 25px;
+            color: white;
+        }
+        
+        .bmc-header h2 {
+            margin: 0;
+            padding: 0;
+            border: none;
+            color: white;
+        }
+        
+        .bmc-header h2 i {
+            color: white;
+        }
+        
+        .bmc-content {
+            padding: 30px 20px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #fef9f0 0%, #fff9ef 100%);
+        }
+        
+        .bmc-content .bmc-widget-placeholder {
+            min-height: 60px;
+        }
+        
         iframe {
             min-height: 500px;
         }
@@ -752,13 +792,23 @@
                     <h2><i class="fas fa-mug-hot"></i> Το φλιτζάνι σου μιλάει</h2>
                 </div>
                 <div class="tally-content">
-                    <iframe data-tally-src="https://tally.so/embed/J90bPK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Cafedium"></iframe>
+                    <iframe data-tally-src="https://tally.so/embed/J90bPK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Cafedium - Το φλιτζάνι σου μιλάει"></iframe>
                 </div>
             </div>
             
             <script>
                 var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
             </script>
+
+            <!-- Buy Me a Coffee Section - Κέρασε μας έναν Καφέ -->
+            <div class="bmc-container">
+                <div class="bmc-header">
+                    <h2><i class="fas fa-heart"></i> Κέρασε μας έναν Καφέ</h2>
+                </div>
+                <div class="bmc-content">
+                    <div id="bmc-widget-container"></div>
+                </div>
+            </div>
 
             <!-- Χαρακτήρες (χωρίς επιλογή - μόνο πληροφόρηση) -->
             <div class="form-section">
@@ -850,6 +900,26 @@
 
                     fortuneTellersList.appendChild(tellerElement);
                 });
+            }
+
+            // Load Buy Me a Coffee widget
+            function loadBuyMeACoffee() {
+                const bmcContainer = document.getElementById('bmc-widget-container');
+                if (bmcContainer) {
+                    const script = document.createElement('script');
+                    script.setAttribute('data-name', 'BMC-Widget');
+                    script.setAttribute('data-cfasync', 'false');
+                    script.src = 'https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js';
+                    script.setAttribute('data-id', 'franklymadear');
+                    script.setAttribute('data-description', 'Support me on Buy me a coffee!');
+                    script.setAttribute('data-message', '');
+                    script.setAttribute('data-color', '#5F7FFF');
+                    script.setAttribute('data-position', 'Right');
+                    script.setAttribute('data-x_margin', '18');
+                    script.setAttribute('data-y_margin', '18');
+                    script.async = true;
+                    bmcContainer.appendChild(script);
+                }
             }
 
             // Consent functionality
@@ -945,6 +1015,9 @@
                     // Απόκρυψη overlay και εμφάνιση περιεχομένου
                     consentOverlay.style.display = 'none';
                     mainContent.style.display = 'block';
+                    
+                    // Φόρτωση του Buy Me a Coffee widget μόλις εμφανιστεί το περιεχόμενο
+                    loadBuyMeACoffee();
                 }
             });
             
@@ -953,6 +1026,7 @@
             if (hasConsent === 'true') {
                 consentOverlay.style.display = 'none';
                 mainContent.style.display = 'block';
+                loadBuyMeACoffee();
             } else {
                 consentOverlay.style.display = 'flex';
                 mainContent.style.display = 'none';
