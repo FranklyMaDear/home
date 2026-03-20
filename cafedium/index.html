@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cafedium - Το Φλιτζάνι σου Μιλάει</title>
+    <title>Cafedium - Καφεμαντεία</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -35,8 +35,6 @@
             --zaira: #9C27B0;
             --sousou: #E91E63;
             --ai: #2196F3;
-            --disabled-bg: #f0f0f0;
-            --disabled-border: #ddd;
         }
         
         body {
@@ -155,161 +153,7 @@
             margin-bottom: 8px;
         }
         
-        /* Φόρμα "Το Φλιτζάνι σου Μιλάει" με ενεργοποίηση */
-        .cup-form-container {
-            background-color: white;
-            border-radius: 16px;
-            box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
-            margin: 25px 0;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .cup-form-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 20px 25px;
-            color: white;
-        }
-        
-        .cup-form-header h2 {
-            margin: 0;
-            padding: 0;
-            border: none;
-            color: white;
-        }
-        
-        .cup-form-header h2 i {
-            color: white;
-        }
-        
-        .cup-form-body {
-            padding: 25px;
-        }
-        
-        .cup-form-locked {
-            text-align: center;
-            padding: 40px 20px;
-            background: #fef8f0;
-            border-radius: 14px;
-            border: 2px dashed var(--accent);
-        }
-        
-        .cup-form-locked i {
-            font-size: 3rem;
-            color: var(--secondary);
-            margin-bottom: 15px;
-        }
-        
-        .cup-form-locked p {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-        }
-        
-        .cup-form-locked .lock-message {
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        .cup-form-active {
-            animation: fadeInUp 0.5s ease-out;
-        }
-        
-        .tally-placeholder {
-            min-height: 550px;
-            transition: all 0.3s;
-        }
-        
-        /* Tally iframe styling */
-        .tally-iframe {
-            border-radius: 12px;
-            width: 100%;
-            border: none;
-        }
-        
-        /* CALENDAR SECTION */
-        .calendar-section {
-            background-color: white;
-            border-radius: 16px;
-            box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
-            margin: 25px 0;
-            overflow: hidden;
-        }
-        
-        .calendar-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 20px 25px;
-            color: white;
-        }
-        
-        .calendar-header h2 {
-            margin: 0;
-            padding: 0;
-            border: none;
-            color: white;
-        }
-        
-        .calendar-header h2 i {
-            color: white;
-        }
-        
-        .calendar-container {
-            padding: 20px;
-        }
-        
-        .calendar-container iframe {
-            border-radius: 12px;
-            min-height: 600px;
-        }
-        
-        /* APPOINTMENT STATUS */
-        .appointment-status {
-            background: #e8f0fe;
-            border-radius: 12px;
-            padding: 12px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-        
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-        }
-        
-        .status-badge i {
-            font-size: 1.2rem;
-        }
-        
-        .status-badge.confirmed {
-            color: var(--success);
-        }
-        
-        .status-badge.pending {
-            color: var(--secondary);
-        }
-        
-        .reset-appointment {
-            background: none;
-            border: 1px solid var(--primary);
-            padding: 6px 14px;
-            border-radius: 30px;
-            color: var(--primary);
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-        
-        .reset-appointment:hover {
-            background: var(--primary);
-            color: white;
-        }
-        
-        /* FORTUNE TELLER CARDS */
+        /* FORTUNE TELLER OPTIONS - ΧΩΡΙΣ ΕΠΙΛΟΓΗ */
         .fortune-teller-options {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -454,6 +298,20 @@
             background: #fefcf8;
         }
         
+        .terms-scroll-box h4 {
+            color: var(--primary);
+            margin: 15px 0 8px 0;
+        }
+        
+        .terms-scroll-box h4:first-child {
+            margin-top: 0;
+        }
+        
+        .terms-scroll-box p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
         .checkbox-group {
             margin: 20px 0;
         }
@@ -475,6 +333,21 @@
             flex-shrink: 0;
         }
         
+        .checkbox-label span {
+            flex: 1;
+            line-height: 1.4;
+        }
+        
+        .checkbox-label a {
+            color: var(--primary);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        
+        .checkbox-label a:hover {
+            color: var(--primary-light);
+        }
+        
         .consent-btn {
             background: linear-gradient(to right, var(--primary), var(--primary-light));
             color: white;
@@ -488,12 +361,169 @@
             transition: all 0.3s;
         }
         
+        .consent-btn:hover {
+            background: linear-gradient(to right, var(--primary-light), var(--secondary));
+            transform: translateY(-2px);
+        }
+        
         .consent-btn:disabled {
             background: #cccccc;
             cursor: not-allowed;
+            transform: none;
         }
         
-        /* Inner modals */
+        /* CALENDAR SECTION */
+        .calendar-section {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
+            margin: 25px 0;
+            overflow: hidden;
+        }
+        
+        .calendar-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 20px 25px;
+            color: white;
+        }
+        
+        .calendar-header h2 {
+            margin: 0;
+            padding: 0;
+            border: none;
+            color: white;
+        }
+        
+        .calendar-header h2 i {
+            color: white;
+        }
+        
+        .calendar-container {
+            padding: 20px;
+        }
+        
+        .calendar-container iframe {
+            border-radius: 12px;
+            min-height: 600px;
+        }
+        
+        /* TALLY IFRAME */
+        .tally-container {
+            margin: 25px 0;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(139, 69, 19, 0.12);
+        }
+        
+        iframe {
+            min-height: 500px;
+        }
+        
+        /* TERMS LINKS - ΜΟΝΟ ΣΤΟ FOOTER */
+        .footer-links {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+        }
+        
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-light);
+            text-decoration: underline;
+        }
+        
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 25px 20px;
+            margin-top: 40px;
+            color: var(--primary-light);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(139, 69, 19, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+        }
+        
+        .coffee-icon {
+            display: inline-block;
+            margin: 0 5px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* ANIMATIONS */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 25px 20px;
+            }
+            
+            h1 {
+                font-size: 1.9rem;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .form-section {
+                padding: 22px 18px;
+            }
+            
+            .fortune-teller-options {
+                grid-template-columns: 1fr;
+            }
+            
+            h2 {
+                font-size: 1.25rem;
+            }
+            
+            .calendar-container iframe {
+                min-height: 500px;
+            }
+        }
+        
+        /* Main content hidden until consent */
+        .main-content {
+            display: none;
+        }
+        
+        /* Modal for terms/privacy popup inside consent */
         .inner-modal {
             display: none;
             position: fixed;
@@ -516,6 +546,30 @@
             max-height: 80vh;
             overflow-y: auto;
             position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .inner-modal-content h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+        
+        .inner-modal-content .terms-text {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .inner-modal-content .terms-text h4 {
+            color: var(--primary);
+            margin: 15px 0 8px 0;
+        }
+        
+        .inner-modal-content .terms-text p {
+            margin-bottom: 10px;
+            line-height: 1.5;
         }
         
         .close-inner-modal {
@@ -525,346 +579,363 @@
             background: none;
             border: none;
             font-size: 1.5rem;
+            color: var(--text);
             cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
         
-        .main-content {
-            display: none;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 25px 20px;
-            margin-top: 40px;
-            color: var(--primary-light);
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(139, 69, 19, 0.1);
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 12px;
-        }
-        
-        .footer-links a {
-            color: var(--primary);
-            text-decoration: none;
-            margin: 0 10px;
-            cursor: pointer;
-        }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        @media (max-width: 768px) {
-            .container { padding: 10px; }
-            h1 { font-size: 1.9rem; }
-            .fortune-teller-options { grid-template-columns: 1fr; }
+        .close-inner-modal:hover {
+            background: #f0f0f0;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <header>
-        <i class="fas fa-mug-hot logo"></i>
-        <h1>Cafedium</h1>
-        <p class="subtitle">·«Καλώς ήρθες στο Cafedium, όπου ο καφές διηγείται ιστορίες»!</p>
-    </header>
+    <div class="container">
+        <header>
+            <i class="fas fa-mug-hot logo"></i>
+            <h1>Cafedium</h1>
+            <p class="subtitle">·«Καλώς ήρθες στο Cafedium, όπου ο καφές διηγείται ιστορίες»!</p>
+        </header>
 
-    <!-- Consent Modal -->
-    <div id="consentOverlay" class="consent-overlay">
-        <div class="consent-modal">
-            <h2><i class="fas fa-file-contract"></i> Όροι και Προϋποθέσεις</h2>
-            <div class="terms-scroll-box">
-                <h4>1. Αποδοχή Όρων</h4>
-                <p>Χρησιμοποιώντας το Cafedium αποδέχεστε τους παρόντες Όρους. Η Υπηρεσία προορίζεται για ψυχαγωγικούς σκοπούς.</p>
-                <h4>2. Ηλικιακός Περιορισμός</h4>
-                <p>Η χρήση περιορίζεται σε άτομα άνω των 18 ετών.</p>
-                <h4>3. Πολιτική Απορρήτου</h4>
-                <p>Συλλέγουμε όνομα, email και στοιχεία φόρμας για την παροχή της υπηρεσίας καφεμαντείας.</p>
-            </div>
-            <div class="checkbox-group">
-                <label class="checkbox-label"><input type="checkbox" id="ageConsentCheckbox"><span><strong>Δηλώνω ότι είμαι άνω των 18 ετών</strong></span></label>
-                <label class="checkbox-label"><input type="checkbox" id="termsConsentCheckbox"><span>Αποδέχομαι τους <strong><a id="showTermsLink">Όρους Χρήσης</a></strong></span></label>
-                <label class="checkbox-label"><input type="checkbox" id="privacyConsentCheckbox"><span>Αποδέχομαι την <strong><a id="showPrivacyLink">Πολιτική Απορρήτου</a></strong></span></label>
-            </div>
-            <button class="consent-btn" id="acceptConsentBtn" disabled>Αποδοχή και Συνέχεια</button>
-        </div>
-    </div>
-
-    <!-- Inner Modals -->
-    <div id="termsInnerModal" class="inner-modal"><div class="inner-modal-content"><button class="close-inner-modal">×</button><h3>Όροι Χρήσης</h3><p>Η υπηρεσία παρέχεται για ψυχαγωγία. Δεν φέρουμε ευθύνη για ερμηνείες.</p></div></div>
-    <div id="privacyInnerModal" class="inner-modal"><div class="inner-modal-content"><button class="close-inner-modal">×</button><h3>Πολιτική Απορρήτου</h3><p>Τα δεδομένα σας χρησιμοποιούνται μόνο για την παροχή της υπηρεσίας.</p></div></div>
-
-    <!-- Κύριο Περιεχόμενο -->
-    <div id="mainContent" class="main-content">
-        <!-- Οδηγίες -->
-        <div class="form-section">
-            <h2><i class="fas fa-info-circle"></i> Οδηγίες Υποβολής</h2>
-            <div class="info-box">
-                <p><strong>Πώς λειτουργεί η διαδικασία:</strong></p>
-                <ul>
-                    <li><strong>Βήμα 1:</strong> Κλείστε το ραντεβού σας μέσω Google Calendar (παρακάτω).</li>
-                    <li><strong>Βήμα 2:</strong> Αφού κλείσετε ραντεβού, θα ενεργοποιηθεί αυτόματα η φόρμα <strong>«Το Φλιτζάνι σου Μιλάει»</strong>.</li>
-                    <li><strong>Βήμα 3:</strong> Συμπληρώστε τα στοιχεία σας και επιλέξτε τον χαρακτήρα που θα ερμηνεύσει τον καφέ σας.</li>
-                    <li><strong>Βήμα 4:</strong> Θα λάβετε την ερμηνεία στο email σας την ημερομηνία του ραντεβού.</li>
-                </ul>
-                <p><strong>Σημαντικό:</strong> Η φόρμα ενεργοποιείται ΜΟΝΟ μετά την ολοκλήρωση κράτησης ραντεβού.</p>
-            </div>
-        </div>
-
-        <!-- Google Calendar Appointment -->
-        <div class="calendar-section">
-            <div class="calendar-header">
-                <h2><i class="fas fa-calendar-check"></i> Βήμα 1: Κλείσε Ραντεβού</h2>
-            </div>
-            <div class="calendar-container">
-                <iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2W749ziDodCAof-hd2VaHeolH7c8qhF8eR4LGAAOG2FLZsK35mV1Eq48qR4z166rTvhiDfPwn-?gv=true" style="border: 0" width="100%" height="600" frameborder="0" id="googleCalendarIframe"></iframe>
-            </div>
-        </div>
-
-        <!-- Στατους Ραντεβού & Το Φλιτζάνι σου Μιλάει (ενεργοποιήσιμο) -->
-        <div class="cup-form-container">
-            <div class="cup-form-header">
-                <h2><i class="fas fa-coffee"></i> Βήμα 2: «Το Φλιτζάνι σου Μιλάει»</h2>
-            </div>
-            <div class="cup-form-body" id="cupFormBody">
-                <!-- Θα γεμίσει δυναμικά από JS: είτε locked είτε unlocked -->
-            </div>
-        </div>
-
-        <!-- Χαρακτήρες (μόνο ενημέρωση) -->
-        <div class="form-section">
-            <h2><i class="fas fa-crystal-ball"></i> Γνωρίστε τους Μάντεις</h2>
-            <div class="info-box">
-                <p><strong>Οι χαρακτήρες που θα διαβάσουν το φλιτζάνι σας:</strong> Κάθε ένας έχει μοναδική προσέγγιση.</p>
-            </div>
-            <div class="fortune-teller-options" id="fortuneTellersList"></div>
-        </div>
-        
-        <footer>
-            <div class="footer-links">
-                <a id="showTermsFooterLink"><i class="fas fa-file-contract"></i> Όροι Χρήσης</a>
-                <a id="showPrivacyFooterLink"><i class="fas fa-shield-alt"></i> Πολιτική Απορρήτου</a>
-            </div>
-            <p>Cafedium by FmD<span class="coffee-icon">☕</span> «Το Φλιτζάνι σου μιλάει» - εδώ ξεκινά το ταξίδι σας στο μυστήριο του φλιτζανιού.</p>
-            <p>©2026 - Όλα τα δικαιώματα διατηρούνται</p>
-        </footer>
-    </div>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // ---------- FORTUNE TELLERS (στατικά για εμφάνιση) ----------
-        const fortuneTellers = [
-            { id: 'zaira', name: 'Ζαΐρα', title: 'Η Παραδοσιακή', description: 'Με 20+ χρόνια εμπειρίας, ερμηνεύει βαθιά και διαχρονικά.', color: 'zaira', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face', rating: 4.8, reviewCount: 25 },
-            { id: 'sousou', name: 'Μαντάμ Σουσού', title: 'Η Σύγχρονη', description: 'Συνδυάζει αρχαία σοφία με σύγχρονες προσεγγίσεις.', color: 'sousou', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face', rating: 4.9, reviewCount: 23 },
-            { id: 'ai', name: 'ΑΙ-Καΐμάκι', title: 'Η Τεχνολογική Προφήτης', description: 'AI & αρχαία τέχνη για ακριβείς ερμηνείες.', color: 'ai', image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=150&h=150&fit=crop&crop=face', rating: 4.7, reviewCount: 12 }
-        ];
-        
-        function loadFortuneTellers() {
-            const container = document.getElementById('fortuneTellersList');
-            if(!container) return;
-            container.innerHTML = '';
-            fortuneTellers.forEach(t => {
-                const card = document.createElement('div');
-                card.className = `fortune-teller-card ${t.color}`;
-                card.innerHTML = `
-                    <img src="${t.image}" alt="${t.name}" class="fortune-teller-image">
-                    <div class="fortune-teller-name">${t.name}</div>
-                    <div class="fortune-teller-title">${t.title}</div>
-                    <div class="fortune-teller-description">${t.description}</div>
-                    <div class="fortune-teller-rating"><div class="rating-stars">${'★'.repeat(Math.floor(t.rating))}</div><div>${t.rating}</div><div>(${t.reviewCount})</div></div>
-                `;
-                container.appendChild(card);
-            });
-        }
-        
-        // ---------- ΛΟΓΙΚΗ ΕΝΕΡΓΟΠΟΙΗΣΗΣ ΤΗΣ ΦΟΡΜΑΣ ΜΕ ΒΑΣΗ ΤΟ ΡΑΝΤΕΒΟΥ ----------
-        // Κλειδί localStorage για αποθήκευση ότι έχει κλείσει ραντεβού
-        const APPOINTMENT_KEY = 'cafedium_appointment_confirmed';
-        const APPOINTMENT_DATE_KEY = 'cafedium_appointment_date';
-        
-        // Στοιχεία DOM
-        const cupFormBody = document.getElementById('cupFormBody');
-        
-        // Ελέγχουμε αν έχει ήδη κλείσει ραντεβού
-        let isAppointmentConfirmed = localStorage.getItem(APPOINTMENT_KEY) === 'true';
-        let appointmentDate = localStorage.getItem(APPOINTMENT_DATE_KEY) || '';
-        
-        // Function to render the cup form (locked or unlocked)
-        function renderCupForm() {
-            if (!cupFormBody) return;
-            
-            if (!isAppointmentConfirmed) {
-                // LOCKED STATE: Δεν έχει κλείσει ραντεβού
-                cupFormBody.innerHTML = `
-                    <div class="cup-form-locked">
-                        <i class="fas fa-lock"></i>
-                        <p class="lock-message">🔒 Η φόρμα «Το Φλιτζάνι σου Μιλάει» είναι κλειδωμένη</p>
-                        <p>Παρακαλώ κλείστε πρώτα το ραντεβού σας στο Google Calendar παραπάνω.</p>
-                        <p style="margin-top: 10px; font-size:0.9rem;">✔️ Μόλις ολοκληρωθεί η κράτηση, η φόρμα θα ξεκλειδώσει αυτόματα.</p>
-                    </div>
-                `;
-            } else {
-                // UNLOCKED STATE: Εμφανίζουμε την Tally φόρμα με το μήνυμα ότι το ραντεβού είναι κλεισμένο
-                const displayDate = appointmentDate ? ` (για την ημερομηνία: ${appointmentDate})` : '';
-                cupFormBody.innerHTML = `
-                    <div class="appointment-status">
-                        <div class="status-badge confirmed">
-                            <i class="fas fa-check-circle"></i> 
-                            <span>✅ Ραντεβού επιβεβαιωμένο${displayDate}</span>
-                        </div>
-                        <button id="resetAppointmentBtn" class="reset-appointment"><i class="fas fa-sync-alt"></i> Αλλαγή ραντεβού</button>
-                    </div>
-                    <div class="tally-placeholder" id="tallyContainer">
-                        <iframe data-tally-src="https://tally.so/embed/J90bPK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="550" frameborder="0" marginheight="0" marginwidth="0" title="Το Φλιτζάνι σου Μιλάει - Cafedium" class="tally-iframe"></iframe>
-                    </div>
-                `;
-                // Φόρτωση Tally embed script (αν δεν έχει ήδη φορτωθεί)
-                if(typeof Tally === 'undefined') {
-                    const script = document.createElement('script');
-                    script.src = "https://tally.so/widgets/embed.js";
-                    script.onload = () => { if(window.Tally) Tally.loadEmbeds(); };
-                    document.body.appendChild(script);
-                } else {
-                    Tally.loadEmbeds();
-                }
+        <!-- Consent Modal - Εμφανίζεται κατά την είσοδο -->
+        <div id="consentOverlay" class="consent-overlay">
+            <div class="consent-modal">
+                <h2><i class="fas fa-file-contract"></i> Όροι και Προϋποθέσεις</h2>
                 
-                // Reset button event
-                const resetBtn = document.getElementById('resetAppointmentBtn');
-                if(resetBtn) {
-                    resetBtn.addEventListener('click', function() {
-                        // Διαγραφή στοιχείων ραντεβού και επαναφορά locked state
-                        localStorage.removeItem(APPOINTMENT_KEY);
-                        localStorage.removeItem(APPOINTMENT_DATE_KEY);
-                        isAppointmentConfirmed = false;
-                        appointmentDate = '';
-                        renderCupForm();
-                        // Επιπλέον, ανανεώνουμε το iframe του calendar (προαιρετικά, απλά για εμπειρία)
-                        const calendarFrame = document.getElementById('googleCalendarIframe');
-                        if(calendarFrame && calendarFrame.src) {
-                            // force refresh μικρό hack
-                            calendarFrame.src = calendarFrame.src;
-                        }
-                    });
-                }
-            }
-        }
-        
-        // Παρακολούθηση για το αν ο χρήστης ολοκλήρωσε το ραντεβού στο Google Calendar.
-        // Δεν υπάρχει native event από το iframe, οπότε προσθέτουμε έναν μηχανισμό:
-        // 1) Ο χρήστης μπορεί να πατήσει ένα κουμπί "Ολοκλήρωσα το ραντεβού" (προαιρετικά).
-        // Αλλά καλύτερα: προσθέτουμε ένα κουμπί κάτω από το ημερολόγιο "Επιβεβαίωση Ραντεβού" που ενεργοποιεί τη φόρμα,
-        // σε συνδυασμό με την ανάγκη να πατήσει ο χρήστης ότι έκλεισε ραντεβού. Είναι φιλικό και διαφανές.
-        // Επιπλέον, βάζουμε ένα σύνδεσμο που ενημερώνει ότι μετά το κλείσιμο ραντεβού πατάς "Ενεργοποίηση".
-        
-        // Προσθέτουμε ένα κουμπί ενεργοποίησης μέσα στην ενότητα του ημερολογίου για καλύτερη εμπειρία
-        const calendarSection = document.querySelector('.calendar-section .calendar-container');
-        if(calendarSection && !document.getElementById('manualConfirmBtn')) {
-            const confirmWrapper = document.createElement('div');
-            confirmWrapper.style.marginTop = '20px';
-            confirmWrapper.style.textAlign = 'center';
-            confirmWrapper.innerHTML = `
-                <button id="manualConfirmAppointment" style="background: var(--secondary); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <i class="fas fa-calendar-plus"></i> Ολοκλήρωσα το ραντεβού μου
+                <div class="terms-scroll-box" id="consentTermsBox">
+                    <h4>1. Αποδοχή Όρων</h4>
+                    <p>Χρησιμοποιώντας το Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις. Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας.</p>
+                    
+                    <h4>2. Υπηρεσίες Καφεμαντείας</h4>
+                    <p>Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση.</p>
+                    
+                    <h4>3. Αποποίηση Ευθύνης</h4>
+                    <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς.</p>
+                    
+                    <h4>4. Ηλικιακός Περιορισμός</h4>
+                    <p>Η χρήση της Υπηρεσίας περιορίζεται σε άτομα άνω των 18 ετών. Με τη χρήση της Υπηρεσίας δηλώνετε ρητά ότι είστε άνω των 18 ετών.</p>
+                    
+                    <h4>5. Πολιτική Απορρήτου</h4>
+                    <p>Συλλέγουμε το όνομα, το email και το περιεχόμενο της φόρμας που συμπληρώνετε αποκλειστικά για την παροχή της υπηρεσίας καφεμαντείας. Τα δεδομένα σας δεν διαμοιράζονται με τρίτους. Μπορείτε να ζητήσετε διαγραφή των δεδομένων σας ανά πάσα στιγμή.</p>
+                </div>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="ageConsentCheckbox">
+                        <span><strong>Δηλώνω υπεύθυνα ότι είμαι άνω των 18 ετών</strong></span>
+                    </label>
+                    
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="termsConsentCheckbox">
+                        <span>Έχω διαβάσει και αποδέχομαι τους <strong><a id="showTermsLink">Όρους Χρήσης</a></strong></span>
+                    </label>
+                    
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="privacyConsentCheckbox">
+                        <span>Έχω διαβάσει και αποδέχομαι την <strong><a id="showPrivacyLink">Πολιτική Απορρήτου</a></strong></span>
+                    </label>
+                </div>
+                
+                <button class="consent-btn" id="acceptConsentBtn" disabled>
+                    <i class="fas fa-check"></i> Αποδοχή και Συνέχεια
                 </button>
-                <p style="font-size: 0.8rem; margin-top: 8px; color: var(--text);">Πατήστε εδώ ΑΦΟΥ κλείσετε το ραντεβού στο ημερολόγιο για να ξεκλειδώσετε τη φόρμα "Το Φλιτζάνι σου Μιλάει".</p>
-            `;
-            calendarSection.appendChild(confirmWrapper);
+            </div>
+        </div>
+
+        <!-- Inner Modal για Όρους Χρήσης (αναδυόμενο) -->
+        <div id="termsInnerModal" class="inner-modal">
+            <div class="inner-modal-content">
+                <button class="close-inner-modal" id="closeTermsInnerModal">×</button>
+                <h3><i class="fas fa-file-contract"></i> Όροι Χρήσης</h3>
+                <div class="terms-text">
+                    <h4>1. Αποδοχή Όρων</h4>
+                    <p>Χρησιμοποιώντας το Cafedium («Υπηρεσία») αποδέχεστε τους παρόντες Όρους και Προϋποθέσεις. Η Συμφωνία ισχύει για όλους τους χρήστες («εσάς» ή «Χρήστη») που έχουν πρόσβαση ή/και χρησιμοποιούν την Υπηρεσία.</p>
+                    
+                    <h4>2. Υπηρεσίες Καφεμαντείας</h4>
+                    <p>Η Υπηρεσία προορίζεται πλήρως για σκοπούς ψυχαγωγίας. Όλες οι αναγνώσεις και οι γνώμες παρέχονται με ειλικρινή τρόπο και μόνο ως καθοδήγηση. Χρησιμοποιώντας αυτήν την υπηρεσία, συμφωνείτε ότι λαμβάνετε τις δικές σας αποφάσεις, βασιζόμενοι αποκλειστικά στη δική σας κρίση.</p>
+
+                    <h4>3. Αποποίηση Ευθύνης</h4>
+                    <p>Η σελίδα και οι διαχειριστές δεν φέρουν καμία ευθύνη για τις προβλέψεις που προκύπτουν από τους χαρακτήρες καφεμαντείας. Οι πληροφορίες και οι ερμηνείες προορίζονται αποκλειστικά για ψυχαγωγικούς σκοπούς.</p>
+                    
+                    <h4>4. Ηλικιακός Περιορισμός</h4>
+                    <p>Η χρήση της Υπηρεσίας περιορίζεται σε άτομα άνω των 18 ετών. Με τη χρήση της Υπηρεσίας δηλώνετε ρητά ότι είστε άνω των 18 ετών. Εάν είστε κάτω των 18 ετών, μην χρησιμοποιείτε την Υπηρεσία.</p>
+                    
+                    <h4>5. Πνευματική Ιδιοκτησία</h4>
+                    <p>Όλο το περιεχόμενο της Υπηρεσίας, συμπεριλαμβανομένων κειμένων, γραφικών, λογότυπων, εικόνων, αποτελεί πνευματική ιδιοκτησία της Cafedium.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inner Modal για Πολιτική Απορρήτου (αναδυόμενο) -->
+        <div id="privacyInnerModal" class="inner-modal">
+            <div class="inner-modal-content">
+                <button class="close-inner-modal" id="closePrivacyInnerModal">×</button>
+                <h3><i class="fas fa-shield-alt"></i> Πολιτική Απορρήτου</h3>
+                <div class="terms-text">
+                    <h4>1. Συλλογή Πληροφοριών</h4>
+                    <p>Συλλέγουμε το όνομα, το email και το περιεχόμενο της φόρμας που συμπληρώνετε για την παροχή της υπηρεσίας καφεμαντείας.</p>
+                    
+                    <h4>2. Χρήση Πληροφοριών</h4>
+                    <p>Οι πληροφορίες σας χρησιμοποιούνται αποκλειστικά για την παροχή της υπηρεσίας καφεμαντείας και την επικοινωνία μαζί σας.</p>
+                    <p>Οι πληροφορίες σας δεν πωλούνται, ανταλλάσσονται ή δίνονται σε τρίτους.</p>
+                    
+                    <h4>3. Προστασία Δεδομένων</h4>
+                    <p>Εφαρμόζουμε μέτρα ασφαλείας για την προστασία των προσωπικών σας δεδομένων. Η πρόσβαση στα δεδομένα σας περιορίζεται μόνο σε εξουσιοδοτημένο προσωπικό.</p>
+                    
+                    <h4>4. Αποθήκευση Δεδομένων</h4>
+                    <p>Τα δεδομένα σας διατηρούνται για όσο διάστημα απαιτείται για την παροχή των υπηρεσιών μας. Μπορείτε να ζητήσετε διαγραφή των δεδομένων σας ανά πάσα στιγμή επικοινωνώντας μαζί μας.</p>
+                    
+                    <h4>5. Δικαιώματα Χρηστών</h4>
+                    <p>Έχετε το δικαίωμα να ενημερώνεστε για τα δεδομένα που διατηρούμε, να ζητάτε διόρθωση ή διαγραφή τους, καθώς και να ανακαλείτε τη συγκατάθεσή σας ανά πάσα στιγμή.</p>
+                    
+                    <h4>6. Cookies</h4>
+                    <p>Η ιστοσελίδα μας χρησιμοποιεί cookies για τη βελτίωση της εμπειρίας πλοήγησης. Μπορείτε να απενεργοποιήσετε τα cookies από τις ρυθμίσεις του browser σας.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Κύριο Περιεχόμενο - Κρυφό μέχρι την αποδοχή -->
+        <div id="mainContent" class="main-content">
+            <!-- Οδηγίες Υποβολής - Πάνω από το Google Calendar -->
+            <div class="form-section">
+                <h2><i class="fas fa-info-circle"></i> Οδηγίες Υποβολής</h2>
+                <div class="info-box">
+                    <p><strong>Πώς λειτουργεί η διαδικασία:</strong></p>
+                    <ul>
+                        <li>Πρώτα κλείστε το ραντεβού σας μέσω Google Calendar</li>
+                        <li>Συμπληρώστε τη φόρμα Tally με τα στοιχεία σας</li>
+                        <li>Επιλέξτε τον Χαρακτήρα που θα ερμηνεύσει τον καφέ σας (παρακάτω)</li>
+                        <li>Θα λάβετε την ερμηνεία στο email σας εντός 24-48 ωρών</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Σημαντικό:</strong> Βεβαιωθείτε ότι το email που δηλώνετε είναι σωστό, καθώς εκεί θα σταλεί η απάντηση.</p>
+                </div>
+            </div>
+
+            <!-- Google Calendar Appointment Scheduling με τίτλο -->
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <h2><i class="fas fa-calendar-check"></i> Κλείσε Ραντεβού</h2>
+                </div>
+                <div class="calendar-container">
+                    <iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2W749ziDodCAof-hd2VaHeolH7c8qhF8eR4LGAAOG2FLZsK35mV1Eq48qR4z166rTvhiDfPwn-?gv=true" style="border: 0" width="100%" height="600" frameborder="0"></iframe>
+                </div>
+            </div>
+
+            <!-- Tally Form -->
+            <div class="tally-container">
+                <iframe data-tally-src="https://tally.so/embed/J90bPK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" title="Cafedium"></iframe>
+            </div>
             
-            const confirmBtn = document.getElementById('manualConfirmAppointment');
-            if(confirmBtn) {
-                confirmBtn.addEventListener('click', function() {
-                    // Ζητάμε από τον χρήστη να επιβεβαιώσει την ημερομηνία (προαιρετικά)
-                    const userDate = prompt("Εισάγετε την ημερομηνία του ραντεβού σας (π.χ. 25/03/2026) για να την αποθηκεύσουμε:", "");
-                    if(userDate !== null && userDate.trim() !== "") {
-                        localStorage.setItem(APPOINTMENT_KEY, 'true');
-                        localStorage.setItem(APPOINTMENT_DATE_KEY, userDate.trim());
-                        isAppointmentConfirmed = true;
-                        appointmentDate = userDate.trim();
-                        renderCupForm();
-                        // Εμφάνιση μηνύματος επιτυχίας
-                        alert("✅ Ραντεβού καταχωρήθηκε! Η φόρμα «Το Φλιτζάνι σου Μιλάει» ενεργοποιήθηκε.");
-                    } else if(userDate === "") {
-                        alert("Παρακαλώ εισάγετε μια ημερομηνία για να συνεχίσετε.");
-                    } else {
-                        // Αν πατήσει cancel, δεν κάνουμε τίποτα
-                    }
+            <script>
+                var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
+            </script>
+
+            <!-- Χαρακτήρες (χωρίς επιλογή - μόνο πληροφόρηση) -->
+            <div class="form-section">
+                <h2><i class="fas fa-crystal-ball"></i> Χαρακτήρες</h2>
+                
+                <div class="info-box">
+                    <p><strong>Γνωρίστε τους καφεμάντεις που διαβάζουν το φλιτζάνι σας:</strong></p>
+                    <p>Κάθε χαρακτήρας έχει τη δική του μοναδική προσέγγιση στην τέχνη της καφεμαντείας.</p>
+                </div>
+                
+                <div class="fortune-teller-options" id="fortuneTellersList">
+                    <!-- Οι καφεμάντεις θα προστεθούν δυναμικά -->
+                </div>
+            </div>
+            
+            <footer>
+                <div class="footer-links">
+                    <a id="showTermsFooterLink"><i class="fas fa-file-contract"></i> Όροι Χρήσης</a>
+                    <a id="showPrivacyFooterLink"><i class="fas fa-shield-alt"></i> Πολιτική Απορρήτου</a>
+                </div>
+                <p>
+                    Cafedium by FmD<span class="coffee-icon">☕</span> «Το Φλιτζάνι σου μιλάει» - εδώ ξεκινά το ταξίδι σας στο μυστήριο του φλιτζανιού.
+                </p>
+                <p>©2026 - Όλα τα δικαιώματα διατηρούνται</p>
+                <p style="font-size: 0.8rem; margin-top: 10px; color: var(--primary-light);">
+                    Cafedium - Η τέχνη της καφεμαντείας
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Καφεμάντεις data (μόνο για εμφάνιση, χωρίς επιλογή)
+            const fortuneTellers = [
+                {
+                    id: 'zaira',
+                    name: 'Ζαΐρα',
+                    title: 'Η Παραδοσιακή',
+                    description: 'Με 20+ χρόνια εμπειρίας, η Ζαΐρα χρησιμοποιεί τις παραδοσιακές τεχνικές που περνούν από γενιά σε γενιά. Η ερμηνεία της είναι βαθιά και διαχρονική.',
+                    color: 'zaira',
+                    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
+                    rating: 4.8,
+                    reviewCount: 25
+                },
+                {
+                    id: 'sousou',
+                    name: 'Μαντάμ Σουσού',
+                    title: 'Η Σύγχρονη',
+                    description: 'Η Μαντάμ Σουσού συνδυάζει την αρχαία σοφία με σύγχρονες προσεγγίσεις. Οι προβλέψεις της είναι γεμάτες ενέργεια και πρακτικές συμβουλές.',
+                    color: 'sousou',
+                    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+                    rating: 4.9,
+                    reviewCount: 23
+                },
+                {
+                    id: 'ai',
+                    name: 'ΑΙ-Καΐμάκι',
+                    title: 'Η Τεχνολογική Προφήτης',
+                    description: 'Συνδυάζοντας τεχνητή νοημοσύνη με την αρχαία τέχνη της καφεμαντείας, η ΑΙ-Καΐμάκι παρέχει ακριβείς και λεπτομερείς ερμηνείες.',
+                    color: 'ai',
+                    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=150&h=150&fit=crop&crop=face',
+                    rating: 4.7,
+                    reviewCount: 12
+                }
+            ];
+
+            // Load fortune tellers (μόνο για εμφάνιση)
+            function loadFortuneTellers() {
+                const fortuneTellersList = document.getElementById('fortuneTellersList');
+                fortuneTellersList.innerHTML = '';
+
+                fortuneTellers.forEach(teller => {
+                    const tellerElement = document.createElement('div');
+                    tellerElement.className = `fortune-teller-card ${teller.color}`;
+                    tellerElement.innerHTML = `
+                        <img src="${teller.image}" alt="${teller.name}" class="fortune-teller-image">
+                        <div class="fortune-teller-name">${teller.name}</div>
+                        <div class="fortune-teller-title">${teller.title}</div>
+                        <div class="fortune-teller-description">${teller.description}</div>
+                        <div class="fortune-teller-rating">
+                            <div class="rating-stars">
+                                ${'★'.repeat(Math.floor(teller.rating))}${teller.rating % 1 >= 0.5 ? '½' : ''}
+                            </div>
+                            <div class="rating-value">${teller.rating}</div>
+                            <div class="rating-count">(${teller.reviewCount} αξιολογήσεις)</div>
+                        </div>
+                    `;
+
+                    fortuneTellersList.appendChild(tellerElement);
                 });
             }
-        }
-        
-        // Αν υπάρχει ήδη ραντεβού, render κανονικά
-        renderCupForm();
-        
-        // ---------- CONSENT MODAL ΛΟΓΙΚΗ ----------
-        const consentOverlay = document.getElementById('consentOverlay');
-        const mainContentDiv = document.getElementById('mainContent');
-        const ageCheckbox = document.getElementById('ageConsentCheckbox');
-        const termsCheckbox = document.getElementById('termsConsentCheckbox');
-        const privacyCheckbox = document.getElementById('privacyConsentCheckbox');
-        const acceptBtn = document.getElementById('acceptConsentBtn');
-        
-        // inner modals
-        const termsInnerModal = document.getElementById('termsInnerModal');
-        const privacyInnerModal = document.getElementById('privacyInnerModal');
-        const showTermsLink = document.getElementById('showTermsLink');
-        const showPrivacyLink = document.getElementById('showPrivacyLink');
-        const showTermsFooterLink = document.getElementById('showTermsFooterLink');
-        const showPrivacyFooterLink = document.getElementById('showPrivacyFooterLink');
-        
-        function openTermsModal() { termsInnerModal.style.display = 'flex'; }
-        function openPrivacyModal() { privacyInnerModal.style.display = 'flex'; }
-        function closeModals() {
-            termsInnerModal.style.display = 'none';
-            privacyInnerModal.style.display = 'none';
-        }
-        
-        if(showTermsLink) showTermsLink.addEventListener('click', (e) => { e.preventDefault(); openTermsModal(); });
-        if(showPrivacyLink) showPrivacyLink.addEventListener('click', (e) => { e.preventDefault(); openPrivacyModal(); });
-        if(showTermsFooterLink) showTermsFooterLink.addEventListener('click', (e) => { e.preventDefault(); openTermsModal(); });
-        if(showPrivacyFooterLink) showPrivacyFooterLink.addEventListener('click', (e) => { e.preventDefault(); openPrivacyModal(); });
-        
-        document.querySelectorAll('.close-inner-modal').forEach(btn => btn.addEventListener('click', closeModals));
-        window.addEventListener('click', (e) => { if(e.target === termsInnerModal) closeModals(); if(e.target === privacyInnerModal) closeModals(); });
-        
-        function checkConsent() {
-            acceptBtn.disabled = !(ageCheckbox.checked && termsCheckbox.checked && privacyCheckbox.checked);
-        }
-        ageCheckbox.addEventListener('change', checkConsent);
-        termsCheckbox.addEventListener('change', checkConsent);
-        privacyCheckbox.addEventListener('change', checkConsent);
-        
-        acceptBtn.addEventListener('click', () => {
-            if(ageCheckbox.checked && termsCheckbox.checked && privacyCheckbox.checked) {
-                localStorage.setItem('cafedium_consent', 'true');
-                consentOverlay.style.display = 'none';
-                mainContentDiv.style.display = 'block';
-                // Ανανέωση render μήπως χρειαστεί επαναφορά φόρμας
-                renderCupForm();
+
+            // Consent functionality
+            const consentOverlay = document.getElementById('consentOverlay');
+            const mainContent = document.getElementById('mainContent');
+            const ageCheckbox = document.getElementById('ageConsentCheckbox');
+            const termsCheckbox = document.getElementById('termsConsentCheckbox');
+            const privacyCheckbox = document.getElementById('privacyConsentCheckbox');
+            const acceptBtn = document.getElementById('acceptConsentBtn');
+            
+            // Inner modals
+            const termsInnerModal = document.getElementById('termsInnerModal');
+            const privacyInnerModal = document.getElementById('privacyInnerModal');
+            const showTermsLink = document.getElementById('showTermsLink');
+            const showPrivacyLink = document.getElementById('showPrivacyLink');
+            const closeTermsInnerModal = document.getElementById('closeTermsInnerModal');
+            const closePrivacyInnerModal = document.getElementById('closePrivacyInnerModal');
+            
+            // Footer links
+            const showTermsFooterLink = document.getElementById('showTermsFooterLink');
+            const showPrivacyFooterLink = document.getElementById('showPrivacyFooterLink');
+            
+            function showTermsModal() {
+                termsInnerModal.style.display = 'flex';
             }
+            
+            function showPrivacyModal() {
+                privacyInnerModal.style.display = 'flex';
+            }
+            
+            function closeTermsModal() {
+                termsInnerModal.style.display = 'none';
+            }
+            
+            function closePrivacyModal() {
+                privacyInnerModal.style.display = 'none';
+            }
+            
+            // Event listeners for inner modals
+            showTermsLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showTermsModal();
+            });
+            
+            showPrivacyLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showPrivacyModal();
+            });
+            
+            closeTermsInnerModal.addEventListener('click', closeTermsModal);
+            closePrivacyInnerModal.addEventListener('click', closePrivacyModal);
+            
+            // Footer links
+            if (showTermsFooterLink) {
+                showTermsFooterLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showTermsModal();
+                });
+            }
+            
+            if (showPrivacyFooterLink) {
+                showPrivacyFooterLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showPrivacyModal();
+                });
+            }
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === termsInnerModal) {
+                    closeTermsModal();
+                }
+                if (e.target === privacyInnerModal) {
+                    closePrivacyModal();
+                }
+            });
+            
+            function checkConsentStatus() {
+                const allChecked = ageCheckbox.checked && termsCheckbox.checked && privacyCheckbox.checked;
+                acceptBtn.disabled = !allChecked;
+            }
+            
+            ageCheckbox.addEventListener('change', checkConsentStatus);
+            termsCheckbox.addEventListener('change', checkConsentStatus);
+            privacyCheckbox.addEventListener('change', checkConsentStatus);
+            
+            acceptBtn.addEventListener('click', function() {
+                if (ageCheckbox.checked && termsCheckbox.checked && privacyCheckbox.checked) {
+                    // Αποθήκευση συγκατάθεσης στο localStorage
+                    localStorage.setItem('cafedium_consent', 'true');
+                    localStorage.setItem('cafedium_consent_date', new Date().toISOString());
+                    
+                    // Απόκρυψη overlay και εμφάνιση περιεχομένου
+                    consentOverlay.style.display = 'none';
+                    mainContent.style.display = 'block';
+                }
+            });
+            
+            // Έλεγχος αν έχει ήδη δώσει συγκατάθεση ο χρήστης
+            const hasConsent = localStorage.getItem('cafedium_consent');
+            if (hasConsent === 'true') {
+                consentOverlay.style.display = 'none';
+                mainContent.style.display = 'block';
+            } else {
+                consentOverlay.style.display = 'flex';
+                mainContent.style.display = 'none';
+            }
+            
+            // Initial load
+            loadFortuneTellers();
         });
-        
-        const hasConsent = localStorage.getItem('cafedium_consent');
-        if(hasConsent === 'true') {
-            consentOverlay.style.display = 'none';
-            mainContentDiv.style.display = 'block';
-        } else {
-            consentOverlay.style.display = 'flex';
-            mainContentDiv.style.display = 'none';
-        }
-        
-        loadFortuneTellers();
-        
-        // Επιπλέον: Αν κάποιος κάνει reset appointment, ξανατρέχουμε render
-        window.renderCupForm = renderCupForm;
-    });
-</script>
+    </script>
 </body>
 </html>
