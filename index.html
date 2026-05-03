@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="6a97888e-site-verification" content="276fb2137387cf4de0ade78f4b0a6067">
-    <!-- Google AdSense Script (NEW) -->
+    <!-- Google AdSense Script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1872407825418691"
      crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
@@ -125,7 +125,6 @@
             font-size: 20px;
         }
         
-        /* Στοιχεία δράσης στο banner */
         .banner-cta-tag {
             background: rgba(255,255,255,0.2);
             backdrop-filter: blur(10px);
@@ -572,6 +571,28 @@
             box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
         }
         
+        /* ========== AUTORELAXED AD STYLES ========== */
+        .autorelaxed-ad-container {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        
+        .autorelaxed-ad-content {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+            background: white;
+            min-height: 200px;
+            padding: 20px;
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .autorelaxed-ad-content:hover {
+            box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
+        }
+        
         /* ========== FOOTER (NEW) ========== */
         .footer {
             background: #1a1a2e;
@@ -647,7 +668,8 @@
             }
             
             .ad-container,
-            .video-ad-container {
+            .video-ad-container,
+            .autorelaxed-ad-container {
                 margin: 30px auto;
                 padding: 0 15px;
             }
@@ -778,7 +800,7 @@
         </div>
     </section>
 
-    <!-- ===== AD CONTAINER 1 ===== -->
+    <!-- ===== AD CONTAINER 1 (Standard) ===== -->
     <div class="ad-container">
         <div class="ad-content">
             <ins class="adsbygoogle"
@@ -795,6 +817,20 @@
                     <small>Η υποστήριξη μέσω διαφημίσεων βοηθάει να διατηρούμε δωρεάν περιεχόμενο!</small>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- ===== AUTORELAXED AD (NEW) ===== -->
+    <div class="autorelaxed-ad-container">
+        <div class="autorelaxed-ad-content">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-format="autorelaxed"
+                 data-ad-client="ca-pub-1872407825418691"
+                 data-ad-slot="1424921010"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
         </div>
     </div>
 
@@ -929,6 +965,7 @@
                 adPlaceholder.style.display = 'flex';
             }
             
+            // Load video ad
             try {
                 (adsbygoogle = window.adsbygoogle || []).push({});
             } catch (error) {}
