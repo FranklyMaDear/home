@@ -11,8 +11,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="6a97888e-site-verification" content="276fb2137387cf4de0ade78f4b0a6067">
-    <!-- Google AdSense Script -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1872407825418691"
+    <!-- Google AdSense Script - NEW -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
      crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
     <style>
@@ -502,72 +502,27 @@
             box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
         }
         
-        .ad-placeholder {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            text-align: center;
-            padding: 40px;
-            z-index: 10;
-        }
-        
-        .placeholder-content {
-            max-width: 420px;
-        }
-        
-        .placeholder-icon {
-            font-size: 52px;
-            margin-bottom: 20px;
-            display: block;
-            opacity: 0.6;
-        }
-        
-        .ad-placeholder h3 {
-            color: #2d2d44;
-            margin-bottom: 10px;
-            font-size: 22px;
-            font-weight: 700;
-        }
-        
-        .ad-placeholder p {
-            color: #666;
-            margin-bottom: 14px;
-            line-height: 1.6;
-        }
-        
-        .ad-placeholder small {
-            color: #888;
-            font-size: 14px;
-        }
-        
-        /* Video ad */
-        .video-ad-container {
+        /* ========== NEW AD DISPLAY (360x800) ========== */
+        .ad-display-container {
             max-width: 1200px;
             margin: 60px auto;
             padding: 0 20px;
+            display: flex;
+            justify-content: center;
         }
         
-        .video-ad-content {
+        .ad-display-wrapper {
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 8px 40px rgba(0,0,0,0.06);
             border: 1px solid rgba(0,0,0,0.04);
             background: white;
-            min-height: 280px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 15px;
             transition: box-shadow 0.3s ease;
+            display: inline-block;
         }
         
-        .video-ad-content:hover {
+        .ad-display-wrapper:hover {
             box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
         }
         
@@ -669,9 +624,15 @@
             
             .ad-container,
             .video-ad-container,
-            .autorelaxed-ad-container {
+            .autorelaxed-ad-container,
+            .ad-display-container {
                 margin: 30px auto;
                 padding: 0 15px;
+            }
+            
+            .ad-display-wrapper {
+                width: 100%;
+                display: block;
             }
             
             .banner-content {
@@ -805,11 +766,11 @@
         <div class="ad-content">
             <ins class="adsbygoogle"
                  style="display:block; min-height: 280px;"
-                 data-ad-client="ca-pub-1872407825418691"
+                 data-ad-client="ca-pub-3186700611266549"
                  data-ad-slot="5407828554"
                  data-ad-format="auto"
                  data-full-width-responsive="true"></ins>
-            <div class="ad-placeholder" id="adPlaceholder">
+            <div class="ad-placeholder" id="adPlaceholder" style="display:none;">
                 <div class="placeholder-content">
                     <span class="placeholder-icon">📢</span>
                     <h3>Αναμονή για διαφημίσεις</h3>
@@ -820,13 +781,26 @@
         </div>
     </div>
 
-    <!-- ===== AUTORELAXED AD (NEW) ===== -->
+    <!-- ===== NEW DISPLAY AD (360x800) ===== -->
+    <div class="ad-display-container">
+        <div class="ad-display-wrapper">
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:360px;height:800px"
+                 data-ad-client="ca-pub-3186700611266549"
+                 data-ad-slot="8243966497"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+
+    <!-- ===== AUTORELAXED AD ===== -->
     <div class="autorelaxed-ad-container">
         <div class="autorelaxed-ad-content">
             <ins class="adsbygoogle"
                  style="display:block"
                  data-ad-format="autorelaxed"
-                 data-ad-client="ca-pub-1872407825418691"
+                 data-ad-client="ca-pub-3186700611266549"
                  data-ad-slot="1424921010"></ins>
             <script>
                  (adsbygoogle = window.adsbygoogle || []).push({});
@@ -839,7 +813,7 @@
         <div class="video-ad-content">
             <ins class="adsbygoogle"
                  style="display:block"
-                 data-ad-client="ca-pub-1872407825418691"
+                 data-ad-client="ca-pub-3186700611266549"
                  data-ad-slot="3092455087"
                  data-ad-format="auto"
                  data-full-width-responsive="true"></ins>
