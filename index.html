@@ -11,8 +11,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="6a97888e-site-verification" content="276fb2137387cf4de0ade78f4b0a6067">
-    <!-- Google AdSense Script - NEW -->
+    <!-- Google AdSense Scripts -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1872407825418691"
+     crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
      crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
     <style>
@@ -548,6 +550,30 @@
             box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
         }
         
+        /* ========== SECONDARY DISPLAY AD (360x800) ========== */
+        .secondary-ad-display-container {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .secondary-ad-display-wrapper {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+            background: white;
+            padding: 15px;
+            transition: box-shadow 0.3s ease;
+            display: inline-block;
+        }
+        
+        .secondary-ad-display-wrapper:hover {
+            box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
+        }
+        
         /* ========== FOOTER (NEW) ========== */
         .footer {
             background: #1a1a2e;
@@ -625,12 +651,14 @@
             .ad-container,
             .video-ad-container,
             .autorelaxed-ad-container,
-            .ad-display-container {
+            .ad-display-container,
+            .secondary-ad-display-container {
                 margin: 30px auto;
                 padding: 0 15px;
             }
             
-            .ad-display-wrapper {
+            .ad-display-wrapper,
+            .secondary-ad-display-wrapper {
                 width: 100%;
                 display: block;
             }
@@ -784,12 +812,25 @@
         </div>
     </div>
 
-    <!-- ===== NEW DISPLAY AD (360x800) ===== -->
+    <!-- ===== NEW DISPLAY AD (360x800) - Original Publisher ===== -->
     <div class="ad-display-container">
         <div class="ad-display-wrapper">
             <ins class="adsbygoogle"
                  style="display:inline-block;width:360px;height:800px"
                  data-ad-client="ca-pub-1872407825418691"
+                 data-ad-slot="8243966497"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+
+    <!-- ===== SECONDARY DISPLAY AD (360x800) - New Publisher ===== -->
+    <div class="secondary-ad-display-container">
+        <div class="secondary-ad-display-wrapper">
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:360px;height:800px"
+                 data-ad-client="ca-pub-3186700611266549"
                  data-ad-slot="8243966497"></ins>
             <script>
                  (adsbygoogle = window.adsbygoogle || []).push({});
