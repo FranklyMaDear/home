@@ -992,6 +992,32 @@
     <!-- ===== BUY ME A COFFEE WIDGET ===== -->
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="franklymadear" data-description="Support me on Buy me a coffee!" data-message="" data-color="#6C63FF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 
+    <!-- ===== AD SETUP SCRIPTS ===== -->
+    <script>
+        // ===== GOOGLE ADSENSE CONFIGURATION =====
+        // Ενεργοποίηση Page-Level Ads (Anchor + Vignette)
+        window.google_ad_client = "ca-pub-3186700611266549";
+        
+        // Anchor Ads (σταθερή διαφήμιση στο κάτω μέρος)
+        window.google_ad_slot = "";
+        window.google_ad_width = 0;
+        window.google_ad_height = 0;
+        
+        // Page-Level Ads Configuration
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-3186700611266549",
+            enable_page_level_ads: true,
+            overlays: {
+                bottom: true  // Ενεργοποίηση Anchor Ads
+            },
+            vignettes: {
+                enabled: true  // Ενεργοποίηση Vignette Ads (full-screen μεταξύ σελίδων)
+            }
+        });
+        
+        console.log('✅ AdSense Configured: Auto Ads + Anchor Ads + Vignette Ads');
+    </script>
+
     <!-- ===== SCRIPTS ===== -->
     <script>
         // ===== PARTICLES BACKGROUND =====
