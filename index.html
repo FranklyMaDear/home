@@ -12,7 +12,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="6a97888e-site-verification" content="276fb2137387cf4de0ade78f4b0a6067">
     
-    <!-- Google AdSense Auto Ads (Διατηρήθηκε μόνο αυτός ο publisher) -->
+    <!-- Google AdSense Auto Ads -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
      crossorigin="anonymous"></script>
     
@@ -25,11 +25,50 @@
             box-sizing: border-box;
         }
         
+        :root {
+            --primary: #6C63FF;
+            --primary-dark: #4A3FCF;
+            --accent: #FF6584;
+            --gold: #FFD93D;
+            --dark: #1a1a2e;
+            --light: #f0f4ff;
+            --white: #ffffff;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.08);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.12);
+            --shadow-xl: 0 24px 64px rgba(0,0,0,0.16);
+            --radius-sm: 12px;
+            --radius-md: 20px;
+            --radius-lg: 28px;
+            --radius-xl: 60px;
+            --transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --transition-slow: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f4ff;
+            background: linear-gradient(180deg, #f0f4ff 0%, #e8ecf8 50%, #f5f0ff 100%);
             color: #333;
             line-height: 1.7;
+            overflow-x: hidden;
+        }
+        
+        /* ========== SCROLLBAR STYLING ========== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f0f4ff;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--accent));
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--primary-dark), #e05570);
         }
         
         .container {
@@ -43,7 +82,44 @@
             color: inherit;
         }
         
-        /* ========== ROLL-UP BANNER (ΕΝΙΣΧΥΜΈΝΗ ΔΙΑΦΉΜΙΣΗ) ========== */
+        /* ========== PARTICLE BACKGROUND ========== */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--primary);
+            opacity: 0.15;
+            animation: floatUp linear infinite;
+        }
+        
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.2;
+            }
+            90% {
+                opacity: 0.2;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* ========== ROLL-UP BANNER ========== */
         .roll-up-banner {
             position: fixed;
             top: -100px;
@@ -59,6 +135,7 @@
             box-shadow: 0 8px 32px rgba(108, 99, 255, 0.4);
             transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             border-bottom: 3px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
         }
         
         @keyframes gradientMove {
@@ -69,6 +146,12 @@
         
         .roll-up-banner.show {
             top: 0;
+            animation: gradientMove 6s ease infinite, bannerGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes bannerGlow {
+            0% { box-shadow: 0 8px 32px rgba(108, 99, 255, 0.4); }
+            100% { box-shadow: 0 8px 48px rgba(255, 101, 132, 0.6); }
         }
         
         .roll-up-banner.scrolled {
@@ -94,17 +177,29 @@
             font-size: 18px;
             text-shadow: 0 2px 8px rgba(0,0,0,0.15);
             letter-spacing: 0.5px;
+            animation: textPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes textPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
         }
         
         .banner-text i {
             margin-right: 10px;
+            animation: iconBounce 1s ease-in-out infinite;
+        }
+        
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
         
         .banner-buy-coffee {
             background: white;
             color: #6C63FF;
             border: none;
-            padding: 10px 28px;
+            padding: 12px 28px;
             border-radius: 50px;
             font-weight: 700;
             cursor: pointer;
@@ -112,8 +207,28 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .banner-buy-coffee::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 217, 61, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .banner-buy-coffee:hover::before {
+            width: 300px;
+            height: 300px;
         }
         
         .banner-buy-coffee:hover {
@@ -125,16 +240,29 @@
         
         .banner-buy-coffee .coffee-icon {
             font-size: 20px;
+            animation: coffeeSteam 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes coffeeSteam {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-3px) rotate(-5deg); }
+            75% { transform: translateY(-3px) rotate(5deg); }
         }
         
         .banner-cta-tag {
             background: rgba(255,255,255,0.2);
             backdrop-filter: blur(10px);
-            padding: 5px 16px;
+            padding: 6px 16px;
             border-radius: 30px;
             font-size: 14px;
             font-weight: 500;
             border: 1px solid rgba(255,255,255,0.3);
+            animation: tagGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes tagGlow {
+            0% { box-shadow: 0 0 10px rgba(255,255,255,0.1); }
+            100% { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
         }
         
         /* ========== HEADER ========== */
@@ -171,11 +299,28 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: -0.5px;
-            transition: transform 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        
+        .logo a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 4px;
+            transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
         .logo a:hover {
             transform: scale(1.05);
+        }
+        
+        .logo a:hover::after {
+            width: 100%;
         }
         
         .nav-links {
@@ -188,32 +333,48 @@
         .nav-links li a {
             font-weight: 600;
             color: #444;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
-            padding: 5px 0;
+            padding: 8px 16px;
+            border-radius: 12px;
+        }
+        
+        .nav-links li a::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.08), rgba(255, 101, 132, 0.08));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
         }
         
         .nav-links li a::after {
             content: '';
             position: absolute;
-            bottom: -2px;
-            left: 0;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
             width: 0;
             height: 3px;
             background: linear-gradient(90deg, #6C63FF, #FF6584);
-            transition: width 0.3s ease;
+            transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             border-radius: 4px;
         }
         
         .nav-links li a:hover {
             color: #6C63FF;
+            transform: translateY(-2px);
+        }
+        
+        .nav-links li a:hover::before {
+            opacity: 1;
         }
         
         .nav-links li a:hover::after {
-            width: 100%;
+            width: 60%;
         }
-        
-        /* Αφαίρεση language-dropdown στυλ */
         
         /* ========== HERO SECTION ========== */
         .hero {
@@ -236,6 +397,16 @@
             animation: heroGlow 12s ease-in-out infinite alternate;
         }
         
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to top, var(--light), transparent);
+        }
+        
         @keyframes heroGlow {
             0% { transform: translate(0, 0) scale(1); }
             100% { transform: translate(20%, 20%) scale(1.2); }
@@ -252,6 +423,18 @@
             margin-bottom: 18px;
             text-shadow: 0 4px 20px rgba(0,0,0,0.15);
             letter-spacing: -1px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .hero p {
@@ -262,6 +445,7 @@
             max-width: 700px;
             margin-left: auto;
             margin-right: auto;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
         }
         
         .cta-buttons {
@@ -269,6 +453,7 @@
             gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
         }
         
         .btn {
@@ -276,9 +461,27 @@
             border-radius: 60px;
             font-weight: 700;
             font-size: 18px;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: inline-block;
             letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:active {
+            transform: scale(0.95) !important;
         }
         
         .btn-primary {
@@ -287,11 +490,20 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.15);
         }
         
+        .btn-primary::before {
+            background: rgba(255, 217, 61, 0.3);
+        }
+        
         .btn-primary:hover {
-            transform: translateY(-4px) scale(1.03);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            transform: translateY(-6px) scale(1.05);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.25);
             background: #FFD93D;
             color: #333;
+        }
+        
+        .btn-primary:hover::before {
+            width: 400px;
+            height: 400px;
         }
         
         .btn-secondary {
@@ -301,16 +513,27 @@
             border: 2px solid rgba(255,255,255,0.3);
         }
         
+        .btn-secondary::before {
+            background: rgba(255,255,255,0.2);
+        }
+        
         .btn-secondary:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-4px) scale(1.03);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-6px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+            border-color: rgba(255,255,255,0.6);
+        }
+        
+        .btn-secondary:hover::before {
+            width: 400px;
+            height: 400px;
         }
         
         /* ========== QUICK ACCESS ========== */
         .quick-access {
             padding: 80px 0;
-            background: white;
+            background: transparent;
+            position: relative;
         }
         
         .section-title {
@@ -323,6 +546,7 @@
             font-weight: 800;
             color: #1a1a2e;
             margin-bottom: 10px;
+            animation: fadeInUp 0.6s ease-out;
         }
         
         .section-title h2 span {
@@ -337,6 +561,7 @@
             color: #666;
             max-width: 600px;
             margin: 0 auto;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
         }
         
         .quick-access-grid {
@@ -347,7 +572,7 @@
         }
         
         .quick-access-card {
-            border-radius: 24px;
+            border-radius: 28px;
             padding: 45px 35px;
             color: white;
             text-align: center;
@@ -356,6 +581,7 @@
             transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 10px 40px rgba(0,0,0,0.08);
             cursor: pointer;
+            border: 2px solid transparent;
         }
         
         .quick-access-card::before {
@@ -368,15 +594,41 @@
             opacity: 0;
             transition: opacity 0.5s ease;
             z-index: 0;
+            border-radius: 28px;
+        }
+        
+        .quick-access-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 0;
+            pointer-events: none;
         }
         
         .quick-access-card:hover {
-            transform: translateY(-12px) scale(1.02);
-            box-shadow: 0 24px 60px rgba(0,0,0,0.15);
+            transform: translateY(-16px) scale(1.03);
+            box-shadow: 0 28px 80px rgba(0,0,0,0.2);
+            border-color: rgba(255,255,255,0.3);
         }
         
         .quick-access-card:hover::before {
             opacity: 1;
+        }
+        
+        .quick-access-card:hover::after {
+            opacity: 1;
+            animation: cardShine 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes cardShine {
+            0% { transform: translate(-20%, -20%) rotate(0deg); }
+            100% { transform: translate(20%, 20%) rotate(360deg); }
         }
         
         .quick-access-card * {
@@ -405,11 +657,21 @@
             margin-bottom: 22px;
             display: block;
             animation: iconFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+        
+        .quick-access-card:hover .quick-access-icon-large {
+            animation: iconFloatFast 0.6s ease-in-out infinite;
         }
         
         @keyframes iconFloat {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes iconFloatFast {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-12px) scale(1.1); }
         }
         
         .quick-access-card h3 {
@@ -432,8 +694,28 @@
             border-radius: 60px;
             text-decoration: none;
             font-weight: 700;
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-access-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            background: rgba(0,0,0,0.05);
+        }
+        
+        .quick-access-btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
         
         .games-card .quick-access-btn {
@@ -445,8 +727,12 @@
         }
         
         .quick-access-btn:hover {
-            transform: scale(1.08) translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            transform: scale(1.08) translateY(-4px);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.2);
+        }
+        
+        .quick-access-btn:active {
+            transform: scale(0.95) !important;
         }
         
         .card-badge {
@@ -455,80 +741,19 @@
             right: 16px;
             background: rgba(255,255,255,0.2);
             backdrop-filter: blur(10px);
-            padding: 4px 14px;
+            padding: 6px 16px;
             border-radius: 30px;
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.5px;
             border: 1px solid rgba(255,255,255,0.2);
+            animation: badgePulse 2s ease-in-out infinite;
+            z-index: 2;
         }
         
-        /* ========== AD CONTAINERS ========== */
-        .ad-container {
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 0 20px;
-        }
-        
-        .ad-content {
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.06);
-            border: 1px solid rgba(0,0,0,0.04);
-            background: white;
-            min-height: 300px;
-            position: relative;
-            transition: box-shadow 0.3s ease;
-        }
-        
-        .ad-content:hover {
-            box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
-        }
-        
-        /* Διαφημιστικό πλαίσιο υψηλής προβολής */
-        .ad-display-container {
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: center;
-        }
-        
-        .ad-display-wrapper {
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.06);
-            border: 1px solid rgba(0,0,0,0.04);
-            background: white;
-            padding: 15px;
-            transition: box-shadow 0.3s ease;
-            display: inline-block;
-        }
-        
-        .ad-display-wrapper:hover {
-            box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
-        }
-        
-        /* Autorelaxed ad */
-        .autorelaxed-ad-container {
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 0 20px;
-        }
-        
-        .autorelaxed-ad-content {
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.06);
-            border: 1px solid rgba(0,0,0,0.04);
-            background: white;
-            min-height: 200px;
-            padding: 20px;
-            transition: box-shadow 0.3s ease;
-        }
-        
-        .autorelaxed-ad-content:hover {
-            box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
+            50% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
         }
         
         /* ========== FOOTER ========== */
@@ -538,6 +763,18 @@
             padding: 60px 0 30px;
             margin-top: 60px;
             border-top: 4px solid #6C63FF;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(108, 99, 255, 0.5), rgba(255, 101, 132, 0.5), transparent);
         }
         
         .footer-content {
@@ -545,6 +782,8 @@
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 40px;
             margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
         }
         
         .footer-section h3 {
@@ -565,6 +804,11 @@
             font-size: 15px;
             line-height: 1.8;
             opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .footer-section p:hover {
+            opacity: 1;
         }
         
         .footer-bottom {
@@ -573,6 +817,8 @@
             text-align: center;
             font-size: 14px;
             opacity: 0.6;
+            position: relative;
+            z-index: 1;
         }
         
         /* ========== RESPONSIVE ========== */
@@ -605,18 +851,6 @@
                 padding: 30px 20px;
             }
             
-            .ad-container,
-            .autorelaxed-ad-container,
-            .ad-display-container {
-                margin: 30px auto;
-                padding: 0 15px;
-            }
-            
-            .ad-display-wrapper {
-                width: 100%;
-                display: block;
-            }
-            
             .banner-content {
                 gap: 12px;
             }
@@ -626,7 +860,7 @@
             }
             
             .banner-buy-coffee {
-                padding: 8px 20px;
+                padding: 10px 20px;
                 font-size: 13px;
             }
             
@@ -642,16 +876,16 @@
                 grid-template-columns: 1fr;
                 text-align: center;
             }
+            
+            .btn {
+                padding: 14px 30px;
+                font-size: 16px;
+            }
         }
         
         @media (max-width: 480px) {
             .hero h1 {
                 font-size: 28px;
-            }
-            
-            .btn {
-                padding: 14px 30px;
-                font-size: 16px;
             }
             
             .quick-access-card h3 {
@@ -661,6 +895,9 @@
     </style>
 </head>
 <body>
+    <!-- ===== PARTICLE BACKGROUND ===== -->
+    <div class="particles-container" id="particlesContainer"></div>
+
     <!-- ===== ROLL-UP BANNER ===== -->
     <div class="roll-up-banner" id="rollUpBanner">
         <div class="banner-content">
@@ -685,7 +922,6 @@
                 <li><a href="/">Αρχική</a></li>
                 <li><a href="https://games.franklymadear.com">Παιχνίδια</a></li>
                 <li><a href="http://blog.franklymadear.com/">Blog</a></li>
-                <!-- Αφαίρεση του language selector -->
             </ul>
         </nav>
     </header>
@@ -696,8 +932,8 @@
             <h1>Καλώς Ήρθες στο <span style="background: linear-gradient(135deg, #FFD93D, #FF6584); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">FranklyMaDear</span></h1>
             <p>Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!</p>
             <div class="cta-buttons">
-                <a href="https://games.franklymadear.com" class="btn btn-primary">Παίξε Τώρα</a>
-                <a href="https://games.franklymadear.com" class="btn btn-secondary">Δες Όλα τα Παιχνίδια</a>
+                <a href="https://games.franklymadear.com" class="btn btn-primary">🎮 Παίξε Τώρα</a>
+                <a href="https://games.franklymadear.com" class="btn btn-secondary">📋 Δες Όλα τα Παιχνίδια</a>
             </div>
         </div>
     </section>
@@ -717,7 +953,7 @@
                     <div class="quick-access-icon-large">🎮</div>
                     <h3>Παιχνίδια</h3>
                     <p>Επισκέψου την πλήρη συλλογή των παιχνιδιών μας. Νέες προκλήσεις, διασκεδαστικά παιχνίδια και ατέλειωτη ψυχαγωγία!</p>
-                    <a href="https://games.franklymadear.com" class="quick-access-btn" target="_blank">Μετάβαση στα Παιχνίδια →</a>
+                    <a href="https://games.franklymadear.com" class="quick-access-btn" target="_blank">🚀 Μετάβαση στα Παιχνίδια</a>
                 </div>
                 
                 <!-- Blog Card -->
@@ -726,76 +962,11 @@
                     <div class="quick-access-icon-large">📝</div>
                     <h3>Blog</h3>
                     <p>Ανακάλυψε χρήσιμα άρθρα, συμβουλές για παιχνίδια, νέα χαρακτηριστικά και πολλά άλλα στο επίσημο blog μας!</p>
-                    <a href="https://blog.franklymadear.com" class="quick-access-btn" target="_blank">Μετάβαση στο Blog →</a>
+                    <a href="https://blog.franklymadear.com" class="quick-access-btn" target="_blank">📖 Μετάβαση στο Blog</a>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- ===== AD CONTAINER 1 (Standard - Ενημερώθηκε ο publisher) ===== -->
-    <div class="ad-container">
-        <div class="ad-content">
-            <ins class="adsbygoogle"
-                 style="display:block; min-height: 280px;"
-                 data-ad-client="ca-pub-3186700611266549"
-                 data-ad-slot="5407828554"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-            <div class="ad-placeholder" id="adPlaceholder" style="display:none;">
-                <div class="placeholder-content">
-                    <span class="placeholder-icon">📢</span>
-                    <h3>Αναμονή για διαφημίσεις</h3>
-                    <p>Οι διαφημίσεις θα εμφανιστούν αυτόματα εδώ μόλις εγκριθούν.</p>
-                    <small>Η υποστήριξη μέσω διαφημίσεων βοηθάει να διατηρούμε δωρεάν περιεχόμενο!</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== DISPLAY AD (360x800) - Μόνο ο επιλεγμένος publisher ===== -->
-    <div class="ad-display-container">
-        <div class="ad-display-wrapper">
-            <ins class="adsbygoogle"
-                 style="display:inline-block;width:360px;height:800px"
-                 data-ad-client="ca-pub-3186700611266549"
-                 data-ad-slot="8243966497"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-    </div>
-
-    <!-- ===== AUTORELAXED AD (Ενημερώθηκε ο publisher) ===== -->
-    <div class="autorelaxed-ad-container">
-        <div class="autorelaxed-ad-content">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-format="autorelaxed"
-                 data-ad-client="ca-pub-3186700611266549"
-                 data-ad-slot="1424921010"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-    </div>
-
-    <!-- ===== VIDEO AD CONTAINER (Ενημερώθηκε ο publisher) ===== -->
-    <div class="video-ad-container">
-        <div class="video-ad-content">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-3186700611266549"
-                 data-ad-slot="3092455087"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-    </div>
 
     <!-- ===== FOOTER ===== -->
     <footer class="footer">
@@ -807,9 +978,9 @@
                 </div>
                
                 <div class="footer-section">
-                    <h3>Επικοινωνία</h3>
+                    <h3>📬 Επικοινωνία</h3>
                     <p>📧 info@franklymadear.com</p>
-                    <p style="margin-top: 8px;">🌐 https://franklymadear.com</p>
+                    <p style="margin-top: 8px;">🌐 franklymadear.com</p>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -823,6 +994,36 @@
 
     <!-- ===== SCRIPTS ===== -->
     <script>
+        // ===== PARTICLES BACKGROUND =====
+        function createParticles() {
+            const container = document.getElementById('particlesContainer');
+            const colors = ['#6C63FF', '#FF6584', '#FFD93D', '#764ba2', '#f5576c'];
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 8 + 4;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const left = Math.random() * 100;
+                const duration = Math.random() * 15 + 10;
+                const delay = Math.random() * 10;
+                
+                particle.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    background: ${color};
+                    left: ${left}%;
+                    animation-duration: ${duration}s;
+                    animation-delay: ${delay}s;
+                `;
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+        
         // ===== BANNER FUNCTIONALITY =====
         const rollUpBanner = document.getElementById('rollUpBanner');
         const mainHeader = document.getElementById('mainHeader');
@@ -833,7 +1034,7 @@
         setTimeout(() => {
             rollUpBanner.classList.add('show');
             mainHeader.classList.add('with-banner');
-            mainHero.classList.add('with-banner');
+            if (mainHero) mainHero.classList.add('with-banner');
         }, 1200);
         
         // Scroll detection
@@ -854,8 +1055,10 @@
             if (e.target.closest('#bannerCoffeeBtn')) return;
             
             try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-                console.log('AdSense refresh via banner');
+                if (window.adsbygoogle) {
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                    console.log('✅ AdSense refreshed via banner click');
+                }
                 
                 const bannerText = rollUpBanner.querySelector('.banner-text');
                 bannerText.innerHTML = '<i>❤️</i> Ευχαριστούμε για την υποστήριξη!';
@@ -883,44 +1086,6 @@
                 bannerText.innerHTML = '<i>✨</i> Ένα κλικ αρκεί! Στηρίξτε μας να συνεχίσουμε!';
             }, 3000);
         });
-        
-        // ===== ADSENSE PLACEHOLDER =====
-        function initAdSense() {
-            const adPlaceholder = document.getElementById('adPlaceholder');
-            const adContainer = document.querySelector('.ad-content');
-            
-            try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-                
-                setTimeout(() => {
-                    const iframes = adContainer.querySelectorAll('iframe');
-                    if (iframes.length === 0) {
-                        adPlaceholder.style.display = 'flex';
-                    } else {
-                        adPlaceholder.style.display = 'none';
-                    }
-                }, 3000);
-                
-                setInterval(() => {
-                    const iframes = adContainer.querySelectorAll('iframe');
-                    if (iframes.length === 0 && adPlaceholder.style.display === 'none') {
-                        adPlaceholder.style.display = 'flex';
-                        try {
-                            (adsbygoogle = window.adsbygoogle || []).push({});
-                        } catch (e) {}
-                    }
-                }, 10000);
-            } catch (error) {
-                adPlaceholder.style.display = 'flex';
-            }
-            
-            // Load video ad
-            try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            } catch (error) {}
-        }
-        
-        document.addEventListener('DOMContentLoaded', initAdSense);
     </script>
 </body>
 </html>
