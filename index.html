@@ -12,12 +12,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="6a97888e-site-verification" content="276fb2137387cf4de0ade78f4b0a6067">
     
-    <!-- Google AdSense Auto Ads -->
+    <!-- Google AdSense Auto Ads (Διατηρήθηκε μόνο αυτός ο publisher) -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
-     crossorigin="anonymous"></script>
-    
-    <!-- Google AdSense Manual Ads -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1872407825418691"
      crossorigin="anonymous"></script>
     
     <link rel="stylesheet" href="style.css">
@@ -47,7 +43,7 @@
             color: inherit;
         }
         
-        /* ========== ROLL-UP BANNER (NEW STYLE) ========== */
+        /* ========== ROLL-UP BANNER (ΕΝΙΣΧΥΜΈΝΗ ΔΙΑΦΉΜΙΣΗ) ========== */
         .roll-up-banner {
             position: fixed;
             top: -100px;
@@ -141,7 +137,7 @@
             border: 1px solid rgba(255,255,255,0.3);
         }
         
-        /* ========== HEADER (NEW STYLE) ========== */
+        /* ========== HEADER ========== */
         .header {
             background: rgba(255,255,255,0.85);
             backdrop-filter: blur(20px);
@@ -217,25 +213,9 @@
             width: 100%;
         }
         
-        .language-dropdown {
-            padding: 8px 14px;
-            border-radius: 12px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            font-weight: 500;
-            color: #333;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            outline: none;
-        }
+        /* Αφαίρεση language-dropdown στυλ */
         
-        .language-dropdown:hover,
-        .language-dropdown:focus {
-            border-color: #6C63FF;
-            box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.1);
-        }
-        
-        /* ========== HERO SECTION (NEW) ========== */
+        /* ========== HERO SECTION ========== */
         .hero {
             background: linear-gradient(135deg, #6C63FF 0%, #4A3FCF 50%, #FF6584 100%);
             padding: 80px 0 100px;
@@ -327,7 +307,7 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.2);
         }
         
-        /* ========== QUICK ACCESS (NEW GRID WITH EFFECTS) ========== */
+        /* ========== QUICK ACCESS ========== */
         .quick-access {
             padding: 80px 0;
             background: white;
@@ -404,7 +384,6 @@
             z-index: 1;
         }
         
-        /* Card 1: Games */
         .quick-access-card.games-card {
             background: linear-gradient(145deg, #667eea, #764ba2);
         }
@@ -413,7 +392,6 @@
             background: linear-gradient(145deg, #764ba2, #667eea);
         }
         
-        /* Card 2: Blog */
         .quick-access-card.blog-card {
             background: linear-gradient(145deg, #f093fb, #f5576c);
         }
@@ -471,7 +449,6 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.2);
         }
         
-        /* Badge στο card */
         .card-badge {
             position: absolute;
             top: 16px;
@@ -486,7 +463,7 @@
             border: 1px solid rgba(255,255,255,0.2);
         }
         
-        /* ========== AD CONTAINERS (STYLISH) ========== */
+        /* ========== AD CONTAINERS ========== */
         .ad-container {
             max-width: 1200px;
             margin: 60px auto;
@@ -508,7 +485,7 @@
             box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
         }
         
-        /* ========== NEW AD DISPLAY (360x800) ========== */
+        /* Διαφημιστικό πλαίσιο υψηλής προβολής */
         .ad-display-container {
             max-width: 1200px;
             margin: 60px auto;
@@ -532,7 +509,7 @@
             box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
         }
         
-        /* ========== AUTORELAXED AD STYLES ========== */
+        /* Autorelaxed ad */
         .autorelaxed-ad-container {
             max-width: 1200px;
             margin: 60px auto;
@@ -554,31 +531,7 @@
             box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
         }
         
-        /* ========== SECONDARY DISPLAY AD (360x800) ========== */
-        .secondary-ad-display-container {
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: center;
-        }
-        
-        .secondary-ad-display-wrapper {
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.06);
-            border: 1px solid rgba(0,0,0,0.04);
-            background: white;
-            padding: 15px;
-            transition: box-shadow 0.3s ease;
-            display: inline-block;
-        }
-        
-        .secondary-ad-display-wrapper:hover {
-            box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
-        }
-        
-        /* ========== FOOTER (NEW) ========== */
+        /* ========== FOOTER ========== */
         .footer {
             background: #1a1a2e;
             color: #ccc;
@@ -653,16 +606,13 @@
             }
             
             .ad-container,
-            .video-ad-container,
             .autorelaxed-ad-container,
-            .ad-display-container,
-            .secondary-ad-display-container {
+            .ad-display-container {
                 margin: 30px auto;
                 padding: 0 15px;
             }
             
-            .ad-display-wrapper,
-            .secondary-ad-display-wrapper {
+            .ad-display-wrapper {
                 width: 100%;
                 display: block;
             }
@@ -711,7 +661,7 @@
     </style>
 </head>
 <body>
-    <!-- ===== ROLL-UP BANNER (NEW) ===== -->
+    <!-- ===== ROLL-UP BANNER ===== -->
     <div class="roll-up-banner" id="rollUpBanner">
         <div class="banner-content">
             <span class="banner-text">
@@ -732,21 +682,10 @@
                 <a href="/">FranklyMaDear</a>
             </div>
             <ul class="nav-links">
-                <li><a href="/" data-key="home">Αρχική</a></li>
-                <li><a href="https://games.franklymadear.com" data-key="games">Παιχνίδια</a></li>
-                <li><a href="http://blog.franklymadear.com/" data-key="blog">Blog</a></li>
-                <li class="language-selector">
-                    <select id="language-select" class="language-dropdown">
-                        <option value="el">Ελληνικά</option>
-                        <option value="en">English</option>
-                        <option value="de">Deutsch</option>
-                        <option value="es">Español</option>
-                        <option value="it">Italiano</option>
-                        <option value="ar">العربية</option>
-                        <option value="ru">Русский</option>
-                        <option value="hi">हिन्दी</option>
-                    </select>
-                </li>
+                <li><a href="/">Αρχική</a></li>
+                <li><a href="https://games.franklymadear.com">Παιχνίδια</a></li>
+                <li><a href="http://blog.franklymadear.com/">Blog</a></li>
+                <!-- Αφαίρεση του language selector -->
             </ul>
         </nav>
     </header>
@@ -754,11 +693,11 @@
     <!-- ===== HERO SECTION ===== -->
     <section class="hero" id="mainHero">
         <div class="container">
-            <h1 data-key="welcome">Καλώς Ήρθες στο <span style="background: linear-gradient(135deg, #FFD93D, #FF6584); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">FranklyMaDear</span></h1>
-            <p data-key="subtitle">Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!</p>
+            <h1>Καλώς Ήρθες στο <span style="background: linear-gradient(135deg, #FFD93D, #FF6584); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">FranklyMaDear</span></h1>
+            <p>Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!</p>
             <div class="cta-buttons">
-                <a href="https://games.franklymadear.com" class="btn btn-primary" data-key="playGames">Παίξε Τώρα</a>
-                <a href="https://games.franklymadear.com" class="btn btn-secondary" data-key="viewAllGames">Δες Όλα τα Παιχνίδια</a>
+                <a href="https://games.franklymadear.com" class="btn btn-primary">Παίξε Τώρα</a>
+                <a href="https://games.franklymadear.com" class="btn btn-secondary">Δες Όλα τα Παιχνίδια</a>
             </div>
         </div>
     </section>
@@ -768,7 +707,7 @@
         <div class="container">
             <div class="section-title">
                 <h2><span>Γρήγορη</span> Πρόσβαση</h2>
-                <p data-key="quickAccessSub">Απευθείας πρόσβαση στις πλατφόρμες μας</p>
+                <p>Απευθείας πρόσβαση στις πλατφόρμες μας</p>
             </div>
             
             <div class="quick-access-grid">
@@ -776,29 +715,29 @@
                 <div class="quick-access-card games-card">
                     <span class="card-badge">🎮 Hot</span>
                     <div class="quick-access-icon-large">🎮</div>
-                    <h3 data-key="gamesTitle">Παιχνίδια</h3>
-                    <p data-key="gamesDesc">Επισκέψου την πλήρη συλλογή των παιχνιδιών μας. Νέες προκλήσεις, διασκεδαστικά παιχνίδια και ατέλειωτη ψυχαγωγία!</p>
-                    <a href="https://games.franklymadear.com" class="quick-access-btn" target="_blank" data-key="goToGames">Μετάβαση στα Παιχνίδια →</a>
+                    <h3>Παιχνίδια</h3>
+                    <p>Επισκέψου την πλήρη συλλογή των παιχνιδιών μας. Νέες προκλήσεις, διασκεδαστικά παιχνίδια και ατέλειωτη ψυχαγωγία!</p>
+                    <a href="https://games.franklymadear.com" class="quick-access-btn" target="_blank">Μετάβαση στα Παιχνίδια →</a>
                 </div>
                 
                 <!-- Blog Card -->
                 <div class="quick-access-card blog-card">
                     <span class="card-badge">📝 Νέα</span>
                     <div class="quick-access-icon-large">📝</div>
-                    <h3 data-key="blogTitle">Blog</h3>
-                    <p data-key="blogDesc">Ανακάλυψε χρήσιμα άρθρα, συμβουλές για παιχνίδια, νέα χαρακτηριστικά και πολλά άλλα στο επίσημο blog μας!</p>
-                    <a href="https://blog.franklymadear.com" class="quick-access-btn" target="_blank" data-key="goToBlog">Μετάβαση στο Blog →</a>
+                    <h3>Blog</h3>
+                    <p>Ανακάλυψε χρήσιμα άρθρα, συμβουλές για παιχνίδια, νέα χαρακτηριστικά και πολλά άλλα στο επίσημο blog μας!</p>
+                    <a href="https://blog.franklymadear.com" class="quick-access-btn" target="_blank">Μετάβαση στο Blog →</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ===== AD CONTAINER 1 (Standard) ===== -->
+    <!-- ===== AD CONTAINER 1 (Standard - Ενημερώθηκε ο publisher) ===== -->
     <div class="ad-container">
         <div class="ad-content">
             <ins class="adsbygoogle"
                  style="display:block; min-height: 280px;"
-                 data-ad-client="ca-pub-1872407825418691"
+                 data-ad-client="ca-pub-3186700611266549"
                  data-ad-slot="5407828554"
                  data-ad-format="auto"
                  data-full-width-responsive="true"></ins>
@@ -816,22 +755,9 @@
         </div>
     </div>
 
-    <!-- ===== NEW DISPLAY AD (360x800) - Original Publisher ===== -->
+    <!-- ===== DISPLAY AD (360x800) - Μόνο ο επιλεγμένος publisher ===== -->
     <div class="ad-display-container">
         <div class="ad-display-wrapper">
-            <ins class="adsbygoogle"
-                 style="display:inline-block;width:360px;height:800px"
-                 data-ad-client="ca-pub-1872407825418691"
-                 data-ad-slot="8243966497"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-    </div>
-
-    <!-- ===== SECONDARY DISPLAY AD (360x800) - New Publisher ===== -->
-    <div class="secondary-ad-display-container">
-        <div class="secondary-ad-display-wrapper">
             <ins class="adsbygoogle"
                  style="display:inline-block;width:360px;height:800px"
                  data-ad-client="ca-pub-3186700611266549"
@@ -842,13 +768,13 @@
         </div>
     </div>
 
-    <!-- ===== AUTORELAXED AD ===== -->
+    <!-- ===== AUTORELAXED AD (Ενημερώθηκε ο publisher) ===== -->
     <div class="autorelaxed-ad-container">
         <div class="autorelaxed-ad-content">
             <ins class="adsbygoogle"
                  style="display:block"
                  data-ad-format="autorelaxed"
-                 data-ad-client="ca-pub-1872407825418691"
+                 data-ad-client="ca-pub-3186700611266549"
                  data-ad-slot="1424921010"></ins>
             <script>
                  (adsbygoogle = window.adsbygoogle || []).push({});
@@ -856,12 +782,12 @@
         </div>
     </div>
 
-    <!-- ===== VIDEO AD CONTAINER ===== -->
+    <!-- ===== VIDEO AD CONTAINER (Ενημερώθηκε ο publisher) ===== -->
     <div class="video-ad-container">
         <div class="video-ad-content">
             <ins class="adsbygoogle"
                  style="display:block"
-                 data-ad-client="ca-pub-1872407825418691"
+                 data-ad-client="ca-pub-3186700611266549"
                  data-ad-slot="3092455087"
                  data-ad-format="auto"
                  data-full-width-responsive="true"></ins>
@@ -877,11 +803,11 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h3><span>FranklyMaDear</span></h3>
-                    <p data-key="footerDesc">Η καλύτερη πλατφόρμα για δωρεάν HTML5 παιχνίδια online.</p>
+                    <p>Η καλύτερη πλατφόρμα για δωρεάν HTML5 παιχνίδια online.</p>
                 </div>
                
                 <div class="footer-section">
-                    <h3 data-key="contact">Επικοινωνία</h3>
+                    <h3>Επικοινωνία</h3>
                     <p>📧 info@franklymadear.com</p>
                     <p style="margin-top: 8px;">🌐 https://franklymadear.com</p>
                 </div>
@@ -932,7 +858,6 @@
                 console.log('AdSense refresh via banner');
                 
                 const bannerText = rollUpBanner.querySelector('.banner-text');
-                const originalText = bannerText.textContent;
                 bannerText.innerHTML = '<i>❤️</i> Ευχαριστούμε για την υποστήριξη!';
                 setTimeout(() => {
                     bannerText.innerHTML = '<i>✨</i> Ένα κλικ αρκεί! Στηρίξτε μας να συνεχίσουμε!';
@@ -953,7 +878,6 @@
             }
             
             const bannerText = rollUpBanner.querySelector('.banner-text');
-            const originalText = bannerText.textContent;
             bannerText.innerHTML = '<i>☕</i> Ευχαριστούμε για την υποστήριξη!';
             setTimeout(() => {
                 bannerText.innerHTML = '<i>✨</i> Ένα κλικ αρκεί! Στηρίξτε μας να συνεχίσουμε!';
@@ -997,176 +921,6 @@
         }
         
         document.addEventListener('DOMContentLoaded', initAdSense);
-        
-        // ===== LANGUAGE TRANSLATIONS =====
-        const translations = {
-            el: {
-                home: "Αρχική",
-                games: "Παιχνίδια",
-                blog: "Blog",
-                welcome: "Καλώς Ήρθες στο FranklyMaDear",
-                subtitle: "Ανακάλυψε τα καλύτερα δωρεάν HTML5 παιχνίδια online!",
-                playGames: "Παίξε Τώρα",
-                viewAllGames: "Δες Όλα τα Παιχνίδια",
-                quickAccessSub: "Απευθείας πρόσβαση στις πλατφόρμες μας",
-                gamesTitle: "Παιχνίδια",
-                gamesDesc: "Επισκέψου την πλήρη συλλογή των παιχνιδιών μας. Νέες προκλήσεις, διασκεδαστικά παιχνίδια και ατέλειωτη ψυχαγωγία!",
-                goToGames: "Μετάβαση στα Παιχνίδια →",
-                blogTitle: "Blog",
-                blogDesc: "Ανακάλυψε χρήσιμα άρθρα, συμβουλές για παιχνίδια, νέα χαρακτηριστικά και πολλά άλλα στο επίσημο blog μας!",
-                goToBlog: "Μετάβαση στο Blog →",
-                footerDesc: "Η καλύτερη πλατφόρμα για δωρεάν HTML5 παιχνίδια online.",
-                contact: "Επικοινωνία"
-            },
-            en: {
-                home: "Home",
-                games: "Games",
-                blog: "Blog",
-                welcome: "Welcome to FranklyMaDear",
-                subtitle: "Discover the best free HTML5 games online!",
-                playGames: "Play Now",
-                viewAllGames: "View All Games",
-                quickAccessSub: "Direct access to our platforms",
-                gamesTitle: "Games",
-                gamesDesc: "Visit our complete collection of games. New challenges, entertaining games and endless fun!",
-                goToGames: "Go to Games →",
-                blogTitle: "Blog",
-                blogDesc: "Discover useful articles, game tips, new features and much more on our official blog!",
-                goToBlog: "Go to Blog →",
-                footerDesc: "The best platform for free HTML5 games online.",
-                contact: "Contact"
-            },
-            de: {
-                home: "Startseite",
-                games: "Spiele",
-                blog: "Blog",
-                welcome: "Willkommen bei FranklyMaDear",
-                subtitle: "Entdecken Sie die besten kostenlosen HTML5-Spiele online!",
-                playGames: "Jetzt spielen",
-                viewAllGames: "Alle Spiele ansehen",
-                quickAccessSub: "Direkter Zugang zu unseren Plattformen",
-                gamesTitle: "Spiele",
-                gamesDesc: "Besuchen Sie unsere vollständige Spielesammlung. Neue Herausforderungen, unterhaltsame Spiele und endloser Spaß!",
-                goToGames: "Zu den Spielen →",
-                blogTitle: "Blog",
-                blogDesc: "Entdecken Sie nützliche Artikel, Spieltipps, neue Funktionen und vieles mehr in unserem offiziellen Blog!",
-                goToBlog: "Zum Blog →",
-                footerDesc: "Die beste Plattform für kostenlose HTML5-Spiele online.",
-                contact: "Kontakt"
-            },
-            es: {
-                home: "Inicio",
-                games: "Juegos",
-                blog: "Blog",
-                welcome: "Bienvenido a FranklyMaDear",
-                subtitle: "¡Descubre los mejores juegos HTML5 gratuitos en línea!",
-                playGames: "Jugar Ahora",
-                viewAllGames: "Ver Todos los Juegos",
-                quickAccessSub: "Acceso directo a nuestras plataformas",
-                gamesTitle: "Juegos",
-                gamesDesc: "¡Visita nuestra colección completa de juegos. Nuevos desafíos, juegos entretenidos y diversión sin fin!",
-                goToGames: "Ir a Juegos →",
-                blogTitle: "Blog",
-                blogDesc: "¡Descubre artículos útiles, consejos de juegos, nuevas características y mucho más en nuestro blog oficial!",
-                goToBlog: "Ir al Blog →",
-                footerDesc: "La mejor plataforma para juegos HTML5 gratuitos en línea.",
-                contact: "Contacto"
-            },
-            it: {
-                home: "Home",
-                games: "Giochi",
-                blog: "Blog",
-                welcome: "Benvenuto su FranklyMaDear",
-                subtitle: "Scopri i migliori giochi HTML5 gratuiti online!",
-                playGames: "Gioca Ora",
-                viewAllGames: "Vedi Tutti i Giochi",
-                quickAccessSub: "Accesso diretto alle nostre piattaforme",
-                gamesTitle: "Giochi",
-                gamesDesc: "Visita la nostra collezione completa di giochi. Nuove sfide, giochi divertenti e divertimento infinito!",
-                goToGames: "Vai ai Giochi →",
-                blogTitle: "Blog",
-                blogDesc: "Scopri articoli utili, suggerimenti sui giochi, nuove funzionalità e molto altro nel nostro blog ufficiale!",
-                goToBlog: "Vai al Blog →",
-                footerDesc: "La migliore piattaforma per giochi HTML5 gratuiti online.",
-                contact: "Contatto"
-            },
-            ar: {
-                home: "الرئيسية",
-                games: "الألعاب",
-                blog: "مدونة",
-                welcome: "مرحبًا بك في FranklyMaDear",
-                subtitle: "اكتشف أفضل ألعاب HTML5 المجانية عبر الإنترنت!",
-                playGames: "العب الآن",
-                viewAllGames: "عرض جميع الألعاب",
-                quickAccessSub: "وصول مباشر إلى منصاتنا",
-                gamesTitle: "الألعاب",
-                gamesDesc: "قم بزيارة مجموعتنا الكاملة من الألعاب. تحديات جديدة، ألعاب مسلية ومتعة لا نهاية لها!",
-                goToGames: "اذهب إلى الألعاب →",
-                blogTitle: "المدونة",
-                blogDesc: "اكتشف مقالات مفيدة، نصائح للألعاب، ميزات جديدة والمزيد في مدونتنا الرسمية!",
-                goToBlog: "اذهب إلى المدونة →",
-                footerDesc: "أفضل منصة لألعاب HTML5 المجانية عبر الإنترنت.",
-                contact: "اتصال"
-            },
-            ru: {
-                home: "Главная",
-                games: "Игры",
-                blog: "Блог",
-                welcome: "Добро пожаловать в FranklyMaDear",
-                subtitle: "Откройте для себя лучшие бесплатные HTML5 игры онлайн!",
-                playGames: "Играть Сейчас",
-                viewAllGames: "Посмотреть Все Игры",
-                quickAccessSub: "Прямой доступ к нашим платформам",
-                gamesTitle: "Игры",
-                gamesDesc: "Посетите нашу полную коллекцию игр. Новые вызовы, увлекательные игры и бесконечное веселье!",
-                goToGames: "Перейти к играм →",
-                blogTitle: "Блог",
-                blogDesc: "Откройте для себя полезные статьи, советы по играм, новые функции и многое другое в нашем официальном блоге!",
-                goToBlog: "Перейти в блог →",
-                footerDesc: "Лучшая платформа для бесплатных HTML5 игр онлайн.",
-                contact: "Контакт"
-            },
-            hi: {
-                home: "होम",
-                games: "गेम्स",
-                blog: "ब्लॉग",
-                welcome: "FranklyMaDear में आपका स्वागत है",
-                subtitle: "ऑनलाइन सर्वश्रेष्ठ मुफ्त HTML5 गेम्स खोजें!",
-                playGames: "अभी खेलें",
-                viewAllGames: "सभी गेम्स देखें",
-                quickAccessSub: "हमारे प्लेटफार्मों तक सीधी पहुंच",
-                gamesTitle: "गेम्स",
-                gamesDesc: "हमारे गेम्स के पूर्ण संग्रह पर जाएं। नई चुनौतियां, मनोरंजक गेम्स और अंतहीन मज़ा!",
-                goToGames: "गेम्स पर जाएं →",
-                blogTitle: "ब्लॉग",
-                blogDesc: "हमारे आधिकारिक ब्लॉग पर उपयोगी लेख, गेम टिप्स, नई सुविधाएं और बहुत कुछ खोजें!",
-                goToBlog: "ब्लॉग पर जाएं →",
-                footerDesc: "मुफ्त HTML5 गेम्स के लिए सर्वश्रेष्ठ प्लेटफॉर्म।",
-                contact: "संपर्क"
-            }
-        };
-        
-        // ===== LANGUAGE SELECTOR =====
-        const languageSelect = document.getElementById('language-select');
-        const savedLanguage = localStorage.getItem('preferredLanguage') || 'el';
-        languageSelect.value = savedLanguage;
-        updateLanguage(savedLanguage);
-        
-        languageSelect.addEventListener('change', (e) => {
-            const selectedLanguage = e.target.value;
-            localStorage.setItem('preferredLanguage', selectedLanguage);
-            updateLanguage(selectedLanguage);
-        });
-        
-        function updateLanguage(lang) {
-            const elements = document.querySelectorAll('[data-key]');
-            elements.forEach(element => {
-                const key = element.getAttribute('data-key');
-                if (translations[lang] && translations[lang][key]) {
-                    element.textContent = translations[lang][key];
-                }
-            });
-        }
     </script>
 </body>
 </html>
