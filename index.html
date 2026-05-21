@@ -12,7 +12,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="6a97888e-site-verification" content="276fb2137387cf4de0ade78f4b0a6067">
     
-    <!-- Google AdSense - ΜΟΝΟ ΕΝΑ SCRIPT ΣΤΟ HEAD -->
+    <!-- Google AdSense - ΜΟΝΟ ΤΟ ΒΑΣΙΚΟ SCRIPT -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
      crossorigin="anonymous"></script>
     
@@ -926,7 +926,7 @@
         </div>
     </section>
 
-    <!-- ===== AD 1: AUTORELAXED (ΜΕΤΑ ΤΟ HERO) ===== -->
+    <!-- ===== ΜΟΝΑΔΙΚΗ ΔΙΑΦΗΜΙΣΗ: AUTORELAXED (ΜΕΤΑ ΤΟ HERO) ===== -->
     <div class="ad-section">
         <div class="ad-wrapper">
             <div class="ad-label">Διαφήμιση</div>
@@ -970,20 +970,6 @@
             </div>
         </div>
     </section>
-
-    <!-- ===== AD 2: DISPLAY 360x800 (ΜΕΤΑ ΤΟ QUICK ACCESS) ===== -->
-    <div class="ad-section">
-        <div class="ad-wrapper">
-            <div class="ad-label">Διαφήμιση</div>
-            <ins class="adsbygoogle"
-                 style="display:inline-block;width:360px;height:800px"
-                 data-ad-client="ca-pub-3186700611266549"
-                 data-ad-slot="8243966497"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-    </div>
 
     <!-- ===== FOOTER ===== -->
     <footer class="footer">
@@ -1053,7 +1039,6 @@
             rollUpBanner.classList.add('show');
             rollUpBanner.classList.remove('hide-banner');
             
-            // Αυτόματη απόκρυψη μετά από 5 δευτερόλεπτα
             clearTimeout(bannerAutoHideTimer);
             bannerAutoHideTimer = setTimeout(() => {
                 hideBanner();
@@ -1064,25 +1049,21 @@
             rollUpBanner.classList.add('hide-banner');
             rollUpBanner.classList.remove('show');
             
-            // Επανεμφάνιση μετά από 30 δευτερόλεπτα
             clearTimeout(bannerTimer);
             bannerTimer = setTimeout(() => {
                 showBanner();
             }, 30000);
         }
         
-        // Αρχική εμφάνιση μετά από 1 δευτερόλεπτο
         setTimeout(() => {
             showBanner();
         }, 1000);
         
-        // Κλείσιμο με το κουμπί X
         bannerCloseBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             hideBanner();
         });
         
-        // Buy Me a Coffee button
         bannerCoffeeBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             
@@ -1097,41 +1078,6 @@
             setTimeout(() => {
                 bannerText.innerHTML = '<i>✨</i> Στηρίξτε μας να συνεχίσουμε!';
             }, 2000);
-        });
-        
-        // ===== FORCE ADSENSE LOAD =====
-        // Επαναλαμβανόμενη προσπάθεια φόρτωσης διαφημίσεων
-        let adLoadAttempts = 0;
-        const maxAttempts = 5;
-        
-        function tryLoadAds() {
-            if (adLoadAttempts >= maxAttempts) return;
-            
-            adLoadAttempts++;
-            console.log(`🔄 Προσπάθεια φόρτωσης διαφημίσεων #${adLoadAttempts}`);
-            
-            try {
-                if (window.adsbygoogle) {
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                    console.log('✅ AdSense push completed');
-                } else {
-                    console.log('⏳ Το adsbygoogle δεν είναι ακόμα διαθέσιμο, επανάληψη...');
-                    setTimeout(tryLoadAds, 2000);
-                }
-            } catch (e) {
-                console.log('❌ AdSense error:', e.message);
-                setTimeout(tryLoadAds, 2000);
-            }
-        }
-        
-        // Ξεκίνα τις προσπάθειες μετά το πλήρες φόρτωμα της σελίδας
-        window.addEventListener('load', function() {
-            setTimeout(tryLoadAds, 1500);
-        });
-        
-        // Επίσης δοκίμασε μετά το DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(tryLoadAds, 3000);
         });
     </script>
 </body>
