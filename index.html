@@ -12,7 +12,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="6a97888e-site-verification" content="276fb2137387cf4de0ade78f4b0a6067">
     
-    <!-- Google AdSense Auto Ads -->
+    <!-- Google AdSense - ΜΟΝΟ ΕΝΑ SCRIPT ΣΤΟ HEAD -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3186700611266549"
      crossorigin="anonymous"></script>
     
@@ -119,150 +119,100 @@
             }
         }
         
-        /* ========== ROLL-UP BANNER ========== */
+        /* ========== ROLL-UP BANNER (ΜΙΚΡΟ & ΔΙΑΚΡΙΤΙΚΟ) ========== */
         .roll-up-banner {
             position: fixed;
-            top: -100px;
+            top: -60px;
             left: 0;
             right: 0;
             z-index: 9999;
-            background: linear-gradient(135deg, #6C63FF, #FF6584, #FFB347);
-            background-size: 300% 300%;
-            animation: gradientMove 6s ease infinite;
-            padding: 14px 20px;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.95), rgba(255, 101, 132, 0.95));
+            padding: 8px 16px;
             text-align: center;
             color: white;
-            box-shadow: 0 8px 32px rgba(108, 99, 255, 0.4);
-            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border-bottom: 3px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 16px rgba(108, 99, 255, 0.3);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-bottom: 2px solid rgba(255,255,255,0.2);
             backdrop-filter: blur(10px);
-        }
-        
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            font-size: 14px;
         }
         
         .roll-up-banner.show {
             top: 0;
-            animation: gradientMove 6s ease infinite, bannerGlow 2s ease-in-out infinite alternate;
         }
         
-        @keyframes bannerGlow {
-            0% { box-shadow: 0 8px 32px rgba(108, 99, 255, 0.4); }
-            100% { box-shadow: 0 8px 48px rgba(255, 101, 132, 0.6); }
-        }
-        
-        .roll-up-banner.scrolled {
-            transform: scale(0.92);
-            opacity: 0.95;
-            padding: 10px 20px;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 12px 48px rgba(108, 99, 255, 0.5);
+        .roll-up-banner.hide-banner {
+            top: -60px;
+            opacity: 0;
         }
         
         .banner-content {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
+            gap: 12px;
             flex-wrap: wrap;
             max-width: 1200px;
             margin: 0 auto;
         }
         
         .banner-text {
-            font-weight: 600;
-            font-size: 18px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            letter-spacing: 0.5px;
-            animation: textPulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes textPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
+            font-weight: 500;
+            font-size: 14px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            letter-spacing: 0.3px;
         }
         
         .banner-text i {
-            margin-right: 10px;
-            animation: iconBounce 1s ease-in-out infinite;
-        }
-        
-        @keyframes iconBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            margin-right: 6px;
         }
         
         .banner-buy-coffee {
             background: white;
             color: #6C63FF;
             border: none;
-            padding: 12px 28px;
-            border-radius: 50px;
-            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 12px;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .banner-buy-coffee::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 217, 61, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .banner-buy-coffee:hover::before {
-            width: 300px;
-            height: 300px;
+            gap: 6px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .banner-buy-coffee:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
             background: #FFD93D;
             color: #333;
         }
         
         .banner-buy-coffee .coffee-icon {
-            font-size: 20px;
-            animation: coffeeSteam 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes coffeeSteam {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-3px) rotate(-5deg); }
-            75% { transform: translateY(-3px) rotate(5deg); }
-        }
-        
-        .banner-cta-tag {
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-            padding: 6px 16px;
-            border-radius: 30px;
             font-size: 14px;
-            font-weight: 500;
-            border: 1px solid rgba(255,255,255,0.3);
-            animation: tagGlow 2s ease-in-out infinite alternate;
         }
         
-        @keyframes tagGlow {
-            0% { box-shadow: 0 0 10px rgba(255,255,255,0.1); }
-            100% { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+        .banner-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-left: 8px;
+        }
+        
+        .banner-close:hover {
+            background: rgba(255,255,255,0.4);
+            transform: scale(1.1);
         }
         
         /* ========== HEADER ========== */
@@ -279,7 +229,7 @@
         }
         
         .header.with-banner {
-            margin-top: 56px;
+            margin-top: 0;
         }
         
         .nav {
@@ -756,6 +706,40 @@
             50% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
         }
         
+        /* ========== AD CONTAINER ========== */
+        .ad-section {
+            padding: 40px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .ad-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+            transition: box-shadow 0.3s ease;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        
+        .ad-wrapper:hover {
+            box-shadow: 0 12px 60px rgba(108, 99, 255, 0.08);
+        }
+        
+        .ad-label {
+            text-align: center;
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
         /* ========== FOOTER ========== */
         .footer {
             background: #1a1a2e;
@@ -852,24 +836,16 @@
             }
             
             .banner-content {
-                gap: 12px;
+                gap: 8px;
             }
             
             .banner-text {
-                font-size: 15px;
+                font-size: 12px;
             }
             
             .banner-buy-coffee {
-                padding: 10px 20px;
-                font-size: 13px;
-            }
-            
-            .banner-cta-tag {
-                display: none;
-            }
-            
-            .roll-up-banner.scrolled {
-                transform: scale(0.95);
+                padding: 5px 12px;
+                font-size: 11px;
             }
             
             .footer-content {
@@ -881,6 +857,10 @@
                 padding: 14px 30px;
                 font-size: 16px;
             }
+            
+            .ad-wrapper {
+                padding: 10px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -891,6 +871,14 @@
             .quick-access-card h3 {
                 font-size: 22px;
             }
+            
+            .roll-up-banner {
+                padding: 6px 10px;
+            }
+            
+            .banner-text {
+                font-size: 11px;
+            }
         }
     </style>
 </head>
@@ -898,17 +886,17 @@
     <!-- ===== PARTICLE BACKGROUND ===== -->
     <div class="particles-container" id="particlesContainer"></div>
 
-    <!-- ===== ROLL-UP BANNER ===== -->
+    <!-- ===== ROLL-UP BANNER (ΜΙΚΡΟ & ΔΙΑΚΡΙΤΙΚΟ) ===== -->
     <div class="roll-up-banner" id="rollUpBanner">
         <div class="banner-content">
             <span class="banner-text">
-                <i>✨</i> Ένα κλικ αρκεί! Στηρίξτε μας να συνεχίσουμε!
+                <i>✨</i> Στηρίξτε μας να συνεχίσουμε!
             </span>
-            <span class="banner-cta-tag">🎯 Support</span>
             <button class="banner-buy-coffee" id="bannerCoffeeBtn">
                 <span class="coffee-icon">☕</span>
                 Buy Me a Coffee
             </button>
+            <button class="banner-close" id="bannerCloseBtn" title="Κλείσιμο">✕</button>
         </div>
     </div>
 
@@ -937,6 +925,21 @@
             </div>
         </div>
     </section>
+
+    <!-- ===== AD 1: AUTORELAXED (ΜΕΤΑ ΤΟ HERO) ===== -->
+    <div class="ad-section">
+        <div class="ad-wrapper">
+            <div class="ad-label">Διαφήμιση</div>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-format="autorelaxed"
+                 data-ad-client="ca-pub-3186700611266549"
+                 data-ad-slot="6826169932"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
 
     <!-- ===== QUICK ACCESS SECTION ===== -->
     <section class="quick-access">
@@ -968,6 +971,20 @@
         </div>
     </section>
 
+    <!-- ===== AD 2: DISPLAY 360x800 (ΜΕΤΑ ΤΟ QUICK ACCESS) ===== -->
+    <div class="ad-section">
+        <div class="ad-wrapper">
+            <div class="ad-label">Διαφήμιση</div>
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:360px;height:800px"
+                 data-ad-client="ca-pub-3186700611266549"
+                 data-ad-slot="8243966497"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+
     <!-- ===== FOOTER ===== -->
     <footer class="footer">
         <div class="container">
@@ -991,32 +1008,6 @@
 
     <!-- ===== BUY ME A COFFEE WIDGET ===== -->
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="franklymadear" data-description="Support me on Buy me a coffee!" data-message="" data-color="#6C63FF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
-
-    <!-- ===== AD SETUP SCRIPTS ===== -->
-    <script>
-        // ===== GOOGLE ADSENSE CONFIGURATION =====
-        // Ενεργοποίηση Page-Level Ads (Anchor + Vignette)
-        window.google_ad_client = "ca-pub-3186700611266549";
-        
-        // Anchor Ads (σταθερή διαφήμιση στο κάτω μέρος)
-        window.google_ad_slot = "";
-        window.google_ad_width = 0;
-        window.google_ad_height = 0;
-        
-        // Page-Level Ads Configuration
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-3186700611266549",
-            enable_page_level_ads: true,
-            overlays: {
-                bottom: true  // Ενεργοποίηση Anchor Ads
-            },
-            vignettes: {
-                enabled: true  // Ενεργοποίηση Vignette Ads (full-screen μεταξύ σελίδων)
-            }
-        });
-        
-        console.log('✅ AdSense Configured: Auto Ads + Anchor Ads + Vignette Ads');
-    </script>
 
     <!-- ===== SCRIPTS ===== -->
     <script>
@@ -1052,48 +1043,43 @@
         
         // ===== BANNER FUNCTIONALITY =====
         const rollUpBanner = document.getElementById('rollUpBanner');
-        const mainHeader = document.getElementById('mainHeader');
-        const mainHero = document.getElementById('mainHero');
         const bannerCoffeeBtn = document.getElementById('bannerCoffeeBtn');
+        const bannerCloseBtn = document.getElementById('bannerCloseBtn');
         
-        // Show banner after delay
-        setTimeout(() => {
+        let bannerTimer;
+        let bannerAutoHideTimer;
+        
+        function showBanner() {
             rollUpBanner.classList.add('show');
-            mainHeader.classList.add('with-banner');
-            if (mainHero) mainHero.classList.add('with-banner');
-        }, 1200);
-        
-        // Scroll detection
-        const bannerShrinkThreshold = 80;
-        
-        window.addEventListener('scroll', function() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            rollUpBanner.classList.remove('hide-banner');
             
-            if (scrollTop > bannerShrinkThreshold) {
-                rollUpBanner.classList.add('scrolled');
-            } else {
-                rollUpBanner.classList.remove('scrolled');
-            }
-        });
+            // Αυτόματη απόκρυψη μετά από 5 δευτερόλεπτα
+            clearTimeout(bannerAutoHideTimer);
+            bannerAutoHideTimer = setTimeout(() => {
+                hideBanner();
+            }, 5000);
+        }
         
-        // Banner click → refresh AdSense
-        rollUpBanner.addEventListener('click', (e) => {
-            if (e.target.closest('#bannerCoffeeBtn')) return;
+        function hideBanner() {
+            rollUpBanner.classList.add('hide-banner');
+            rollUpBanner.classList.remove('show');
             
-            try {
-                if (window.adsbygoogle) {
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                    console.log('✅ AdSense refreshed via banner click');
-                }
-                
-                const bannerText = rollUpBanner.querySelector('.banner-text');
-                bannerText.innerHTML = '<i>❤️</i> Ευχαριστούμε για την υποστήριξη!';
-                setTimeout(() => {
-                    bannerText.innerHTML = '<i>✨</i> Ένα κλικ αρκεί! Στηρίξτε μας να συνεχίσουμε!';
-                }, 3000);
-            } catch (error) {
-                console.error('AdSense refresh error:', error);
-            }
+            // Επανεμφάνιση μετά από 30 δευτερόλεπτα
+            clearTimeout(bannerTimer);
+            bannerTimer = setTimeout(() => {
+                showBanner();
+            }, 30000);
+        }
+        
+        // Αρχική εμφάνιση μετά από 1 δευτερόλεπτο
+        setTimeout(() => {
+            showBanner();
+        }, 1000);
+        
+        // Κλείσιμο με το κουμπί X
+        bannerCloseBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            hideBanner();
         });
         
         // Buy Me a Coffee button
@@ -1107,10 +1093,45 @@
             }
             
             const bannerText = rollUpBanner.querySelector('.banner-text');
-            bannerText.innerHTML = '<i>☕</i> Ευχαριστούμε για την υποστήριξη!';
+            bannerText.innerHTML = '<i>☕</i> Ευχαριστούμε!';
             setTimeout(() => {
-                bannerText.innerHTML = '<i>✨</i> Ένα κλικ αρκεί! Στηρίξτε μας να συνεχίσουμε!';
-            }, 3000);
+                bannerText.innerHTML = '<i>✨</i> Στηρίξτε μας να συνεχίσουμε!';
+            }, 2000);
+        });
+        
+        // ===== FORCE ADSENSE LOAD =====
+        // Επαναλαμβανόμενη προσπάθεια φόρτωσης διαφημίσεων
+        let adLoadAttempts = 0;
+        const maxAttempts = 5;
+        
+        function tryLoadAds() {
+            if (adLoadAttempts >= maxAttempts) return;
+            
+            adLoadAttempts++;
+            console.log(`🔄 Προσπάθεια φόρτωσης διαφημίσεων #${adLoadAttempts}`);
+            
+            try {
+                if (window.adsbygoogle) {
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                    console.log('✅ AdSense push completed');
+                } else {
+                    console.log('⏳ Το adsbygoogle δεν είναι ακόμα διαθέσιμο, επανάληψη...');
+                    setTimeout(tryLoadAds, 2000);
+                }
+            } catch (e) {
+                console.log('❌ AdSense error:', e.message);
+                setTimeout(tryLoadAds, 2000);
+            }
+        }
+        
+        // Ξεκίνα τις προσπάθειες μετά το πλήρες φόρτωμα της σελίδας
+        window.addEventListener('load', function() {
+            setTimeout(tryLoadAds, 1500);
+        });
+        
+        // Επίσης δοκίμασε μετά το DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(tryLoadAds, 3000);
         });
     </script>
 </body>
